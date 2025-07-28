@@ -1,0 +1,23 @@
+// src/app/api/auth/signup/route.ts
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
+
+export async function POST(req: Request) {
+  const { name, email, password } = await req.json();
+  if (!name || !email || !password) {
+    return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+  }
+
+  const { data, error } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    user_metadata: { name },
+    email_confirm: true,
+  });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 409 });
+  }
+
+  return NextResponse.json({ user: data.user }, { status: 201 });
+}

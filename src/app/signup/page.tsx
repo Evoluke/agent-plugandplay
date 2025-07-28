@@ -1,33 +1,62 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     if (password !== confirm) {
-      alert("As senhas não coincidem");
+      setError("As senhas não coincidem");
       return;
     }
-    // TODO: chamar API /api/auth/signup
-    console.log({ name, email, password });
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Falha no cadastro");
+      } else {
+        // cadastro OK: redireciona ao login
+        router.push("/login");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Erro de conexão");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-50 p-4">
       <form
         onSubmit={handleSubmit}
-        className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-6"
+        className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
       >
         <h1 className="text-2xl font-semibold text-center">Cadastro</h1>
+
+        {error && (
+          <div className="text-red-600 text-sm text-center">{error}</div>
+        )}
 
         <div>
           <label htmlFor="name" className="block text-sm font-medium">
@@ -81,8 +110,8 @@ export default function SignupPage() {
           />
         </div>
 
-        <Button type="submit" className="w-full">
-          Cadastrar
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Cadastrando..." : "Cadastrar"}
         </Button>
 
         <p className="text-center text-sm">
