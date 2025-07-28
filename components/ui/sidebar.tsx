@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import {
   Tooltip,
   TooltipTrigger,
@@ -48,7 +47,7 @@ export function Sidebar() {
 
       <nav className="flex flex-col space-y-2">
         {navItems.map((item) => (
-          <Tooltip key={item.href}>
+          <Tooltip key={item.href} disableHoverableContent>
             <TooltipTrigger asChild>
               <Link
                 href={item.href}
@@ -57,7 +56,7 @@ export function Sidebar() {
                 {item.icon}
               </Link>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
               <span>{item.label}</span>
             </TooltipContent>
           </Tooltip>
@@ -65,7 +64,7 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto">
-        <Tooltip>
+        <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <button
               onClick={handleLogout}
@@ -74,7 +73,7 @@ export function Sidebar() {
               <LogOut size={20} />
             </button>
           </TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
             <span>Logout</span>
           </TooltipContent>
         </Tooltip>
