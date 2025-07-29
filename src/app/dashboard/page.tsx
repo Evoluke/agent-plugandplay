@@ -46,7 +46,7 @@ export default function DashboardPage() {
       });
   }, [user]);
 
-  if (!user || !company) return;
+  if (!user || !company) return null;
 
 
 

@@ -18,7 +18,7 @@ export default function DashboardClientLayout({ children }: Props) {
     })
   }, [router])
 
-  if (!user) return <div>Carregando...</div>
+  if (!user) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>
 
   return (
     <div className="flex h-screen">

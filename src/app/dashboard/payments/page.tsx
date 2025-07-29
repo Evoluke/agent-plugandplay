@@ -1,14 +1,16 @@
 // src/app/payments/page.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabasebrowser } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BudgetCard } from "@/components/ui/budget-card";
+import { PostgrestError } from '@supabase/supabase-js';
 
 type Payment = {
   id: string;
+  company_id: string;
   referencia: string;
   due_date: string;    // string no formato ISO
   amount: number;
@@ -19,27 +21,39 @@ type Payment = {
 export default function PaymentsPage() {
   const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [company, setCompany] = useState<any>(null);
+
 
   useEffect(() => {
-    async function fetchPayments() {
-      const { data, error } = await supabasebrowser
-        .from("payments")
-        .select("*")
-        .order("due_date", { ascending: false });
+    supabasebrowser.auth.getUser().then(({ data, error }: { data: any; error: PostgrestError | null }) => {
+      if (error || !data?.user) {
 
-      if (error) throw error;
-      setPayments(data as Payment[]);  // cast aqui
-
-      if (error) {
-        console.error("Erro ao carregar pagamentos:", error);
       } else {
-        setPayments(data);
+
+        setUser(data.user);
       }
-      setLoading(false);
-    }
-    fetchPayments();
-  }, []);
+    });
+  }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    supabasebrowser
+      .from('payments')
+      .select('*, company!inner(user_id)')
+      .eq('company.user_id', user.id)  
+      .order('due_date', { ascending: true })
+      .then(({ data, error }: { data: any; error: PostgrestError | null }) => {
+        if (error) {
+          console.error('Erro ao buscar company:', error.message);
+        } else {
+          setPayments(data || []);
+        }
+      });
+  }, [user]);
+
+  if (!user || !payments) return <p>teste</p>;
+
 
   // orçamento e alertas (mantido como antes)
   const monthlyBudget = 2000;
@@ -54,10 +68,6 @@ export default function PaymentsPage() {
   ];
 
   const handlePay = (id: string) => router.push(`/dashboard/payments/${id}/`);
-
-  if (loading) {
-    return <p className="p-4 text-center">Carregando pagamentos...</p>;
-  }
 
   return (
     <div className="p-4 space-y-6 w-4/5 mx-auto">

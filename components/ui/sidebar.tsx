@@ -1,5 +1,6 @@
 // src/components/Sidebar.tsx
 
+import { supabasebrowser } from '@/lib/supabase';
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -35,10 +36,13 @@ export function Sidebar() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    const res = await fetch('/api/auth/logout', { method: 'POST' });
-    document.cookie =
-      "sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-    if (res.ok) router.replace('/login');
+    const { error } = await supabasebrowser.auth.signOut();
+
+    if (error) {
+      console.error('Erro ao fazer logout:', error.message);
+      return;
+    }
+    router.replace('/login');
   };
 
   return (
