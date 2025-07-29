@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabasebrowser } from '@/lib/supabase';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BudgetCard } from "@/components/ui/budget-card";
 
@@ -23,7 +23,7 @@ export default function PaymentsPage() {
 
   useEffect(() => {
     async function fetchPayments() {
-      const { data, error } = await supabase
+      const { data, error } = await supabasebrowser
         .from("payments")
         .select("*")
         .order("due_date", { ascending: false });

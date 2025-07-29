@@ -1,8 +1,7 @@
 // src/app/dashboard/page.tsx
 
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
-import React from "react";
+'use client';
+
 import {
   Card,
   CardHeader,
@@ -11,8 +10,45 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Folder, Users, FileText, Clock } from "lucide-react";
+import { supabasebrowser } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [company, setCompany] = useState<any>(null);
+
+  useEffect(() => {
+    supabasebrowser.auth.getUser().then(({ data, error }) => {
+      if (error || !data?.user) {
+        
+      } else {
+
+        setUser(data.user);
+      }
+    });
+  }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    supabasebrowser
+      .from('company')
+      .select('*')
+      .eq('user_id', user.id)
+      .single()          // pega apenas um registro
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Erro ao buscar company:', error.message);
+        } else {
+          setCompany(data);
+        }
+      });
+  }, [user]);
+
+  if (!user || !company) return;
+
+
 
   const actionItems = [
     { icon: <Folder className="w-5 h-5 text-blue-500" />, title: "Gerenciar Agentes", desc: "Crie ou edite seus agentes de IA", disabled: false },
@@ -28,7 +64,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <h2 className="text-xl font-semibold">Olá,  👋</h2>
+          <h2 className="text-xl font-semibold">Olá, {company.company_name} 👋</h2>
           <p className="text-base text-gray-700">Quais são seus objetivos para hoje?</p>
           <p className="text-sm text-gray-500">
             Esta plataforma permite orquestrar, monitorar e otimizar agentes de IA de forma colaborativa. Teste, analise e aprimore decisões com base em dados reais — em equipe, em escala e com total controle.

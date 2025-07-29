@@ -1,15 +1,25 @@
-// src/app/dashboard/layout.tsx
+// src/app/dashboard/layout.client.tsx
+'use client'
+import React, { ReactNode, useEffect, useState } from 'react'
+import { Sidebar } from '@/components/ui/sidebar'
+import { supabasebrowser } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 
-"use client";
+interface Props { children: ReactNode }
 
-import React, { ReactNode } from 'react';
-import { Sidebar } from '@/components/ui/sidebar';
+export default function DashboardClientLayout({ children }: Props) {
+  const router = useRouter()
+  const [user, setUser] = useState<any>(null)
 
-interface Props {
-  children: ReactNode;
-}
+  useEffect(() => {
+    supabasebrowser.auth.getUser().then(({ data, error }) => {
+      if (error || !data?.user) router.replace('/login')
+      else setUser(data.user)
+    })
+  }, [router])
 
-export default function DashboardLayout({ children }: Props) {
+  if (!user) return <div>Carregando...</div>
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -17,5 +27,5 @@ export default function DashboardLayout({ children }: Props) {
         {children}
       </main>
     </div>
-  );
+  )
 }

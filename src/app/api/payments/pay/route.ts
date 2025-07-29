@@ -18,27 +18,28 @@ export async function POST(request: Request) {
 
 
   // 1) Cria cobrança no Asaas sandbox
-  const resp = await fetch(
-    process.env.ASAAS_API_URL!,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        "User-Agent": "Evoluke",
-        'access_token': process.env.ASAAS_API_KEY!
-      },
-      body: JSON.stringify({
-        customer: '6889196',
-        billingType: "UNDEFINED",
-        dueDate: dueDate,
-        value: total,
-        description: `Pagamento ${id}`,
-        postalService: false,
-        externalReference: id
-      })
-    }
-  )
+  const endpoint = `${process.env.ASAAS_API_URL}/payments`;   // ← adicione /payments
+console.log (endpoint)
+  const resp = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'access_token': process.env.ASAAS_API_KEY!,
+      'User-Agent': 'Evoluke'
+    },
+    body: JSON.stringify({
+      customer: '6889196',
+      billingType: 'UNDEFINED',
+      dueDate,
+      value: total,
+      description: `Pagamento ${id}`,
+      postalService: false,
+      externalReference: id
+    })
+  });
   const data = await resp.json()
+
+
   if (!resp.ok) return NextResponse.json({ error: data }, { status: 400 })
 
   return NextResponse.json({ success: true, asaas: data })

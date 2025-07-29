@@ -36,9 +36,6 @@ export function Sidebar() {
 
   const handleLogout = async () => {
     const res = await fetch('/api/auth/logout', { method: 'POST' });
-    localStorage.removeItem("sb-access-token");
-    localStorage.removeItem("sb-refresh-token");
-    localStorage.removeItem("sb-expires-at");
     document.cookie =
       "sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
     if (res.ok) router.replace('/login');
