@@ -6,13 +6,12 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,14 +28,18 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Falha no login");
-        setLoading(false);
         return;
       }
 
+      // salvar tokens no localStorage
+      localStorage.setItem("sb-access-token", data.access_token);
+      localStorage.setItem("sb-refresh-token", data.refresh_token);
+      localStorage.setItem("sb-expires-at", String(data.expires_at));
+      document.cookie = `sb-access-token=${data.access_token}; path=/; Secure; SameSite=Lax`;
+
       router.push("/dashboard");
-    } catch (err) {
+    } catch {
       setError("Erro de conexão");
-      console.error(err);
     } finally {
       setLoading(false);
     }

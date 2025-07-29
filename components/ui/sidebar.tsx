@@ -25,7 +25,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Início', href: '/dashboard', icon: <Home size={20} /> },
-  { label: 'Agentes IA', href: '/dashboard/agents', icon: <Brain size={20} /> },  
+  { label: 'Agentes IA', href: '/dashboard/agents', icon: <Brain size={20} /> },
   { label: 'Pagamentos', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
   { label: 'Configuração', href: '/dashboard/config', icon: <Settings size={20} /> },
   { label: 'Suporte', href: '/dashboard/support', icon: <HelpCircle size={20} /> },
@@ -36,6 +36,11 @@ export function Sidebar() {
 
   const handleLogout = async () => {
     const res = await fetch('/api/auth/logout', { method: 'POST' });
+    localStorage.removeItem("sb-access-token");
+    localStorage.removeItem("sb-refresh-token");
+    localStorage.removeItem("sb-expires-at");
+    document.cookie =
+      "sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
     if (res.ok) router.replace('/login');
   };
 

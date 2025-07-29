@@ -1,7 +1,7 @@
 // src/app/dashboard/page.tsx
 
-"use client";
-
+import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
 import React from "react";
 import {
   Card,
@@ -12,8 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Folder, Users, FileText, Clock } from "lucide-react";
 
-export default function DashboardPage() {
-  const currentMonth = new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+export default async function DashboardPage() {
 
   const actionItems = [
     { icon: <Folder className="w-5 h-5 text-blue-500" />, title: "Gerenciar Agentes", desc: "Crie ou edite seus agentes de IA", disabled: false },
@@ -29,7 +28,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <h2 className="text-xl font-semibold">Olá, %name_user%! 👋</h2>
+          <h2 className="text-xl font-semibold">Olá,  👋</h2>
           <p className="text-base text-gray-700">Quais são seus objetivos para hoje?</p>
           <p className="text-sm text-gray-500">
             Esta plataforma permite orquestrar, monitorar e otimizar agentes de IA de forma colaborativa. Teste, analise e aprimore decisões com base em dados reais — em equipe, em escala e com total controle.

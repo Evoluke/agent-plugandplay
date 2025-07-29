@@ -3,7 +3,7 @@
 "use client";
 
 import React, { ReactNode } from 'react';
-import { Sidebar } from '@/components/ui/Sidebar';
+import { Sidebar } from '@/components/ui/sidebar';
 
 interface Props {
   children: ReactNode;
