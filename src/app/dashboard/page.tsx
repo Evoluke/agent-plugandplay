@@ -22,16 +22,16 @@ export default function DashboardPage() {
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
       if (error || !data?.user) {
-        
+        console.log("Erro ao buscar usuário.");
       } else {
 
         setUser(data.user);
       }
     });
-  }, [router]);
+  }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
     supabasebrowser
       .from('company')
       .select('*')

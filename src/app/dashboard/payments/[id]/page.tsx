@@ -10,10 +10,11 @@ import { toast } from "sonner";
 
 interface Payment {
     id: string;
-    referencia: string;
+    reference: string;
     due_date: string;
     amount: number;
     usage: number;
+    created_at: string;
     status: "pendente" | "quitado";
 }
 
@@ -48,9 +49,9 @@ export default function PaymentPage() {
         load();
     }, [id]);
 
-    if (loading) return <p className="text-center py-10">Carregando...</p>;
-    if (error) return <p className="text-red-600 py-10">Erro: {error}</p>;
-    if (!payment) return <p className="text-center py-10">Pagamento não encontrado.</p>;
+    if (loading) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Carregando...</p>;
+    if (error) return <p className="text-red-600 py-10 min-h-screen flex items-center justify-center">Erro: {error}</p>;
+    if (!payment) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Pagamento não encontrado.</p>;
     if (payment.status === "quitado") {
         return (
             <Card className="max-w-md mx-auto mt-10">
@@ -58,13 +59,13 @@ export default function PaymentPage() {
                     <CardTitle>Pagamento já quitado</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    O pagamento de <strong>{payment.referencia}</strong> já foi processado.
+                    O pagamento de <strong>{payment.reference}</strong> já foi processado.
                 </CardContent>
             </Card>
         );
     }
 
-    const total = payment.amount + payment.usage;
+    const total = payment.amount;
     const date = payment.due_date;
 
     const handleGenerateLink = async () => {
@@ -98,15 +99,13 @@ export default function PaymentPage() {
                             <h2 className="text-sm font-semibold text-gray-700">Dados do Pagamento</h2>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                                 <span className="font-medium text-gray-600">Referência:</span>
-                                <span>{payment.referencia}</span>
+                                <span>{payment.reference}</span>
+                                <span className="font-medium text-gray-600">Data Referência:</span>
+                                <span>{new Date(payment.created_at).toLocaleDateString("pt-BR")}</span>
                                 <span className="font-medium text-gray-600">Vencimento:</span>
                                 <span>{new Date(payment.due_date).toLocaleDateString("pt-BR")}</span>
                                 <span className="font-medium text-gray-600">Valor Base:</span>
-                                <span>R${payment.amount.toFixed(2)}</span>
-                                <span className="font-medium text-gray-600">Valor Uso:</span>
-                                <span>R${payment.usage.toFixed(2)}</span>
-                                <span className="font-medium text-gray-600">Total:</span>
-                                <span className="border-t pt-1">R${(payment.amount + payment.usage).toFixed(2)}</span>
+                                <span className="border-t pt-1">R${(payment.amount).toFixed(2)}</span>
                             </div>
                         </section>
 

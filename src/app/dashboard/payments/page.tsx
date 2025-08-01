@@ -5,82 +5,74 @@ import { supabasebrowser } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BudgetCard } from "@/components/ui/budget-card";
-import { PostgrestError } from '@supabase/supabase-js';
+
 
 type Payment = {
   id: string;
-  company_id: string;
-  referencia: string;
-  due_date: string;    // string no formato ISO
   amount: number;
-  usage: number;
-  status: "pendente" | "quitado";
+  status: 'pendente' | 'pago';
+  created_at: string;
+  due_date: string;
+  reference: string;
 };
+
 
 export default function PaymentsPage() {
   const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [user, setUser] = useState<any>(null);
-  const [company, setCompany] = useState<any>(null);
 
 
   useEffect(() => {
-    supabasebrowser.auth.getUser().then(({ data, error }: { data: any; error: PostgrestError | null }) => {
+    supabasebrowser.auth.getUser().then(({ data, error }) => {
       if (error || !data?.user) {
-
+        console.log("Erro ao buscar usuário.");
       } else {
 
         setUser(data.user);
       }
     });
-  }, [router]);
+  }, []);
 
   useEffect(() => {
-    if (!user) return;
-    supabasebrowser
+  if (!user?.id) return;
+
+  const fetchPayments = async () => {
+    const { data, error } = await supabasebrowser
       .from('payments')
-      .select('*, company!inner(user_id)')
-      .eq('company.user_id', user.id)  
-      .order('due_date', { ascending: true })
-      .then(({ data, error }: { data: any; error: PostgrestError | null }) => {
-        if (error) {
-          console.error('Erro ao buscar company:', error.message);
-        } else {
-          setPayments(data || []);
-        }
-      });
-  }, [user]);
+      .select(`
+        id,
+        amount,
+        status,
+        paid_in,
+        created_at,
+        due_date,
+        reference,
+        company!inner(id)
+      `)
+      // filtra por company.user_id sem precisar de outro .select()
+      .eq('company.user_id', user.id)
+      .order('created_at', { ascending: false });
 
-  if (!user || !payments) return <p>teste</p>;
+    if (error) {
+      console.error('Erro ao buscar payments:', error);
+      return;
+    }
+
+    setPayments(data);
+  };
+
+  fetchPayments();
+}, [user]);
 
 
-  // orçamento e alertas (mantido como antes)
-  const monthlyBudget = 2000;
-  const spent = payments.reduce((sum, p) => sum + p.usage, 0);
-  const month = new Date().toLocaleString("pt-BR", { month: "long" });
-  const today = new Date();
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const resetInDays = lastDayOfMonth.getDate() - today.getDate();
-  const alerts = [
-    { threshold: 80, label: "usage alert" },
-    { threshold: 100, label: "usage alert" },
-  ];
+
+  if (!user || !payments) return null;
 
   const handlePay = (id: string) => router.push(`/dashboard/payments/${id}/`);
 
   return (
     <div className="p-4 space-y-6 w-4/5 mx-auto">
-      <BudgetCard
-        title="Orçamento Mensal"
-        periodLabel={month}
-        spent={spent}
-        budget={monthlyBudget}
-        resetInDays={resetInDays}
-        alerts={alerts}
-        onAddAlert={() => { }}
-        onEditBudget={() => { }}
-      />
 
       <Card>
         <CardHeader>
@@ -91,23 +83,21 @@ export default function PaymentsPage() {
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-2">Referência</th>
+                <th className="px-4 py-2">Data Referência</th>    
                 <th className="px-4 py-2">Vencimento</th>
-                <th className="px-4 py-2">Preço base (R$)</th>
-                <th className="px-4 py-2">Utilização (R$)</th>
+                <th className="px-4 py-2">Valor (R$)</th>
                 <th className="px-4 py-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {payments.map(p => (
                 <tr key={p.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2">{p.referencia}</td>
-                  <td className="px-4 py-2">
-                    {new Date(p.due_date).toLocaleDateString("pt-BR")}
-                  </td>
+                  <td className="px-4 py-2">{p.reference}</td>
+                  <td className="px-4 py-2">{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
+                  <td className="px-4 py-2">{new Date(p.due_date).toLocaleDateString("pt-BR")}</td>
                   <td className="px-4 py-2">R${p.amount.toFixed(2)}</td>
-                  <td className="px-4 py-2">R${p.usage.toFixed(2)}</td>
                   <td className="px-4 py-2">
-                    {p.status === "quitado" ? (
+                    {p.status === "pago" ? (
                       <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                         Quitado
                       </span>
