@@ -199,6 +199,7 @@ export default function CompleteProfilePage() {
             value={cpfCnpj}
             onChange={(e) => handleCpfCnpjChange(e.target.value)}
             maxLength={18}
+            placeholder="000.000.000-00"
             required
           />
         </div>
@@ -225,6 +226,7 @@ export default function CompleteProfilePage() {
               value={zipCode}
               onChange={(e) => handleZipChange(e.target.value)}
               maxLength={9}
+              placeholder="00000-000"
               required
             />
           </div>
@@ -293,6 +295,7 @@ export default function CompleteProfilePage() {
               value={phone}
               onChange={(e) => handlePhoneChange(e.target.value)}
               maxLength={19}
+              placeholder="+00 (00) 00000-0000"
               required
             />
           </div>
