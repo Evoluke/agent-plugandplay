@@ -1,7 +1,6 @@
 // src/app/api/auth/signup/route.ts
 import { NextResponse } from "next/server";
-import { supabaseadmin } from "@/lib/supabase";
-import { supabase } from '@/lib/supabase'
+import { supabaseadmin } from '@/lib/supabaseAdmin'
 
 export async function POST(req: Request) {
   const { name, email, password } = await req.json();
@@ -22,9 +21,9 @@ export async function POST(req: Request) {
 
   const userId = data.user.id;
   // 2) insere na tabela business (service role key ignora RLS)
-  const { error: bizError } = await supabase
-    .from('client')
-    .insert({ user_id: userId, business_name: name});
+  const { error: bizError } = await supabaseadmin
+    .from('company')
+    .insert({ user_id: userId, company_name: name});
   if (bizError) {
     return NextResponse.json({ error: bizError.message }, { status: 500 });
   }

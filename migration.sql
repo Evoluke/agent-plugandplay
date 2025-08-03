@@ -10,61 +10,16 @@ create table public.company (
   constraint company_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
 ) TABLESPACE pg_default;
 
--- Cria a tabela de account_balances
-create table public.account_balances (
-  id bigint not null,
-  company_id bigint not null,
-  current_balance numeric(18, 2) not null default '0'::numeric,
-  updated_at timestamp with time zone not null default now(),
-  constraint account_balances_pkey primary key (id),
-  constraint account_balances_company_id_key unique (company_id),
-  constraint account_balances_id_key unique (id),
-  constraint account_balances_company_id_fkey foreign KEY (company_id) references company (id)
-) TABLESPACE pg_default;
-
--- Cria tabela de log de alterações
-CREATE TABLE balance_changes_log (
-  id                  SERIAL PRIMARY KEY,
-  account_balance_id  INT            NOT NULL REFERENCES account_balances(id),
-  old_balance         NUMERIC(18,2)  NOT NULL,
-  new_balance         NUMERIC(18,2)  NOT NULL,
-  changed_at          TIMESTAMPTZ    NOT NULL DEFAULT now()
-);
-
--- Função que insere no log sempre que o saldo mudar
-CREATE OR REPLACE FUNCTION fn_audit_balance_change()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF TG_OP = 'UPDATE' AND OLD.current_balance IS DISTINCT FROM NEW.current_balance THEN
-    INSERT INTO balance_changes_log(
-      account_balance_id,
-      old_balance,
-      new_balance,
-      changed_at
-    ) VALUES (
-      OLD.id,
-      OLD.current_balance,
-      NEW.current_balance,
-      now()
-    );
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger que dispara após UPDATE em account_balances
-CREATE TRIGGER trg_audit_balance_change
-AFTER UPDATE ON account_balances
-FOR EACH ROW
-EXECUTE FUNCTION fn_audit_balance_change();
-
 -- Cria tabela de pagamentos
 create table public.payments (
   id uuid not null default gen_random_uuid (),
   created_at timestamp with time zone not null default now(),
   company_id bigint null,
   amount numeric(18, 2) not null default '0'::numeric,
-  status text not null,
+  status public.status_payment not null default 'pendente'::status_payment,
+  paid_in timestamp with time zone null,
+  due_date timestamp with time zone not null,
+  reference text not null default '-'::text,
   constraint payments_pkey primary key (id),
   constraint payments_company_id_fkey foreign KEY (company_id) references company (id)
 ) TABLESPACE pg_default;

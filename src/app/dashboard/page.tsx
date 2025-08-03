@@ -10,9 +10,10 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Folder, Users, FileText, Clock } from "lucide-react";
-import { supabasebrowser } from '@/lib/supabase';
+import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -51,9 +52,9 @@ export default function DashboardPage() {
 
 
   const actionItems = [
-    { icon: <Folder className="w-5 h-5 text-blue-500" />, title: "Gerenciar Agentes", desc: "Crie ou edite seus agentes de IA", disabled: false },
-    { icon: <Users className="w-5 h-5 text-green-500" />, title: "Monitoramento", desc: "Monitore seus agentes de IA", disabled: true },
-    { icon: <FileText className="w-5 h-5 text-purple-500" />, title: "Gerar Relatórios", desc: "Compartilhe insights com as partes interessadas", disabled: true },
+    { icon: <Folder className="w-5 h-5 text-blue-500" />, title: "Gerenciar Agentes", desc: "Crie ou edite seus agentes de IA", href: "/dashboard/agents", disabled: false },
+    { icon: <Users className="w-5 h-5 text-green-500" />, title: "Monitoramento", desc: "Monitore seus agentes de IA", href: "/dashboard/", disabled: true },
+    { icon: <FileText className="w-5 h-5 text-purple-500" />, title: "Gerar Relatórios", href: "/dashboard/", desc: "Compartilhe insights com as partes interessadas", disabled: true },
   ];
 
   return (
@@ -74,32 +75,35 @@ export default function DashboardPage() {
         <div className="space-y-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {actionItems.map((item) => (
-              <Card
-                key={item.title}
-                className={`relative h-36 transition ${item.disabled ? 'cursor-not-allowed' : 'hover:shadow-lg'}`}
-              >
-                {item.disabled && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                      Em breve
-                    </span>
-                  </div>
-                )}
+              <Link key={item.title} href={item.href}>
+                <Card
+                  key={item.title}
+                  className={`relative h-36 transition ${item.disabled ? 'cursor-not-allowed' : 'hover:shadow-lg'}`}
+                >
+                  {item.disabled && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
+                        Em breve
+                      </span>
+                    </div>
+                  )}
 
-                <div className={`${item.disabled ? 'opacity-50 select-none' : ''}`}>
-                  <CardHeader className="flex items-center gap-2 px-3 pt-3">
-                    {item.icon}
-                    <CardTitle className="text-base font-medium">
-                      {item.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-3 pb-3">
-                    <CardDescription className="text-xs text-gray-600">
-                      {item.desc}
-                    </CardDescription>
-                  </CardContent>
-                </div>
-              </Card>
+                  <div className={`${item.disabled ? 'opacity-50 select-none' : ''}`}>
+
+                    <CardHeader className="flex items-center gap-2 px-3 pt-3">
+                      {item.icon}
+                      <CardTitle className="text-base font-medium">
+                        {item.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-3 pb-3">
+                      <CardDescription className="text-xs text-gray-600">
+                        {item.desc}
+                      </CardDescription>
+                    </CardContent>
+                  </div>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

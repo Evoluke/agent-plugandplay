@@ -2,7 +2,7 @@
 'use client'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { Sidebar } from '@/components/ui/sidebar'
-import { supabasebrowser } from '@/lib/supabase'
+import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 interface Props { children: ReactNode }

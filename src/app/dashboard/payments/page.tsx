@@ -1,7 +1,7 @@
 // src/app/payments/page.tsx
 "use client";
 
-import { supabasebrowser } from '@/lib/supabase';
+import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";

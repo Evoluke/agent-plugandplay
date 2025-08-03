@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { supabasebrowser } from '@/lib/supabase'
+import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
@@ -24,7 +24,7 @@ export default function LoginPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();                                // ← correção crítica
+    e.preventDefault();
     const { error } = await supabasebrowser.auth.signInWithPassword({ email, password });
     if (error) {
       alert('Falha no login: ' + error.message);

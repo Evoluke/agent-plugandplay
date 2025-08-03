@@ -1,6 +1,6 @@
 // src/components/Sidebar.tsx
 
-import { supabasebrowser } from '@/lib/supabase';
+import { supabasebrowser } from '@/lib/supabaseClient';
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

@@ -3,10 +3,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import Link from 'next/link';
+import { supabasebrowser } from '@/lib/supabaseClient';
 
 interface Payment {
     id: string;
@@ -28,15 +30,29 @@ export default function PaymentPage() {
 
     const [isGenerating, setIsGenerating] = useState(false);
     const [paymentLink, setPaymentLink] = useState<string | null>(null);
+    const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
+        supabasebrowser.auth.getUser().then(({ data, error }) => {
+            if (error || !data?.user) {
+                console.log("Erro ao buscar usuário.");
+            } else {
+
+                setUser(data.user);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!user?.id) return;
         async function load() {
             try {
                 if (!id) throw new Error("ID inválido");
                 const { data, error } = await supabase
                     .from("payments")
-                    .select("*")
+                    .select("*, company!inner(id)")
                     .eq("id", id)
+                    .eq('company.user_id', user.id)
                     .single();
                 if (error) throw error;
                 setPayment(data as Payment);
@@ -47,7 +63,7 @@ export default function PaymentPage() {
             }
         }
         load();
-    }, [id]);
+    }, [user]);
 
     if (loading) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Carregando...</p>;
     if (error) return <p className="text-red-600 py-10 min-h-screen flex items-center justify-center">Erro: {error}</p>;
@@ -87,8 +103,13 @@ export default function PaymentPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-            <div className="w-full max-w-lg">
+        <div className=" bg-gray-50 flex items-center justify-center p-6">
+            <div className="h-full w-full max-w-lg">
+                <Link href="/dashboard/payments">
+                    <Button variant="ghost" className="mb-4">
+                        ← Voltar
+                    </Button>
+                </Link>
                 <Card className="border shadow-lg rounded-lg overflow-hidden">
                     <CardHeader className="bg-white px-6 py-4 border-b">
                         <CardTitle className="text-xl font-semibold text-gray-800 text-center">Detalhes do Pagamento</CardTitle>
