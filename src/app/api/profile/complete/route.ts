@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import { COUNTRIES, STATES, CITIES } from "@/lib/locations";
+import {
+  isValidCpfCnpj,
+  isValidAddress,
+  isValidResponsible,
+} from "@/lib/validators";
 
 export async function POST(req: Request) {
   const {
@@ -20,10 +26,22 @@ export async function POST(req: Request) {
     !city ||
     !state ||
     !country ||
-    !responsible_name 
+    !responsible_name
     // !language
   ) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+  }
+  if (!isValidCpfCnpj(cpf_cnpj)) {
+    return NextResponse.json({ error: "CPF/CNPJ inválido" }, { status: 400 });
+  }
+  if (!isValidAddress(address)) {
+    return NextResponse.json({ error: "Endereço inválido" }, { status: 400 });
+  }
+  if (!CITIES.includes(city) || !STATES.includes(state) || !COUNTRIES.includes(country)) {
+    return NextResponse.json({ error: "Localização inválida" }, { status: 400 });
+  }
+  if (!isValidResponsible(responsible_name)) {
+    return NextResponse.json({ error: "Responsável inválido" }, { status: 400 });
   }
 
   const { data: company, error: companyError } = await supabaseadmin

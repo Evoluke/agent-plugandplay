@@ -6,6 +6,19 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { COUNTRIES, STATES, CITIES } from "@/lib/locations";
+import {
+  isValidCpfCnpj,
+  isValidAddress,
+  isValidResponsible,
+} from "@/lib/validators";
 
 export default function CompleteProfilePage() {
   const router = useRouter();
@@ -15,7 +28,7 @@ export default function CompleteProfilePage() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("Brasil");
   const [responsible, setResponsible] = useState("");
   // const [language, setLanguage] = useState("");
 
@@ -59,6 +72,22 @@ export default function CompleteProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
+    if (!isValidCpfCnpj(cpfCnpj)) {
+      toast.error("CPF/CNPJ inválido");
+      return;
+    }
+    if (!isValidAddress(address)) {
+      toast.error("Endereço deve ter entre 3 e 200 caracteres");
+      return;
+    }
+    if (!CITIES.includes(city) || !STATES.includes(state) || !COUNTRIES.includes(country)) {
+      toast.error("Localização inválida");
+      return;
+    }
+    if (!isValidResponsible(responsible)) {
+      toast.error("Responsável deve ter entre 4 e 80 caracteres");
+      return;
+    }
     setLoading(true);
     const res = await fetch("/api/profile/complete", {
       method: "POST",
@@ -110,6 +139,7 @@ export default function CompleteProfilePage() {
             value={cpfCnpj}
             onChange={(e) => setCpfCnpj(e.target.value)}
             required
+            maxLength={18}
           />
         </div>
         <div>
@@ -122,46 +152,57 @@ export default function CompleteProfilePage() {
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
+            minLength={3}
+            maxLength={200}
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="city" className="block text-sm font-medium">
-              Cidade
-            </label>
-            <Input
-              id="city"
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              required
-            />
+            <label className="block text-sm font-medium">Cidade</label>
+            <Select value={city} onValueChange={setCity}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                {CITIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
-            <label htmlFor="state" className="block text-sm font-medium">
-              Estado
-            </label>
-            <Input
-              id="state"
-              type="text"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              required
-            />
+            <label className="block text-sm font-medium">Estado</label>
+            <Select value={state} onValueChange={setState}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                {STATES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="country" className="block text-sm font-medium">
-              País
-            </label>
-            <Input
-              id="country"
-              type="text"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              required
-            />
+            <label className="block text-sm font-medium">País</label>
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           {/* <div>
             <label htmlFor="language" className="block text-sm font-medium">
@@ -186,6 +227,8 @@ export default function CompleteProfilePage() {
             value={responsible}
             onChange={(e) => setResponsible(e.target.value)}
             required
+            minLength={4}
+            maxLength={80}
           />
         </div>
         <Button type="submit" className="w-full" disabled={loading}>

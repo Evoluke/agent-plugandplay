@@ -6,6 +6,11 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  isValidCompanyName,
+  isValidEmail,
+  isValidPassword,
+} from "@/lib/validators";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,6 +24,20 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!isValidCompanyName(name)) {
+      setError("Nome da empresa deve ter entre 4 e 80 caracteres");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError("Email inválido");
+      return;
+    }
+    if (!isValidPassword(password)) {
+      setError(
+        "Senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo"
+      );
+      return;
+    }
     if (password !== confirm) {
       setError("As senhas não coincidem");
       return;
@@ -68,6 +87,8 @@ export default function SignupPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            minLength={4}
+            maxLength={80}
           />
         </div>
 
@@ -81,6 +102,7 @@ export default function SignupPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            maxLength={320}
           />
         </div>
 
@@ -94,6 +116,9 @@ export default function SignupPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={8}
+            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}"
+            title="Deve conter letra maiúscula, minúscula, número e símbolo"
           />
         </div>
 
@@ -107,6 +132,9 @@ export default function SignupPage() {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
+            minLength={8}
+            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}"
+            title="Deve conter letra maiúscula, minúscula, número e símbolo"
           />
         </div>
 

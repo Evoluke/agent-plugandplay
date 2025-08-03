@@ -1,11 +1,28 @@
 // src/app/api/auth/signup/route.ts
 import { NextResponse } from "next/server";
 import { supabaseadmin } from '@/lib/supabaseAdmin'
+import {
+  isValidCompanyName,
+  isValidEmail,
+  isValidPassword,
+} from "@/lib/validators";
 
 export async function POST(req: Request) {
   const { name, email, password } = await req.json();
   if (!name || !email || !password) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+  }
+  if (!isValidCompanyName(name)) {
+    return NextResponse.json(
+      { error: "Nome da empresa inválido" },
+      { status: 400 }
+    );
+  }
+  if (!isValidEmail(email)) {
+    return NextResponse.json({ error: "Email inválido" }, { status: 400 });
+  }
+  if (!isValidPassword(password)) {
+    return NextResponse.json({ error: "Senha inválida" }, { status: 400 });
   }
 
   const { data, error } = await supabaseadmin.auth.admin.createUser({
