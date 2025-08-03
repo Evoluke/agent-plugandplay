@@ -64,6 +64,15 @@ export default function CompleteProfilePage() {
     setPhone(formatted);
   };
 
+  const handleZipChange = (value: string) => {
+    let digits = value.replace(/\D/g, "");
+    if (digits.length > 8) digits = digits.slice(0, 8);
+    if (digits.length > 5) {
+      digits = digits.replace(/(\d{5})(\d{1,3})/, "$1-$2");
+    }
+    setZipCode(digits);
+  };
+
   useEffect(() => {
     supabasebrowser.auth.getUser().then(async ({ data, error }) => {
       if (error || !data?.user) {
@@ -90,7 +99,7 @@ export default function CompleteProfilePage() {
         if (profile) {
           handleCpfCnpjChange(profile.cpf_cnpj || "");
           setAddress(profile.address || "");
-          setZipCode(profile.zip_code || "");
+          handleZipChange(profile.zip_code || "");
           setCity(profile.city || "");
           setState(profile.state || "");
           setCountry(profile.country || "Brasil");
@@ -214,7 +223,8 @@ export default function CompleteProfilePage() {
               id="zip"
               type="text"
               value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
+              onChange={(e) => handleZipChange(e.target.value)}
+              maxLength={9}
               required
             />
           </div>
