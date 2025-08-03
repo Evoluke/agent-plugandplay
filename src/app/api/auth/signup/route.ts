@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   // 2) insere na tabela business (service role key ignora RLS)
   const { error: bizError } = await supabaseadmin
     .from('company')
-    .insert({ user_id: userId, company_name: name});
+    .insert({ user_id: userId, company_name: name, profile_complete: false });
   if (bizError) {
     return NextResponse.json({ error: bizError.message }, { status: 500 });
   }

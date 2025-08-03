@@ -16,13 +16,20 @@ export default function LoginPage() {
 
 
   useEffect(() => {
-    supabasebrowser.auth.getUser().then(({ data, error }) => {
+    supabasebrowser.auth.getUser().then(async ({ data, error }) => {
       if (error) {
         setLoading(false);
         return;
       }
-      if (data?.user) router.replace('/dashboard');
-      else setLoading(false);
+      if (data?.user) {
+        const { data: company } = await supabasebrowser
+          .from('company')
+          .select('profile_complete')
+          .eq('user_id', data.user.id)
+          .single();
+        if (company?.profile_complete) router.replace('/dashboard');
+        else router.replace('/complete-profile');
+      } else setLoading(false);
     });
   }, [router]);
 
@@ -30,11 +37,17 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabasebrowser.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabasebrowser.auth.signInWithPassword({ email, password });
     if (error) {
       toast.error('Falha no login: ' + error.message);
     } else {
-      router.push('/dashboard');
+      const { data: company } = await supabasebrowser
+        .from('company')
+        .select('profile_complete')
+        .eq('user_id', data.user!.id)
+        .single();
+      if (company?.profile_complete) router.push('/dashboard');
+      else router.push('/complete-profile');
     }
   };
 
