@@ -1,15 +1,24 @@
 import { NextResponse } from "next/server";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import {
+  isValidCpfCnpj,
+  isValidAddress,
+  isValidCep,
+  isValidResponsible,
+  isValidPhone,
+} from "@/lib/validators";
 
 export async function POST(req: Request) {
   const {
     user_id,
     cpf_cnpj,
     address,
+    zip_code,
     city,
     state,
     country,
     responsible_name,
+    phone,
     // language,
   } = await req.json();
 
@@ -17,13 +26,37 @@ export async function POST(req: Request) {
     !user_id ||
     !cpf_cnpj ||
     !address ||
+    !zip_code ||
     !city ||
     !state ||
     !country ||
-    !responsible_name 
+    !responsible_name ||
+    !phone
     // !language
   ) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+  }
+
+  if (!isValidCpfCnpj(cpf_cnpj)) {
+    return NextResponse.json({ error: "CPF/CNPJ inválido" }, { status: 400 });
+  }
+  if (!isValidAddress(address)) {
+    return NextResponse.json(
+      { error: "Endereço deve ter entre 3 e 200 caracteres" },
+      { status: 400 },
+    );
+  }
+  if (!isValidCep(zip_code)) {
+    return NextResponse.json({ error: "CEP inválido" }, { status: 400 });
+  }
+  if (!isValidResponsible(responsible_name)) {
+    return NextResponse.json(
+      { error: "Responsável deve ter entre 4 e 80 caracteres" },
+      { status: 400 },
+    );
+  }
+  if (!isValidPhone(phone)) {
+    return NextResponse.json({ error: "Telefone inválido" }, { status: 400 });
   }
 
   const { data: company, error: companyError } = await supabaseadmin
@@ -47,10 +80,12 @@ export async function POST(req: Request) {
       .update({
         cpf_cnpj,
         address,
+        zip_code,
         city,
         state,
         country,
         responsible_name,
+        phone,
         // language,
       })
       .eq("id", profileId);
@@ -67,10 +102,12 @@ export async function POST(req: Request) {
       .insert({
         cpf_cnpj,
         address,
+        zip_code,
         city,
         state,
         country,
         responsible_name,
+        phone,
         // language,
       })
       .select("id")
