@@ -19,7 +19,6 @@ export async function POST(request: Request) {
 
   // 1) Cria cobrança no Asaas sandbox
   const endpoint = `${process.env.ASAAS_API_URL}/payments`;   // ← adicione /payments
-console.log (endpoint)
   const resp = await fetch(endpoint, {
     method: 'POST',
     headers: {

@@ -5,7 +5,7 @@ import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
+import { toast } from "sonner";
 
 type Payment = {
   id: string;
@@ -16,31 +16,35 @@ type Payment = {
   reference: string;
 };
 
+type User = {
+  id: string;
+};
+
 
 export default function PaymentsPage() {
   const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
       if (error || !data?.user) {
-        console.log("Erro ao buscar usuário.");
+        toast.error("Erro ao buscar usuário.");
       } else {
 
-        setUser(data.user);
+        setUser(data.user as User);
       }
     });
   }, []);
 
   useEffect(() => {
-  if (!user?.id) return;
+    if (!user?.id) return;
 
-  const fetchPayments = async () => {
-    const { data, error } = await supabasebrowser
-      .from('payments')
-      .select(`
+    const fetchPayments = async () => {
+      const { data, error } = await supabasebrowser
+        .from('payments')
+        .select(`
         id,
         amount,
         status,
@@ -50,20 +54,20 @@ export default function PaymentsPage() {
         reference,
         company!inner(id)
       `)
-      // filtra por company.user_id sem precisar de outro .select()
-      .eq('company.user_id', user.id)
-      .order('created_at', { ascending: false });
+        // filtra por company.user_id sem precisar de outro .select()
+        .eq('company.user_id', user.id)
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Erro ao buscar payments:', error);
-      return;
-    }
+      if (error) {
+        console.error('Erro ao buscar payments:', error);
+        return;
+      }
 
-    setPayments(data);
-  };
+      setPayments(data);
+    };
 
-  fetchPayments();
-}, [user]);
+    fetchPayments();
+  }, [user]);
 
 
 
@@ -83,7 +87,7 @@ export default function PaymentsPage() {
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-2">Referência</th>
-                <th className="px-4 py-2">Data Referência</th>    
+                <th className="px-4 py-2">Data Referência</th>
                 <th className="px-4 py-2">Vencimento</th>
                 <th className="px-4 py-2">Valor (R$)</th>
                 <th className="px-4 py-2">Status</th>

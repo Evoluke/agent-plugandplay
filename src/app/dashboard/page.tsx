@@ -12,18 +12,17 @@ import {
 import { Folder, Users, FileText, Clock } from "lucide-react";
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from "sonner";
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [company, setCompany] = useState<any>(null);
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
       if (error || !data?.user) {
-        console.log("Erro ao buscar usuário.");
+        toast.error("Erro ao buscar usuário.");
       } else {
 
         setUser(data.user);
@@ -40,7 +39,7 @@ export default function DashboardPage() {
       .single()          // pega apenas um registro
       .then(({ data, error }) => {
         if (error) {
-          console.error('Erro ao buscar company:', error.message);
+          toast.error('Erro ao buscar company: ' + error.message);
         } else {
           setCompany(data);
         }

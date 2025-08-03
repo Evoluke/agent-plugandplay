@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -35,11 +36,10 @@ export default function SignupPage() {
       if (!res.ok) {
         setError(data.error || "Falha no cadastro");
       } else {
-        // cadastro OK: redireciona ao login
         router.push("/login");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      toast.error("Erro de conexão");
       setError("Erro de conexão");
     } finally {
       setLoading(false);

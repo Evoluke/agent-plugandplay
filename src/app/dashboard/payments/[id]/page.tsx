@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,21 +30,22 @@ export default function PaymentPage() {
 
     const [isGenerating, setIsGenerating] = useState(false);
     const [paymentLink, setPaymentLink] = useState<string | null>(null);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<{ id: string } | null>(null);
 
     useEffect(() => {
         supabasebrowser.auth.getUser().then(({ data, error }) => {
             if (error || !data?.user) {
-                console.log("Erro ao buscar usuário.");
+                toast.error("Erro ao buscar usuário.");
             } else {
 
-                setUser(data.user);
+                setUser({ id: data.user.id });
             }
         });
     }, []);
 
     useEffect(() => {
         if (!user?.id) return;
+        const userId = user.id;
         async function load() {
             try {
                 if (!id) throw new Error("ID inválido");
@@ -52,18 +53,18 @@ export default function PaymentPage() {
                     .from("payments")
                     .select("*, company!inner(id)")
                     .eq("id", id)
-                    .eq('company.user_id', user.id)
+                    .eq('company.user_id', userId)
                     .single();
                 if (error) throw error;
                 setPayment(data as Payment);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);
             }
         }
         load();
-    }, [user]);
+    }, [user, id]);
 
     if (loading) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Carregando...</p>;
     if (error) return <p className="text-red-600 py-10 min-h-screen flex items-center justify-center">Erro: {error}</p>;
@@ -96,9 +97,9 @@ export default function PaymentPage() {
             if (!res.ok) throw await res.text();
             const { asaas } = await res.json();
             setPaymentLink(asaas.invoiceUrl || asaas.paymentLink);
-        } catch (err: any) {
-            console.error(err);
-            toast.error("Falha ao gerar link"); // ou console.error
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Falha ao gerar link";
+            toast.error(message);
         }
     };
 

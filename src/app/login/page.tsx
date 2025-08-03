@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
 
- 
+
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
       if (data?.user) router.replace('/dashboard')
@@ -27,7 +28,7 @@ export default function LoginPage() {
     e.preventDefault();
     const { error } = await supabasebrowser.auth.signInWithPassword({ email, password });
     if (error) {
-      alert('Falha no login: ' + error.message);
+      toast.error('Falha no login: ' + error.message);
     } else {
       router.push('/dashboard');
     }

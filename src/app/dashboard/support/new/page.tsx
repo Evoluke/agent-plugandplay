@@ -50,7 +50,7 @@ export default function NewSupportPage() {
             .single()          // pega apenas um registro
             .then(({ data, error }) => {
                 if (error) {
-                    console.error('Erro ao buscar company:', error.message);
+                    toast.error('Erro ao buscar company: ' + error.message);
                 } else {
                     setCompany(data);
                 }
@@ -110,7 +110,7 @@ export default function NewSupportPage() {
                 .upload(filePath, arquivo);
 
             if (upErr) {
-                console.error("Upload error:", upErr);
+                toast.error('Falha no upload do arquivo.');
                 setFileError("Falha no upload do arquivo.");
                 return;
             }
