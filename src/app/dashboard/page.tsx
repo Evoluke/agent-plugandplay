@@ -23,6 +23,8 @@ type Company = {
   id: string;
   user_id: string;
   company_name: string;
+  profile_complete: boolean;
+  company_profile_id?: number;
 };
 
 export default function DashboardPage() {
