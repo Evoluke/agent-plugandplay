@@ -5,6 +5,7 @@ import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
 
 
 type Payment = {
@@ -16,20 +17,24 @@ type Payment = {
   reference: string;
 };
 
+type User = {
+  id: string;
+};
+
 
 export default function PaymentsPage() {
   const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
       if (error || !data?.user) {
-        console.log("Erro ao buscar usuário.");
+        toast.error("Erro ao buscar usuário.");
       } else {
 
-        setUser(data.user);
+        setUser(data.user as User);
       }
     });
   }, []);
@@ -55,7 +60,7 @@ export default function PaymentsPage() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Erro ao buscar payments:', error);
+      toast.error('Erro ao buscar payments: ' + error.message);
       return;
     }
 
