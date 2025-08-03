@@ -15,9 +15,19 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from "sonner";
 
+type User = {
+  id: string;
+};
+
+type Company = {
+  id: string;
+  user_id: string;
+  company_name: string;
+};
+
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
-  const [company, setCompany] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {

@@ -17,10 +17,14 @@ export default function LoginPage() {
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
-      if (data?.user) router.replace('/dashboard')
+      if (error) {
+        setLoading(false);
+        return;
+      }
+      if (data?.user) router.replace('/dashboard');
       else setLoading(false);
-    })
-  }, [router])
+    });
+  }, [router]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>
 

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
+import type { User } from "@supabase/supabase-js";
 import {
     Card,
     CardHeader,
@@ -46,7 +47,7 @@ const faqList: FAQ[] = [
 
 export default function SupportPage() {
     const router = useRouter();
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [tickets, setTickets] = useState<Ticket[]>([]);
 
     // 1) busca usuário

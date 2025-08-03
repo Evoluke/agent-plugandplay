@@ -4,7 +4,7 @@ export const runtime = 'nodejs'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
-  const { id, bussines_id, date, total } = await request.json()
+   const { id, date, total } = await request.json()
 
   const requestedDate = new Date(date)
   const today = new Date()

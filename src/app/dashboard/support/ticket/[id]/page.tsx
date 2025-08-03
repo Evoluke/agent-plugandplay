@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabaseClient";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,11 +22,10 @@ interface Ticket {
 }
 
 export default function TicketPage() {
-    const router = useRouter();
     const params = useParams();
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -49,13 +49,17 @@ export default function TicketPage() {
                     .single();
                 if (error) throw error;
                 setTicket(data);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Erro desconhecido");
+                }
             } finally {
                 setLoading(false);
             }
         })();
-    }, [user]);
+    }, [user, id]);
 
     if (loading) return <p className="text-center py-10">Carregando...</p>;
     if (error) return <p className="text-red-600 py-10">Erro: {error}</p>;

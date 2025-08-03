@@ -30,17 +30,23 @@ const contentStyles = cva(
 
 const viewportStyles = cva("p-1")
 
-export interface SelectProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> {}
-export interface SelectTriggerProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
-    VariantProps<typeof triggerStyles> {}
-export interface SelectContentProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {}
-export interface SelectItemProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {}
-export interface SelectValueProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Value> {}
+
+export type SelectProps = React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Root
+>
+export type SelectTriggerProps = React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Trigger
+> &
+  VariantProps<typeof triggerStyles>
+export type SelectContentProps = React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Content
+>
+export type SelectItemProps = React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Item
+>
+export type SelectValueProps = React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Value
+>
 
 export const Select = SelectPrimitive.Root
 

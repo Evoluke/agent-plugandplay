@@ -9,7 +9,8 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { toast } from "sonner";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { CardTitle } from "@/components/ui/card";
+import type { User } from "@supabase/supabase-js";
 import {
     Select,
     SelectContent,
@@ -17,6 +18,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+
+interface Company {
+    id: string;
+}
 
 const motivos = [
     { value: "bug", label: "Erro no sistema" },
@@ -31,9 +36,9 @@ export default function NewSupportPage() {
     const [descricao, setDescricao] = useState("")
     const [arquivo, setArquivo] = useState<File | null>(null)
     const [fileError, setFileError] = useState("")
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const router = useRouter();
-    const [company, setCompany] = useState<any>(null);
+    const [company, setCompany] = useState<Company | null>(null);
 
     useEffect(() => {
         supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -97,6 +102,11 @@ export default function NewSupportPage() {
 
         if (!motivo) {
             toast.error("Por favor, selecione um motivo.");
+            return;
+        }
+
+        if (!company) {
+            toast.error("Erro: empresa não encontrada.");
             return;
         }
 

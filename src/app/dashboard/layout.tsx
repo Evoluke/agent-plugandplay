@@ -4,12 +4,13 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Sidebar } from '@/components/ui/sidebar'
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
+import type { User } from '@supabase/supabase-js'
 
 interface Props { children: ReactNode }
 
 export default function DashboardClientLayout({ children }: Props) {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
