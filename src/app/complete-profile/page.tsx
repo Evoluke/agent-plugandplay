@@ -35,6 +35,35 @@ export default function CompleteProfilePage() {
   const [phone, setPhone] = useState("");
   // const [language, setLanguage] = useState("");
 
+  const handleCpfCnpjChange = (value: string) => {
+    let digits = value.replace(/\D/g, "");
+    if (digits.length > 14) digits = digits.slice(0, 14);
+    if (digits.length <= 11) {
+      digits = digits
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    } else {
+      digits = digits
+        .replace(/(\d{2})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1/$2")
+        .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+    }
+    setCpfCnpj(digits);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    let digits = value.replace(/\D/g, "");
+    if (digits.length > 13) digits = digits.slice(0, 13);
+    let formatted = "";
+    if (digits.length > 0) formatted += "+" + digits.slice(0, 2);
+    if (digits.length >= 3) formatted += " (" + digits.slice(2, 4) + ")";
+    if (digits.length >= 5) formatted += " " + digits.slice(4, 9);
+    if (digits.length >= 10) formatted += "-" + digits.slice(9, 13);
+    setPhone(formatted);
+  };
+
   useEffect(() => {
     supabasebrowser.auth.getUser().then(async ({ data, error }) => {
       if (error || !data?.user) {
@@ -59,14 +88,14 @@ export default function CompleteProfilePage() {
           .eq("id", company.company_profile_id)
           .single();
         if (profile) {
-          setCpfCnpj(profile.cpf_cnpj || "");
+          handleCpfCnpjChange(profile.cpf_cnpj || "");
           setAddress(profile.address || "");
           setZipCode(profile.zip_code || "");
           setCity(profile.city || "");
           setState(profile.state || "");
           setCountry(profile.country || "Brasil");
           setResponsible(profile.responsible_name || "");
-          setPhone(profile.phone || "");
+          handlePhoneChange(profile.phone || "");
           // setLanguage(profile.language || "");
         }
       }
@@ -159,7 +188,8 @@ export default function CompleteProfilePage() {
             id="cpfCnpj"
             type="text"
             value={cpfCnpj}
-            onChange={(e) => setCpfCnpj(e.target.value)}
+            onChange={(e) => handleCpfCnpjChange(e.target.value)}
+            maxLength={18}
             required
           />
         </div>
@@ -251,7 +281,8 @@ export default function CompleteProfilePage() {
               id="phone"
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => handlePhoneChange(e.target.value)}
+              maxLength={19}
               required
             />
           </div>

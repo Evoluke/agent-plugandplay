@@ -37,7 +37,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
   }
 
-  if (!isValidCpfCnpj(cpf_cnpj)) {
+  const cleanCpfCnpj = cpf_cnpj.replace(/\D/g, "");
+  const cleanZip = zip_code.replace(/\D/g, "");
+  const cleanPhone = phone.replace(/\D/g, "");
+
+  if (!isValidCpfCnpj(cleanCpfCnpj)) {
     return NextResponse.json({ error: "CPF/CNPJ inválido" }, { status: 400 });
   }
   if (!isValidAddress(address)) {
@@ -46,7 +50,7 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  if (!isValidCep(zip_code)) {
+  if (!isValidCep(cleanZip)) {
     return NextResponse.json({ error: "CEP inválido" }, { status: 400 });
   }
   if (!isValidResponsible(responsible_name)) {
@@ -55,7 +59,7 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  if (!isValidPhone(phone)) {
+  if (!isValidPhone(cleanPhone)) {
     return NextResponse.json({ error: "Telefone inválido" }, { status: 400 });
   }
 
@@ -78,14 +82,14 @@ export async function POST(req: Request) {
     const { error: profileUpdateError } = await supabaseadmin
       .from("company_profile")
       .update({
-        cpf_cnpj,
+        cpf_cnpj: cleanCpfCnpj,
         address,
-        zip_code,
+        zip_code: cleanZip,
         city,
         state,
         country,
         responsible_name,
-        phone,
+        phone: cleanPhone,
         // language,
       })
       .eq("id", profileId);
@@ -100,14 +104,14 @@ export async function POST(req: Request) {
     const { data: profile, error: profileInsertError } = await supabaseadmin
       .from("company_profile")
       .insert({
-        cpf_cnpj,
+        cpf_cnpj: cleanCpfCnpj,
         address,
-        zip_code,
+        zip_code: cleanZip,
         city,
         state,
         country,
         responsible_name,
-        phone,
+        phone: cleanPhone,
         // language,
       })
       .select("id")

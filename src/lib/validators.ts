@@ -68,5 +68,5 @@ export function isValidCep(cep: string) {
 }
 
 export function isValidPhone(phone: string) {
-  return /^\d{10,11}$/.test(phone.replace(/\D/g, ""));
+  return /^\d{13}$/.test(phone.replace(/\D/g, ""));
 }
