@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     state,
     country,
     responsible_name,
-    language,
+    // language,
   } = await req.json();
 
   if (
@@ -20,8 +20,8 @@ export async function POST(req: Request) {
     !city ||
     !state ||
     !country ||
-    !responsible_name ||
-    !language
+    !responsible_name 
+    // !language
   ) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
   }
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
         state,
         country,
         responsible_name,
-        language,
+        // language,
       })
       .eq("id", profileId);
 
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
         state,
         country,
         responsible_name,
-        language,
+        // language,
       })
       .select("id")
       .single();

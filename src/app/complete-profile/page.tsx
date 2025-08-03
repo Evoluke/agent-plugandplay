@@ -17,7 +17,7 @@ export default function CompleteProfilePage() {
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
   const [responsible, setResponsible] = useState("");
-  const [language, setLanguage] = useState("");
+  // const [language, setLanguage] = useState("");
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(async ({ data, error }) => {
@@ -49,7 +49,7 @@ export default function CompleteProfilePage() {
           setState(profile.state || "");
           setCountry(profile.country || "");
           setResponsible(profile.responsible_name || "");
-          setLanguage(profile.language || "");
+          // setLanguage(profile.language || "");
         }
       }
       setLoading(false);
@@ -71,7 +71,7 @@ export default function CompleteProfilePage() {
         state,
         country,
         responsible_name: responsible,
-        language,
+        // language,
       }),
     });
     const data = await res.json();
@@ -163,7 +163,7 @@ export default function CompleteProfilePage() {
               required
             />
           </div>
-          <div>
+          {/* <div>
             <label htmlFor="language" className="block text-sm font-medium">
               Idioma
             </label>
@@ -174,7 +174,7 @@ export default function CompleteProfilePage() {
               onChange={(e) => setLanguage(e.target.value)}
               required
             />
-          </div>
+          </div> */}
         </div>
         <div>
           <label htmlFor="responsible" className="block text-sm font-medium">
