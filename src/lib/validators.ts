@@ -70,3 +70,8 @@ export function isValidCep(cep: string) {
 export function isValidPhone(phone: string) {
   return /^\d{10,11}$/.test(phone.replace(/\D/g, ""));
 }
+
+export function isValidAgentName(name: string) {
+  const len = name.trim().length;
+  return len >= 3 && len <= 80;
+}
