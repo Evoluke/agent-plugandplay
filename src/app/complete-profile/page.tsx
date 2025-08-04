@@ -6,6 +6,7 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import Link from 'next/link';
 import {
   isValidCpfCnpj,
   isValidAddress,
@@ -13,13 +14,6 @@ import {
   isValidResponsible,
   isValidPhone,
 } from "@/lib/validators";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export default function CompleteProfilePage() {
   const router = useRouter();
@@ -182,81 +176,106 @@ export default function CompleteProfilePage() {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-50 p-4">
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
-      >
-        <h1 className="text-2xl font-semibold text-center">
-          Completar Perfil
-        </h1>
-        <div>
-          <label htmlFor="cpfCnpj" className="block text-sm font-medium">
-            CPF/CNPJ
-          </label>
-          <Input
-            id="cpfCnpj"
-            type="text"
-            value={cpfCnpj}
-            onChange={(e) => handleCpfCnpjChange(e.target.value)}
-            maxLength={18}
-            placeholder="000.000.000-00"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="address" className="block text-sm font-medium">
-            Endereço
-          </label>
-          <Input
-            id="address"
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="h-full w-full max-w-lg">
+        <Link href="/login">
+          <Button variant="ghost" className="mb-4">
+            ← Voltar
+          </Button>
+        </Link>
+
+        <form
+          onSubmit={handleSubmit}
+          className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
+        >
+
+          <h1 className="text-2xl font-semibold text-center">
+            Completar Perfil
+          </h1>
           <div>
-            <label htmlFor="zip" className="block text-sm font-medium">
-              CEP
+            <label htmlFor="cpfCnpj" className="block text-sm font-medium">
+              CPF/CNPJ
             </label>
             <Input
-              id="zip"
+              id="cpfCnpj"
               type="text"
-              value={zipCode}
-              onChange={(e) => handleZipChange(e.target.value)}
-              maxLength={9}
-              placeholder="00000-000"
+              value={cpfCnpj}
+              onChange={(e) => handleCpfCnpjChange(e.target.value)}
+              maxLength={18}
+              placeholder="000.000.000-00"
               required
             />
           </div>
           <div>
-            <label htmlFor="city" className="block text-sm font-medium">
-              Cidade
+            <label htmlFor="address" className="block text-sm font-medium">
+              Endereço
             </label>
             <Input
-              id="city"
+              id="address"
               type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              maxLength={200}
               required
             />
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="state" className="block text-sm font-medium">
-              Estado
-            </label>
-            <Input
-              id="state"
-              type="text"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="zip" className="block text-sm font-medium">
+                CEP
+              </label>
+              <Input
+                id="zip"
+                type="text"
+                value={zipCode}
+                onChange={(e) => handleZipChange(e.target.value)}
+                maxLength={9}
+                placeholder="00000-000"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="city" className="block text-sm font-medium">
+                Cidade
+              </label>
+              <Input
+                id="city"
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                maxLength={255}
+                required
+              />
+            </div>
           </div>
-          <div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="state" className="block text-sm font-medium">
+                Estado
+              </label>
+              <Input
+                id="state"
+                type="text"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                maxLength={255}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium">
+                Telefone
+              </label>
+              <Input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                maxLength={19}
+                placeholder="+00 (00) 00000-0000"
+                required
+              />
+            </div>
+            {/* <div>
             <label htmlFor="country" className="block text-sm font-medium">
               País
             </label>
@@ -270,40 +289,26 @@ export default function CompleteProfilePage() {
                 <SelectItem value="Portugal">Portugal</SelectItem>
               </SelectContent>
             </Select>
+          </div> */}
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="responsible" className="block text-sm font-medium">
-              Responsável
+              Nome do responsável
             </label>
             <Input
               id="responsible"
               type="text"
               value={responsible}
               onChange={(e) => setResponsible(e.target.value)}
+              maxLength={80}
               required
             />
           </div>
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium">
-              Telefone
-            </label>
-            <Input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => handlePhoneChange(e.target.value)}
-              maxLength={19}
-              placeholder="+00 (00) 00000-0000"
-              required
-            />
-          </div>
-        </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Salvando..." : "Salvar"}
-        </Button>
-      </form>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Salvando..." : "Salvar"}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
