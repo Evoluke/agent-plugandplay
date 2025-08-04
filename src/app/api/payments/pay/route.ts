@@ -33,14 +33,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
-  const { id, date, total } = await request.json();
+  const body = await request.json();
+  const { id, total } = body;
+  let date = body.date;
 
   if (typeof id !== 'string' || !id.trim()) {
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
   }
+
+  if (typeof date === 'string' && date.includes('T')) {
+    date = new Date(date).toISOString().slice(0, 10);
+  }
+
   if (
     typeof date !== 'string' ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+    !/^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(date) ||
     Number.isNaN(new Date(date).getTime())
   ) {
     return NextResponse.json({ error: 'Invalid date' }, { status: 400 });
