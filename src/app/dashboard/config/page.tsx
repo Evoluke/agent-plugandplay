@@ -196,7 +196,6 @@ export default function ConfigPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        user_id: userId,
         cpf_cnpj: cpfCnpj,
         address,
         zip_code: zipCode,

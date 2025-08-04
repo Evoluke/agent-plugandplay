@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
 import {
   isValidCpfCnpj,
@@ -9,8 +11,16 @@ import {
 } from "@/lib/validators";
 
 export async function POST(req: Request) {
+  const supabase = createRouteHandlerClient({ cookies });
   const {
-    user_id,
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  }
+
+  const {
     cpf_cnpj,
     address,
     zip_code,
@@ -23,7 +33,6 @@ export async function POST(req: Request) {
   } = await req.json();
 
   if (
-    !user_id ||
     !cpf_cnpj ||
     !address ||
     !zip_code ||
@@ -63,9 +72,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Telefone inválido" }, { status: 400 });
   }
 
+  const user_id = user.id;
   const { data: company, error: companyError } = await supabaseadmin
     .from("company")
-    .select("id, company_profile_id")
+    .select("id, company_profile_id, user_id")
     .eq("user_id", user_id)
     .single();
 
@@ -73,6 +83,13 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: companyError?.message || "Empresa não encontrada" },
       { status: 404 }
+    );
+  }
+
+  if (company.user_id !== user_id) {
+    return NextResponse.json(
+      { error: "Empresa não pertence ao usuário" },
+      { status: 403 }
     );
   }
 
