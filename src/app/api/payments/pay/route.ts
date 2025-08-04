@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { company_name, company_profile } = company as {
+  const { company_name, company_profile } = company as unknown as {
     company_name: string | null;
     company_profile: {
       cpf_cnpj: string;
