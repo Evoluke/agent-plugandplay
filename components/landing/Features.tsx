@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Bot, MessageSquare, Users, LayoutKanban } from "lucide-react";
+import { Bot, MessageSquare, Users, Kanban } from "lucide-react";
 
 const features = [
   {
@@ -22,7 +22,7 @@ const features = [
   {
     title: "Kanban",
     description: "Organize tarefas e fluxos de trabalho com quadros visuais intuitivos.",
-    icon: LayoutKanban,
+    icon: Kanban,
   },
 ];
 
