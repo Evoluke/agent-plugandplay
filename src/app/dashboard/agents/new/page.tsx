@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
@@ -70,64 +78,68 @@ export default function NewAgentPage() {
   const isFormValid = isValidAgentName(name) && type !== "";
 
   return (
-    <div className="space-y-6 max-w-lg">
-      <div>
-        <h1 className="text-2xl font-semibold">Criar novo agente de IA</h1>
-        <p className="text-sm text-gray-600">
-          Você poderá ativá-lo e configurar fluxos depois.
-        </p>
-      </div>
+    <div className="flex items-center justify-center h-full">
+      <Card className="w-full max-w-lg">
+        <form onSubmit={handleSubmit}>
+          <CardHeader>
+            <CardTitle>Criar novo agente de IA</CardTitle>
+            <CardDescription>
+              Você poderá ativá-lo e configurar fluxos depois.
+            </CardDescription>
+          </CardHeader>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Função do Agente</label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {agentTypes.map((option) => (
-              <AgentTypeCard
-                key={option.value}
-                value={option.value}
-                title={option.title}
-                description={option.description}
-                selected={type === option.value}
-                onSelect={setType}
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Função do Agente</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {agentTypes.map((option) => (
+                  <AgentTypeCard
+                    key={option.value}
+                    value={option.value}
+                    title={option.title}
+                    description={option.description}
+                    selected={type === option.value}
+                    onSelect={setType}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium">
+                Nome do Agente
+              </label>
+              <Input
+                id="name"
+                placeholder="Ex: Evoluke SDR"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
-            ))}
-          </div>
-        </div>
+              <p className="text-xs text-gray-500">
+                Escolha um nome interno para seu agente de IA
+              </p>
+              {name && !isValidAgentName(name) && (
+                <p className="text-xs text-red-500">
+                  O nome deve ter entre 3 e 80 caracteres
+                </p>
+              )}
+            </div>
+          </CardContent>
 
-        <div className="space-y-2">
-          <label htmlFor="name" className="text-sm font-medium">
-            Nome do Agente
-          </label>
-          <Input
-            id="name"
-            placeholder="Ex: Evoluke SDR"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <p className="text-xs text-gray-500">
-            Escolha um nome interno para seu agente de IA
-          </p>
-          {name && !isValidAgentName(name) && (
-            <p className="text-xs text-red-500">
-              O nome deve ter entre 3 e 80 caracteres
-            </p>
-          )}
-        </div>
-
-        <div className="flex space-x-2">
-          <Button type="submit" disabled={!isFormValid}>
-            Criar Agente de IA
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push("/dashboard")}
-          >
-            Cancelar
-          </Button>
-        </div>
-      </form>
+          <CardFooter className="flex space-x-2">
+            <Button type="submit" disabled={!isFormValid}>
+              Criar Agente de IA
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/dashboard")}
+            >
+              Cancelar
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   );
 }
