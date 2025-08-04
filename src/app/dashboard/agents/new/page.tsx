@@ -5,13 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
 
@@ -20,6 +14,24 @@ export default function NewAgentPage() {
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [companyId, setCompanyId] = useState<number | null>(null);
+
+  const agentTypes = [
+    {
+      value: "agendamento",
+      title: "Agendamento",
+      description: "Gerencia horários e calendários",
+    },
+    {
+      value: "sdr",
+      title: "SDR",
+      description: "Qualifica e interage com leads",
+    },
+    {
+      value: "suporte",
+      title: "Suporte",
+      description: "Responde dúvidas e auxilia clientes",
+    },
+  ];
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(async ({ data }) => {
@@ -69,22 +81,18 @@ export default function NewAgentPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Função do Agente</label>
-          <Select onValueChange={setType}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione a função" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="agendamento">
-                Agendamento - Gerencia horários e calendários
-              </SelectItem>
-              <SelectItem value="sdr">
-                SDR - Qualifica e interage com leads
-              </SelectItem>
-              <SelectItem value="suporte">
-                Suporte - Responde dúvidas e auxilia clientes
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {agentTypes.map((option) => (
+              <AgentTypeCard
+                key={option.value}
+                value={option.value}
+                title={option.title}
+                description={option.description}
+                selected={type === option.value}
+                onSelect={setType}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="space-y-2">
