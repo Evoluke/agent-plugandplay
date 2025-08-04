@@ -17,7 +17,7 @@ interface Payment {
     amount: number;
     usage: number;
     created_at: string;
-    status: "pendente" | "quitado";
+    status: "pendente" | "pago";
 }
 
 export default function PaymentPage() {
@@ -69,7 +69,7 @@ export default function PaymentPage() {
     if (loading) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Carregando...</p>;
     if (error) return <p className="text-red-600 py-10 min-h-screen flex items-center justify-center">Erro: {error}</p>;
     if (!payment) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Pagamento não encontrado.</p>;
-    if (payment.status === "quitado") {
+    if (payment.status === "pago") {
         return (
             <Card className="max-w-md mx-auto mt-10">
                 <CardHeader>
