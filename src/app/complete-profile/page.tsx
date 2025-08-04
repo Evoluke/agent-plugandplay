@@ -6,7 +6,6 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import Link from 'next/link';
 import {
   isValidCpfCnpj,
   isValidAddress,
@@ -65,6 +64,11 @@ export default function CompleteProfilePage() {
       digits = digits.replace(/(\d{5})(\d{1,3})/, "$1-$2");
     }
     setZipCode(digits);
+  };
+
+  const handleBack = async () => {
+    await supabasebrowser.auth.signOut();
+    router.replace("/login");
   };
 
   useEffect(() => {
@@ -177,11 +181,9 @@ export default function CompleteProfilePage() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-50 p-4">
       <div className="h-full w-full max-w-lg">
-        <Link href="/login">
-          <Button variant="ghost" className="mb-4">
-            ← Voltar
-          </Button>
-        </Link>
+        <Button variant="ghost" className="mb-4" onClick={handleBack}>
+          ← Voltar
+        </Button>
 
         <form
           onSubmit={handleSubmit}
