@@ -114,7 +114,7 @@ export default function NewAgentPage() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/dashboard/agents")}
+            onClick={() => router.push("/dashboard")}
           >
             Cancelar
           </Button>
