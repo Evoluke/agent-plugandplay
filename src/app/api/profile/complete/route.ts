@@ -1,15 +1,24 @@
 import { NextResponse } from "next/server";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import {
+  isValidCpfCnpj,
+  isValidAddress,
+  isValidCep,
+  isValidResponsible,
+  isValidPhone,
+} from "@/lib/validators";
 
 export async function POST(req: Request) {
   const {
     user_id,
     cpf_cnpj,
     address,
+    zip_code,
     city,
     state,
     country,
     responsible_name,
+    phone,
     // language,
   } = await req.json();
 
@@ -17,13 +26,41 @@ export async function POST(req: Request) {
     !user_id ||
     !cpf_cnpj ||
     !address ||
+    !zip_code ||
     !city ||
     !state ||
     !country ||
-    !responsible_name 
+    !responsible_name ||
+    !phone
     // !language
   ) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+  }
+
+  const cleanCpfCnpj = cpf_cnpj.replace(/\D/g, "");
+  const cleanZip = zip_code.replace(/\D/g, "");
+  const cleanPhone = phone.replace(/\D/g, "");
+
+  if (!isValidCpfCnpj(cleanCpfCnpj)) {
+    return NextResponse.json({ error: "CPF/CNPJ inválido" }, { status: 400 });
+  }
+  if (!isValidAddress(address)) {
+    return NextResponse.json(
+      { error: "Endereço deve ter entre 3 e 200 caracteres" },
+      { status: 400 },
+    );
+  }
+  if (!isValidCep(cleanZip)) {
+    return NextResponse.json({ error: "CEP inválido" }, { status: 400 });
+  }
+  if (!isValidResponsible(responsible_name)) {
+    return NextResponse.json(
+      { error: "Responsável deve ter entre 4 e 80 caracteres" },
+      { status: 400 },
+    );
+  }
+  if (!isValidPhone(cleanPhone)) {
+    return NextResponse.json({ error: "Telefone inválido" }, { status: 400 });
   }
 
   const { data: company, error: companyError } = await supabaseadmin
@@ -45,12 +82,14 @@ export async function POST(req: Request) {
     const { error: profileUpdateError } = await supabaseadmin
       .from("company_profile")
       .update({
-        cpf_cnpj,
+        cpf_cnpj: cleanCpfCnpj,
         address,
+        zip_code: cleanZip,
         city,
         state,
         country,
         responsible_name,
+        phone: cleanPhone,
         // language,
       })
       .eq("id", profileId);
@@ -65,12 +104,14 @@ export async function POST(req: Request) {
     const { data: profile, error: profileInsertError } = await supabaseadmin
       .from("company_profile")
       .insert({
-        cpf_cnpj,
+        cpf_cnpj: cleanCpfCnpj,
         address,
+        zip_code: cleanZip,
         city,
         state,
         country,
         responsible_name,
+        phone: cleanPhone,
         // language,
       })
       .select("id")

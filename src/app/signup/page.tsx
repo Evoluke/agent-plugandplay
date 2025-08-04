@@ -6,6 +6,11 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  isValidCompanyName,
+  isValidEmail,
+  isValidPassword,
+} from "@/lib/validators";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,6 +24,20 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!isValidCompanyName(name)) {
+      setError("Nome da empresa deve ter entre 4 e 80 caracteres");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError("Email inválido");
+      return;
+    }
+    if (!isValidPassword(password)) {
+      setError(
+        "Senha deve ter ao menos 8 caracteres com maiúsculas, minúsculas, número e símbolo",
+      );
+      return;
+    }
     if (password !== confirm) {
       setError("As senhas não coincidem");
       return;

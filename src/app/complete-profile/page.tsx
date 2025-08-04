@@ -6,6 +6,20 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  isValidCpfCnpj,
+  isValidAddress,
+  isValidCep,
+  isValidResponsible,
+  isValidPhone,
+} from "@/lib/validators";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CompleteProfilePage() {
   const router = useRouter();
@@ -13,11 +27,51 @@ export default function CompleteProfilePage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [address, setAddress] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("Brasil");
   const [responsible, setResponsible] = useState("");
+  const [phone, setPhone] = useState("");
   // const [language, setLanguage] = useState("");
+
+  const handleCpfCnpjChange = (value: string) => {
+    let digits = value.replace(/\D/g, "");
+    if (digits.length > 14) digits = digits.slice(0, 14);
+    if (digits.length <= 11) {
+      digits = digits
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    } else {
+      digits = digits
+        .replace(/(\d{2})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1/$2")
+        .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+    }
+    setCpfCnpj(digits);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    let digits = value.replace(/\D/g, "");
+    if (digits.length > 13) digits = digits.slice(0, 13);
+    let formatted = "";
+    if (digits.length > 0) formatted += "+" + digits.slice(0, 2);
+    if (digits.length >= 3) formatted += " (" + digits.slice(2, 4) + ")";
+    if (digits.length >= 5) formatted += " " + digits.slice(4, 9);
+    if (digits.length >= 10) formatted += "-" + digits.slice(9, 13);
+    setPhone(formatted);
+  };
+
+  const handleZipChange = (value: string) => {
+    let digits = value.replace(/\D/g, "");
+    if (digits.length > 8) digits = digits.slice(0, 8);
+    if (digits.length > 5) {
+      digits = digits.replace(/(\d{5})(\d{1,3})/, "$1-$2");
+    }
+    setZipCode(digits);
+  };
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(async ({ data, error }) => {
@@ -43,12 +97,14 @@ export default function CompleteProfilePage() {
           .eq("id", company.company_profile_id)
           .single();
         if (profile) {
-          setCpfCnpj(profile.cpf_cnpj || "");
+          handleCpfCnpjChange(profile.cpf_cnpj || "");
           setAddress(profile.address || "");
+          handleZipChange(profile.zip_code || "");
           setCity(profile.city || "");
           setState(profile.state || "");
-          setCountry(profile.country || "");
+          setCountry(profile.country || "Brasil");
           setResponsible(profile.responsible_name || "");
+          handlePhoneChange(profile.phone || "");
           // setLanguage(profile.language || "");
         }
       }
@@ -60,6 +116,37 @@ export default function CompleteProfilePage() {
     e.preventDefault();
     if (!userId) return;
     setLoading(true);
+    if (!isValidCpfCnpj(cpfCnpj)) {
+      toast.error("CPF/CNPJ inválido");
+      setLoading(false);
+      return;
+    }
+    if (!isValidAddress(address)) {
+      toast.error("Endereço deve ter entre 3 e 200 caracteres");
+      setLoading(false);
+      return;
+    }
+    if (!isValidCep(zipCode)) {
+      toast.error("CEP inválido");
+      setLoading(false);
+      return;
+    }
+    if (!city || !state) {
+      toast.error("Cidade e Estado são obrigatórios");
+      setLoading(false);
+      return;
+    }
+    if (!isValidResponsible(responsible)) {
+      toast.error("Responsável deve ter entre 4 e 80 caracteres");
+      setLoading(false);
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      toast.error("Telefone inválido");
+      setLoading(false);
+      return;
+    }
+
     const res = await fetch("/api/profile/complete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -67,10 +154,12 @@ export default function CompleteProfilePage() {
         user_id: userId,
         cpf_cnpj: cpfCnpj,
         address,
+        zip_code: zipCode,
         city,
         state,
         country,
         responsible_name: responsible,
+        phone,
         // language,
       }),
     });
@@ -108,7 +197,9 @@ export default function CompleteProfilePage() {
             id="cpfCnpj"
             type="text"
             value={cpfCnpj}
-            onChange={(e) => setCpfCnpj(e.target.value)}
+            onChange={(e) => handleCpfCnpjChange(e.target.value)}
+            maxLength={18}
+            placeholder="000.000.000-00"
             required
           />
         </div>
@@ -126,6 +217,20 @@ export default function CompleteProfilePage() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
+            <label htmlFor="zip" className="block text-sm font-medium">
+              CEP
+            </label>
+            <Input
+              id="zip"
+              type="text"
+              value={zipCode}
+              onChange={(e) => handleZipChange(e.target.value)}
+              maxLength={9}
+              placeholder="00000-000"
+              required
+            />
+          </div>
+          <div>
             <label htmlFor="city" className="block text-sm font-medium">
               Cidade
             </label>
@@ -137,6 +242,8 @@ export default function CompleteProfilePage() {
               required
             />
           </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="state" className="block text-sm font-medium">
               Estado
@@ -149,44 +256,49 @@ export default function CompleteProfilePage() {
               required
             />
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="country" className="block text-sm font-medium">
               País
             </label>
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o país" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Brasil">Brasil</SelectItem>
+                <SelectItem value="Estados Unidos">Estados Unidos</SelectItem>
+                <SelectItem value="Portugal">Portugal</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="responsible" className="block text-sm font-medium">
+              Responsável
+            </label>
             <Input
-              id="country"
+              id="responsible"
               type="text"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              value={responsible}
+              onChange={(e) => setResponsible(e.target.value)}
               required
             />
           </div>
-          {/* <div>
-            <label htmlFor="language" className="block text-sm font-medium">
-              Idioma
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium">
+              Telefone
             </label>
             <Input
-              id="language"
-              type="text"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => handlePhoneChange(e.target.value)}
+              maxLength={19}
+              placeholder="+00 (00) 00000-0000"
               required
             />
-          </div> */}
-        </div>
-        <div>
-          <label htmlFor="responsible" className="block text-sm font-medium">
-            Responsável
-          </label>
-          <Input
-            id="responsible"
-            type="text"
-            value={responsible}
-            onChange={(e) => setResponsible(e.target.value)}
-            required
-          />
+          </div>
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Salvando..." : "Salvar"}

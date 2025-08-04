@@ -4,10 +4,12 @@ create table public.company_profile (
   created_at timestamp with time zone not null default now(),
   cpf_cnpj text not null,
   address text not null,
+  zip_code text not null,
   city text not null,
   state text not null,
   country text not null,
   responsible_name text not null,
+  phone text not null,
   language text not null,
   constraint company_profile_pkey primary key (id),
   constraint company_profile_id_key unique (id)
