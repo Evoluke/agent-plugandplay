@@ -33,7 +33,8 @@ export default function UpdatePasswordForm() {
     setLoading(true);
     const { error } = await supabasebrowser.auth.updateUser({ password });
     if (error) {
-      toast.error('Erro ao redefinir senha: ' + error.message);
+      console.error('Erro ao redefinir senha:', error.message);
+      toast.error('Erro ao redefinir senha. Tente novamente mais tarde.');
     } else {
       await supabasebrowser.auth.signOut();
       toast.success('Senha atualizada');

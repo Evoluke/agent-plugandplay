@@ -44,7 +44,8 @@ export async function POST(req: Request) {
   });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 409 });
+    console.error('Erro ao criar usuário:', error.message);
+    return NextResponse.json({ error: 'Erro ao criar usuário' }, { status: 409 });
   }
 
   const userId = data.user.id;
@@ -53,7 +54,8 @@ export async function POST(req: Request) {
     .from('company')
     .insert({ user_id: userId, company_name: name, profile_complete: false });
   if (bizError) {
-    return NextResponse.json({ error: bizError.message }, { status: 500 });
+    console.error('Erro ao criar company:', bizError.message);
+    return NextResponse.json({ error: 'Erro ao criar company' }, { status: 500 });
   }
 
   return NextResponse.json({ user: data.user }, { status: 201 });

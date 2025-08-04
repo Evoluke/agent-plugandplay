@@ -63,8 +63,9 @@ export async function POST(req: NextRequest) {
     ]);
 
   if (error) {
+    console.error('Erro ao criar ticket:', error.message);
     return NextResponse.json(
-      { error: error.message },
+      { error: 'Erro ao criar ticket' },
       { status: 500 }
     );
   }

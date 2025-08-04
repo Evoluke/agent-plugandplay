@@ -51,7 +51,8 @@ export default function DashboardPage() {
       .single()          // pega apenas um registro
       .then(({ data, error }) => {
         if (error) {
-          toast.error('Erro ao buscar company: ' + error.message);
+          console.error('Erro ao buscar company:', error.message);
+          toast.error('Erro ao buscar company.');
         } else {
           setCompany(data);
         }
