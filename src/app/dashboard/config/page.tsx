@@ -25,6 +25,7 @@ export default function ConfigPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
+  const [initialEmail, setInitialEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [cpfCnpj, setCpfCnpj] = useState("");
@@ -82,7 +83,9 @@ export default function ConfigPage() {
       }
       const uid = data.user.id;
       setUserId(uid);
-      setEmail(data.user.email || "");
+      const userEmail = data.user.email || "";
+      setEmail(userEmail);
+      setInitialEmail(userEmail);
       const { data: company } = await supabasebrowser
         .from("company")
         .select("company_name, company_profile_id")
@@ -167,6 +170,7 @@ export default function ConfigPage() {
       return;
     }
 
+    const emailChanged = email !== initialEmail;
     const { error: authError } = await supabasebrowser.auth.updateUser({
       email,
       password: password || undefined,
@@ -210,7 +214,11 @@ export default function ConfigPage() {
       return;
     }
 
+    if (emailChanged) {
+      toast.info("Verifique seu novo e-mail para confirmar a alteração");
+    }
     toast.success("Configurações salvas");
+    setInitialEmail(email);
     setPassword("");
     setConfirm("");
     setSaving(false);

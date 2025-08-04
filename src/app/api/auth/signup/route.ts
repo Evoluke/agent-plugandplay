@@ -39,7 +39,8 @@ export async function POST(req: Request) {
     email,
     password,
     user_metadata: { name },
-    email_confirm: true,
+    // Envia email de confirmação em vez de confirmar automaticamente
+    email_confirm: false,
   });
 
   if (error) {
