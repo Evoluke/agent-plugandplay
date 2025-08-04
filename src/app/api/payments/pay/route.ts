@@ -3,6 +3,7 @@ export const runtime = 'nodejs';
 
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabaseClient';
+import { supabaseadmin } from '@/lib/supabaseAdmin';
 
 const rateLimitMap = new Map<string, { count: number; last: number }>();
 const WINDOW_MS = 60_000;
@@ -59,6 +60,83 @@ export async function POST(request: Request) {
 
   console.log(`[payment] user=${userId} id=${id} total=${total}`);
 
+  const { data: company, error: companyError } = await supabaseadmin
+    .from('company')
+    .select(
+      'company_name, company_profile!inner(cpf_cnpj, responsible_name, phone)'
+    )
+    .eq('user_id', userId)
+    .single();
+
+  if (companyError || !company) {
+    return NextResponse.json(
+      { error: 'Company profile not found' },
+      { status: 400 }
+    );
+  }
+
+  const { company_name, company_profile } = company as {
+    company_name: string | null;
+    company_profile: {
+      cpf_cnpj: string;
+      responsible_name: string;
+      phone: string;
+    }[];
+  };
+
+  const profile = company_profile?.[0];
+  if (!profile) {
+    return NextResponse.json(
+      { error: 'Company profile not found' },
+      { status: 400 }
+    );
+  }
+
+  const cpfCnpj = profile.cpf_cnpj;
+  const phone = profile.phone;
+  const name = company_name || profile.responsible_name;
+  const email = userData.user.email;
+
+  let customerId: string | null = null;
+
+  const searchResp = await fetch(
+    `${process.env.ASAAS_API_URL}/customers?cpfCnpj=${cpfCnpj}`,
+    {
+      headers: {
+        access_token: process.env.ASAAS_API_KEY!,
+        'User-Agent': 'Evoluke',
+      },
+    }
+  );
+  const searchData = await searchResp.json();
+
+  if (searchResp.ok && Array.isArray(searchData.data) && searchData.data.length) {
+    customerId = searchData.data[0].id as string;
+  } else {
+    const createResp = await fetch(
+      `${process.env.ASAAS_API_URL}/customers`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          access_token: process.env.ASAAS_API_KEY!,
+          'User-Agent': 'Evoluke',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          cpfCnpj,
+          mobilePhone: phone,
+        }),
+      }
+    );
+    const createData = await createResp.json();
+    if (!createResp.ok) {
+      return NextResponse.json({ error: createData }, { status: 400 });
+    }
+    customerId = createData.id as string;
+  }
+
   const endpoint = `${process.env.ASAAS_API_URL}/payments`;
   const resp = await fetch(endpoint, {
     method: 'POST',
@@ -68,7 +146,7 @@ export async function POST(request: Request) {
       'User-Agent': 'Evoluke',
     },
     body: JSON.stringify({
-      customer: '6889196',
+      customer: customerId,
       billingType: 'UNDEFINED',
       dueDate,
       value: total,
