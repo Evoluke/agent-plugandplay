@@ -6,7 +6,11 @@ import { supabaseadmin } from "@/lib/supabaseAdmin";
 const allowedTypes = ["agendamento", "sdr", "suporte"] as const;
 type AgentType = (typeof allowedTypes)[number];
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  _req: NextRequest,
+  context: { params: { id: string } }
+) {
+  const { params } = context;
   const supabase = createRouteHandlerClient({ cookies });
   const {
     data: { user },
@@ -44,7 +48,11 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   return NextResponse.json(agent, { status: 200 });
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
+  const { params } = context;
   const supabase = createRouteHandlerClient({ cookies });
   const {
     data: { user },
