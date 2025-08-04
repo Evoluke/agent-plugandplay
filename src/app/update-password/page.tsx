@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabasebrowser } from '@/lib/supabaseClient';
@@ -9,6 +9,10 @@ import { toast } from 'sonner';
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const errorDescription = searchParams.get('error_description');
+  const expiresAt = searchParams.get('expires_at');
+  const isExpired = expiresAt ? Date.now() > Number(expiresAt) * 1000 : false;
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,11 +35,27 @@ export default function UpdatePasswordPage() {
     if (error) {
       toast.error('Erro ao redefinir senha: ' + error.message);
     } else {
+      await supabasebrowser.auth.signOut();
       toast.success('Senha atualizada');
       router.push('/login');
     }
     setLoading(false);
   };
+
+  if (errorDescription || isExpired) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50 p-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4 text-center">
+          <p className="text-lg font-medium">
+            {errorDescription || 'O link de recuperação expirou.'}
+          </p>
+          <Button onClick={() => router.push('/login')} className="w-full">
+            Voltar ao login
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-50 p-4">
