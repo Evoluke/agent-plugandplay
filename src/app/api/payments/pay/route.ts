@@ -82,26 +82,24 @@ export async function POST(request: Request) {
     );
   }
 
-  const { company_name, company_profile } = company as {
+  const { company_name, company_profile } = company as unknown as {
     company_name: string | null;
     company_profile: {
       cpf_cnpj: string;
       responsible_name: string;
       phone: string;
-    }[];
+    };
   };
-
-  const profile = company_profile?.[0];
-  if (!profile) {
+  if (!company_profile) {
     return NextResponse.json(
       { error: 'Company profile not found' },
       { status: 400 }
     );
   }
 
-  const cpfCnpj = profile.cpf_cnpj;
-  const phone = profile.phone;
-  const name = company_name || profile.responsible_name;
+  const cpfCnpj = company_profile.cpf_cnpj;
+  const phone = company_profile.phone;
+  const name = company_name || company_profile.responsible_name;
   const email = userData.user.email;
 
   let customerId: string | null = null;
