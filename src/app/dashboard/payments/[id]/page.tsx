@@ -89,9 +89,18 @@ export default function PaymentPage() {
         if (isGenerating || paymentLink) return;
         setIsGenerating(true);
         try {
+            const {
+                data: { session },
+                error: sessionError,
+            } = await supabasebrowser.auth.getSession();
+            if (sessionError || !session) throw new Error("Sessão não encontrada");
+
             const res = await fetch("/api/payments/pay", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session.access_token}`,
+                },
                 body: JSON.stringify({ id, date, total }),
             });
             if (!res.ok) throw await res.text();
