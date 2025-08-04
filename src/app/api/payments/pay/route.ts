@@ -98,7 +98,7 @@ export async function POST(request: Request) {
   }
 
   const cpfCnpj = company_profile.cpf_cnpj;
-  const phone = company_profile.phone;
+  const phone = company_profile.phone.replace(/^55/, '');
   const name = company_name || company_profile.responsible_name;
   const email = userData.user.email;
 

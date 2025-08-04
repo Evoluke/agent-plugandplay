@@ -111,7 +111,9 @@ export async function POST(request: Request) {
 
   const cleanName = name.trim();
   const cleanCpf = cpfCnpj.replace(/\D/g, '');
-  const cleanPhone = phone ? phone.replace(/\D/g, '') : undefined;
+  const cleanPhone = phone
+    ? phone.replace(/\D/g, '').replace(/^55/, '')
+    : undefined;
   const cleanEmail = email?.trim();
 
   if (!isValidResponsible(cleanName)) {

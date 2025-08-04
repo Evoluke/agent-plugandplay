@@ -57,13 +57,11 @@ export default function ConfigPage() {
 
   const handlePhoneChange = (value: string) => {
     let digits = value.replace(/\D/g, "");
-    if (digits.length > 13) digits = digits.slice(0, 13);
-    let formatted = "";
-    if (digits.length > 0) formatted += "+" + digits.slice(0, 2);
-    if (digits.length >= 3) formatted += " (" + digits.slice(2, 4) + ")";
-    if (digits.length >= 5) formatted += " " + digits.slice(4, 9);
-    if (digits.length >= 10) formatted += "-" + digits.slice(9, 13);
-    setPhone(formatted);
+    if (digits.startsWith("55")) digits = digits.slice(2);
+    if (digits.length > 11) digits = digits.slice(0, 11);
+    digits = digits.replace(/^(\d{2})(\d)/, "($1) $2");
+    digits = digits.replace(/(\d{5})(\d)/, "$1-$2");
+    setPhone(digits);
   };
 
   const handleZipChange = (value: string) => {
