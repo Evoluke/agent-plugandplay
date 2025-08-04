@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import type { RouteContext } from "next";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
 
 const allowedTypes = ["agendamento", "sdr", "suporte"] as const;
@@ -9,7 +8,7 @@ type AgentType = (typeof allowedTypes)[number];
 
 export async function GET(
   _req: NextRequest,
-  { params }: RouteContext<{ id: string }>
+  { params }: { params: { id: string } }
 ) {
   const supabase = createRouteHandlerClient({ cookies });
   const {
@@ -50,7 +49,7 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: RouteContext<{ id: string }>
+  { params }: { params: { id: string } }
 ) {
   const supabase = createRouteHandlerClient({ cookies });
   const {
