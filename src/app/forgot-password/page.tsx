@@ -18,7 +18,8 @@ export default function ForgotPasswordPage() {
       redirectTo: `${window.location.origin}/update-password`,
     });
     if (error) {
-      toast.error('Erro ao enviar email: ' + error.message);
+      console.error('Erro ao enviar email:', error.message);
+      toast.error('Erro ao enviar email. Tente novamente mais tarde.');
     } else {
       toast.success('Email de recuperação enviado');
     }

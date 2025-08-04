@@ -39,7 +39,8 @@ export default function LoginPage() {
     e.preventDefault();
     const { data, error } = await supabasebrowser.auth.signInWithPassword({ email, password });
     if (error) {
-      toast.error('Falha no login: ' + error.message);
+      console.error('Falha no login:', error.message);
+      toast.error('Falha no login. Tente novamente mais tarde.');
     } else {
       const { data: company } = await supabasebrowser
         .from('company')

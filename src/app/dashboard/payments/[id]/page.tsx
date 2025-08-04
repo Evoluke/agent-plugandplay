@@ -98,8 +98,8 @@ export default function PaymentPage() {
             const { asaas } = await res.json();
             setPaymentLink(asaas.invoiceUrl || asaas.paymentLink);
         } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : "Falha ao gerar link";
-            toast.error(message);
+            console.error('Erro ao gerar link de pagamento:', err);
+            toast.error('Erro ao gerar link de pagamento. Tente novamente mais tarde.');
         }
     };
 
