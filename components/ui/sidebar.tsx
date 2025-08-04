@@ -112,7 +112,7 @@ export function Sidebar() {
             </TooltipContent>
           </Tooltip>
           {open && (
-            <div className="absolute left-12 top-0 z-10 w-48 bg-white border rounded shadow-md">
+            <div className="absolute left-12 top-0 z-10 w-64 bg-white border rounded shadow-md">
               {agents.map((agent) => (
                 <Link
                   key={agent.id}
@@ -120,16 +120,17 @@ export function Sidebar() {
                   className="block px-4 py-2 text-sm hover:bg-gray-100"
                   onClick={() => setOpen(false)}
                 >
-                  {agent.name}
+                  🤖 {agent.name}
                 </Link>
               ))}
-              <div className="border-t my-1" />
+              {!agents ? <div /> : <div className="border-t my-1" />}
+
               <Link
                 href="/dashboard/agents/new"
-                className="block px-4 py-2 text-sm hover:bg-gray-100"
+                className="block py-2 text-sm font-semibold text-center justify-center text-[#0E4DE0] hover:bg-gray-100"
                 onClick={() => setOpen(false)}
               >
-                Criar Agente IA
+                Criar novo Agente IA
               </Link>
             </div>
           )}
