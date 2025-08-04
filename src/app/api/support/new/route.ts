@@ -39,6 +39,33 @@ export async function POST(req: NextRequest) {
     company_id: requestedCompanyId,
   } = await req.json();
 
+  if (!title || typeof title !== "string" || title.trim().length < 3) {
+    return NextResponse.json(
+      { error: "Título é obrigatório e deve ter ao menos 3 caracteres" },
+      { status: 400 }
+    );
+  }
+
+  if (!reason || typeof reason !== "string" || reason.trim().length < 3) {
+    return NextResponse.json(
+      { error: "Motivo é obrigatório e deve ter ao menos 3 caracteres" },
+      { status: 400 }
+    );
+  }
+
+  if (!description || typeof description !== "string" || description.trim().length < 10) {
+    return NextResponse.json(
+      { error: "Descrição é obrigatória e deve ter ao menos 10 caracteres" },
+      { status: 400 }
+    );
+  }
+
+  const sanitize = (input: string) => input.replace(/<[^>]*>?/gm, "").trim();
+
+  const sanitizedTitle = sanitize(title);
+  const sanitizedReason = sanitize(reason);
+  const sanitizedDescription = sanitize(description);
+
   if (requestedCompanyId && requestedCompanyId !== company.id) {
     return NextResponse.json(
       { error: "Empresa inválida" },
@@ -54,9 +81,9 @@ export async function POST(req: NextRequest) {
     .from("tickets")
     .insert([
       {
-        title,
-        reason,
-        description,
+        title: sanitizedTitle,
+        reason: sanitizedReason,
+        description: sanitizedDescription,
         attachment_url,
         company_id: company.id,
       },
