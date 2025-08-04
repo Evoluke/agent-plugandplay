@@ -81,7 +81,7 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="text-right">
+        <div className="text-right -mt-5">
           <Link href="/forgot-password" className="text-sm text-teal-600 hover:underline">
             Esqueci minha senha
           </Link>
