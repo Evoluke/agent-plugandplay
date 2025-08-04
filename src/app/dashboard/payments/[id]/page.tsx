@@ -82,13 +82,13 @@ export default function PaymentPage() {
         );
     }
 
-    const total = payment.amount;
-    const date = payment.due_date;
-
     const handleGenerateLink = async () => {
         if (isGenerating || paymentLink) return;
         setIsGenerating(true);
         try {
+            const date = new Date(payment.due_date).toISOString().slice(0, 10);
+            const total = payment.amount;
+
             const {
                 data: { session },
                 error: sessionError,
