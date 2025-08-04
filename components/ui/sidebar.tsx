@@ -1,14 +1,10 @@
 // src/components/Sidebar.tsx
 
-import { supabasebrowser } from '@/lib/supabaseClient';
-import React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from '@/components/ui/tooltip';
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Home,
   Settings,
@@ -16,73 +12,122 @@ import {
   HelpCircle,
   Brain,
   LogOut,
-} from 'lucide-react';
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
+import { supabasebrowser } from "@/lib/supabaseClient";
 
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
+}
+
+interface Agent {
+  id: string;
+  name: string;
 }
 
 const navItems: NavItem[] = [
-  { label: 'Início', href: '/dashboard', icon: <Home size={20} /> },
-  { label: 'Agentes IA', href: '/dashboard/agents', icon: <Brain size={20} /> },
-  { label: 'Pagamentos', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
-  { label: 'Configuração', href: '/dashboard/config', icon: <Settings size={20} /> },
-  { label: 'Suporte', href: '/dashboard/support', icon: <HelpCircle size={20} /> },
+  { label: "Início", href: "/dashboard", icon: <Home size={20} /> },
+  { label: "Pagamentos", href: "/dashboard/payments", icon: <CreditCard size={20} /> },
+  { label: "Configuração", href: "/dashboard/config", icon: <Settings size={20} /> },
+  { label: "Suporte", href: "/dashboard/support", icon: <HelpCircle size={20} /> },
 ];
 
 export function Sidebar() {
   const router = useRouter();
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    supabasebrowser.auth.getUser().then(({ data }) => {
+      const user = data.user;
+      if (!user) return;
+      supabasebrowser
+        .from("company")
+        .select("id")
+        .eq("user_id", user.id)
+        .single()
+        .then(({ data: company }) => {
+          if (!company) return;
+          supabasebrowser
+            .from("agents")
+            .select("id, name")
+            .eq("company_id", company.id)
+            .order("created_at", { ascending: true })
+            .then(({ data }) => {
+              if (data) setAgents(data);
+            });
+        });
+    });
+  }, []);
 
   const handleLogout = async () => {
     const { error } = await supabasebrowser.auth.signOut();
 
     if (error) {
-      console.error('Erro ao fazer logout:', error.message);
+      console.error("Erro ao fazer logout:", error.message);
       return;
     }
-    router.replace('/login');
+    router.replace("/login");
   };
 
   return (
-    <aside className="w-16 bg-white border-r h-full flex flex-col items-center py-4 space-y-4">
-      <div className="w-10 h-10 bg-gray-100 rounded-xl border border-gray-300 flex items-center justify-center p-1">
+    <aside className="w-64 bg-white border-r h-full flex flex-col">
+      <div className="p-4 border-b">
         <span className="text-xl font-semibold text-gray-700">E</span>
       </div>
-
-      <nav className="flex flex-col space-y-2">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
         {navItems.map((item) => (
-          <Tooltip key={item.href} disableHoverableContent>
-            <TooltipTrigger asChild>
-              <Link
-                href={item.href}
-                className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
-              >
-                {item.icon}
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
-              <span>{item.label}</span>
-            </TooltipContent>
-          </Tooltip>
+          <Link
+            key={item.href}
+            href={item.href}
+            className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100"
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </Link>
         ))}
+        <div className="pt-2">
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="flex items-center gap-2 w-full px-2 py-1 rounded hover:bg-gray-100"
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
+            <Brain size={20} />
+            <span>Agentes</span>
+          </button>
+          {!collapsed && (
+            <div className="ml-8 mt-1 space-y-1">
+              {agents.map((a) => (
+                <Link
+                  key={a.id}
+                  href={`/dashboard/agents/${a.id}`}
+                  className="block px-2 py-1 rounded hover:bg-gray-100"
+                >
+                  {a.name}
+                </Link>
+              ))}
+              <hr className="my-2" />
+              <Link
+                href="/dashboard/agents/new"
+                className="block px-2 py-1 rounded hover:bg-gray-100 text-blue-600"
+              >
+                + Novo Agente
+              </Link>
+            </div>
+          )}
+        </div>
       </nav>
-
-      <div className="mt-auto">
-        <Tooltip disableHoverableContent>
-          <TooltipTrigger asChild>
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
-            >
-              <LogOut size={20} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
-            <span>Logout</span>
-          </TooltipContent>
-        </Tooltip>
+      <div className="p-4 border-t">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 w-full px-2 py-1 rounded hover:bg-gray-100"
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
       </div>
     </aside>
   );
