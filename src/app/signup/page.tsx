@@ -55,6 +55,7 @@ export default function SignupPage() {
       if (!res.ok) {
         setError(data.error || "Falha no cadastro");
       } else {
+        toast.success("Verifique seu email para confirmar o cadastro");
         router.push("/login");
       }
     } catch {
