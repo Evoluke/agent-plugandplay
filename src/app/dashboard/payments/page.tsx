@@ -84,7 +84,7 @@ export default function PaymentsPage() {
         </CardHeader>
         <CardContent>
           <table className="w-full text-left">
-            <thead className="bg-gray-100">
+            <thead className="bg-[#FAFAFA]">
               <tr>
                 <th className="px-4 py-2">Referência</th>
                 <th className="px-4 py-2">Data Referência</th>
@@ -95,7 +95,7 @@ export default function PaymentsPage() {
             </thead>
             <tbody>
               {payments.map(p => (
-                <tr key={p.id} className="border-b hover:bg-gray-50">
+                <tr key={p.id} className="border-b hover:bg-[#FAFAFA]">
                   <td className="px-4 py-2">{p.reference}</td>
                   <td className="px-4 py-2">{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
                   <td className="px-4 py-2">{new Date(p.due_date).toLocaleDateString("pt-BR")}</td>

@@ -176,7 +176,7 @@ export default function CompleteProfilePage() {
     );
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-50 p-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
       <div className="h-full w-full max-w-lg">
         <Button variant="ghost" className="mb-4" onClick={handleBack}>
           ← Voltar

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-100 py-8">
+    <footer className="bg-[#FAFAFA] py-8">
       <div className="container mx-auto flex flex-col items-center gap-4 px-4 text-center text-sm text-muted-foreground">
         <div className="flex gap-6">
           <Link href="/login" className="hover:text-primary">

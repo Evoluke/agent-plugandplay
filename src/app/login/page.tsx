@@ -53,7 +53,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
       <form
         onSubmit={handleSubmit}
         className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-6"

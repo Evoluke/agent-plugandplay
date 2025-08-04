@@ -35,7 +35,7 @@ export default function DashboardClientLayout({ children }: Props) {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <main className="flex-1 bg-gray-50 p-6 h-full overflow-auto">
+      <main className="flex-1 bg-[#FAFAFA] p-6 h-full overflow-auto">
         {children}
       </main>
     </div>

@@ -113,7 +113,7 @@ export default function PaymentPage() {
     };
 
     return (
-        <div className=" bg-gray-50 flex items-center justify-center p-6">
+        <div className=" bg-[#FAFAFA] flex items-center justify-center p-6">
             <div className="h-full w-full max-w-lg">
                 <Link href="/dashboard/payments">
                     <Button variant="ghost" className="mb-4">

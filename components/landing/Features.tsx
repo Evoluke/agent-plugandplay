@@ -28,7 +28,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="bg-white py-24" id="features">
+    <section className="bg-[#FAFAFA] py-24" id="features">
       <div className="container mx-auto max-w-6xl px-4">
         <h2 className="mb-12 text-center text-3xl font-bold">Recursos principais</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

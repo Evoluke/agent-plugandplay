@@ -155,7 +155,7 @@ export default function NewSupportPage() {
     if (!user) return <p className="text-center py-10">Carregando...</p>;
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <main className="min-h-screen flex items-center justify-center bg-[#FAFAFA] p-4">
             <div className="h-full w-full max-w-lg">
                 <Link href="/dashboard/support">
                     <Button variant="ghost" className="mb-4">
