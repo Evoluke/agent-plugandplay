@@ -15,6 +15,13 @@ export default function UpdatePasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const strong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!strong.test(password)) {
+      toast.error(
+        'A senha deve ter pelo menos 8 caracteres e incluir letras maiúsculas, minúsculas e números'
+      );
+      return;
+    }
     if (password !== confirm) {
       toast.error('As senhas não coincidem');
       return;
@@ -46,6 +53,7 @@ export default function UpdatePasswordPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={8}
           />
         </div>
 
@@ -57,6 +65,7 @@ export default function UpdatePasswordPage() {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
+            minLength={8}
           />
         </div>
 
