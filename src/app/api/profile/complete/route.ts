@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 
   const cleanCpfCnpj = cpf_cnpj.replace(/\D/g, "");
   const cleanZip = zip_code.replace(/\D/g, "");
-  const cleanPhone = phone.replace(/\D/g, "");
+  const cleanPhone = phone.replace(/\D/g, "").replace(/^55/, "");
 
   if (!isValidCpfCnpj(cleanCpfCnpj)) {
     return NextResponse.json({ error: "CPF/CNPJ inválido" }, { status: 400 });
