@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   return (
-    <section className="bg-gradient-to-b from-white to-gray-50 py-24 text-center">
+    <section className="bg-[#FAFAFA] py-24 text-center">
       <div className="container mx-auto flex max-w-5xl flex-col items-center gap-6 px-4">
         <h1 className="text-4xl font-bold sm:text-5xl">
           Atendimento eficiente com IA

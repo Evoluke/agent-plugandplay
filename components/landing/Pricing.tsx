@@ -30,7 +30,7 @@ const plans = [
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="bg-gray-50 py-24">
+    <section id="pricing" className="bg-[#FAFAFA] py-24">
       <div className="container mx-auto max-w-6xl px-4">
         <h2 className="mb-12 text-center text-3xl font-bold">Planos</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
