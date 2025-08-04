@@ -1,12 +1,11 @@
 // src/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Inter, Poppins, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
-const poppins = Poppins({ variable: "--font-poppins", weight: ["600"], subsets: ["latin"] });
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR">
       <body
-        className={`${inter.variable} ${poppins.variable} ${geistMono.variable} antialiased h-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
         <Toaster position="top-right"/>
         {children}
