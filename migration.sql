@@ -46,3 +46,18 @@ create table public.payments (
 ) TABLESPACE pg_default;
 
 
+-- Enum para tipos de agente
+create type public.agent_type as enum ('agendamento', 'sdr', 'suporte');
+
+-- Tabela de agentes de IA
+create table public.agents (
+  id uuid not null default gen_random_uuid (),
+  name text not null,
+  type public.agent_type not null,
+  is_active boolean not null default false,
+  created_at timestamp with time zone not null default now(),
+  company_id bigint not null,
+  constraint agents_pkey primary key (id),
+  constraint agents_company_id_fkey foreign key (company_id) references company (id)
+) TABLESPACE pg_default;
+
