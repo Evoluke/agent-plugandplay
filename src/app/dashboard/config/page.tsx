@@ -6,6 +6,7 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   isValidCompanyName,
   isValidEmail,
@@ -223,155 +224,163 @@ export default function ConfigPage() {
     );
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <h1 className="text-2xl font-semibold text-center">Configurações</h1>
-        <div>
-          <label htmlFor="company" className="block text-sm font-medium">
-            Nome da empresa
-          </label>
-          <Input
-            id="company"
-            type="text"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium">
-            Email
-          </label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium">
-            Nova senha
-          </label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="confirm" className="block text-sm font-medium">
-            Confirmar senha
-          </label>
-          <Input
-            id="confirm"
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="cpfCnpj" className="block text-sm font-medium">
-            CPF/CNPJ
-          </label>
-          <Input
-            id="cpfCnpj"
-            type="text"
-            value={cpfCnpj}
-            onChange={(e) => handleCpfCnpjChange(e.target.value)}
-            maxLength={18}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="address" className="block text-sm font-medium">
-            Endereço
-          </label>
-          <Input
-            id="address"
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            maxLength={200}
-            required
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="zip" className="block text-sm font-medium">
-              CEP
-            </label>
-            <Input
-              id="zip"
-              type="text"
-              value={zipCode}
-              onChange={(e) => handleZipChange(e.target.value)}
-              maxLength={9}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium">
-              Cidade
-            </label>
-            <Input
-              id="city"
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              maxLength={255}
-              required
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="state" className="block text-sm font-medium">
-              Estado
-            </label>
-            <Input
-              id="state"
-              type="text"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              maxLength={255}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium">
-              Telefone
-            </label>
-            <Input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => handlePhoneChange(e.target.value)}
-              maxLength={19}
-              required
-            />
-          </div>
-        </div>
-        <div>
-          <label htmlFor="responsible" className="block text-sm font-medium">
-            Nome do responsável
-          </label>
-          <Input
-            id="responsible"
-            type="text"
-            value={responsible}
-            onChange={(e) => setResponsible(e.target.value)}
-            maxLength={80}
-            required
-          />
-        </div>
-        <Button type="submit" className="w-full" disabled={saving}>
-          {saving ? "Salvando..." : "Salvar"}
-        </Button>
-      </form>
+    <div className=" bg-gray-50 flex items-center justify-center p-6">
+      {/* <div className="h-full w-full max-w-lg"> */}
+      <div className="h-full w-full max-w-lg">
+        <Card className="border shadow-lg rounded-lg overflow-hidden">
+          <CardHeader className="bg-white px-6 py-4 border-b">
+            <CardTitle className="text-xl font-semibold text-gray-800 text-center">Configurações</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="company" className="block text-sm font-medium">
+                  Nome da empresa
+                </label>
+                <Input
+                  id="company"
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium">
+                  Nova senha
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="confirm" className="block text-sm font-medium">
+                  Confirmar senha
+                </label>
+                <Input
+                  id="confirm"
+                  type="password"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="cpfCnpj" className="block text-sm font-medium">
+                  CPF/CNPJ
+                </label>
+                <Input
+                  id="cpfCnpj"
+                  type="text"
+                  value={cpfCnpj}
+                  onChange={(e) => handleCpfCnpjChange(e.target.value)}
+                  maxLength={18}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium">
+                  Endereço
+                </label>
+                <Input
+                  id="address"
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  maxLength={200}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="zip" className="block text-sm font-medium">
+                    CEP
+                  </label>
+                  <Input
+                    id="zip"
+                    type="text"
+                    value={zipCode}
+                    onChange={(e) => handleZipChange(e.target.value)}
+                    maxLength={9}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium">
+                    Cidade
+                  </label>
+                  <Input
+                    id="city"
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    maxLength={255}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="state" className="block text-sm font-medium">
+                    Estado
+                  </label>
+                  <Input
+                    id="state"
+                    type="text"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    maxLength={255}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium">
+                    Telefone
+                  </label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    maxLength={19}
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="responsible" className="block text-sm font-medium">
+                  Nome do responsável
+                </label>
+                <Input
+                  id="responsible"
+                  type="text"
+                  value={responsible}
+                  onChange={(e) => setResponsible(e.target.value)}
+                  maxLength={80}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={saving}>
+                {saving ? "Salvando..." : "Salvar"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
-
