@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, Fragment } from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -23,6 +24,7 @@ type Agent = {
 export default function AgentDetailPage() {
   const params = useParams();
   const id = params?.id as string;
+  const pathname = usePathname();
   const [agent, setAgent] = useState<Agent | null>(null);
 
   useEffect(() => {
@@ -38,11 +40,23 @@ export default function AgentDetailPage() {
   if (!agent) return <div>Carregando...</div>;
 
   const menuItems = [
-    { label: "Personalidade", icon: Smile },
-    { label: "Comportamento", icon: Settings },
-    { label: "Onboarding", icon: BookOpen },
-    { label: "Base de conhecimento", icon: Database },
-    { label: "Instruções Específicas", icon: ClipboardList },
+    { label: "Personalidade", icon: Smile, href: `/dashboard/agents/${id}` },
+    {
+      label: "Comportamento",
+      icon: Settings,
+      href: `/dashboard/agents/${id}/comportamento`,
+    },
+    { label: "Onboarding", icon: BookOpen, href: `/dashboard/agents/${id}/onboarding` },
+    {
+      label: "Base de conhecimento",
+      icon: Database,
+      href: `/dashboard/agents/${id}/base-conhecimento`,
+    },
+    {
+      label: "Instruções Específicas",
+      icon: ClipboardList,
+      href: `/dashboard/agents/${id}/instrucoes-especificas`,
+    },
   ];
 
   return (
@@ -50,14 +64,17 @@ export default function AgentDetailPage() {
       <div className="flex justify-center">
         <Card className="w-4/5 p-6">
           <nav className="flex items-center justify-around">
-            {menuItems.map(({ label, icon: Icon }, index) => (
+            {menuItems.map(({ label, icon: Icon, href }, index) => (
               <Fragment key={label}>
                 <Button
-                  variant="ghost"
+                  asChild
+                  variant={pathname === href ? "secondary" : "ghost"}
                   className="flex h-auto flex-col items-center gap-1 text-sm"
                 >
-                  <Icon className="h-5 w-5 text-gray-700" />
-                  <span>{label}</span>
+                  <Link href={href} className="flex flex-col items-center">
+                    <Icon className="h-5 w-5" />
+                    <span>{label}</span>
+                  </Link>
                 </Button>
                 {index < menuItems.length - 1 && (
                   <div className="h-8 border-l" />
@@ -65,6 +82,11 @@ export default function AgentDetailPage() {
               </Fragment>
             ))}
           </nav>
+        </Card>
+      </div>
+      <div className="flex justify-center">
+        <Card className="w-4/5 p-6">
+          {/* Conteúdo do submenu */}
         </Card>
       </div>
     </div>
