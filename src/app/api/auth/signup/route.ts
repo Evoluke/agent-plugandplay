@@ -1,5 +1,6 @@
 // src/app/api/auth/signup/route.ts
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseClient";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
 import {
   isValidCompanyName,
@@ -34,17 +35,17 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-
-  const { data, error } = await supabaseadmin.auth.admin.createUser({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    user_metadata: { name },
-    // Envia email de confirmação em vez de confirmar automaticamente
-    email_confirm: false,
+    options: {
+      data: { name },
+      emailRedirectTo: "http://localhost:3000/auth/callback",
+    },
   });
 
-  if (error) {
-    console.error('Erro ao criar usuário:', error.message);
+  if (error || !data.user) {
+    console.error('Erro ao criar usuário:', error?.message);
     return NextResponse.json({ error: 'Erro ao criar usuário' }, { status: 409 });
   }
 
@@ -58,5 +59,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Erro ao criar company' }, { status: 500 });
   }
 
-  return NextResponse.json({ user: data.user }, { status: 201 });
+  return NextResponse.json(
+    {
+      message:
+        'Usuário criado. Um e-mail de verificação foi enviado para confirmar o cadastro.',
+    },
+    { status: 201 },
+  );
 }
