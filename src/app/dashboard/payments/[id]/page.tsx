@@ -165,24 +165,22 @@ export default function PaymentPage() {
                             </div>
                         </section>
 
-                        <Button
-                            onClick={handleGenerateLink}
-                            disabled={isGenerating || !!paymentLink}
-                            className="w-full"
-                        >
-                            Gerar link de pagamento
-                        </Button>
-
-                        {/* Exibe link quando disponível */}
-                        {paymentLink && (
+                        {/* Link de pagamento */}
+                        {paymentLink ? (
                             <a
                                 href={paymentLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block mt-2 text-center text-blue-600 underline"
+                                className="block w-full text-center text-blue-600 underline"
                             >
                                 Abrir link de pagamento
                             </a>
+                        ) : (
+                            <p className="text-center text-sm text-gray-500">
+                                {isGenerating
+                                    ? "Gerando link de pagamento..."
+                                    : "Link de pagamento indisponível"}
+                            </p>
                         )}
                     </CardContent>
                 </Card>
