@@ -30,10 +30,10 @@ const plans = [
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="bg-[#FAFAFA] py-24">
-      <div className="container mx-auto max-w-6xl px-4">
+    <section id="pricing" className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16">
+      <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
         <h2 className="mb-12 text-center text-3xl font-bold">Planos</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {plans.map(({ name, price, features }) => (
             <Card key={name} className="flex flex-col">
               <CardHeader>
