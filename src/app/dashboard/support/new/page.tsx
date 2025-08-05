@@ -39,6 +39,7 @@ export default function NewSupportPage() {
     const [user, setUser] = useState<User | null>(null);
     const router = useRouter();
     const [company, setCompany] = useState<Company | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -91,6 +92,8 @@ export default function NewSupportPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (isSubmitting) return;
+
         if (!user) {
             toast.error("Erro: usuário não autenticado.");
             return;
@@ -111,44 +114,47 @@ export default function NewSupportPage() {
             return;
         }
 
+        setIsSubmitting(true);
+        try {
+            let attachmentPath: string | null = null;
+            if (arquivo) {
+                const filePath = `user_ticket/${Date.now()}_${arquivo.name}`;
+                const { data: upData, error: upErr } = await supabasebrowser
+                    .storage
+                    .from("ticket-attachments")
+                    .upload(filePath, arquivo);
 
-        let attachmentPath: string | null = null;
-        if (arquivo) {
-            const filePath = `user_ticket/${Date.now()}_${arquivo.name}`;
-            const { data: upData, error: upErr } = await supabasebrowser
-                .storage
-                .from("ticket-attachments")
-                .upload(filePath, arquivo);
+                if (upErr) {
+                    toast.error('Falha no upload do arquivo.');
+                    setFileError("Falha no upload do arquivo.");
+                    return;
+                }
 
-            if (upErr) {
-                toast.error('Falha no upload do arquivo.');
-                setFileError("Falha no upload do arquivo.");
-                return;
+                attachmentPath = upData.path;
             }
 
-            attachmentPath = upData.path;
+            const res = await fetch("/api/support/new", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: titulo,
+                    reason: motivo,
+                    description: descricao,
+                    attachmentPath,
+                    company_id: company.id
+                }),
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                toast.error("Erro: " + err.error);
+            } else {
+                toast.success("Chamado criado!");
+                router.push("/dashboard/support");
+            }
+        } finally {
+            setIsSubmitting(false);
         }
-
-        const res = await fetch("/api/support/new", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                title: titulo,
-                reason: motivo,
-                description: descricao,
-                attachmentPath,
-                company_id: company.id
-            }),
-        });
-
-        if (!res.ok) {
-            const err = await res.json();
-            toast.error("Erro: " + err.error);
-        } else {
-            toast.success("Chamado criado!");
-            router.push("/dashboard/support");
-        }
-
 
     }
 
@@ -213,8 +219,8 @@ export default function NewSupportPage() {
 
                     {fileError && <p className="text-sm text-destructive mb-4">{fileError}</p>}
 
-                    <Button type="submit" className="w-full">
-                        Enviar
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        {isSubmitting ? "Enviando..." : "Enviar"}
                     </Button>
                 </form>
             </div>
