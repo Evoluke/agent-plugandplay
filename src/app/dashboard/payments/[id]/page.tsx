@@ -32,6 +32,7 @@ export default function PaymentPage() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [paymentLink, setPaymentLink] = useState<string | null>(null);
     const [user, setUser] = useState<{ id: string } | null>(null);
+    const [autoAttempted, setAutoAttempted] = useState(false);
 
     const handleGenerateLink = async () => {
         if (isGenerating || paymentLink || !payment) return;
@@ -59,7 +60,18 @@ export default function PaymentPage() {
             setPaymentLink(asaas.invoiceUrl || asaas.paymentLink);
         } catch (err: unknown) {
             console.error('Erro ao gerar link de pagamento:', err);
-            toast.error('Erro ao gerar link de pagamento. Tente novamente mais tarde.');
+            let message = 'Erro ao gerar link de pagamento. Tente novamente mais tarde.';
+            if (typeof err === 'string') {
+                try {
+                    const parsed = JSON.parse(err);
+                    if (parsed.error === 'Payment not found') {
+                        message = 'Link de pagamento não encontrado.';
+                    }
+                } catch {
+                    // ignore JSON parse errors
+                }
+            }
+            toast.error(message);
         } finally {
             setIsGenerating(false);
         }
@@ -101,11 +113,12 @@ export default function PaymentPage() {
       }, [user, id]);
 
       useEffect(() => {
-          if (payment && !paymentLink && !isGenerating) {
+          if (payment && !paymentLink && !isGenerating && !autoAttempted) {
+              setAutoAttempted(true);
               handleGenerateLink();
           }
           // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [payment, paymentLink, isGenerating]);
+      }, [payment, paymentLink, isGenerating, autoAttempted]);
 
       if (loading) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Carregando...</p>;
       if (error) return <p className="text-red-600 py-10 min-h-screen flex items-center justify-center">Erro: {error}</p>;
