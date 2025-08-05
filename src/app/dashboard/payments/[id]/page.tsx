@@ -18,6 +18,7 @@ interface Payment {
     usage: number;
     created_at: string;
     status: "pendente" | "pago";
+    payment_link: string | null;
 }
 
 export default function PaymentPage() {
@@ -31,6 +32,50 @@ export default function PaymentPage() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [paymentLink, setPaymentLink] = useState<string | null>(null);
     const [user, setUser] = useState<{ id: string } | null>(null);
+    const [autoAttempted, setAutoAttempted] = useState(false);
+
+    const handleGenerateLink = async () => {
+        if (isGenerating || paymentLink || !payment) return;
+        setIsGenerating(true);
+        try {
+            const date = new Date(payment.due_date).toISOString().slice(0, 10);
+            const total = payment.amount;
+
+            const {
+                data: { session },
+                error: sessionError,
+            } = await supabasebrowser.auth.getSession();
+            if (sessionError || !session) throw new Error("Sessão não encontrada");
+
+            const res = await fetch("/api/payments/pay", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session.access_token}`,
+                },
+                body: JSON.stringify({ id, date, total }),
+            });
+            if (!res.ok) throw await res.text();
+            const { asaas } = await res.json();
+            setPaymentLink(asaas.invoiceUrl || asaas.paymentLink);
+        } catch (err: unknown) {
+            console.error('Erro ao gerar link de pagamento:', err);
+            let message = 'Erro ao gerar link de pagamento. Tente novamente mais tarde.';
+            if (typeof err === 'string') {
+                try {
+                    const parsed = JSON.parse(err);
+                    if (parsed.error === 'Payment not found') {
+                        message = 'Link de pagamento não encontrado.';
+                    }
+                } catch {
+                    // ignore JSON parse errors
+                }
+            }
+            toast.error(message);
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
     useEffect(() => {
         supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -57,6 +102,7 @@ export default function PaymentPage() {
                     .single();
                 if (error) throw error;
                 setPayment(data as Payment);
+                setPaymentLink((data as Payment).payment_link);
             } catch (err: unknown) {
                 setError(err instanceof Error ? err.message : String(err));
             } finally {
@@ -64,13 +110,21 @@ export default function PaymentPage() {
             }
         }
         load();
-    }, [user, id]);
+      }, [user, id]);
 
-    if (loading) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Carregando...</p>;
-    if (error) return <p className="text-red-600 py-10 min-h-screen flex items-center justify-center">Erro: {error}</p>;
-    if (!payment) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Pagamento não encontrado.</p>;
-    if (payment.status === "pago") {
-        return (
+      useEffect(() => {
+          if (payment && !paymentLink && !isGenerating && !autoAttempted) {
+              setAutoAttempted(true);
+              handleGenerateLink();
+          }
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [payment, paymentLink, isGenerating, autoAttempted]);
+
+      if (loading) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Carregando...</p>;
+      if (error) return <p className="text-red-600 py-10 min-h-screen flex items-center justify-center">Erro: {error}</p>;
+      if (!payment) return <p className="text-center py-10 min-h-screen flex items-center justify-center">Pagamento não encontrado.</p>;
+      if (payment.status === "pago") {
+          return (
             <Card className="max-w-md mx-auto mt-10">
                 <CardHeader>
                     <CardTitle>Pagamento já quitado</CardTitle>
@@ -82,35 +136,6 @@ export default function PaymentPage() {
         );
     }
 
-    const handleGenerateLink = async () => {
-        if (isGenerating || paymentLink) return;
-        setIsGenerating(true);
-        try {
-            const date = new Date(payment.due_date).toISOString().slice(0, 10);
-            const total = payment.amount;
-
-            const {
-                data: { session },
-                error: sessionError,
-            } = await supabasebrowser.auth.getSession();
-            if (sessionError || !session) throw new Error("Sessão não encontrada");
-
-            const res = await fetch("/api/payments/pay", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({ id, date, total }),
-            });
-            if (!res.ok) throw await res.text();
-            const { asaas } = await res.json();
-            setPaymentLink(asaas.invoiceUrl || asaas.paymentLink);
-        } catch (err: unknown) {
-            console.error('Erro ao gerar link de pagamento:', err);
-            toast.error('Erro ao gerar link de pagamento. Tente novamente mais tarde.');
-        }
-    };
 
     return (
         <div className=" bg-[#FAFAFA] flex items-center justify-center p-6">
