@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import { getUserFromCookie } from "@/lib/auth";
 import {
   isValidCpfCnpj,
   isValidAddress,
@@ -11,11 +10,7 @@ import {
 } from "@/lib/validators";
 
 export async function POST(req: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { user } = await getUserFromCookie();
   if (!user) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }

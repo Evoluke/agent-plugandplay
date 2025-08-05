@@ -1,16 +1,10 @@
 // src/app/api/support/new/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import { getUserFromCookie } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
+  const { user, error: authError } = await getUserFromCookie();
   if (authError || !user) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
@@ -18,7 +12,7 @@ export async function POST(req: NextRequest) {
   const {
     data: company,
     error: companyError,
-  } = await supabase
+  } = await supabaseadmin
     .from("company")
     .select("id")
     .eq("user_id", user.id)
