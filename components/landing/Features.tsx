@@ -1,41 +1,37 @@
-"use client";
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Bot, MessageSquare, Users, Kanban } from "lucide-react";
+import { Bot, MessageSquare, Users } from "lucide-react";
 
-const features = [
+const items = [
   {
-    title: "Agente de IA",
-    description: "Automatize respostas e agilize atendimentos com inteligência artificial.",
+    title: "Automação inteligente",
+    description:
+      "Reduza o tempo de resposta com agentes que entendem seu negócio.",
     icon: Bot,
   },
   {
-    title: "Atendimento multicanal",
-    description: "Conecte-se com clientes por e-mail, chat e redes sociais em um só lugar.",
+    title: "Centralização de canais",
+    description: "Converse por e-mail, chat e redes sociais em um único lugar.",
     icon: MessageSquare,
   },
   {
-    title: "CRM",
-    description: "Gerencie contatos e oportunidades com uma visão completa do cliente.",
+    title: "Gestão de clientes",
+    description: "Tenha histórico completo e oportunidades sempre à mão.",
     icon: Users,
-  },
-  {
-    title: "Kanban",
-    description: "Organize tarefas e fluxos de trabalho com quadros visuais intuitivos.",
-    icon: Kanban,
   },
 ];
 
 export default function Features() {
   return (
-    <section className="bg-[#FAFAFA] py-24" id="features">
-      <div className="container mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold">Recursos principais</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {features.map(({ title, description, icon: Icon }) => (
+    <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16" id="sobre">
+      <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
+        <h2 className="mb-8 text-center text-3xl font-bold">
+          Por que é melhor
+        </h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map(({ title, description, icon: Icon }) => (
             <Card key={title} className="h-full">
               <CardHeader>
-                <Icon className="mb-2 h-8 w-8 text-primary" />
+                <Icon className="mb-2 h-6 w-6 text-primary" />
                 <CardTitle>{title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -48,3 +44,4 @@ export default function Features() {
     </section>
   );
 }
+
