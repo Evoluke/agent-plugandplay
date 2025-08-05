@@ -12,7 +12,11 @@ import {
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  // Supabase helpers still expect a synchronous cookie getter. Pre-resolve
+  // the cookie store and cast to the async signature expected by the helper.
+  const supabase = createRouteHandlerClient({
+    cookies: (() => cookieStore) as unknown as () => Promise<typeof cookieStore>,
+  });
   const {
     data: { user },
   } = await supabase.auth.getUser();

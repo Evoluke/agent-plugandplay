@@ -6,7 +6,11 @@ import { supabaseadmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  // Supabase helpers expect a sync cookie getter. Pre-resolve the store and
+  // cast to the async signature expected by the helper.
+  const supabase = createRouteHandlerClient({
+    cookies: (() => cookieStore) as unknown as () => Promise<typeof cookieStore>,
+  });
   const {
     data: { user },
     error: authError,
