@@ -69,11 +69,11 @@ export default function NewAgentPage() {
       return;
     }
 
-    toast.success(
-      "Agente criado com sucesso. Configure-o ou ative-o quando estiver pronto."
+    toast.success("Agente criado com sucesso...");
+    setTimeout(
+      () => window.location.assign(`/dashboard/agents/${data.id}`),
+      2000
     );
-    router.refresh();
-    router.push(`/dashboard/agents/${data.id}`);    
   };
 
   const isFormValid = isValidAgentName(name) && type !== "";
