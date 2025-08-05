@@ -132,7 +132,7 @@ export default function NewAgentPage() {
               </div>
             </CardContent>
 
-            <CardFooter className="flex space-x-2 mt-6">
+            <CardFooter className="flex space-x-2 mt-6 justify-center">
               <Button type="submit" disabled={!isFormValid}>
                 Criar Agente de IA
               </Button>

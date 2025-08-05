@@ -47,12 +47,6 @@ export default function AgentDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">{agent.name}</h1>
-        <p className="text-sm text-gray-600">Função: {agent.type}</p>
-        <p className="text-sm">Status: {agent.is_active ? "Ativo" : "Inativo"}</p>
-      </div>
-
       <div className="flex justify-center">
         <Card className="w-4/5 p-6">
           <nav className="flex items-center justify-around">
