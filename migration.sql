@@ -41,6 +41,8 @@ create table public.payments (
   paid_in timestamp with time zone null,
   due_date timestamp with time zone not null,
   reference text not null default '-'::text,
+  asaas_id text null,
+  payment_link text null,
   constraint payments_pkey primary key (id),
   constraint payments_company_id_fkey foreign KEY (company_id) references company (id)
 ) TABLESPACE pg_default;

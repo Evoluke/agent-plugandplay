@@ -67,6 +67,32 @@ export async function POST(request: Request) {
 
   console.log(`[payment] user=${userId} id=${id} total=${total}`);
 
+  const { data: paymentRecord, error: paymentError } = await supabaseadmin
+    .from('payments')
+    .select('id, asaas_id, payment_link, due_date')
+    .or(`id.eq.${id},reference.eq.${id}`)
+    .maybeSingle();
+  if (paymentError) {
+    console.error(paymentError);
+  }
+  if (paymentRecord?.asaas_id && paymentRecord.payment_link) {
+    return NextResponse.json({
+      success: true,
+      asaas: {
+        id: paymentRecord.asaas_id,
+        invoiceUrl: paymentRecord.payment_link,
+        paymentLink: paymentRecord.payment_link,
+        dueDate: paymentRecord.due_date,
+      },
+    });
+  }
+  if (!paymentRecord) {
+    return NextResponse.json(
+      { error: 'Payment not found' },
+      { status: 404 }
+    );
+  }
+
   const { data: company, error: companyError } = await supabaseadmin
     .from('company')
     .select(
@@ -163,6 +189,15 @@ export async function POST(request: Request) {
   const data = await resp.json();
 
   if (!resp.ok) return NextResponse.json({ error: data }, { status: 400 });
+
+  await supabaseadmin
+    .from('payments')
+    .update({
+      asaas_id: data.id,
+      payment_link: data.invoiceUrl || data.paymentLink,
+      due_date: data.dueDate || dueDate,
+    })
+    .eq('id', paymentRecord.id);
 
   return NextResponse.json({ success: true, asaas: data });
 }
