@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import { getUserFromCookie } from "@/lib/auth";
 import {
   isValidCpfCnpj,
   isValidAddress,
@@ -11,16 +10,7 @@ import {
 } from "@/lib/validators";
 
 export async function POST(req: Request) {
-  const cookieStore = await cookies();
-  // Supabase helpers still expect a synchronous cookie getter. Pre-resolve
-  // the cookie store and cast to the async signature expected by the helper.
-  const supabase = createRouteHandlerClient({
-    cookies: (() => cookieStore) as unknown as () => Promise<typeof cookieStore>,
-  });
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { user } = await getUserFromCookie();
   if (!user) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }

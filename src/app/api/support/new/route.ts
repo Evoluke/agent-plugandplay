@@ -1,21 +1,10 @@
 // src/app/api/support/new/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import { getUserFromCookie } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const cookieStore = await cookies();
-  // Supabase helpers expect a sync cookie getter. Pre-resolve the store and
-  // cast to the async signature expected by the helper.
-  const supabase = createRouteHandlerClient({
-    cookies: (() => cookieStore) as unknown as () => Promise<typeof cookieStore>,
-  });
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
+  const { user, error: authError } = await getUserFromCookie();
   if (authError || !user) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
@@ -23,7 +12,7 @@ export async function POST(req: NextRequest) {
   const {
     data: company,
     error: companyError,
-  } = await supabase
+  } = await supabaseadmin
     .from("company")
     .select("id")
     .eq("user_id", user.id)
