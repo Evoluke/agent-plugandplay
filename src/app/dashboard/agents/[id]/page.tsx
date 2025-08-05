@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useParams } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Smile,
+  Settings,
+  BookOpen,
+  Database,
+  ClipboardList,
+} from "lucide-react";
 
 type Agent = {
   id: string;
@@ -30,11 +38,11 @@ export default function AgentDetailPage() {
   if (!agent) return <div>Carregando...</div>;
 
   const menuItems = [
-    "Personalidade",
-    "Comportamento",
-    "Onboarding",
-    "Base de conhecimento",
-    "Instruções Específicas",
+    { label: "Personalidade", icon: Smile },
+    { label: "Comportamento", icon: Settings },
+    { label: "Onboarding", icon: BookOpen },
+    { label: "Base de conhecimento", icon: Database },
+    { label: "Instruções Específicas", icon: ClipboardList },
   ];
 
   return (
@@ -45,13 +53,26 @@ export default function AgentDetailPage() {
         <p className="text-sm">Status: {agent.is_active ? "Ativo" : "Inativo"}</p>
       </div>
 
-      <nav className="flex flex-wrap justify-center gap-2">
-        {menuItems.map((item) => (
-          <Button key={item} variant="outline" className="rounded-full">
-            {item}
-          </Button>
-        ))}
-      </nav>
+      <div className="flex justify-center">
+        <Card className="w-4/5 p-6">
+          <nav className="flex items-center justify-around">
+            {menuItems.map(({ label, icon: Icon }, index) => (
+              <Fragment key={label}>
+                <Button
+                  variant="ghost"
+                  className="flex h-auto flex-col items-center gap-1 text-sm"
+                >
+                  <Icon className="h-5 w-5 text-gray-700" />
+                  <span>{label}</span>
+                </Button>
+                {index < menuItems.length - 1 && (
+                  <div className="h-8 border-l" />
+                )}
+              </Fragment>
+            ))}
+          </nav>
+        </Card>
+      </div>
     </div>
   );
 }
