@@ -123,7 +123,9 @@ export function Sidebar() {
                   🤖 {agent.name}
                 </Link>
               ))}
-              {!agents ? <div /> : <div className="border-t my-1" />}
+              {agents != null && (
+                <div className="border-t my-1" />
+              )}
 
               <Link
                 href="/dashboard/agents/new"

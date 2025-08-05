@@ -22,6 +22,7 @@ export default function NewAgentPage() {
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const agentTypes = [
     {
@@ -56,7 +57,9 @@ export default function NewAgentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid || !companyId) return;
+    if (!isFormValid || !companyId || isSubmitting) return;
+
+    setIsSubmitting(true);
 
     const { data, error } = await supabasebrowser
       .from("agents")
@@ -66,6 +69,7 @@ export default function NewAgentPage() {
 
     if (error || !data) {
       toast.error("Erro ao criar agente.");
+      setIsSubmitting(false);
       return;
     }
 
