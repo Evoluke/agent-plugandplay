@@ -11,7 +11,8 @@ import {
 } from "@/lib/validators";
 
 export async function POST(req: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const cookieStore = await cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
   const {
     data: { user },
   } = await supabase.auth.getUser();

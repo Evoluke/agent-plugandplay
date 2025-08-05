@@ -5,7 +5,8 @@ import { cookies } from "next/headers";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const cookieStore = await cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
   const {
     data: { user },
     error: authError,
