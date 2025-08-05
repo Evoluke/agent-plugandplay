@@ -1,37 +1,37 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Bot, MessageSquare, Users, Kanban } from "lucide-react";
+import { Bot, MessageSquare, Users } from "lucide-react";
 
 const features = [
   {
     title: "Agente de IA",
-    description: "Automatize respostas e agilize atendimentos com inteligência artificial.",
+    description:
+      "Automatize respostas e agilize atendimentos com inteligência artificial.",
     icon: Bot,
   },
   {
     title: "Atendimento multicanal",
-    description: "Conecte-se com clientes por e-mail, chat e redes sociais em um só lugar.",
+    description:
+      "Conecte-se com clientes por e-mail, chat e redes sociais em um só lugar.",
     icon: MessageSquare,
   },
   {
-    title: "CRM",
-    description: "Gerencie contatos e oportunidades com uma visão completa do cliente.",
+    title: "CRM integrado",
+    description:
+      "Gerencie contatos e oportunidades com uma visão completa do cliente.",
     icon: Users,
-  },
-  {
-    title: "Kanban",
-    description: "Organize tarefas e fluxos de trabalho com quadros visuais intuitivos.",
-    icon: Kanban,
   },
 ];
 
 export default function Features() {
   return (
-    <section className="bg-[#FAFAFA] py-24" id="features">
-      <div className="container mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold">Recursos principais</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="bg-[#FAFAFA]" id="features">
+      <div className="mx-auto max-w-[1140px] px-3 py-8 md:px-4 md:py-12 lg:px-6 lg:py-16">
+        <h2 className="mb-12 text-center text-3xl font-bold">
+          Por que é melhor
+        </h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map(({ title, description, icon: Icon }) => (
             <Card key={title} className="h-full">
               <CardHeader>
