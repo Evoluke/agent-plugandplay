@@ -41,10 +41,29 @@ export default function NewSupportPage() {
     const [company, setCompany] = useState<Company | null>(null);
 
     useEffect(() => {
-        supabasebrowser.auth.getUser().then(({ data, error }) => {
-            if (!error && data.user) setUser(data.user);
+        const getInitialSession = async () => {
+            const {
+                data: { session },
+            } = await supabasebrowser.auth.getSession();
+            const currentUser = session?.user ?? null;
+            setUser(currentUser);
+            if (!currentUser) router.replace("/login");
+        };
+
+        getInitialSession();
+
+        const {
+            data: { subscription },
+        } = supabasebrowser.auth.onAuthStateChange((_event, session) => {
+            const updatedUser = session?.user ?? null;
+            setUser(updatedUser);
+            if (!updatedUser) router.replace("/login");
         });
-    }, []);
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [router]);
 
     useEffect(() => {
         if (!user?.id) return;
@@ -132,6 +151,7 @@ export default function NewSupportPage() {
         const res = await fetch("/api/support/new", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
                 title: titulo,
                 reason: motivo,
