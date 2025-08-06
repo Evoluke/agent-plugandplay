@@ -63,3 +63,19 @@ create table public.agents (
   constraint agents_company_id_fkey foreign key (company_id) references company (id)
 ) TABLESPACE pg_default;
 
+-- Enum para tom de voz dos agentes
+create type public.voice_tone as enum ('formal', 'casual');
+
+-- Tabela de personalidade dos agentes
+create table public.agent_personality (
+  id uuid not null default gen_random_uuid (),
+  created_at timestamp with time zone not null default now(),
+  agent_id uuid not null,
+  voice_tone public.voice_tone not null,
+  objective text not null,
+  limits text not null,
+  constraint agent_personality_pkey primary key (id),
+  constraint agent_personality_agent_id_key unique (agent_id),
+  constraint agent_personality_agent_id_fkey foreign key (agent_id) references agents (id)
+) TABLESPACE pg_default;
+
