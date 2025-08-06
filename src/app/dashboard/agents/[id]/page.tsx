@@ -151,35 +151,38 @@ export default function AgentDetailPage() {
       <div className="flex justify-center">
         <Card className="w-4/5 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">
-                Nome interno
-              </label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-              <p className="text-xs text-gray-500">
-                Identifica o agente no dashboard.
-              </p>
-              <p className="text-xs text-gray-500">3 a 80 caracteres</p>
-              {name && !isValidAgentName(name) && (
-                <p className="text-xs text-red-500">
-                  O nome deve ter entre 3 e 80 caracteres
-                </p>
-              )}
+            <div className="flex gap-4">
+              <div className="flex-1 space-y-2">
+                <label htmlFor="name" className="text-sm font-medium">
+                  Nome interno
+                </label>
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                <div className="flex justify-between text-xs text-gray-500">
+                  <p>Identifica o agente no dashboard.</p>
+                  <p className="text-gray-400"> 3 a 50 caracteres</p>
+                </div>
+                {name && !isValidAgentName(name) && (
+                  <p className="text-xs text-red-500">
+                    O nome deve ter entre 3 e 50 caracteres
+                  </p>
+                )}
+              </div>
+
+              <div className="flex-1 space-y-2">
+                <label className="text-sm font-medium">Tom de voz</label>
+                <Select value={tone} onValueChange={setTone}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tom" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="formal">Formal</SelectItem>
+                    <SelectItem value="casual">Casual</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">Define estilo de resposta</p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Tom de voz</label>
-              <Select value={tone} onValueChange={setTone}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tom" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="formal">Formal</SelectItem>
-                  <SelectItem value="casual">Casual</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-gray-500">Define estilo de resposta</p>
-            </div>
 
             <div className="space-y-2">
               <label htmlFor="objective" className="text-sm font-medium">
@@ -189,11 +192,13 @@ export default function AgentDetailPage() {
                 id="objective"
                 value={objective}
                 onChange={(e) => setObjective(e.target.value)}
+                className="resize-y max-h-50 overflow-auto"
               />
-              <p className="text-xs text-gray-500">
-                Resume o “por quê” do agente.
-              </p>
-              <p className="text-xs text-gray-500">10 a 500 caracteres</p>
+              <div className="flex justify-between text-xs text-gray-500">
+
+              <p>Resume o “por quê” do agente.</p>
+              <p className="text-gray-400">10 a 500 caracteres</p>
+              </div>
               {objective && !objectiveValid && (
                 <p className="text-xs text-red-500">
                   O objetivo deve ter entre 10 e 500 caracteres
@@ -209,9 +214,12 @@ export default function AgentDetailPage() {
                 id="limits"
                 value={limits}
                 onChange={(e) => setLimits(e.target.value)}
+                className="resize-y max-h-50 overflow-auto"
               />
-              <p className="text-xs text-gray-500">(o que não dizer/fazer).</p>
-              <p className="text-xs text-gray-500">10 a 1000 caracteres</p>
+              <div className="flex justify-between text-xs text-gray-500">
+              <p>O que não dizer/fazer.</p>
+              <p className="text-xs text-gray-400">10 a 1000 caracteres</p>
+              </div>
               {limits && !limitsValid && (
                 <p className="text-xs text-red-500">
                   Os limites devem ter entre 10 e 1000 caracteres

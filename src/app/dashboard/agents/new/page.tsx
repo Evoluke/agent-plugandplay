@@ -126,7 +126,7 @@ export default function NewAgentPage() {
                 </p>
                 {name && !isValidAgentName(name) && (
                   <p className="text-xs text-red-500">
-                    O nome deve ter entre 3 e 80 caracteres
+                    O nome deve ter entre 3 e 50 caracteres
                   </p>
                 )}
               </div>

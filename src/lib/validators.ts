@@ -73,5 +73,5 @@ export function isValidPhone(phone: string) {
 
 export function isValidAgentName(name: string) {
   const len = name.trim().length;
-  return len >= 3 && len <= 80;
+  return len >= 3 && len <= 50;
 }
