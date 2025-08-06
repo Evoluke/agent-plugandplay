@@ -92,3 +92,16 @@ create table public.agent_behavior (
   constraint agent_behavior_agent_id_fkey foreign key (agent_id) references agents (id)
 ) TABLESPACE pg_default;
 
+
+-- Tabela de onboarding dos agentes
+create table public.agent_onboarding (
+  id uuid not null default gen_random_uuid (),
+  created_at timestamp with time zone not null default now(),
+  agent_id uuid not null,
+  welcome_message text not null default ''::text,
+  collection jsonb not null default '[]'::jsonb,
+  constraint agent_onboarding_pkey primary key (id),
+  constraint agent_onboarding_agent_id_key unique (agent_id),
+  constraint agent_onboarding_agent_id_fkey foreign key (agent_id) references agents (id)
+) TABLESPACE pg_default;
+
