@@ -6,8 +6,9 @@ import { useSearchParams } from 'next/navigation';
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Suspense } from 'react';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
   const [cooldown, setCooldown] = useState(0);
@@ -52,6 +53,14 @@ export default function VerifyEmailPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
 
