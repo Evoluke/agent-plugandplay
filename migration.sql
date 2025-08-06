@@ -79,3 +79,16 @@ create table public.agent_personality (
   constraint agent_personality_agent_id_fkey foreign key (agent_id) references agents (id)
 ) TABLESPACE pg_default;
 
+-- Tabela de comportamento dos agentes
+create table public.agent_behavior (
+  id uuid not null default gen_random_uuid (),
+  created_at timestamp with time zone not null default now(),
+  agent_id uuid not null,
+  limitations text not null default ''::text,
+  forbidden_words text not null default ''::text,
+  default_fallback text not null,
+  constraint agent_behavior_pkey primary key (id),
+  constraint agent_behavior_agent_id_key unique (agent_id),
+  constraint agent_behavior_agent_id_fkey foreign key (agent_id) references agents (id)
+) TABLESPACE pg_default;
+
