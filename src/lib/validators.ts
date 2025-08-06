@@ -75,3 +75,13 @@ export function isValidAgentName(name: string) {
   const len = name.trim().length;
   return len >= 3 && len <= 80;
 }
+
+export function isValidAgentObjective(text: string) {
+  const len = text.trim().length;
+  return len >= 10 && len <= 200;
+}
+
+export function isValidAgentLimit(text: string) {
+  const len = text.trim().length;
+  return len >= 10 && len <= 200;
+}
