@@ -68,16 +68,29 @@ export default function AgentOnboardingPage() {
 
   if (!agent) return <div>Carregando...</div>;
 
+  const variableRegex = /^[a-z]+(?:_[a-z]+)*$/;
+
   const welcomeMessageValid = welcomeMessage.trim().length <= 500;
-  const collectionValid = collection.every(
-    (item) =>
-      item.question.trim().length <= 500 &&
-      item.variable.trim().length >= 10 &&
-      item.variable.trim().length <= 200
-  );
+  const collectionValid = collection.every((item) => {
+    const question = item.question.trim();
+    const variable = item.variable.trim();
+
+    if (!question && !variable) return true;
+    if (question && !variable) return false;
+    if (!question && variable) return false;
+
+    return (
+      question.length <= 200 &&
+      variable.length >= 10 &&
+      variable.length <= 200 &&
+      variableRegex.test(variable)
+    );
+  });
+
   const hasAtLeastOneItem = collection.some(
     (item) => item.question.trim() && item.variable.trim()
   );
+
   const isFormValid = welcomeMessageValid && collectionValid && hasAtLeastOneItem;
 
   const handleQuestionChange = (index: number, value: string) => {
@@ -87,8 +100,12 @@ export default function AgentOnboardingPage() {
   };
 
   const handleVariableChange = (index: number, value: string) => {
+    const sanitized = value
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-z_]/g, "");
     const newCollection = [...collection];
-    newCollection[index].variable = value;
+    newCollection[index].variable = sanitized;
     setCollection(newCollection);
   };
 
@@ -206,20 +223,19 @@ export default function AgentOnboardingPage() {
                   >
                     Pergunta de coleta
                   </label>
-                  <Textarea
+                  <Input
                     id={`question-${index}`}
                     value={item.question}
                     onChange={(e) => handleQuestionChange(index, e.target.value)}
-                    className="resize-y max-h-50 overflow-auto"
-                    maxLength={500}
+                    maxLength={200}
                   />
                   <div className="flex justify-between text-xs text-gray-500">
                     <p>Nome, telefone, preferência de horário.</p>
-                    <p className="text-gray-400">0 a 500 caracteres</p>
+                    <p className="text-gray-400">0 a 200 caracteres</p>
                   </div>
-                  {item.question && item.question.trim().length > 500 && (
+                  {item.question && item.question.trim().length > 200 && (
                     <p className="text-xs text-red-500">
-                      A pergunta deve ter no máximo 500 caracteres
+                      A pergunta deve ter no máximo 200 caracteres
                     </p>
                   )}
                 </div>
@@ -232,19 +248,22 @@ export default function AgentOnboardingPage() {
                   </label>
                   <Input
                     id={`variable-${index}`}
+                    placeholder="example_variable"
+                    pattern="^[a-z]+(?:_[a-z]+)*$"
                     value={item.variable}
                     onChange={(e) => handleVariableChange(index, e.target.value)}
                     minLength={10}
                     maxLength={200}
                   />
                   <div className="flex justify-end text-xs text-gray-500">
-                    <p className="text-gray-400">10 a 200 caracteres</p>
+                    <p className="text-gray-400">10 a 200 caracteres, use snake_case</p>
                   </div>
                   {item.variable &&
                     (item.variable.trim().length < 10 ||
-                      item.variable.trim().length > 200) && (
+                      item.variable.trim().length > 200 ||
+                      !variableRegex.test(item.variable.trim())) && (
                       <p className="text-xs text-red-500">
-                        A variável deve ter entre 10 e 200 caracteres
+                        A variável deve ter entre 10 e 200 caracteres, usando letras minúsculas e underscore
                       </p>
                     )}
                 </div>
