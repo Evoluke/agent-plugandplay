@@ -40,7 +40,13 @@ export default function LoginPage() {
     const { data, error } = await supabasebrowser.auth.signInWithPassword({ email, password });
     if (error) {
       console.error('Falha no login:', error.message);
-      toast.error('Falha no login. Tente novamente mais tarde.');
+      if (error.message.includes('Email not confirmed')) {
+        router.push('/verify-email?email=' + encodeURIComponent(email));
+      } else if (error.message.includes('Invalid login credentials')) {
+        toast.error('Email ou senha inválidos');
+      } else {
+        toast.error('Falha no login. Tente novamente mais tarde.');
+      }
     } else {
       const { data: company } = await supabasebrowser
         .from('company')
