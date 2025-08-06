@@ -40,7 +40,6 @@ export async function POST(req: Request) {
     password,
     options: {
       data: { name },
-      emailRedirectTo: "http://localhost:3000/auth/callback",
     },
   });
   if (error) {
