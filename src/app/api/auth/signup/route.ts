@@ -43,10 +43,28 @@ export async function POST(req: Request) {
       emailRedirectTo: "http://localhost:3000/auth/callback",
     },
   });
+  if (error) {
+    console.error("Erro ao criar usuário:", error.message);
+    if (
+      error.message?.includes("User already registered") ||
+      error.status === 400
+    ) {
+      return NextResponse.json(
+        { error: "Email já cadastrado" },
+        { status: 409 }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro ao criar usuário" },
+      { status: 409 }
+    );
+  }
 
-  if (error || !data.user) {
-    console.error('Erro ao criar usuário:', error?.message);
-    return NextResponse.json({ error: 'Erro ao criar usuário' }, { status: 409 });
+  if (!data.user) {
+    return NextResponse.json(
+      { error: "Erro ao criar usuário" },
+      { status: 409 }
+    );
   }
 
   const userId = data.user.id;
