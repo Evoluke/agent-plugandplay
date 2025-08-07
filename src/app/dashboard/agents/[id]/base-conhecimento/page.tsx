@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useParams, usePathname } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,13 @@ export default function AgentKnowledgeBasePage() {
   const id = params?.id as string;
   const pathname = usePathname();
   const [agent, setAgent] = useState<Agent | null>(null);
+  const [activeSection, setActiveSection] = useState("Arquivos");
+  const [search, setSearch] = useState("");
+  const [files, setFiles] = useState([
+    { name: "documento1.pdf", tokens: 2048 },
+    { name: "documento2.pdf", tokens: 1024 },
+  ]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -69,15 +76,22 @@ export default function AgentKnowledgeBasePage() {
 
   const sidebarItems = [
     { label: "Websites", icon: Globe },
-    { label: "Arquivos", icon: FileText, active: true },
+    { label: "Arquivos", icon: FileText },
     { label: "FAQ", icon: HelpCircle },
     { label: "Vídeos", icon: Video },
   ];
 
-  const files = [
-    { name: "documento1.pdf", tokens: 2048 },
-    { name: "documento2.pdf", tokens: 1024 },
-  ];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const tokens = Math.ceil(file.size / 4);
+    setFiles((prev) => [...prev, { name: file.name, tokens }]);
+    e.target.value = "";
+  };
+
+  const filteredFiles = files.filter((file) =>
+    file.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -104,45 +118,69 @@ export default function AgentKnowledgeBasePage() {
       </div>
 
       <div className="flex justify-center">
-        <Card className="w-4/5 p-6 bg-gray-900 text-gray-100">
+        <Card className="w-4/5 p-6">
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-semibold">Cérebro</h2>
             <div className="flex gap-6">
               <aside className="w-40 flex-shrink-0 space-y-2">
-                {sidebarItems.map(({ label, icon: Icon, active }) => (
-                  <Button
-                    key={label}
-                    variant={active ? "secondary" : "ghost"}
-                    className="w-full justify-start gap-2"
-                  >
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </Button>
-                ))}
+                {sidebarItems.map(({ label, icon: Icon }) => {
+                  const active = activeSection === label;
+                  return (
+                    <Button
+                      key={label}
+                      variant={active ? "secondary" : "ghost"}
+                      className="w-full justify-start gap-2"
+                      onClick={() => setActiveSection(label)}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {label}
+                    </Button>
+                  );
+                })}
               </aside>
               <main className="flex-1 space-y-6">
                 <div className="flex items-center justify-between">
                   <Input
                     placeholder="Pesquisar"
-                    className="max-w-xs bg-gray-800 text-gray-100"
+                    className="max-w-xs"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                   />
-                  <Button>Adicionar Fonte</Button>
+                  <>
+                    <Button onClick={() => fileInputRef.current?.click()}>
+                      Adicionar Fonte
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </>
                 </div>
-                <h3 className="text-lg font-medium">Arquivos</h3>
-                <div className="border border-gray-800 rounded-md divide-y divide-gray-800">
-                  {files.map((file) => (
-                    <div
-                      key={file.name}
-                      className="flex items-center justify-between px-4 py-3"
-                    >
-                      <div className="flex items-center gap-2">
-                        <File className="h-4 w-4" />
-                        <span>{file.name}</span>
-                      </div>
-                      <span>{file.tokens.toLocaleString()} tokens</span>
+                {activeSection === "Arquivos" ? (
+                  <>
+                    <h3 className="text-lg font-medium">Arquivos</h3>
+                    <div className="rounded-md border divide-y">
+                      {filteredFiles.map((file) => (
+                        <div
+                          key={file.name}
+                          className="flex items-center justify-between px-4 py-3"
+                        >
+                          <div className="flex items-center gap-2">
+                            <File className="h-4 w-4" />
+                            <span>{file.name}</span>
+                          </div>
+                          <span>{file.tokens.toLocaleString()} tokens</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </>
+                ) : (
+                  <h3 className="text-lg font-medium">
+                    {activeSection} em desenvolvimento
+                  </h3>
+                )}
               </main>
             </div>
           </div>
