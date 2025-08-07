@@ -90,8 +90,13 @@ export function Sidebar() {
 
   return (
     <aside className="w-16 bg-white border-r h-full flex flex-col items-center py-4 space-y-4">
-      <div className="w-10 h-10 bg-gray-100 rounded-xl border border-gray-300 flex items-center justify-center p-1">
-        <span className="text-xl font-semibold text-gray-700">E</span>
+      <div className="w-10 h-10 bg-[#0D0D0D] rounded-xl flex items-center justify-center p-1">
+              <img
+        src="/logo-sidebar.svg"
+        alt="Logomarca Evoluke"
+        className="w-8 h-8"
+      />
+
       </div>
 
       <nav className="flex flex-col space-y-2">
