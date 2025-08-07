@@ -18,13 +18,23 @@ import {
   HelpCircle,
   Video,
   File,
+  Trash,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Agent {
   id: string;
   name: string;
   type: string;
   is_active: boolean;
+  company_id: number;
+}
+
+interface KnowledgeFile {
+  id: string;
+  name: string;
+  tokens: number;
+  path: string;
 }
 
 export default function AgentKnowledgeBasePage() {
@@ -34,22 +44,26 @@ export default function AgentKnowledgeBasePage() {
   const [agent, setAgent] = useState<Agent | null>(null);
   const [activeSection, setActiveSection] = useState("Arquivos");
   const [search, setSearch] = useState("");
-  const [files, setFiles] = useState([
-    { name: "documento1.pdf", tokens: 2048 },
-    { name: "documento2.pdf", tokens: 1024 },
-  ]);
+  const [files, setFiles] = useState<KnowledgeFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!id) return;
-    supabasebrowser
-      .from("agents")
-      .select("id,name,type,is_active")
-      .eq("id", id)
-      .single()
-      .then(({ data }) => {
-        setAgent(data);
-      });
+    const fetchData = async () => {
+      const { data: agentData } = await supabasebrowser
+        .from("agents")
+        .select("id,name,type,is_active,company_id")
+        .eq("id", id)
+        .single();
+      setAgent(agentData);
+
+      const { data: fileData } = await supabasebrowser
+        .from("agent_knowledge_files")
+        .select("id,name,tokens,path")
+        .eq("agent_id", id);
+      setFiles(fileData || []);
+    };
+    fetchData();
   }, [id]);
 
   if (!agent) return <div>Carregando...</div>;
@@ -81,17 +95,67 @@ export default function AgentKnowledgeBasePage() {
     { label: "Vídeos", icon: Video },
   ];
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const MAX_TOKENS = 1_000_000;
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !agent) return;
     const tokens = Math.ceil(file.size / 4);
-    setFiles((prev) => [...prev, { name: file.name, tokens }]);
+    const totalTokens = files.reduce((sum, f) => sum + f.tokens, 0);
+    if (totalTokens + tokens > MAX_TOKENS) {
+      toast.error("Limite de tokens excedido");
+      e.target.value = "";
+      return;
+    }
+    const path = `${agent.company_id}/${id}/${Date.now()}_${file.name}`;
+    const { error: uploadError } = await supabasebrowser.storage
+      .from("knowledge-base")
+      .upload(path, file);
+    if (uploadError) {
+      toast.error("Falha no upload do arquivo");
+      e.target.value = "";
+      return;
+    }
+    const { data, error } = await supabasebrowser
+      .from("agent_knowledge_files")
+      .insert({
+        agent_id: id,
+        company_id: agent.company_id,
+        name: file.name,
+        tokens,
+        path,
+      })
+      .select()
+      .single();
+    if (error || !data) {
+      toast.error("Falha ao salvar arquivo");
+    } else {
+      setFiles((prev) => [...prev, data]);
+      toast.success("Arquivo adicionado");
+    }
     e.target.value = "";
+  };
+
+  const handleRemove = async (file: KnowledgeFile) => {
+    await supabasebrowser.storage.from("knowledge-base").remove([file.path]);
+    const { error } = await supabasebrowser
+      .from("agent_knowledge_files")
+      .delete()
+      .eq("id", file.id);
+    if (error) {
+      toast.error("Falha ao remover arquivo");
+      return;
+    }
+    setFiles((prev) => prev.filter((f) => f.id !== file.id));
+    toast.success("Arquivo removido");
   };
 
   const filteredFiles = files.filter((file) =>
     file.name.toLowerCase().includes(search.toLowerCase())
   );
+  const totalTokens = files.reduce((sum, f) => sum + f.tokens, 0);
 
   return (
     <div className="space-y-6">
@@ -164,17 +228,34 @@ export default function AgentKnowledgeBasePage() {
                     <div className="rounded-md border divide-y">
                       {filteredFiles.map((file) => (
                         <div
-                          key={file.name}
+                          key={file.id}
                           className="flex items-center justify-between px-4 py-3"
                         >
                           <div className="flex items-center gap-2">
                             <File className="h-4 w-4" />
                             <span>{file.name}</span>
                           </div>
-                          <span>{file.tokens.toLocaleString()} tokens</span>
+                          <div className="flex items-center gap-4">
+                            <span>{file.tokens.toLocaleString()} tokens</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemove(file)}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
+                      {filteredFiles.length === 0 && (
+                        <div className="p-4 text-sm text-muted-foreground">
+                          Nenhum arquivo
+                        </div>
+                      )}
                     </div>
+                    <p className="text-sm text-right text-gray-500">
+                      {totalTokens.toLocaleString()} / {MAX_TOKENS.toLocaleString()} tokens
+                    </p>
                   </>
                 ) : (
                   <h3 className="text-lg font-medium">
