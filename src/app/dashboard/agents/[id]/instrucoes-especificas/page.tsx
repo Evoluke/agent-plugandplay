@@ -1,0 +1,325 @@
+"use client";
+
+import Link from "next/link";
+import { Fragment, useEffect, useState } from "react";
+import { useParams, usePathname } from "next/navigation";
+import { supabasebrowser } from "@/lib/supabaseClient";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Smile,
+  Settings,
+  BookOpen,
+  Database,
+  ClipboardList,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
+
+interface Agent {
+  id: string;
+  name: string;
+  type: string;
+  is_active: boolean;
+}
+
+interface FaqItem {
+  context: string;
+  userSays: string;
+  action: string;
+}
+
+export default function AgentSpecificInstructionsPage() {
+  const params = useParams();
+  const id = params?.id as string;
+  const pathname = usePathname();
+  const [agent, setAgent] = useState<Agent | null>(null);
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    supabasebrowser
+      .from("agents")
+      .select("id,name,type,is_active")
+      .eq("id", id)
+      .single()
+      .then(({ data }) => {
+        setAgent(data);
+      });
+
+    supabasebrowser
+      .from("agent_specific_instructions")
+      .select("context,user_says,action")
+      .eq("agent_id", id)
+      .then(({ data }) => {
+        if (data) {
+          setFaqs(
+            data.slice(0, 5).map(
+              (item: {
+                context?: string;
+                user_says?: string;
+                action?: string;
+              }) => ({
+                context: item.context ?? "",
+                userSays: item.user_says ?? "",
+                action: item.action ?? "",
+              })
+            )
+          );
+        } else {
+          setFaqs([]);
+        }
+      });
+  }, [id]);
+
+  if (!agent) return <div>Carregando...</div>;
+
+  const faqValid =
+    faqs.length <= 5 &&
+    faqs.every(
+      (f) =>
+        f.context.trim().length > 0 &&
+        f.context.trim().length <= 255 &&
+        f.userSays.trim().length > 0 &&
+        f.userSays.trim().length <= 255 &&
+        f.action.trim().length > 0 &&
+        f.action.trim().length <= 500
+    );
+  const isFormValid = faqValid;
+
+  const addFaq = () => {
+    if (faqs.length >= 5) return;
+    setFaqs([...faqs, { context: "", userSays: "", action: "" }]);
+  };
+
+  const removeFaq = (index: number) =>
+    setFaqs(faqs.filter((_, i) => i !== index));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowErrors(true);
+    if (!isFormValid || isSubmitting) {
+      toast.error("Preencha os campos obrigatórios corretamente.");
+      return;
+    }
+    setIsSubmitting(true);
+
+    const { error: deleteError } = await supabasebrowser
+      .from("agent_specific_instructions")
+      .delete()
+      .eq("agent_id", id);
+
+    if (deleteError) {
+      toast.error("Erro ao salvar instruções específicas.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const { error } = await supabasebrowser
+      .from("agent_specific_instructions")
+      .insert(
+        faqs.map((f) => ({
+          agent_id: id,
+          context: f.context,
+          user_says: f.userSays,
+          action: f.action,
+        }))
+      );
+
+    if (error) {
+      toast.error("Erro ao salvar instruções específicas.");
+    } else {
+      toast.success("Instruções específicas salvas com sucesso.");
+    }
+    setIsSubmitting(false);
+  };
+
+  const menuItems = [
+    { label: "Personalidade", icon: Smile, href: `/dashboard/agents/${id}` },
+    {
+      label: "Comportamento",
+      icon: Settings,
+      href: `/dashboard/agents/${id}/comportamento`,
+    },
+    { label: "Onboarding", icon: BookOpen, href: `/dashboard/agents/${id}/onboarding` },
+    {
+      label: "Base de conhecimento",
+      icon: Database,
+      href: `/dashboard/agents/${id}/base-conhecimento`,
+    },
+    {
+      label: "Instruções Específicas",
+      icon: ClipboardList,
+      href: `/dashboard/agents/${id}/instrucoes-especificas`,
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-center">
+        <Card className="w-4/5 p-6">
+          <nav className="flex items-center justify-around">
+            {menuItems.map(({ label, icon: Icon, href }, index) => (
+              <Fragment key={label}>
+                <Button
+                  asChild
+                  variant={pathname === href ? "secondary" : "ghost"}
+                  className="flex h-auto flex-col items-center gap-1 text-sm"
+                >
+                  <Link href={href} className="flex flex-col items-center">
+                    <Icon className="h-5 w-5" />
+                    <span>{label}</span>
+                  </Link>
+                </Button>
+                {index < menuItems.length - 1 && <div className="h-8 border-l" />}
+              </Fragment>
+            ))}
+          </nav>
+        </Card>
+      </div>
+      <div className="flex justify-center">
+        <Card className="w-4/5 p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="space-y-4 rounded-md border p-4"
+              >
+                <div className="flex justify-between">
+                  <h3 className="text-sm font-medium">Instrução {index + 1}</h3>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeFaq(index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`context-${index}`}
+                    className="text-sm font-medium"
+                  >
+                    Contexto
+                  </label>
+                  <Input
+                    id={`context-${index}`}
+                    value={faq.context}
+                    onChange={(e) =>
+                      setFaqs((prev) =>
+                        prev.map((f, i) =>
+                          i === index ? { ...f, context: e.target.value } : f
+                        )
+                      )
+                    }
+                    maxLength={255}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>Cenário onde a instrução se aplica.</p>
+                    <p className="text-gray-400">1 a 255 caracteres</p>
+                  </div>
+                  {showErrors && faq.context.trim() === "" && (
+                    <p className="text-xs text-red-500">
+                      O contexto é obrigatório
+                    </p>
+                  )}
+                  {showErrors && faq.context.trim().length > 255 && (
+                    <p className="text-xs text-red-500">
+                      O contexto deve ter no máximo 255 caracteres
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`userSays-${index}`}
+                    className="text-sm font-medium"
+                  >
+                    Usuário diz
+                  </label>
+                  <Input
+                    id={`userSays-${index}`}
+                    value={faq.userSays}
+                    onChange={(e) =>
+                      setFaqs((prev) =>
+                        prev.map((f, i) =>
+                          i === index ? { ...f, userSays: e.target.value } : f
+                        )
+                      )
+                    }
+                    maxLength={255}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>O que o usuário fala.</p>
+                    <p className="text-gray-400">1 a 255 caracteres</p>
+                  </div>
+                  {showErrors && faq.userSays.trim() === "" && (
+                    <p className="text-xs text-red-500">
+                      A mensagem do usuário é obrigatória
+                    </p>
+                  )}
+                  {showErrors && faq.userSays.trim().length > 255 && (
+                    <p className="text-xs text-red-500">
+                      A mensagem deve ter no máximo 255 caracteres
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`action-${index}`}
+                    className="text-sm font-medium"
+                  >
+                    Aja assim
+                  </label>
+                  <Textarea
+                    id={`action-${index}`}
+                    value={faq.action}
+                    onChange={(e) =>
+                      setFaqs((prev) =>
+                        prev.map((f, i) =>
+                          i === index ? { ...f, action: e.target.value } : f
+                        )
+                      )
+                    }
+                    className="resize-y max-h-50 overflow-auto"
+                    maxLength={500}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>Resposta ou ação do agente.</p>
+                    <p className="text-gray-400">1 a 500 caracteres</p>
+                  </div>
+                  {showErrors && faq.action.trim() === "" && (
+                    <p className="text-xs text-red-500">A ação é obrigatória</p>
+                  )}
+                  {showErrors && faq.action.trim().length > 500 && (
+                    <p className="text-xs text-red-500">
+                      A ação deve ter no máximo 500 caracteres
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addFaq}
+              className="flex items-center gap-2"
+              disabled={faqs.length >= 5}
+            >
+              <Plus className="h-4 w-4" /> Adicionar instrução
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Salvando..." : "Salvar"}
+            </Button>
+          </form>
+        </Card>
+      </div>
+    </div>
+  );
+}
+

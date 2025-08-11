@@ -119,3 +119,15 @@ create table public.agent_knowledge_files (
   constraint agent_knowledge_files_company_id_fkey foreign key (company_id) references company (id)
 ) TABLESPACE pg_default;
 
+
+create table public.agent_specific_instructions (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  agent_id uuid not null,
+  context text not null,
+  user_says text not null,
+  action text not null,
+  constraint agent_specific_instructions_pkey primary key (id),
+  constraint agent_specific_instructions_agent_id_fkey foreign key (agent_id) references agents (id)
+) TABLESPACE pg_default;
+
