@@ -162,30 +162,25 @@ export default function AgentKnowledgeBasePage() {
     <div className="space-y-6">
       <div className="flex justify-center">
         <Card className="w-4/5 p-6">
-          <div className="space-y-4">
-            <nav className="flex items-center justify-around">
-              {menuItems.map(({ label, icon: Icon, href }, index) => (
-                <Fragment key={label}>
-                  <Button
-                    asChild
-                    variant={pathname === href ? "secondary" : "ghost"}
-                    className="flex h-auto flex-col items-center gap-1 text-sm"
-                  >
-                    <Link href={href} className="flex flex-col items-center">
-                      <Icon className="h-5 w-5" />
-                      <span>{label}</span>
-                    </Link>
-                  </Button>
-                  {index < menuItems.length - 1 && (
-                    <div className="h-8 border-l" />
-                  )}
-                </Fragment>
-              ))}
-            </nav>
-            <div className="flex justify-end">
-              <UpdateAgentButton agentId={id} />
-            </div>
-          </div>
+          <nav className="flex items-center justify-around">
+            {menuItems.map(({ label, icon: Icon, href }, index) => (
+              <Fragment key={label}>
+                <Button
+                  asChild
+                  variant={pathname === href ? "secondary" : "ghost"}
+                  className="flex h-auto flex-col items-center gap-1 text-sm"
+                >
+                  <Link href={href} className="flex flex-col items-center">
+                    <Icon className="h-5 w-5" />
+                    <span>{label}</span>
+                  </Link>
+                </Button>
+                {index < menuItems.length - 1 && (
+                  <div className="h-8 border-l" />
+                )}
+              </Fragment>
+            ))}
+          </nav>
         </Card>
       </div>
 
@@ -274,6 +269,11 @@ export default function AgentKnowledgeBasePage() {
             </div>
           </div>
         </Card>
+      </div>
+      <div className="flex justify-center">
+        <div className="w-4/5 flex justify-end">
+          <UpdateAgentButton agentId={id} />
+        </div>
       </div>
     </div>
   );
