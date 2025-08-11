@@ -39,6 +39,7 @@ export default function AgentSpecificInstructionsPage() {
   const [agent, setAgent] = useState<Agent | null>(null);
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -111,7 +112,11 @@ export default function AgentSpecificInstructionsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid || isSubmitting) return;
+    setShowErrors(true);
+    if (!isFormValid || isSubmitting) {
+      toast.error("Preencha os campos obrigatórios corretamente.");
+      return;
+    }
     setIsSubmitting(true);
 
     const instructions = JSON.stringify(faqs);
@@ -213,12 +218,12 @@ export default function AgentSpecificInstructionsPage() {
                     <p>Cenário onde a instrução se aplica.</p>
                     <p className="text-gray-400">1 a 255 caracteres</p>
                   </div>
-                  {faq.context.trim() === "" && (
+                  {showErrors && faq.context.trim() === "" && (
                     <p className="text-xs text-red-500">
                       O contexto é obrigatório
                     </p>
                   )}
-                  {faq.context.trim().length > 255 && (
+                  {showErrors && faq.context.trim().length > 255 && (
                     <p className="text-xs text-red-500">
                       O contexto deve ter no máximo 255 caracteres
                     </p>
@@ -247,12 +252,12 @@ export default function AgentSpecificInstructionsPage() {
                     <p>O que o usuário fala.</p>
                     <p className="text-gray-400">1 a 255 caracteres</p>
                   </div>
-                  {faq.userSays.trim() === "" && (
+                  {showErrors && faq.userSays.trim() === "" && (
                     <p className="text-xs text-red-500">
                       A mensagem do usuário é obrigatória
                     </p>
                   )}
-                  {faq.userSays.trim().length > 255 && (
+                  {showErrors && faq.userSays.trim().length > 255 && (
                     <p className="text-xs text-red-500">
                       A mensagem deve ter no máximo 255 caracteres
                     </p>
@@ -282,10 +287,10 @@ export default function AgentSpecificInstructionsPage() {
                     <p>Resposta ou ação do agente.</p>
                     <p className="text-gray-400">1 a 500 caracteres</p>
                   </div>
-                  {faq.action.trim() === "" && (
+                  {showErrors && faq.action.trim() === "" && (
                     <p className="text-xs text-red-500">A ação é obrigatória</p>
                   )}
-                  {faq.action.trim().length > 500 && (
+                  {showErrors && faq.action.trim().length > 500 && (
                     <p className="text-xs text-red-500">
                       A ação deve ter no máximo 500 caracteres
                     </p>
@@ -302,7 +307,7 @@ export default function AgentSpecificInstructionsPage() {
             >
               <Plus className="h-4 w-4" /> Adicionar instrução
             </Button>
-            <Button type="submit" disabled={!isFormValid || isSubmitting}>
+            <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Salvando..." : "Salvar"}
             </Button>
           </form>
