@@ -16,6 +16,7 @@ import {
 import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
+import { MAX_AGENTS_PER_COMPANY } from "@/lib/constants";
 
 export default function NewAgentPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function NewAgentPage() {
   const [type, setType] = useState("");
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agentCount, setAgentCount] = useState(0);
 
   const agentTypes = [
     {
@@ -51,7 +53,14 @@ export default function NewAgentPage() {
         .select("id")
         .eq("user_id", user.id)
         .single();
-      setCompanyId(company?.id || null);
+      const id = company?.id;
+      setCompanyId(id || null);
+      if (!id) return;
+      const { count } = await supabasebrowser
+        .from("agents")
+        .select("id", { count: "exact", head: true })
+        .eq("company_id", id);
+      setAgentCount(count || 0);
     });
   }, []);
 
@@ -60,6 +69,16 @@ export default function NewAgentPage() {
     if (!isFormValid || !companyId || isSubmitting) return;
 
     setIsSubmitting(true);
+
+    const { count } = await supabasebrowser
+      .from("agents")
+      .select("id", { count: "exact", head: true })
+      .eq("company_id", companyId);
+    if ((count || 0) >= MAX_AGENTS_PER_COMPANY) {
+      toast.error(`Limite de ${MAX_AGENTS_PER_COMPANY} agentes atingido.`);
+      setIsSubmitting(false);
+      return;
+    }
 
     const { data, error } = await supabasebrowser
       .from("agents")
@@ -133,7 +152,10 @@ export default function NewAgentPage() {
             </CardContent>
 
             <CardFooter className="flex space-x-2 mt-6 justify-center">
-              <Button type="submit" disabled={!isFormValid}>
+              <Button
+                type="submit"
+                disabled={!isFormValid || agentCount >= MAX_AGENTS_PER_COMPANY || isSubmitting}
+              >
                 Criar Agente de IA
               </Button>
               <Button
@@ -144,6 +166,11 @@ export default function NewAgentPage() {
                 Cancelar
               </Button>
             </CardFooter>
+            {agentCount >= MAX_AGENTS_PER_COMPANY && (
+              <p className="text-sm text-center text-red-500 mb-4">
+                Limite de {MAX_AGENTS_PER_COMPANY} agentes atingido.
+              </p>
+            )}
           </form>
         </Card>
       </div>

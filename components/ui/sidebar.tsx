@@ -19,6 +19,7 @@ import {
   Brain,
   LogOut,
 } from 'lucide-react';
+import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 
 interface NavItem {
   label: string;
@@ -144,13 +145,19 @@ export function Sidebar() {
                 <div className="border-t my-1" />
               )}
 
-              <Link
-                href="/dashboard/agents/new"
-                className="block py-2 text-sm font-semibold text-center justify-center text-[#0E4DE0] hover:bg-gray-100"
-                onClick={() => setOpen(false)}
-              >
-                Criar novo Agente IA
-              </Link>
+              {agents.length < MAX_AGENTS_PER_COMPANY ? (
+                <Link
+                  href="/dashboard/agents/new"
+                  className="block py-2 text-sm font-semibold text-center justify-center text-[#0E4DE0] hover:bg-gray-100"
+                  onClick={() => setOpen(false)}
+                >
+                  Criar novo Agente IA
+                </Link>
+              ) : (
+                <span className="block px-4 py-2 text-sm text-gray-500 text-center">
+                  Limite de agentes atingido
+                </span>
+              )}
             </div>
           )}
         </div>
