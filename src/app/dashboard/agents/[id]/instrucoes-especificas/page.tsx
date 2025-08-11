@@ -6,6 +6,7 @@ import { useParams, usePathname } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Smile,
@@ -13,6 +14,8 @@ import {
   BookOpen,
   Database,
   ClipboardList,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,12 +26,20 @@ interface Agent {
   is_active: boolean;
 }
 
+interface FaqItem {
+  context: string;
+  userSays: string;
+  action: string;
+}
+
 export default function AgentSpecificInstructionsPage() {
   const params = useParams();
   const id = params?.id as string;
   const pathname = usePathname();
   const [agent, setAgent] = useState<Agent | null>(null);
-  const [instructions, setInstructions] = useState("");
+  const [faqs, setFaqs] = useState<FaqItem[]>([
+    { context: "", userSays: "", action: "" },
+  ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -48,22 +59,58 @@ export default function AgentSpecificInstructionsPage() {
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
-        if (data) {
-          setInstructions(data.instructions);
+        if (data?.instructions) {
+          try {
+            const parsed = JSON.parse(data.instructions);
+            if (Array.isArray(parsed)) {
+              setFaqs(
+                parsed.map(
+                  (
+                    item: {
+                      context?: string;
+                      userSays?: string;
+                      action?: string;
+                    }
+                  ) => ({
+                    context: item.context ?? "",
+                    userSays: item.userSays ?? "",
+                    action: item.action ?? "",
+                  })
+                )
+              );
+            }
+          } catch {
+            setFaqs([{ context: "", userSays: "", action: "" }]);
+          }
         }
       });
   }, [id]);
 
   if (!agent) return <div>Carregando...</div>;
 
-  const instructionsValid =
-    instructions.trim().length > 0 && instructions.trim().length <= 1000;
-  const isFormValid = instructionsValid;
+  const faqValid = faqs.every(
+    (f) =>
+      f.context.trim().length > 0 &&
+      f.context.trim().length <= 255 &&
+      f.userSays.trim().length > 0 &&
+      f.userSays.trim().length <= 255 &&
+      f.action.trim().length > 0 &&
+      f.action.trim().length <= 500
+  );
+  const isFormValid = faqValid;
+
+  const addFaq = () =>
+    setFaqs([...faqs, { context: "", userSays: "", action: "" }]);
+
+  const removeFaq = (index: number) =>
+    setFaqs(faqs.filter((_, i) => i !== index));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid || isSubmitting) return;
     setIsSubmitting(true);
+
+    const instructions = JSON.stringify(faqs);
 
     const { error } = await supabasebrowser
       .from("agent_specific_instructions")
@@ -123,32 +170,135 @@ export default function AgentSpecificInstructionsPage() {
       <div className="flex justify-center">
         <Card className="w-4/5 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="instructions" className="text-sm font-medium">
-                Instruções específicas
-              </label>
-              <Textarea
-                id="instructions"
-                value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
-                className="resize-y max-h-50 overflow-auto"
-                maxLength={1000}
-              />
-              <div className="flex justify-between text-xs text-gray-500">
-                <p>Orientações adicionais para o agente.</p>
-                <p className="text-gray-400">1 a 1000 caracteres</p>
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="space-y-4 rounded-md border p-4"
+              >
+                <div className="flex justify-between">
+                  <h3 className="text-sm font-medium">Instrução {index + 1}</h3>
+                  {faqs.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeFaq(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`context-${index}`}
+                    className="text-sm font-medium"
+                  >
+                    Contexto
+                  </label>
+                  <Input
+                    id={`context-${index}`}
+                    value={faq.context}
+                    onChange={(e) =>
+                      setFaqs((prev) =>
+                        prev.map((f, i) =>
+                          i === index ? { ...f, context: e.target.value } : f
+                        )
+                      )
+                    }
+                    maxLength={255}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>Cenário onde a instrução se aplica.</p>
+                    <p className="text-gray-400">1 a 255 caracteres</p>
+                  </div>
+                  {faq.context.trim() === "" && (
+                    <p className="text-xs text-red-500">
+                      O contexto é obrigatório
+                    </p>
+                  )}
+                  {faq.context.trim().length > 255 && (
+                    <p className="text-xs text-red-500">
+                      O contexto deve ter no máximo 255 caracteres
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`userSays-${index}`}
+                    className="text-sm font-medium"
+                  >
+                    Usuário diz
+                  </label>
+                  <Input
+                    id={`userSays-${index}`}
+                    value={faq.userSays}
+                    onChange={(e) =>
+                      setFaqs((prev) =>
+                        prev.map((f, i) =>
+                          i === index ? { ...f, userSays: e.target.value } : f
+                        )
+                      )
+                    }
+                    maxLength={255}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>O que o usuário fala.</p>
+                    <p className="text-gray-400">1 a 255 caracteres</p>
+                  </div>
+                  {faq.userSays.trim() === "" && (
+                    <p className="text-xs text-red-500">
+                      A mensagem do usuário é obrigatória
+                    </p>
+                  )}
+                  {faq.userSays.trim().length > 255 && (
+                    <p className="text-xs text-red-500">
+                      A mensagem deve ter no máximo 255 caracteres
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`action-${index}`}
+                    className="text-sm font-medium"
+                  >
+                    Aja assim
+                  </label>
+                  <Textarea
+                    id={`action-${index}`}
+                    value={faq.action}
+                    onChange={(e) =>
+                      setFaqs((prev) =>
+                        prev.map((f, i) =>
+                          i === index ? { ...f, action: e.target.value } : f
+                        )
+                      )
+                    }
+                    className="resize-y max-h-50 overflow-auto"
+                    maxLength={500}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>Resposta ou ação do agente.</p>
+                    <p className="text-gray-400">1 a 500 caracteres</p>
+                  </div>
+                  {faq.action.trim() === "" && (
+                    <p className="text-xs text-red-500">A ação é obrigatória</p>
+                  )}
+                  {faq.action.trim().length > 500 && (
+                    <p className="text-xs text-red-500">
+                      A ação deve ter no máximo 500 caracteres
+                    </p>
+                  )}
+                </div>
               </div>
-              {!instructions && (
-                <p className="text-xs text-red-500">
-                  As instruções são obrigatórias
-                </p>
-              )}
-              {instructions && !instructionsValid && (
-                <p className="text-xs text-red-500">
-                  As instruções devem ter no máximo 1000 caracteres
-                </p>
-              )}
-            </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addFaq}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" /> Adicionar instrução
+            </Button>
             <Button type="submit" disabled={!isFormValid || isSubmitting}>
               {isSubmitting ? "Salvando..." : "Salvar"}
             </Button>
