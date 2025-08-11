@@ -16,6 +16,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { toast } from "sonner";
+import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 
 type Agent = {
   id: string;
@@ -183,7 +184,9 @@ export default function AgentOnboardingPage() {
                     <span>{label}</span>
                   </Link>
                 </Button>
-                {index < menuItems.length - 1 && <div className="h-8 border-l" />}
+                {index < menuItems.length - 1 && (
+                  <div className="h-8 border-l" />
+                )}
               </Fragment>
             ))}
           </nav>
@@ -298,6 +301,11 @@ export default function AgentOnboardingPage() {
             </Button>
           </form>
         </Card>
+      </div>
+      <div className="flex justify-center">
+        <div className="w-4/5 flex justify-end">
+          <UpdateAgentButton agentId={id} />
+        </div>
       </div>
     </div>
   );
