@@ -54,33 +54,23 @@ export default function AgentSpecificInstructionsPage() {
 
     supabasebrowser
       .from("agent_specific_instructions")
-      .select("instructions")
+      .select("context,user_says,action")
       .eq("agent_id", id)
-      .single()
       .then(({ data }) => {
-        if (data?.instructions) {
-          try {
-            const parsed = JSON.parse(data.instructions);
-            if (Array.isArray(parsed)) {
-              setFaqs(
-                parsed.slice(0, 5).map(
-                  (
-                    item: {
-                      context?: string;
-                      userSays?: string;
-                      action?: string;
-                    }
-                  ) => ({
-                    context: item.context ?? "",
-                    userSays: item.userSays ?? "",
-                    action: item.action ?? "",
-                  })
-                )
-              );
-            }
-          } catch {
-            setFaqs([]);
-          }
+        if (data) {
+          setFaqs(
+            data.slice(0, 5).map(
+              (item: {
+                context?: string;
+                user_says?: string;
+                action?: string;
+              }) => ({
+                context: item.context ?? "",
+                userSays: item.user_says ?? "",
+                action: item.action ?? "",
+              })
+            )
+          );
         } else {
           setFaqs([]);
         }
@@ -119,11 +109,27 @@ export default function AgentSpecificInstructionsPage() {
     }
     setIsSubmitting(true);
 
-    const instructions = JSON.stringify(faqs);
+    const { error: deleteError } = await supabasebrowser
+      .from("agent_specific_instructions")
+      .delete()
+      .eq("agent_id", id);
+
+    if (deleteError) {
+      toast.error("Erro ao salvar instruções específicas.");
+      setIsSubmitting(false);
+      return;
+    }
 
     const { error } = await supabasebrowser
       .from("agent_specific_instructions")
-      .upsert({ agent_id: id, instructions }, { onConflict: "agent_id" });
+      .insert(
+        faqs.map((f) => ({
+          agent_id: id,
+          context: f.context,
+          user_says: f.userSays,
+          action: f.action,
+        }))
+      );
 
     if (error) {
       toast.error("Erro ao salvar instruções específicas.");

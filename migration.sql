@@ -120,12 +120,14 @@ create table public.agent_knowledge_files (
 ) TABLESPACE pg_default;
 
 
--- Tabela de instruções específicas dos agentes
 create table public.agent_specific_instructions (
-  agent_id uuid not null,
+  id uuid not null default gen_random_uuid(),
   created_at timestamp with time zone not null default now(),
-  instructions text not null default '[]'::text,
-  constraint agent_specific_instructions_pkey primary key (agent_id),
+  agent_id uuid not null,
+  context text not null,
+  user_says text not null,
+  action text not null,
+  constraint agent_specific_instructions_pkey primary key (id),
   constraint agent_specific_instructions_agent_id_fkey foreign key (agent_id) references agents (id)
 ) TABLESPACE pg_default;
 
