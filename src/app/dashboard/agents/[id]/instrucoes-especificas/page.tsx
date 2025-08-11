@@ -37,9 +37,7 @@ export default function AgentSpecificInstructionsPage() {
   const id = params?.id as string;
   const pathname = usePathname();
   const [agent, setAgent] = useState<Agent | null>(null);
-  const [faqs, setFaqs] = useState<FaqItem[]>([
-    { context: "", userSays: "", action: "" },
-  ]);
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -64,7 +62,7 @@ export default function AgentSpecificInstructionsPage() {
             const parsed = JSON.parse(data.instructions);
             if (Array.isArray(parsed)) {
               setFaqs(
-                parsed.map(
+                parsed.slice(0, 5).map(
                   (
                     item: {
                       context?: string;
@@ -80,27 +78,33 @@ export default function AgentSpecificInstructionsPage() {
               );
             }
           } catch {
-            setFaqs([{ context: "", userSays: "", action: "" }]);
+            setFaqs([]);
           }
+        } else {
+          setFaqs([]);
         }
       });
   }, [id]);
 
   if (!agent) return <div>Carregando...</div>;
 
-  const faqValid = faqs.every(
-    (f) =>
-      f.context.trim().length > 0 &&
-      f.context.trim().length <= 255 &&
-      f.userSays.trim().length > 0 &&
-      f.userSays.trim().length <= 255 &&
-      f.action.trim().length > 0 &&
-      f.action.trim().length <= 500
-  );
+  const faqValid =
+    faqs.length <= 5 &&
+    faqs.every(
+      (f) =>
+        f.context.trim().length > 0 &&
+        f.context.trim().length <= 255 &&
+        f.userSays.trim().length > 0 &&
+        f.userSays.trim().length <= 255 &&
+        f.action.trim().length > 0 &&
+        f.action.trim().length <= 500
+    );
   const isFormValid = faqValid;
 
-  const addFaq = () =>
+  const addFaq = () => {
+    if (faqs.length >= 5) return;
     setFaqs([...faqs, { context: "", userSays: "", action: "" }]);
+  };
 
   const removeFaq = (index: number) =>
     setFaqs(faqs.filter((_, i) => i !== index));
@@ -177,16 +181,14 @@ export default function AgentSpecificInstructionsPage() {
               >
                 <div className="flex justify-between">
                   <h3 className="text-sm font-medium">Instrução {index + 1}</h3>
-                  {faqs.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeFaq(index)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeFaq(index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
                 <div className="space-y-2">
                   <label
@@ -296,6 +298,7 @@ export default function AgentSpecificInstructionsPage() {
               variant="outline"
               onClick={addFaq}
               className="flex items-center gap-2"
+              disabled={faqs.length >= 5}
             >
               <Plus className="h-4 w-4" /> Adicionar instrução
             </Button>
