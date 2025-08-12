@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         agent_id: agentId,
         amount: AGENT_UPDATE_FEE,
         due_date: dueDate.toISOString(),
-        reference: `Atualização do agente ${agent.name}`,
+        reference: `Mensalidade ${agent.name}`,
       });
     if (insertError) {
       return NextResponse.json({ error: 'Failed to create payment' }, { status: 500 });
