@@ -34,7 +34,7 @@ export default function DeactivateAgentButton({ agentId, onDeactivated }: Props)
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <Button variant="destructive">Desativar Agente</Button>
+        <Button variant="outline">Desativar Agente</Button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />

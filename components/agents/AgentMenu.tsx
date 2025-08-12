@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabasebrowser } from "@/lib/supabaseClient";
-import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import {
   Smile,
   Settings,
@@ -24,7 +23,6 @@ type Agent = {
 
 export default function AgentMenu({ agent }: { agent: Agent }) {
   const pathname = usePathname();
-  const [isActive, setIsActive] = useState(agent.is_active);
   const [lastPayment, setLastPayment] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,17 +50,11 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
     <div className="flex justify-center">
       <div className="w-4/5 flex gap-4">
         <Card className="w-64 p-4 flex flex-col gap-2 text-sm">
-          <p>Agente {isActive ? "ativo" : "inativo"}</p>
+          <p>Agente {agent.is_active ? "ativo" : "inativo"}</p>
           <p>
             Vencimento último pagamento: {" "}
             {lastPayment ? new Date(lastPayment).toLocaleDateString("pt-BR") : "Não existe"}
           </p>
-          {isActive && (
-            <DeactivateAgentButton
-              agentId={agent.id}
-              onDeactivated={() => setIsActive(false)}
-            />
-          )}
         </Card>
         <Card className="flex-1 p-6">
           <nav className="flex items-center justify-around">

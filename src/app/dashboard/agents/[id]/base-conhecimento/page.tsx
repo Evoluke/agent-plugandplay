@@ -21,6 +21,7 @@ import {
   MAX_KNOWLEDGE_FILE_SIZE,
 } from "@/lib/constants";
 import AgentMenu from "@/components/agents/AgentMenu";
+import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 
 interface Agent {
   id: string;
@@ -251,7 +252,15 @@ export default function AgentKnowledgeBasePage() {
         </Card>
       </div>
       <div className="flex justify-center">
-        <div className="w-4/5 flex justify-end">
+        <div className="w-4/5 flex justify-end gap-2">
+          {agent.is_active && (
+            <DeactivateAgentButton
+              agentId={id}
+              onDeactivated={() =>
+                setAgent((a) => (a ? { ...a, is_active: false } : a))
+              }
+            />
+          )}
           <UpdateAgentButton agentId={id} />
         </div>
       </div>
