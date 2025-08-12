@@ -3,6 +3,7 @@ export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabaseClient';
 import { supabaseadmin } from '@/lib/supabaseAdmin';
+import { AGENT_UPDATE_FEE } from '@/lib/payments';
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -61,6 +62,7 @@ export async function POST(request: Request) {
       .insert({
         company_id: company.id,
         agent_id: agentId,
+        amount: AGENT_UPDATE_FEE,
         due_date: dueDate.toISOString(),
         reference: `Atualização do agente ${agentId}`,
       });
