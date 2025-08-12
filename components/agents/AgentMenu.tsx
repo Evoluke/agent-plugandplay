@@ -49,12 +49,19 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
   return (
     <div className="flex justify-center">
       <div className="w-4/5 flex gap-4">
-        <Card className="w-64 p-4 flex flex-col gap-2 text-sm">
-          <p>Agente {agent.is_active ? "ativo" : "inativo"}</p>
-          <p>
-            Vencimento último pagamento: {" "}
-            {lastPayment ? new Date(lastPayment).toLocaleDateString("pt-BR") : "Não existe"}
-          </p>
+        <Card className="w-64 p-4 flex flex-col items-center justify-center gap-3 text-sm text-center">
+          <div>
+            <p className="text-xs text-gray-500">Status do agente</p>
+            <p className={`text-base font-semibold ${agent.is_active ? "text-green-600" : "text-red-600"}`}>
+              {agent.is_active ? "Ativo" : "Inativo"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Vencimento último pagamento</p>
+            <p>
+              {lastPayment ? new Date(lastPayment).toLocaleDateString("pt-BR") : "Não existe"}
+            </p>
+          </div>
         </Card>
         <Card className="flex-1 p-6">
           <nav className="flex items-center justify-around">
