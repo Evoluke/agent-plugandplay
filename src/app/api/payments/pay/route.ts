@@ -69,22 +69,11 @@ export async function POST(request: Request) {
 
   const { data: paymentRecord, error: paymentError } = await supabaseadmin
     .from('payments')
-    .select('id, asaas_id, payment_link, due_date')
+    .select('id, company_id, asaas_id, payment_link, due_date')
     .or(`id.eq.${id},reference.eq.${id}`)
     .maybeSingle();
   if (paymentError) {
     console.error(paymentError);
-  }
-  if (paymentRecord?.asaas_id && paymentRecord.payment_link) {
-    return NextResponse.json({
-      success: true,
-      asaas: {
-        id: paymentRecord.asaas_id,
-        invoiceUrl: paymentRecord.payment_link,
-        paymentLink: paymentRecord.payment_link,
-        dueDate: paymentRecord.due_date,
-      },
-    });
   }
   if (!paymentRecord) {
     return NextResponse.json(
@@ -96,7 +85,7 @@ export async function POST(request: Request) {
   const { data: company, error: companyError } = await supabaseadmin
     .from('company')
     .select(
-      'company_name, company_profile!inner(cpf_cnpj, responsible_name, phone)'
+      'id, company_name, company_profile!inner(cpf_cnpj, responsible_name, phone)'
     )
     .eq('user_id', userId)
     .single();
@@ -106,6 +95,22 @@ export async function POST(request: Request) {
       { error: 'Company profile not found' },
       { status: 400 }
     );
+  }
+
+  if (paymentRecord.company_id !== company.id) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  if (paymentRecord.asaas_id && paymentRecord.payment_link) {
+    return NextResponse.json({
+      success: true,
+      asaas: {
+        id: paymentRecord.asaas_id,
+        invoiceUrl: paymentRecord.payment_link,
+        paymentLink: paymentRecord.payment_link,
+        dueDate: paymentRecord.due_date,
+      },
+    });
   }
 
   const { company_name, company_profile } = company as unknown as {
