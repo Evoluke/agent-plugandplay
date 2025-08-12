@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabasebrowser } from "@/lib/supabaseClient";
@@ -14,6 +14,8 @@ const COOLDOWN_MS = 5 * 60 * 1000;
 export default function UpdateAgentButton({ agentId }: UpdateAgentButtonProps) {
   const [isCooldown, setIsCooldown] = useState(false);
   const [remaining, setRemaining] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const processingRef = useRef(false);
 
   useEffect(() => {
     const last = localStorage.getItem(`agent-update-${agentId}`);
@@ -48,6 +50,9 @@ export default function UpdateAgentButton({ agentId }: UpdateAgentButtonProps) {
   }, [isCooldown, agentId]);
 
   const handleClick = async () => {
+    if (isCooldown || processingRef.current) return;
+    processingRef.current = true;
+    setIsProcessing(true);
     try {
       const { data: { session }, error } = await supabasebrowser.auth.getSession();
       if (error || !session) throw new Error("Sessão não encontrada");
@@ -68,12 +73,19 @@ export default function UpdateAgentButton({ agentId }: UpdateAgentButtonProps) {
       setRemaining(COOLDOWN_MS / 1000);
     } catch {
       toast.error("Erro ao atualizar agente.");
+    } finally {
+      processingRef.current = false;
+      setIsProcessing(false);
     }
   };
 
   return (
-    <Button onClick={handleClick} disabled={isCooldown}>
-      {isCooldown ? `Aguarde ${remaining}s` : "Atualizar Agente IA"}
+    <Button onClick={handleClick} disabled={isCooldown || isProcessing}>
+      {isCooldown
+        ? `Aguarde ${remaining}s`
+        : isProcessing
+          ? "Atualizando..."
+          : "Atualizar Agente IA"}
     </Button>
   );
 }
