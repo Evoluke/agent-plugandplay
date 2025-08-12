@@ -22,6 +22,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
+import {
+  ALLOWED_KNOWLEDGE_MIME_TYPES,
+  MAX_KNOWLEDGE_FILE_SIZE,
+} from "@/lib/constants";
 
 interface Agent {
   id: string;
@@ -103,6 +107,30 @@ export default function AgentKnowledgeBasePage() {
   ) => {
     const file = e.target.files?.[0];
     if (!file || !agent) return;
+    if (!ALLOWED_KNOWLEDGE_MIME_TYPES.includes(file.type)) {
+      toast.error("Tipo de arquivo não suportado");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > MAX_KNOWLEDGE_FILE_SIZE) {
+      toast.error("Arquivo excede o tamanho máximo de 10MB");
+      e.target.value = "";
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file);
+    const validation = await fetch("/api/knowledge-base/validate", {
+      method: "POST",
+      body: formData,
+    });
+    if (!validation.ok) {
+      const { error } = await validation
+        .json()
+        .catch(() => ({ error: "Arquivo inválido" }));
+      toast.error(error);
+      e.target.value = "";
+      return;
+    }
     const tokens = Math.ceil(file.size / 4);
     const totalTokens = files.reduce((sum, f) => sum + f.tokens, 0);
     if (totalTokens + tokens > MAX_TOKENS) {
