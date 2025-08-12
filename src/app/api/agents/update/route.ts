@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
   const { data: agent, error: agentError } = await supabaseadmin
     .from('agents')
-    .select('company_id')
+    .select('company_id, name')
     .eq('id', agentId)
     .single();
 
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         agent_id: agentId,
         amount: AGENT_UPDATE_FEE,
         due_date: dueDate.toISOString(),
-        reference: `Atualização do agente ${agentId}`,
+        reference: `Atualização do agente ${agent.name}`,
       });
     if (insertError) {
       return NextResponse.json({ error: 'Failed to create payment' }, { status: 500 });
