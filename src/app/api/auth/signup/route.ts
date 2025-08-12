@@ -67,20 +67,52 @@ export async function POST(req: Request) {
   }
 
   const userId = data.user.id;
-  // 2) insere na tabela business (service role key ignora RLS)
-  const { error: bizError } = await supabaseadmin
-    .from('company')
-    .insert({ user_id: userId, company_name: name, profile_complete: false });
-  if (bizError) {
-    console.error('Erro ao criar company:', bizError.message);
-    return NextResponse.json({ error: 'Erro ao criar company' }, { status: 500 });
-  }
 
-  return NextResponse.json(
-    {
-      message:
-        'Usuário criado. Um e-mail de verificação foi enviado para confirmar o cadastro.',
-    },
-    { status: 201 },
-  );
+  try {
+    // 2) insere na tabela company (service role key ignora RLS)
+    const { error: companyError } = await supabaseadmin
+      .from("company")
+      .insert({ user_id: userId, company_name: name, profile_complete: false });
+
+    if (companyError) {
+      console.error("Erro ao criar company:", companyError.message);
+      // remove o usuário criado para garantir consistência
+      const { error: deleteError } = await supabaseadmin.auth.admin.deleteUser(
+        userId,
+      );
+      if (deleteError) {
+        console.error(
+          "Erro ao remover usuário após falha ao criar company:",
+          deleteError.message,
+        );
+      }
+      return NextResponse.json(
+        { error: "Erro ao criar empresa, cadastro cancelado" },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json(
+      {
+        message:
+          "Usuário criado. Um e-mail de verificação foi enviado para confirmar o cadastro.",
+      },
+      { status: 201 },
+    );
+  } catch (err) {
+    console.error("Erro inesperado ao criar company:", err);
+    const { error: deleteError } = await supabaseadmin.auth.admin.deleteUser(
+      userId,
+    );
+    if (deleteError) {
+      console.error(
+        "Erro ao remover usuário após exceção inesperada:",
+        deleteError.message,
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro inesperado ao criar empresa" },
+      { status: 500 },
+    );
+  }
 }
