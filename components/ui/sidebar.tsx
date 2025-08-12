@@ -50,22 +50,27 @@ export function Sidebar() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const fetchAgents = async () => {
+    const { data } = await supabasebrowser.auth.getUser();
+    const user = data?.user;
+    if (!user) return;
+    const { data: company } = await supabasebrowser
+      .from('company')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    if (!company?.id) return;
+    const { data: agentData } = await supabasebrowser
+      .from('agents')
+      .select('id,name')
+      .eq('company_id', company.id);
+    setAgents(agentData || []);
+  };
+
   useEffect(() => {
-    supabasebrowser.auth.getUser().then(async ({ data }) => {
-      const user = data?.user;
-      if (!user) return;
-      const { data: company } = await supabasebrowser
-        .from('company')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-      if (!company?.id) return;
-      const { data: agentData } = await supabasebrowser
-        .from('agents')
-        .select('id,name')
-        .eq('company_id', company.id);
-      setAgents(agentData || []);
-    });
+    fetchAgents();
+    window.addEventListener('agentsUpdated', fetchAgents);
+    return () => window.removeEventListener('agentsUpdated', fetchAgents);
   }, []);
 
   const handleLogout = async () => {
