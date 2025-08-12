@@ -100,6 +100,7 @@ export default function AgentDetailPage() {
       toast.error("Erro ao salvar personalidade.");
     } else {
       toast.success("Personalidade salva com sucesso.");
+      window.dispatchEvent(new Event("agentsUpdated"));
     }
     setIsSubmitting(false);
   };
