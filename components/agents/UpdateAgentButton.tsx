@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { supabasebrowser } from "@/lib/supabaseClient";
 
 interface UpdateAgentButtonProps {
   agentId: string;
@@ -48,7 +49,19 @@ export default function UpdateAgentButton({ agentId }: UpdateAgentButtonProps) {
 
   const handleClick = async () => {
     try {
-      // Futuras validações e ações serão adicionadas aqui
+      const { data: { session }, error } = await supabasebrowser.auth.getSession();
+      if (error || !session) throw new Error("Sessão não encontrada");
+
+      const res = await fetch("/api/agents/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ agentId }),
+      });
+      if (!res.ok) throw new Error();
+
       toast.success("Agente atualizado com sucesso.");
       localStorage.setItem(`agent-update-${agentId}`, Date.now().toString());
       setIsCooldown(true);
