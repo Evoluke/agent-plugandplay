@@ -18,18 +18,21 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
   const handleActivate = async () => {
     setLoading(true);
 
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
     const { data: pending } = await supabasebrowser
       .from("payments")
       .select("id")
       .eq("agent_id", agentId)
       .eq("status", "pendente")
-      .lt("due_date", new Date().toISOString())
+      .lt("due_date", oneMonthAgo.toISOString())
       .limit(1)
       .maybeSingle();
 
     if (pending) {
       toast.error(
-        "Você possui pagamentos em atraso. Regularize-os para ativar o agente."
+        "Você possui pagamentos vencidos há mais de um mês. Regularize-os para ativar o agente."
       );
       setLoading(false);
       return;
