@@ -50,7 +50,7 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
   return (
     <div className="flex justify-center">
       <div className="w-4/5 flex gap-4">
-        <Card className="w-64 p-4 flex flex-col items-center justify-center gap-3 text-sm text-center">
+        <Card className="w-52 p-4 flex flex-col items-center justify-center gap-3 text-sm text-center">
           <div>
             <p className="text-xs text-gray-500">Status do agente</p>
             <p className={`text-base font-semibold ${agent.is_active ? "text-green-600" : "text-red-600"}`}>
