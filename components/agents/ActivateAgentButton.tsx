@@ -30,16 +30,16 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       return;
     }
 
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     const hasOverdue = pendings.some(
-      (p) => new Date(p.due_date) < oneMonthAgo
+      (p) => new Date(p.due_date) < today
     );
 
     if (hasOverdue) {
       toast.error(
-        "Você possui pagamentos vencidos há mais de um mês. Regularize-os para ativar o agente."
+        "Você possui pagamentos vencidos. Regularize-os para ativar o agente."
       );
       setLoading(false);
       return;
