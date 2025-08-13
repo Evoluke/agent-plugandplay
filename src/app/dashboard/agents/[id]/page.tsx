@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import AgentMenu from "@/components/agents/AgentMenu";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
+import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
 
 type Agent = {
   id: string;
@@ -188,11 +189,18 @@ export default function AgentDetailPage() {
       </div>
       <div className="flex justify-center">
         <div className="w-4/5 flex justify-end gap-2">
-          {agent.is_active && (
+          {agent.is_active ? (
             <DeactivateAgentButton
               agentId={id}
               onDeactivated={() =>
                 setAgent((a) => (a ? { ...a, is_active: false } : a))
+              }
+            />
+          ) : (
+            <ActivateAgentButton
+              agentId={id}
+              onActivated={() =>
+                setAgent((a) => (a ? { ...a, is_active: true } : a))
               }
             />
           )}
