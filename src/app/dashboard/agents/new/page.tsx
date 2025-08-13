@@ -31,6 +31,7 @@ export default function NewAgentPage() {
       value: "agendamento",
       title: "Agendamento",
       description: "Gerencia horários e calendários",
+      disabled: true,
     },
     {
       value: "sdr",
@@ -115,7 +116,7 @@ export default function NewAgentPage() {
 
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Função do Agente</label>
+                <label className="text-sm font-medium">Modelo do Agente</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {agentTypes.map((option) => (
                     <AgentTypeCard
@@ -123,6 +124,7 @@ export default function NewAgentPage() {
                       value={option.value}
                       title={option.title}
                       description={option.description}
+                      disabled={option.disabled}
                       selected={type === option.value}
                       onSelect={setType}
                     />
