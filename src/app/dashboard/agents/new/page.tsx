@@ -17,6 +17,7 @@ import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
 import { MAX_AGENTS_PER_COMPANY } from "@/lib/constants";
+import { AGENT_TEMPLATES } from "@/lib/agentTemplates";
 
 export default function NewAgentPage() {
   const router = useRouter();
@@ -91,6 +92,47 @@ export default function NewAgentPage() {
       toast.error("Erro ao criar agente.");
       setIsSubmitting(false);
       return;
+    }
+
+    const template = AGENT_TEMPLATES[type];
+    if (template) {
+      const inserts = [];
+      inserts.push(
+        supabasebrowser.from("agent_personality").insert({
+          agent_id: data.id,
+          ...template.personality,
+        })
+      );
+      inserts.push(
+        supabasebrowser.from("agent_behavior").insert({
+          agent_id: data.id,
+          ...template.behavior,
+        })
+      );
+      inserts.push(
+        supabasebrowser.from("agent_onboarding").insert({
+          agent_id: data.id,
+          ...template.onboarding,
+        })
+      );
+      if (template.specificInstructions.length > 0) {
+        inserts.push(
+          supabasebrowser
+            .from("agent_specific_instructions")
+            .insert(
+              template.specificInstructions.map((i) => ({
+                agent_id: data.id,
+                ...i,
+              }))
+            )
+        );
+      }
+      const results = await Promise.all(inserts);
+      if (results.some((r) => r.error)) {
+        toast.error("Erro ao aplicar template do agente.");
+        setIsSubmitting(false);
+        return;
+      }
     }
 
     toast.success("Agente criado com sucesso...");
