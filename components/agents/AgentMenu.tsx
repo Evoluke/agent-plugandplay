@@ -30,9 +30,10 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
       .from("payments")
       .select("due_date")
       .eq("agent_id", agent.id)
+      .eq("status", "pendente")
       .order("due_date", { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         setLastPayment(data?.due_date ?? null);
       });
