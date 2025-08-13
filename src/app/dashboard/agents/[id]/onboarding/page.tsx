@@ -29,9 +29,7 @@ export default function AgentOnboardingPage() {
   const id = params?.id as string;
   const [agent, setAgent] = useState<Agent | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState("");
-  const [collection, setCollection] = useState<CollectionItem[]>([
-    { question: "", information: "" },
-  ]);
+  const [collection, setCollection] = useState<CollectionItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -53,7 +51,7 @@ export default function AgentOnboardingPage() {
       .then(({ data }) => {
         if (data) {
           setWelcomeMessage(data.welcome_message);
-          if (Array.isArray(data.collection) && data.collection.length > 0) {
+          if (Array.isArray(data.collection)) {
             setCollection(data.collection);
           }
         }
@@ -74,11 +72,7 @@ export default function AgentOnboardingPage() {
     return question.length <= 200 && information.length <= 200;
   });
 
-  const hasAtLeastOneItem = collection.some(
-    (item) => item.question.trim() && item.information.trim()
-  );
-
-  const isFormValid = welcomeMessageValid && collectionValid && hasAtLeastOneItem;
+  const isFormValid = welcomeMessageValid && collectionValid;
 
   const handleQuestionChange = (index: number, value: string) => {
     const newCollection = [...collection];
@@ -98,7 +92,6 @@ export default function AgentOnboardingPage() {
   };
 
   const removeItem = (index: number) => {
-    if (collection.length === 1) return;
     const newCollection = collection.filter((_, i) => i !== index);
     setCollection(newCollection);
   };
@@ -208,15 +201,13 @@ export default function AgentOnboardingPage() {
                       </p>
                     )}
                 </div>
-                {collection.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => removeItem(index)}
-                  >
-                    Remover
-                  </Button>
-                )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => removeItem(index)}
+                >
+                  Remover
+                </Button>
               </div>
             ))}
 
