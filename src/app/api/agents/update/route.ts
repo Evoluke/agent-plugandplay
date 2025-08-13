@@ -57,7 +57,6 @@ export async function POST(request: Request) {
 
   if (!existing || existing.length === 0) {
     const dueDate = new Date();
-    dueDate.setMonth(dueDate.getMonth() + 1);
     const { data: inserted, error: insertError } = await supabaseadmin
       .from('payments')
       .insert({

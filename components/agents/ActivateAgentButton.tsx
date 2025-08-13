@@ -18,19 +18,24 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
   const handleActivate = async () => {
     setLoading(true);
 
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
     const { data: pending } = await supabasebrowser
       .from("payments")
-      .select("id")
+      .select("due_date")
       .eq("agent_id", agentId)
       .eq("status", "pendente")
-      .lt("due_date", oneMonthAgo.toISOString())
+      .order("due_date", { ascending: true })
       .limit(1)
       .maybeSingle();
 
-    if (pending) {
+    if (!pending) {
+      toast.error("Atualizar o agente de IA anteriormente.");
+      setLoading(false);
+      return;
+    }
+
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    if (new Date(pending.due_date) < oneMonthAgo) {
       toast.error(
         "Você possui pagamentos vencidos há mais de um mês. Regularize-os para ativar o agente."
       );
