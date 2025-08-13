@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   if (!existing || existing.length === 0) {
     const dueDate = new Date();
     dueDate.setMonth(dueDate.getMonth() + 1);
-    const { error: insertError } = await supabaseadmin
+    const { data: inserted, error: insertError } = await supabaseadmin
       .from('payments')
       .insert({
         company_id: company.id,
@@ -66,10 +66,13 @@ export async function POST(request: Request) {
         amount: AGENT_UPDATE_FEE,
         due_date: dueDate.toISOString(),
         reference: `Mensalidade ${agent.name}`,
-      });
-    if (insertError) {
+      })
+      .select('id')
+      .single();
+    if (insertError || !inserted) {
       return NextResponse.json({ error: 'Failed to create payment' }, { status: 500 });
     }
+    return NextResponse.json({ success: true, paymentId: inserted.id });
   }
 
   return NextResponse.json({ success: true });

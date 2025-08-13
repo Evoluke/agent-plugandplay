@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabasebrowser } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 interface UpdateAgentButtonProps {
   agentId: string;
@@ -16,6 +17,7 @@ export default function UpdateAgentButton({ agentId }: UpdateAgentButtonProps) {
   const [remaining, setRemaining] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const processingRef = useRef(false);
+  const router = useRouter();
 
   useEffect(() => {
     const last = localStorage.getItem(`agent-update-${agentId}`);
@@ -66,11 +68,15 @@ export default function UpdateAgentButton({ agentId }: UpdateAgentButtonProps) {
         body: JSON.stringify({ agentId }),
       });
       if (!res.ok) throw new Error();
+      const data = await res.json();
 
       toast.success("Agente atualizado com sucesso.");
       localStorage.setItem(`agent-update-${agentId}`, Date.now().toString());
       setIsCooldown(true);
       setRemaining(COOLDOWN_MS / 1000);
+      if (data.paymentId) {
+        router.push(`/dashboard/payments/${data.paymentId}`);
+      }
     } catch {
       toast.error("Erro ao atualizar agente.");
     } finally {
