@@ -21,7 +21,7 @@ type Agent = {
 
 type CollectionItem = {
   question: string;
-  variable: string;
+  information: string;
 };
 
 export default function AgentOnboardingPage() {
@@ -30,7 +30,7 @@ export default function AgentOnboardingPage() {
   const [agent, setAgent] = useState<Agent | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [collection, setCollection] = useState<CollectionItem[]>([
-    { question: "", variable: "" },
+    { question: "", information: "" },
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -62,27 +62,20 @@ export default function AgentOnboardingPage() {
 
   if (!agent) return <div>Carregando...</div>;
 
-  const variableRegex = /^[a-z]+(?:_[a-z]+)*$/;
-
   const welcomeMessageValid = welcomeMessage.trim().length <= 500;
   const collectionValid = collection.every((item) => {
     const question = item.question.trim();
-    const variable = item.variable.trim();
+    const information = item.information.trim();
 
-    if (!question && !variable) return true;
-    if (question && !variable) return false;
-    if (!question && variable) return false;
+    if (!question && !information) return true;
+    if (question && !information) return false;
+    if (!question && information) return false;
 
-    return (
-      question.length <= 200 &&
-      variable.length >= 10 &&
-      variable.length <= 200 &&
-      variableRegex.test(variable)
-    );
+    return question.length <= 200 && information.length <= 200;
   });
 
   const hasAtLeastOneItem = collection.some(
-    (item) => item.question.trim() && item.variable.trim()
+    (item) => item.question.trim() && item.information.trim()
   );
 
   const isFormValid = welcomeMessageValid && collectionValid && hasAtLeastOneItem;
@@ -93,19 +86,15 @@ export default function AgentOnboardingPage() {
     setCollection(newCollection);
   };
 
-  const handleVariableChange = (index: number, value: string) => {
-    const sanitized = value
-      .toLowerCase()
-      .replace(/\s+/g, "_")
-      .replace(/[^a-z_]/g, "");
+  const handleInformationChange = (index: number, value: string) => {
     const newCollection = [...collection];
-    newCollection[index].variable = sanitized;
+    newCollection[index].information = value;
     setCollection(newCollection);
   };
 
   const addItem = () => {
     if (collection.length >= 5) return;
-    setCollection([...collection, { question: "", variable: "" }]);
+    setCollection([...collection, { question: "", information: "" }]);
   };
 
   const removeItem = (index: number) => {
@@ -119,7 +108,7 @@ export default function AgentOnboardingPage() {
     if (!isFormValid || isSubmitting) return;
     setIsSubmitting(true);
     const filtered = collection.filter(
-      (item) => item.question.trim() && item.variable.trim()
+      (item) => item.question.trim() && item.information.trim()
     );
     const { error } = await supabasebrowser
       .from("agent_onboarding")
@@ -195,29 +184,27 @@ export default function AgentOnboardingPage() {
                 </div>
                 <div className="flex-1 space-y-2">
                   <label
-                    htmlFor={`variable-${index}`}
+                    htmlFor={`information-${index}`}
                     className="text-sm font-medium"
                   >
-                    Variável de coleta
+                    Explique o que é essa informação
                   </label>
                   <Input
-                    id={`variable-${index}`}
-                    placeholder="example_variable"
-                    pattern="^[a-z]+(?:_[a-z]+)*$"
-                    value={item.variable}
-                    onChange={(e) => handleVariableChange(index, e.target.value)}
-                    minLength={10}
+                    id={`information-${index}`}
+                    placeholder="Ex: Nome completo do cliente"
+                    value={item.information}
+                    onChange={(e) =>
+                      handleInformationChange(index, e.target.value)
+                    }
                     maxLength={200}
                   />
                   <div className="flex justify-end text-xs text-gray-500">
-                    <p className="text-gray-400">10 a 200 caracteres, use snake_case</p>
+                    <p className="text-gray-400">0 a 200 caracteres</p>
                   </div>
-                  {item.variable &&
-                    (item.variable.trim().length < 10 ||
-                      item.variable.trim().length > 200 ||
-                      !variableRegex.test(item.variable.trim())) && (
+                  {item.information &&
+                    item.information.trim().length > 200 && (
                       <p className="text-xs text-red-500">
-                        A variável deve ter entre 10 e 200 caracteres, usando letras minúsculas e underscore
+                        A explicação deve ter no máximo 200 caracteres
                       </p>
                     )}
                 </div>
@@ -239,11 +226,11 @@ export default function AgentOnboardingPage() {
               onClick={addItem}
               disabled={collection.length >= 5}
             >
-              Adicionar pergunta/variável
+              Adicionar pergunta/explicação
             </Button>
             {collection.length >= 5 && (
               <p className="text-xs text-gray-500">
-                Máximo de 5 perguntas/variáveis
+                Máximo de 5 perguntas/explicações
               </p>
             )}
 
