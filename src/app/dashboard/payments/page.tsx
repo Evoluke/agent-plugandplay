@@ -10,7 +10,7 @@ import { toast } from "sonner";
 type Payment = {
   id: string;
   amount: number;
-  status: 'pendente' | 'pago';
+  status: 'pendente' | 'pago' | 'estorno';
   created_at: string;
   due_date: string;
   reference: string;
@@ -104,6 +104,10 @@ export default function PaymentsPage() {
                     {p.status === "pago" ? (
                       <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                         Quitado
+                      </span>
+                    ) : p.status === "estorno" ? (
+                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                        Estornado
                       </span>
                     ) : (
                       <button

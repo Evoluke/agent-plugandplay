@@ -17,7 +17,7 @@ interface Payment {
     amount: number;
     usage: number;
     created_at: string;
-    status: "pendente" | "pago";
+    status: "pendente" | "pago" | "estorno";
     payment_link: string | null;
 }
 
@@ -131,6 +131,18 @@ export default function PaymentPage() {
                 </CardHeader>
                 <CardContent>
                     O pagamento de <strong>{payment.reference}</strong> já foi processado.
+                </CardContent>
+            </Card>
+        );
+    }
+      if (payment.status === "estorno") {
+          return (
+            <Card className="max-w-md mx-auto mt-10">
+                <CardHeader>
+                    <CardTitle>Pagamento estornado</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    O pagamento de <strong>{payment.reference}</strong> foi estornado.
                 </CardContent>
             </Card>
         );

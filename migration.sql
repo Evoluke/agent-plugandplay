@@ -31,6 +31,9 @@ create table public.company (
   constraint company_profile_id_fkey foreign KEY (company_profile_id) references company_profile (id)
 ) TABLESPACE pg_default;
 
+-- Enum para status de pagamento
+create type public.status_payment as enum ('pendente', 'pago', 'estorno');
+
 -- Cria tabela de pagamentos
 create table public.payments (
   id uuid not null default gen_random_uuid (),

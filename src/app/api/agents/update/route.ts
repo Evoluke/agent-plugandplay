@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     .from('payments')
     .select('id')
     .eq('agent_id', agentId)
-    .neq('status', 'pago')
+    .eq('status', 'pendente')
     .limit(1);
 
   if (paymentError) {
