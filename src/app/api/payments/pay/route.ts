@@ -40,6 +40,9 @@ export async function POST(request: Request) {
   if (typeof id !== 'string' || !id.trim()) {
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
   }
+  if (/[^\w-]/.test(id)) {
+    return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+  }
 
   if (typeof date === 'string' && date.includes('T')) {
     date = new Date(date).toISOString().slice(0, 10);
@@ -67,11 +70,20 @@ export async function POST(request: Request) {
 
   console.log(`[payment] user=${userId} id=${id} total=${total}`);
 
-  const { data: paymentRecord, error: paymentError } = await supabaseadmin
+  let { data: paymentRecord, error: paymentError } = await supabaseadmin
     .from('payments')
     .select('id, company_id, asaas_id, payment_link, due_date')
-    .or(`id.eq.${id},reference.eq.${id}`)
+    .eq('id', id)
     .maybeSingle();
+
+  if (!paymentRecord && !paymentError) {
+    ({ data: paymentRecord, error: paymentError } = await supabaseadmin
+      .from('payments')
+      .select('id, company_id, asaas_id, payment_link, due_date')
+      .eq('reference', id)
+      .maybeSingle());
+  }
+
   if (paymentError) {
     console.error(paymentError);
   }
