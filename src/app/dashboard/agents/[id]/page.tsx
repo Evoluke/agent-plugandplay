@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { isValidAgentName } from "@/lib/validators";
 import { Button } from "@/components/ui/button";
@@ -102,6 +103,38 @@ export default function AgentDetailPage() {
   return (
     <div className="space-y-6">
       <AgentMenu agent={agent} />
+      <Card className="w-4/5 mx-auto p-4 text-sm space-y-2">
+        <p className="font-medium">Configure o agente seguindo as etapas:</p>
+        <ul className="list-disc pl-4 space-y-1">
+          <li>
+            <strong>Base de conhecimento</strong>: adicione arquivos, links, FAQs e vídeos que servirão de referência.
+            <Button variant="link" asChild className="px-1">
+              <Link href={`/dashboard/agents/${id}/base-conhecimento`}>Ir para base de conhecimento</Link>
+            </Button>
+          </li>
+          <li>
+            <strong>Comportamento</strong>: defina tom de voz, objetivo e limites de atuação.
+            <Button variant="link" asChild className="px-1">
+              <Link href={`/dashboard/agents/${id}/comportamento`}>Ir para comportamento</Link>
+            </Button>
+          </li>
+          <li>
+            <strong>Instruções específicas</strong>: detalhe orientações e casos especiais.
+            <Button variant="link" asChild className="px-1">
+              <Link href={`/dashboard/agents/${id}/instrucoes-especificas`}>Ir para instruções específicas</Link>
+            </Button>
+          </li>
+          <li>
+            <strong>Onboarding</strong>: personalize a primeira interação com usuários.
+            <Button variant="link" asChild className="px-1">
+              <Link href={`/dashboard/agents/${id}/onboarding`}>Ir para onboarding</Link>
+            </Button>
+          </li>
+        </ul>
+        <p className="text-xs text-gray-500">
+          Siga a sequência acima para configurar o agente. Atualize este texto caso novas funcionalidades sejam adicionadas.
+        </p>
+      </Card>
       <div className="flex justify-center">
         <Card className="w-4/5 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
