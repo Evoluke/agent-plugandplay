@@ -10,22 +10,17 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 export default function AgentGuide() {
   const params = useParams();
   const id = params?.id as string;
-  const [introOpen, setIntroOpen] = useState(true);
+  const [introOpen, setIntroOpen] = useState<boolean | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data }) => {
-      setUserId(data.user?.id ?? null);
+      const uid = data.user?.id ?? null;
+      setUserId(uid);
+      const stored = uid ? localStorage.getItem(`agentIntroOpen_${uid}`) : null;
+      setIntroOpen(stored !== null ? stored === "true" : true);
     });
   }, []);
-
-  useEffect(() => {
-    if (!userId) return;
-    const stored = localStorage.getItem(`agentIntroOpen_${userId}`);
-    if (stored !== null) {
-      setIntroOpen(stored === "true");
-    }
-  }, [userId]);
 
   const handleIntroOpenChange = (open: boolean) => {
     setIntroOpen(open);
@@ -33,6 +28,8 @@ export default function AgentGuide() {
       localStorage.setItem(`agentIntroOpen_${userId}`, String(open));
     }
   };
+
+  if (introOpen === null) return null;
 
   return (
     <>
