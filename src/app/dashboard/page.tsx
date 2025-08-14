@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Folder, Users, FileText, Clock } from "lucide-react";
+import { Folder, Users, FileText } from "lucide-react";
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -121,6 +121,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/*
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Estatísticas</h3>
@@ -149,6 +150,7 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+      */}
     </div>
   );
 }
