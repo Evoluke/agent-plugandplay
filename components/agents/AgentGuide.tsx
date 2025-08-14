@@ -96,7 +96,7 @@ export default function AgentGuide() {
       </Dialog.Root>
       {!introOpen && (
         <Button
-          className="fixed bottom-4 left-4 z-50 rounded-full shadow-lg"
+          className="fixed bottom-4 right-4 z-50 rounded-full shadow-lg"
           onClick={() => handleIntroOpenChange(true)}
         >
           Guia
