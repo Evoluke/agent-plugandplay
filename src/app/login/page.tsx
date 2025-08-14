@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { supabasebrowser } from '@/lib/supabaseClient'
@@ -85,9 +86,8 @@ export default function LoginPage() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium">Senha</label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required

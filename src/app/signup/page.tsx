@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -108,9 +109,8 @@ export default function SignupPage() {
           <label htmlFor="password" className="block text-sm font-medium">
             Senha
           </label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -121,9 +121,8 @@ export default function SignupPage() {
           <label htmlFor="confirm" className="block text-sm font-medium">
             Confirme a senha
           </label>
-          <Input
+          <PasswordInput
             id="confirm"
-            type="password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
