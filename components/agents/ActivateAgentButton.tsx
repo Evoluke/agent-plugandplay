@@ -38,7 +38,12 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       return;
     }
 
-    if (new Date(payment.due_date) < new Date()) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dueDate = new Date(payment.due_date);
+    dueDate.setHours(0, 0, 0, 0);
+
+    if (dueDate < today) {
       toast.error(
         "Pagamento pendente vencido. Não é possível ativar o agente."
       );
