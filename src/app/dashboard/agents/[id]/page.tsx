@@ -21,6 +21,7 @@ import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import AgentMenu from "@/components/agents/AgentMenu";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
+import * as Dialog from "@radix-ui/react-dialog";
 
 type Agent = {
   id: string;
@@ -38,6 +39,7 @@ export default function AgentDetailPage() {
   const [objective, setObjective] = useState("");
   const [limits, setLimits] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [introOpen, setIntroOpen] = useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -103,38 +105,61 @@ export default function AgentDetailPage() {
   return (
     <div className="space-y-6">
       <AgentMenu agent={agent} />
-      <Card className="w-4/5 mx-auto p-4 text-sm space-y-2">
-        <p className="font-medium">Configure o agente seguindo as etapas:</p>
-        <ul className="list-disc pl-4 space-y-1">
-          <li>
-            <strong>Base de conhecimento</strong>: adicione arquivos, links, FAQs e vídeos que servirão de referência.
-            <Button variant="link" asChild className="px-1">
-              <Link href={`/dashboard/agents/${id}/base-conhecimento`}>Ir para base de conhecimento</Link>
-            </Button>
-          </li>
-          <li>
-            <strong>Comportamento</strong>: defina tom de voz, objetivo e limites de atuação.
-            <Button variant="link" asChild className="px-1">
-              <Link href={`/dashboard/agents/${id}/comportamento`}>Ir para comportamento</Link>
-            </Button>
-          </li>
-          <li>
-            <strong>Instruções específicas</strong>: detalhe orientações e casos especiais.
-            <Button variant="link" asChild className="px-1">
-              <Link href={`/dashboard/agents/${id}/instrucoes-especificas`}>Ir para instruções específicas</Link>
-            </Button>
-          </li>
-          <li>
-            <strong>Onboarding</strong>: personalize a primeira interação com usuários.
-            <Button variant="link" asChild className="px-1">
-              <Link href={`/dashboard/agents/${id}/onboarding`}>Ir para onboarding</Link>
-            </Button>
-          </li>
-        </ul>
-        <p className="text-xs text-gray-500">
-          Siga a sequência acima para configurar o agente. Atualize este texto caso novas funcionalidades sejam adicionadas.
-        </p>
-      </Card>
+      <Dialog.Root open={introOpen} onOpenChange={setIntroOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-6 shadow space-y-4">
+            <Dialog.Title className="text-lg font-semibold">
+              Configuração do agente
+            </Dialog.Title>
+            <div className="text-sm space-y-2">
+              <p>Configure o agente seguindo as etapas:</p>
+              <ul className="list-disc pl-4 space-y-1">
+                <li>
+                  <strong>Base de conhecimento</strong>: adicione arquivos, links, FAQs e vídeos que servirão de referência.
+                  <Button variant="link" asChild className="px-1">
+                    <Link href={`/dashboard/agents/${id}/base-conhecimento`}>Ir para base de conhecimento</Link>
+                  </Button>
+                </li>
+                <li>
+                  <strong>Comportamento</strong>: defina tom de voz, objetivo e limites de atuação.
+                  <Button variant="link" asChild className="px-1">
+                    <Link href={`/dashboard/agents/${id}/comportamento`}>Ir para comportamento</Link>
+                  </Button>
+                </li>
+                <li>
+                  <strong>Instruções específicas</strong>: detalhe orientações e casos especiais.
+                  <Button variant="link" asChild className="px-1">
+                    <Link href={`/dashboard/agents/${id}/instrucoes-especificas`}>Ir para instruções específicas</Link>
+                  </Button>
+                </li>
+                <li>
+                  <strong>Onboarding</strong>: personalize a primeira interação com usuários.
+                  <Button variant="link" asChild className="px-1">
+                    <Link href={`/dashboard/agents/${id}/onboarding`}>Ir para onboarding</Link>
+                  </Button>
+                </li>
+              </ul>
+              <p className="text-xs text-gray-500">
+                Siga a sequência acima para configurar o agente. Atualize este texto caso novas funcionalidades sejam adicionadas.
+              </p>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="secondary" onClick={() => setIntroOpen(false)}>
+                Minimizar
+              </Button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+      {!introOpen && (
+        <Button
+          className="fixed bottom-4 left-4 z-50 rounded-full shadow-lg"
+          onClick={() => setIntroOpen(true)}
+        >
+          Guia
+        </Button>
+      )}
       <div className="flex justify-center">
         <Card className="w-4/5 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
