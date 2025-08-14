@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   useEffect(() => {
@@ -37,24 +38,29 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await supabasebrowser.auth.signInWithPassword({ email, password });
-    if (error) {
-      console.error('Falha no login:', error.message);
-      if (error.message.includes('Email not confirmed')) {
-        router.push('/verify-email?email=' + encodeURIComponent(email));
-      } else if (error.message.includes('Invalid login credentials')) {
-        toast.error('Email ou senha inválidos');
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabasebrowser.auth.signInWithPassword({ email, password });
+      if (error) {
+        console.error('Falha no login:', error.message);
+        if (error.message.includes('Email not confirmed')) {
+          router.push('/verify-email?email=' + encodeURIComponent(email));
+        } else if (error.message.includes('Invalid login credentials')) {
+          toast.error('Email ou senha inválidos');
+        } else {
+          toast.error('Falha no login. Tente novamente mais tarde.');
+        }
       } else {
-        toast.error('Falha no login. Tente novamente mais tarde.');
+        const { data: company } = await supabasebrowser
+          .from('company')
+          .select('profile_complete')
+          .eq('user_id', data.user!.id)
+          .single();
+        if (company?.profile_complete) router.push('/dashboard');
+        else router.push('/complete-profile');
       }
-    } else {
-      const { data: company } = await supabasebrowser
-        .from('company')
-        .select('profile_complete')
-        .eq('user_id', data.user!.id)
-        .single();
-      if (company?.profile_complete) router.push('/dashboard');
-      else router.push('/complete-profile');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -94,8 +100,8 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <Button type="submit" className="w-full">
-          Entrar                                     {/* ← não deixe vazio */}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Entrando..." : "Entrar"}                                     {/* ← não deixe vazio */}
         </Button>
 
 
