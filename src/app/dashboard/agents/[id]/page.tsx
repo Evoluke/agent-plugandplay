@@ -40,6 +40,28 @@ export default function AgentDetailPage() {
   const [limits, setLimits] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [introOpen, setIntroOpen] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabasebrowser.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? null);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+    const stored = localStorage.getItem(`agentIntroOpen_${userId}`);
+    if (stored !== null) {
+      setIntroOpen(stored === "true");
+    }
+  }, [userId]);
+
+  const handleIntroOpenChange = (open: boolean) => {
+    setIntroOpen(open);
+    if (userId) {
+      localStorage.setItem(`agentIntroOpen_${userId}`, String(open));
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -105,7 +127,7 @@ export default function AgentDetailPage() {
   return (
     <div className="space-y-6">
       <AgentMenu agent={agent} />
-      <Dialog.Root open={introOpen} onOpenChange={setIntroOpen}>
+      <Dialog.Root open={introOpen} onOpenChange={handleIntroOpenChange}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/50" />
           <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-6 shadow space-y-4">
@@ -145,7 +167,10 @@ export default function AgentDetailPage() {
               </p>
             </div>
             <div className="flex justify-end">
-              <Button variant="secondary" onClick={() => setIntroOpen(false)}>
+              <Button
+                variant="secondary"
+                onClick={() => handleIntroOpenChange(false)}
+              >
                 Minimizar
               </Button>
             </div>
@@ -154,8 +179,8 @@ export default function AgentDetailPage() {
       </Dialog.Root>
       {!introOpen && (
         <Button
-          className="fixed bottom-4 left-4 z-50 rounded-full shadow-lg"
-          onClick={() => setIntroOpen(true)}
+          className="fixed bottom-4 right-4 z-50 rounded-full shadow-lg"
+          onClick={() => handleIntroOpenChange(true)}
         >
           Guia
         </Button>
