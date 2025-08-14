@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Folder, Users, FileText, Clock } from "lucide-react";
+import { Folder, Users, FileText } from "lucide-react";
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -69,6 +69,17 @@ export default function DashboardPage() {
     { icon: <FileText className="w-5 h-5 text-purple-500" />, title: "Gerar Relatórios", href: "/dashboard/", desc: "Compartilhe insights com as partes interessadas", disabled: true },
   ];
 
+  const agentsData = [
+    { key: 'agent1', color: 'bg-blue-500', label: 'Agente 1' },
+    { key: 'agent2', color: 'bg-green-500', label: 'Agente 2' },
+  ];
+
+  const messageData = Array.from({ length: 30 }, (_, i) => ({
+    day: i + 1,
+    agent1: ((i + 1) * 2) % 15 + 5,
+    agent2: ((i + 1) * 3) % 20 + 2,
+  }));
+
   return (
     <div className="p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -121,6 +132,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/*
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Estatísticas</h3>
@@ -146,6 +158,39 @@ export default function DashboardPage() {
                 <CardDescription className="text-xs text-gray-500">{stat.note}</CardDescription>
               </CardContent>
             </Card>
+          ))}
+        </div>
+      </div>
+      */}
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Mensagens por Agente</h3>
+          <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
+            Mensal
+          </span>
+        </div>
+        <div className="w-full h-64 border rounded p-2">
+          <div className="flex h-full items-end space-x-1">
+            {messageData.map((d) => (
+              <div key={d.day} className="flex-1 flex items-end space-x-1">
+                {agentsData.map((agent) => (
+                  <div
+                    key={agent.key}
+                    className={`${agent.color} w-2`}
+                    style={{ height: `${d[agent.key as keyof typeof d] * 4}px` }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex space-x-4 text-xs">
+          {agentsData.map((agent) => (
+            <div key={agent.key} className="flex items-center">
+              <span className={`w-3 h-3 ${agent.color} mr-1`}></span>
+              {agent.label}
+            </div>
           ))}
         </div>
       </div>
