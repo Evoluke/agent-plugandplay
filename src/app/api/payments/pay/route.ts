@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 
   const { data: paymentRecord, error: paymentError } = await supabaseadmin
     .from('payments')
-    .select('id, company_id, asaas_id, payment_link, due_date')
+    .select('id, company_id, asaas_id, payment_link, due_date, amount')
     .or(`id.eq.${id},reference.eq.${id}`)
     .maybeSingle();
   if (paymentError) {
@@ -99,6 +99,10 @@ export async function POST(request: Request) {
 
   if (paymentRecord.company_id !== company.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  if (total !== paymentRecord.amount) {
+    return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
   }
 
   if (paymentRecord.asaas_id && paymentRecord.payment_link) {
@@ -185,7 +189,7 @@ export async function POST(request: Request) {
       customer: customerId,
       billingType: 'UNDEFINED',
       dueDate,
-      value: total,
+      value: paymentRecord.amount,
       description: `Pagamento ${id}`,
       postalService: false,
       externalReference: id,
