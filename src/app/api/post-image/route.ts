@@ -15,10 +15,10 @@ type Payload = {
 async function getBrowser() {
   const isVercel = !!process.env.VERCEL;
   if (isVercel) {
-    const chromium = await import("@sparticuz/chromium");
-    const puppeteerCore = await import("puppeteer-core");
+    const { default: chromium } = await import("@sparticuz/chromium");
+    const puppeteer = await import("puppeteer-core");
     const executablePath = await chromium.executablePath();
-    return puppeteerCore.launch({
+    return puppeteer.launch({
       args: chromium.args,
       defaultViewport: { width: 1080, height: 1080 },
       executablePath,
