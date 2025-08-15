@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 type Payload = {
   title?: string; // linha grande
   body?: string; // parágrafo
-  linkText?: string; // texto sublinhado
+  linkText?: string; // palavras sublinhadas (separadas por "|")
   arrow?: boolean; // mostra seta
   bg?: string; // cor de fundo
   fg?: string; // cor do texto
@@ -40,16 +40,27 @@ async function getBrowser() {
 
 function htmlTemplate({
   title = "Você não precisa atender\ntodos",
-  body = "A maioria ainda responde clientes\nmanualmente.",
+  body = "A maioria ainda responde clientes\nmanualmente.\nEsse post não é pra eles.",
   linkText = "Esse post não é pra eles.",
   arrow = true,
   bg = "#FFFFFF",
   fg = "#0D0D0D",
 }: Payload) {
-  // converte quebras \n para <br/>
   const esc = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const br = (s: string) => esc(s).replace(/\n/g, "<br/>");
+  const br = (s: string) => s.replace(/\n/g, "<br/>");
+  const brEsc = (s: string) => esc(s).replace(/\n/g, "<br/>");
+  const underline = (text: string, links: string) => {
+    let html = esc(text);
+    const items = links
+      ? links.split("|").map((t) => esc(t)).filter(Boolean)
+      : [];
+    for (const item of items) {
+      const re = new RegExp(item.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"), "g");
+      html = html.replace(re, `<span class="link">${item}</span>`);
+    }
+    return br(html);
+  };
 
   return `
 <!doctype html>
@@ -92,11 +103,8 @@ function htmlTemplate({
 </head>
 <body>
   <div class="wrap">
-    <div class="title">${br(title)}</div>
-    <div>
-      <div class="body">${br(body)}</div>
-      <div class="link">${br(linkText)}</div>
-    </div>
+    <div class="title">${brEsc(title)}</div>
+    <div class="body">${underline(body, linkText)}</div>
     ${arrow ? '<div class="cta"></div>' : ""}
   </div>
 </body>
