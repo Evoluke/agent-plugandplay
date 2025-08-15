@@ -18,11 +18,12 @@ async function getBrowser() {
     const { default: chromium } = await import("@sparticuz/chromium");
     const puppeteer = await import("puppeteer-core");
     const executablePath = await chromium.executablePath();
+    const headless = chromium.headless === "new" ? true : chromium.headless;
     return puppeteer.launch({
       args: chromium.args,
       defaultViewport: { width: 1080, height: 1080 },
       executablePath,
-      headless: chromium.headless,
+      headless,
     });
   } else {
     const puppeteer = await import("puppeteer");
