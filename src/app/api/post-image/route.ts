@@ -88,10 +88,6 @@ function htmlTemplate({
   .body{
     font-size:42.667px; line-height:59px; font-weight:400; color:#0d0d0d; letter-spacing: 0.001em;
     max-width:820px;
-      text-align: justify;        /* distribui espaços para preencher a linha */
-  text-align-last: justify;   /* também na última linha */
-  hyphens: auto;              /* quebra melhor as palavras (com lang=pt-BR) */
-  word-spacing: normal;       /* evita somar espaçamento manual */
   }
   .link{
     font-size:42.667px; line-height:59px; font-weight:400; text-decoration:underline;
