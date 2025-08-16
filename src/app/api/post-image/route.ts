@@ -25,7 +25,7 @@ async function getBrowser() {
     const executablePath = await chromiumOpts.executablePath();
     return puppeteerCore.launch({
       args: chromiumOpts.args,
-      defaultViewport: { width: 1080, height: 1080 },
+      defaultViewport: { width: 1024, height: 1024 },
       executablePath,
       headless: chromiumOpts.headless,
     });
@@ -33,7 +33,7 @@ async function getBrowser() {
     const { default: puppeteer } = await import("puppeteer");
     return puppeteer.launch({
       headless: true,
-      defaultViewport: { width: 1080, height: 1080 },
+      defaultViewport: { width: 1024, height: 1024 },
     });
   }
 }
@@ -64,40 +64,47 @@ function htmlTemplate({
 
   return `
 <!doctype html>
-<html>
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=1080, initial-scale=1" />
+<meta name="viewport" content="width=1024, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  @font-face { font-family: Inter; font-weight: 400; src: local("Inter"); font-display: swap; }
-  @font-face { font-family: Inter; font-weight: 600; src: local("Inter"); font-display: swap; }
-  html,body{margin:0;padding:0;width:1080px;height:1080px;background:${bg};}
+<style>
+  html,body{margin:0;padding:0;width:1024px;height:1024px;background:${bg};}
   .wrap{
     position:relative; box-sizing:border-box; width:100%; height:100%;
-    padding:120px 96px; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    padding:277px 96px; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     color:${fg};
-    display:flex; flex-direction:column; gap:48px;
+    display:flex; flex-direction:column; gap:81px;
   }
   .title{
-    font-size:96px; line-height:1.05; font-weight:700; letter-spacing:-0.02em;
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-size:56px; line-height:78px; font-weight:600; letter-spacing:-0.001em;
     max-width:820px;
   }
   .body{
-    font-size:44px; line-height:1.3; font-weight:400; color:#242424;
+    font-size:42.667px; line-height:59px; font-weight:400; color:#0d0d0d; letter-spacing: 0.001em;
     max-width:820px;
+      text-align: justify;        /* distribui espaços para preencher a linha */
+  text-align-last: justify;   /* também na última linha */
+  hyphens: auto;              /* quebra melhor as palavras (com lang=pt-BR) */
+  word-spacing: normal;       /* evita somar espaçamento manual */
   }
   .link{
-    font-size:44px; line-height:1.3; font-weight:500; text-decoration:underline;
-    color:${fg};
+    font-size:42.667px; line-height:59px; font-weight:400; text-decoration:underline;
+    color:${fg}; letter-spacing: 0.001em; 
   }
   .cta{
-    position:absolute; right:96px; bottom:96px; width:360px; height:8px; border-radius:999px;
+    position:absolute; right:96px; bottom:-24px; width:239px; height:6px; border-radius:999px;
     background:${fg};
   }
   .cta::after{
-    content:""; position:absolute; right:-8px; top:-12px;
-    width:0; height:0; border-top:16px solid transparent; border-bottom:16px solid transparent;
-    border-left:32px solid ${fg};
+    content:""; position:absolute; right:-8px; top:-10px;
+    width:0; height:0; border-top:12px solid transparent; border-bottom:14px solid transparent; border-radius:3px;
+    border-left:20px solid ${fg};
   }
 </style>
 </head>
