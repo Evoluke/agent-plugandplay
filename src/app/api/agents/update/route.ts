@@ -83,10 +83,16 @@ export async function POST(request: Request) {
     specificInstructions: specific ?? [],
   });
 
-  await supabaseadmin
+  const { error: updateError } = await supabaseadmin
     .from('agents')
     .update({ instructions })
     .eq('id', agentId);
+  if (updateError) {
+    return NextResponse.json(
+      { error: 'Failed to update agent instructions' },
+      { status: 500 },
+    );
+  }
 
   const { data: existing, error: paymentError } = await supabaseadmin
     .from('payments')
