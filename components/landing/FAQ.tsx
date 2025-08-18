@@ -1,23 +1,23 @@
 const faqs = [
   {
-    q: "Como começo a usar a plataforma?",
-    a: "Basta criar uma conta gratuita e conectar seus canais preferidos.",
+    q: "O que é a Evoluke?",
+    a: "Uma plataforma que une CRM omnichannel e inteligência artificial para otimizar seu atendimento.",
   },
   {
-    q: "Posso integrar com outros sistemas?",
-    a: "Sim, oferecemos API e integrações nativas com CRM e outros serviços.",
+    q: "Posso integrar meus canais atuais?",
+    a: "Sim. Conecte e-mail, chat, redes sociais e muito mais em um único lugar.",
   },
   {
-    q: "Existe período de teste?",
-    a: "Sim, todos os planos possuem 14 dias gratuitos para avaliação.",
+    q: "A inteligência artificial aprende com meus atendimentos?",
+    a: "Sim, ela se adapta às interações para responder com cada vez mais precisão.",
   },
   {
-    q: "Os dados dos meus clientes estão seguros?",
-    a: "Utilizamos criptografia e seguimos as melhores práticas de segurança.",
+    q: "Vocês oferecem serviços sob demanda?",
+    a: "Nossa equipe está disponível para implementar e personalizar soluções conforme a necessidade da sua empresa.",
   },
   {
-    q: "Como funciona o suporte?",
-    a: "Nossa equipe está disponível por chat e e-mail em horário comercial.",
+    q: "Meus dados estão seguros?",
+    a: "Utilizamos criptografia e seguimos as melhores práticas de segurança para proteger suas informações.",
   },
 ];
 

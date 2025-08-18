@@ -10,11 +10,10 @@ export default function Hero() {
       <div className="mx-auto grid max-w-[1140px] items-center gap-6 md:gap-8 lg:gap-6 px-3 md:px-4 lg:px-6 md:grid-cols-2 lg:grid-cols-12">
         <div className="space-y-4 text-center md:text-left lg:col-span-6">
           <h1 className="text-4xl font-bold sm:text-5xl">
-            Atendimento eficiente com IA
+            Inteligência Artificial e CRM Omnichannel
           </h1>
           <p className="text-lg text-muted-foreground">
-            Centralize conversas, gerencie clientes e otimize processos com
-            ferramentas inteligentes.
+            A Evoluke integra IA ao seu CRM para personalizar atendimentos e automatizar processos.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">
             <Link href="/signup" className="w-full sm:w-auto">
@@ -22,9 +21,9 @@ export default function Hero() {
                 Começar agora
               </Button>
             </Link>
-            <Link href="#sobre" className="w-full sm:w-auto">
+            <Link href="#solucoes" className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Conhecer planos
+                Ver soluções
               </Button>
             </Link>
           </div>

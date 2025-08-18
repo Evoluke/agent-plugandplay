@@ -9,21 +9,21 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 const description =
-  "Agent Plug and Play é uma plataforma de agentes de inteligência artificial plug and play para automação, chatbots e integrações sem código.";
+  "A Evoluke oferece soluções de CRM integradas com inteligência artificial, personalizando atendimentos e automatizando processos para empresas.";
 
 export const metadata: Metadata = {
-  title: "Agent Plug and Play",
+  title: "Evoluke",
   description,
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Agent Plug and Play",
+    title: "Evoluke",
     description,
-    url: "https://agent-plugandplay.com",
-    siteName: "Agent Plug and Play",
+    url: "https://evoluke.com.br",
+    siteName: "Evoluke",
     images: [
       {
         url: "/logo.svg",
-        alt: "Agent Plug and Play",
+        alt: "Evoluke",
       },
     ],
     locale: "pt_BR",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Agent Plug and Play",
+    title: "Evoluke",
     description,
     images: ["/logo.svg"],
   },

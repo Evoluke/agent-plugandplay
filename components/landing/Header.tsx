@@ -19,17 +19,17 @@ export default function Header() {
           <ul className="flex gap-6 text-sm">
             <li>
               <Link href="#" className="hover:text-primary">
-                Home
+                Início
               </Link>
             </li>
             <li>
-              <Link href="#sobre" className="hover:text-primary">
-                Sobre
+              <Link href="#solucoes" className="hover:text-primary">
+                Soluções
               </Link>
             </li>
             <li>
-              <Link href="#servicos" className="hover:text-primary">
-                Serviços
+              <Link href="#planos" className="hover:text-primary">
+                Planos
               </Link>
             </li>
             <li>
@@ -46,7 +46,7 @@ export default function Header() {
             </Button>
           </Link>
           <Link href="/signup">
-            <Button size="sm">Registrar</Button>
+            <Button size="sm">Criar conta</Button>
           </Link>
         </div>
         <Button
@@ -73,13 +73,13 @@ export default function Header() {
           </div>
           <nav className="mt-8 flex flex-col items-center gap-4 text-lg">
             <Link href="#" onClick={() => setOpen(false)}>
-              Home
+              Início
             </Link>
-            <Link href="#sobre" onClick={() => setOpen(false)}>
-              Sobre
+            <Link href="#solucoes" onClick={() => setOpen(false)}>
+              Soluções
             </Link>
-            <Link href="#servicos" onClick={() => setOpen(false)}>
-              Serviços
+            <Link href="#planos" onClick={() => setOpen(false)}>
+              Planos
             </Link>
             <Link href="#contato" onClick={() => setOpen(false)}>
               Contato
@@ -92,7 +92,7 @@ export default function Header() {
               </Button>
             </Link>
             <Link href="/signup" className="w-full" onClick={() => setOpen(false)}>
-              <Button className="w-full">Registrar</Button>
+              <Button className="w-full">Criar conta</Button>
             </Link>
           </div>
         </div>
