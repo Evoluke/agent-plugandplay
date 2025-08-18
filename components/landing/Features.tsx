@@ -5,17 +5,17 @@ const items = [
   {
     title: "IA integrada",
     description:
-      "Automatize processos e personalize atendimentos com inteligência artificial.",
+      "Automatize e personalize atendimentos com inteligência artificial.",
     icon: Bot,
   },
   {
     title: "CRM Omnichannel",
-    description: "Conecte e-mail, chat, redes sociais e mais em uma plataforma única.",
+    description: "Conecte Whatsapp com multiplos usuários interagindo em uma plataforma única.",
     icon: MessageSquare,
   },
   {
     title: "Suporte especializado",
-    description: "Conte com nossa equipe para implementar soluções sob medida.",
+    description: "Oferecemos serviços de automações e soluções sob medida.",
     icon: Users,
   },
 ];

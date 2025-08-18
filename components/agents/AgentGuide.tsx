@@ -44,18 +44,34 @@ export default function AgentGuide() {
               <p>Configure o agente seguindo as etapas:</p>
               <ul className="list-disc pl-4 space-y-1">
                 <li>
-                  <strong>Base de conhecimento</strong>: adicione arquivos, links, FAQs e vídeos que servirão de referência.
+                  <strong>Personalidade</strong>: defina tom de voz, objetivo e limites de atuação.
                   <Button variant="link" asChild className="px-1">
-                    <Link href={`/dashboard/agents/${id}/base-conhecimento`}>
-                      Ir para base de conhecimento
+                    <Link href={`/dashboard/agents/${id}`}>
+                      Ir para comportamento
                     </Link>
                   </Button>
                 </li>
                 <li>
-                  <strong>Comportamento</strong>: defina tom de voz, objetivo e limites de atuação.
+                  <strong>Comportamento</strong>: defina limitações, palavras proibidas e fallback padrão.
                   <Button variant="link" asChild className="px-1">
                     <Link href={`/dashboard/agents/${id}/comportamento`}>
                       Ir para comportamento
+                    </Link>
+                  </Button>
+                </li>
+                <li>
+                  <strong>Onboarding</strong>: personalize a interação com usuários.
+                  <Button variant="link" asChild className="px-1">
+                    <Link href={`/dashboard/agents/${id}/onboarding`}>
+                      Ir para onboarding
+                    </Link>
+                  </Button>
+                </li>
+                <li>
+                  <strong>Base de conhecimento</strong>: adicione arquivos que servirão de referência.
+                  <Button variant="link" asChild className="px-1">
+                    <Link href={`/dashboard/agents/${id}/base-conhecimento`}>
+                      Ir para base de conhecimento
                     </Link>
                   </Button>
                 </li>
@@ -67,17 +83,10 @@ export default function AgentGuide() {
                     </Link>
                   </Button>
                 </li>
-                <li>
-                  <strong>Onboarding</strong>: personalize a primeira interação com usuários.
-                  <Button variant="link" asChild className="px-1">
-                    <Link href={`/dashboard/agents/${id}/onboarding`}>
-                      Ir para onboarding
-                    </Link>
-                  </Button>
-                </li>
+
               </ul>
               <p className="text-xs text-gray-500">
-                Siga a sequência acima para configurar o agente. Atualize este texto caso novas funcionalidades sejam adicionadas.
+                Siga a sequência acima para configurar o agente.
               </p>
             </div>
             <div className="flex justify-end">

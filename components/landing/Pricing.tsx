@@ -12,13 +12,13 @@ import {
 
 const plans = [
   {
-    name: "Básico",
-    price: "Grátis",
-    features: ["Agente de IA", "Atendimento multicanal"],
+    name: "Suporte Atendimento",
+    price: "R$ 599,00/mês",
+    features: ["Consulta base de conhecimento", "Responde seus clientes 24/7"],
   },
   {
-    name: "Pro",
-    price: "R$49/mês",
+    name: "Representante de vendas (SDR)",
+    price: "R$ 599,00/mês",
     features: ["Todos os recursos do Básico", "CRM completo", "Kanban"],
   },
   {
@@ -32,7 +32,7 @@ export default function Pricing() {
   return (
     <section id="planos" className="bg-[#FAFAFA] py-24">
       <div className="container mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold">Planos</h2>
+        <h2 className="mb-12 text-center text-3xl font-bold">Modelos prontos para uso</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {plans.map(({ name, price, features }) => (
             <Card key={name} className="flex flex-col">

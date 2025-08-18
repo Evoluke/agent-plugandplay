@@ -1,23 +1,15 @@
 const faqs = [
   {
     q: "O que é a Evoluke?",
-    a: "Uma plataforma que une CRM omnichannel e inteligência artificial para otimizar seu atendimento.",
+    a: "Nossa tecnologia combina agentes de inteligência artificial que entendem as particularidades do seu negócio. Ao funcionar junto a uma plataforma de CRM multicanal, esses agentes automatizam o atendimento de maneira integrada. Isso permite processos mais eficientes e um relacionamento com clientes que cresce de forma inteligente e escalável.",
   },
   {
-    q: "Posso integrar meus canais atuais?",
-    a: "Sim. Conecte e-mail, chat, redes sociais e muito mais em um único lugar.",
+    q: "O que está incluso?",
+    a: "Você conta com a plataforma de CRM Multicanal e, é claro, com Agentes de IA personalizados de acordo com as necessidades da sua empresa.",
   },
   {
-    q: "A inteligência artificial aprende com meus atendimentos?",
-    a: "Sim, ela se adapta às interações para responder com cada vez mais precisão.",
-  },
-  {
-    q: "Vocês oferecem serviços sob demanda?",
-    a: "Nossa equipe está disponível para implementar e personalizar soluções conforme a necessidade da sua empresa.",
-  },
-  {
-    q: "Meus dados estão seguros?",
-    a: "Utilizamos criptografia e seguimos as melhores práticas de segurança para proteger suas informações.",
+    q: "Como funciona?",
+    a: "Cadastre-se na plataforma, crie seu agente de IA e personalize-o com as características da sua empresa. Após o pagamento, você terá acesso ao nosso CRM Omnichannel e ao seu agente de IA, pronto para atender seus clientes.",
   },
 ];
 

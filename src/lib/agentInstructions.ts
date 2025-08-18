@@ -18,7 +18,7 @@ export interface AgentInstructionsData {
 
 export function buildAgentInstructions(data: AgentInstructionsData): string {
   const lines: string[] = [];
-  lines.push('<instructions>');
+  lines.push('<agent>');
   lines.push('  <personality>');
   lines.push(`    <voice_tone>${data.personality.voice_tone}</voice_tone>`);
   lines.push(`    <objective>${data.personality.objective}</objective>`);
@@ -48,6 +48,6 @@ export function buildAgentInstructions(data: AgentInstructionsData): string {
     lines.push('    </instruction>');
   }
   lines.push('  </specific_instructions>');
-  lines.push('</instructions>');
+  lines.push('</agent>');
   return lines.join('\n');
 }

@@ -28,19 +28,15 @@ type FAQ = {
 const faqList: FAQ[] = [
     {
         question: "Como faço para atualizar meu perfil?",
-        answer: "Acesse Configurações → Perfil e edite seus dados.",
+        answer: "Acesse Configurações e edite seus dados.",
     },
     {
         question: "Como posso redefinir minha senha?",
         answer: "Clique em “Esqueci minha senha” na tela de login.",
     },
     {
-        question: "O que é a funcionalidade X?",
-        answer: "A funcionalidade X permite que você …",
-    },
-    {
-        question: "Mais uma pergunta frequente?",
-        answer: "Resposta para outra pergunta.",
+        question: "Quais são os meios de pagamento disponíveis?",
+        answer: "Aceitamos pagamentos via PIX, boleto bancário, cartão de crédito e débito.",
     },
 
 ];

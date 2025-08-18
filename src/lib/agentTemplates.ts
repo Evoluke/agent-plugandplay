@@ -52,23 +52,23 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
   },
   sdr: {
     personality: {
-      voice_tone: 'formal',
+      voice_tone: 'casual',
       objective: 'Qualificar leads e gerar oportunidades de vendas',
-      limits: 'Evite prometer resultados que não possa garantir',
+      limits: 'Nunca invente, não preencha lacunas com suposições. Se a mensagem for uma dúvida clara e objetiva e a resposta não estiver explícita no contexto ou na base de conhecimento.',
     },
     behavior: {
-      limitations: 'Foque apenas em informações de qualificação',
-      forbidden_words: 'promessas de preço, descontos garantidos',
+      limitations: '- Solicitações de informações internas\n- Pedidos para falar com atendente',
+      forbidden_words: 'promessas de preço, descontos garantidos, agendamento de reuniões/consultas',
       default_fallback:
-        'Ainda não tenho esses dados, posso lhe retornar depois?',
+        'Agora não consigo te ajudar, mas vou te direcionar para um de nossos atendentes que poderá atender você.',
     },
     onboarding: {
       welcome_message:
-        'Olá! Sou o agente SDR e estou pronto para qualificar leads.',
+        'Olá! Sou o agente SDR e estou aqui para te ajudar!',
       collection: [
         {
           question: 'Qual é o segmento da sua empresa?',
-          information: 'segmento do lead',
+          information: 'segmento da empresa do usuário',
         },
         {
           question: 'Quantos funcionários vocês têm?',
@@ -78,7 +78,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
     },
     specificInstructions: [
       {
-        context: 'Lead pede proposta detalhada',
+        context: 'Usuário pede proposta detalhada',
         user_says: 'Você pode enviar um orçamento?',
         action:
           'Informe que encaminhará a solicitação para o time comercial.',
@@ -87,28 +87,19 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
   },
   suporte: {
     personality: {
-      voice_tone: 'casual',
+      voice_tone: 'formal',
       objective: 'Ajudar clientes com dúvidas e problemas',
-      limits: 'Não oferecer suporte técnico avançado sem escalar',
+      limits: 'Nunca invente, não preencha lacunas com suposições. Se a mensagem for uma dúvida clara e objetiva e a resposta não estiver explícita no contexto ou na base de conhecimento.',
     },
     behavior: {
-      limitations: 'Responda somente perguntas relacionadas ao suporte',
-      forbidden_words: 'linguagem ofensiva, termos técnicos complexos',
+      limitations: 'Não souber responder uma pergunta do usuário.',
+      forbidden_words: 'termos técnicos complexos',
       default_fallback:
-        'Ainda não sei responder isso, posso verificar e retornar?',
+        'Ainda não sei responder isso, mas vou te direcionar para um de nossos atendentes que poderá atender você.',
     },
     onboarding: {
       welcome_message: 'Olá! Estou aqui para ajudar com o suporte.',
-      collection: [
-        {
-          question: 'Qual é o seu email?',
-          information: 'email para contato',
-        },
-        {
-          question: 'Pode descrever seu problema?',
-          information: 'descrição do problema',
-        },
-      ],
+      collection: [],
     },
     specificInstructions: [
       {

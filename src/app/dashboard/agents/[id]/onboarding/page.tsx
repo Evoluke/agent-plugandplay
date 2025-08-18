@@ -143,7 +143,7 @@ export default function AgentOnboardingPage() {
                 maxLength={500}
               />
               <div className="flex justify-between text-xs text-gray-500">
-                <p>Oii! Sou a IA da Evoluke.</p>
+                <p>exemplo: Oii! Sou a IA da Evoluke.</p>
                 <p className="text-gray-400">0 a 500 caracteres</p>
               </div>
               {welcomeMessage && !welcomeMessageValid && (

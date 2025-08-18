@@ -8,12 +8,12 @@ export default function Hero() {
   return (
     <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16">
       <div className="mx-auto grid max-w-[1140px] items-center gap-6 md:gap-8 lg:gap-6 px-3 md:px-4 lg:px-6 md:grid-cols-2 lg:grid-cols-12">
-        <div className="space-y-4 text-center md:text-left lg:col-span-6">
+        <div className="space-y-4 text-center md:text-left lg:col-span-7">
           <h1 className="text-4xl font-bold sm:text-5xl">
-            Inteligência Artificial e CRM Omnichannel
+            Empresas inteligentes já usam IA no atendimento
           </h1>
           <p className="text-lg text-muted-foreground">
-            A Evoluke integra IA ao seu CRM para personalizar atendimentos e automatizar processos.
+            A Evoluke integra IA a um CRM para personalizar atendimentos e automatizar processos.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">
             <Link href="/signup" className="w-full sm:w-auto">
@@ -27,11 +27,8 @@ export default function Hero() {
               </Button>
             </Link>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Sem cartão de crédito
-          </p>
         </div>
-        <div className="flex justify-center lg:col-span-6">
+        <div className="flex justify-center lg:col-span-5">
           <Image
             src="/globe.svg"
             alt="Ilustração"

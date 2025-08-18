@@ -128,7 +128,7 @@ export default function AgentBehaviorPage() {
                 maxLength={500}
               />
               <div className="flex justify-between text-xs text-gray-500">
-                <p>Filtra jargões ou expressões.</p>
+                <p>Filtra expressões e ações.</p>
                 <p className="text-gray-400">0 a 500 caracteres</p>
               </div>
               {forbiddenWords && !forbiddenWordsValid && (
