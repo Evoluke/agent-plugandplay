@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabaseClient';
 import { supabaseadmin } from '@/lib/supabaseAdmin';
 import { AGENT_UPDATE_FEE } from '@/lib/payments';
+import { buildAgentInstructions } from '@/lib/agentInstructions';
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -43,6 +44,49 @@ export async function POST(request: Request) {
   if (companyError || !company) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
+
+  const { data: personality } = await supabaseadmin
+    .from('agent_personality')
+    .select('voice_tone, objective, limits')
+    .eq('agent_id', agentId)
+    .single();
+  const { data: behavior } = await supabaseadmin
+    .from('agent_behavior')
+    .select('limitations, forbidden_words, default_fallback')
+    .eq('agent_id', agentId)
+    .single();
+  const { data: onboarding } = await supabaseadmin
+    .from('agent_onboarding')
+    .select('welcome_message, collection')
+    .eq('agent_id', agentId)
+    .single();
+  const { data: specific } = await supabaseadmin
+    .from('agent_specific_instructions')
+    .select('context, user_says, action')
+    .eq('agent_id', agentId);
+
+  const instructions = buildAgentInstructions({
+    personality: personality ?? {
+      voice_tone: '',
+      objective: '',
+      limits: '',
+    },
+    behavior: behavior ?? {
+      limitations: '',
+      forbidden_words: '',
+      default_fallback: '',
+    },
+    onboarding: onboarding ?? {
+      welcome_message: '',
+      collection: [],
+    },
+    specificInstructions: specific ?? [],
+  });
+
+  await supabaseadmin
+    .from('agents')
+    .update({ instructions })
+    .eq('id', agentId);
 
   const { data: existing, error: paymentError } = await supabaseadmin
     .from('payments')
