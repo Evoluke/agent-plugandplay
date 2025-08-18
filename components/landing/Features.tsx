@@ -3,30 +3,28 @@ import { Bot, MessageSquare, Users } from "lucide-react";
 
 const items = [
   {
-    title: "Automação inteligente",
+    title: "IA integrada",
     description:
-      "Reduza o tempo de resposta com agentes que entendem seu negócio.",
+      "Automatize processos e personalize atendimentos com inteligência artificial.",
     icon: Bot,
   },
   {
-    title: "Centralização de canais",
-    description: "Converse por e-mail, chat e redes sociais em um único lugar.",
+    title: "CRM Omnichannel",
+    description: "Conecte e-mail, chat, redes sociais e mais em uma plataforma única.",
     icon: MessageSquare,
   },
   {
-    title: "Gestão de clientes",
-    description: "Tenha histórico completo e oportunidades sempre à mão.",
+    title: "Suporte especializado",
+    description: "Conte com nossa equipe para implementar soluções sob medida.",
     icon: Users,
   },
 ];
 
 export default function Features() {
   return (
-    <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16" id="sobre">
+    <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16" id="solucoes">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
-        <h2 className="mb-8 text-center text-3xl font-bold">
-          Por que é melhor
-        </h2>
+        <h2 className="mb-8 text-center text-3xl font-bold">Soluções</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(({ title, description, icon: Icon }) => (
             <Card key={title} className="h-full">

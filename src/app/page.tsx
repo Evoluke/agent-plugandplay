@@ -6,6 +6,7 @@ import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
+import Pricing from "@/components/landing/Pricing";
 import type { Metadata } from "next";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -15,22 +16,22 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  title: "Agent Plug and Play",
+  title: "Evoluke",
   description:
-    "Centralize conversas, gerencie clientes e otimize processos com ferramentas inteligentes.",
+    "A Evoluke oferece soluções de CRM integradas com inteligência artificial, personalizando atendimentos e automatizando processos para empresas.",
   openGraph: {
-    title: "Agent Plug and Play",
+    title: "Evoluke",
     description:
-      "Centralize conversas, gerencie clientes e otimize processos com ferramentas inteligentes.",
+      "A Evoluke oferece soluções de CRM integradas com inteligência artificial, personalizando atendimentos e automatizando processos para empresas.",
     url: baseUrl,
-    siteName: "Agent Plug and Play",
+    siteName: "Evoluke",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Agent Plug and Play",
+    title: "Evoluke",
     description:
-      "Centralize conversas, gerencie clientes e otimize processos com ferramentas inteligentes.",
+      "A Evoluke oferece soluções de CRM integradas com inteligência artificial, personalizando atendimentos e automatizando processos para empresas.",
   },
 };
 
@@ -42,25 +43,25 @@ export default function HomePage() {
         <Hero />
         <Features />
         <Benefit
-          tag="Benefício"
-          title="Automatize seu atendimento"
-          description="Use agentes inteligentes para responder rapidamente e com precisão."
+          tag="IA + CRM"
+          title="Personalize atendimentos com IA"
+          description="A Evoluke usa inteligência artificial para automatizar respostas e entender o contexto dos seus clientes."
           bullets={[
-            "Respostas em segundos",
+            "Respostas rápidas e precisas",
             "Aprendizado contínuo",
+            "Serviços sob demanda",
             "Escalabilidade",
-            "Personalização",
           ]}
           cta="Saiba mais"
           href="#"
           image="/window.svg"
         />
         <Benefit
-          tag="Produtividade"
-          title="Organize suas conversas"
-          description="Centralize todos os canais e tenha histórico completo de cada cliente."
+          tag="Omnichannel"
+          title="Centralize todos os canais"
+          description="Integre e-mail, chat, redes sociais e acompanhe todo o histórico em um único lugar."
           bullets={[
-            "E-mail, chat e redes sociais",
+            "Visão 360º do cliente",
             "Registro automático",
             "Busca avançada",
             "Análises em tempo real",
@@ -71,6 +72,7 @@ export default function HomePage() {
           reverse
           primary
         />
+        <Pricing />
         <Testimonials />
         <FAQ />
         <FinalCTA />
