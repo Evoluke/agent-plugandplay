@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabasebrowser } from '@/lib/supabaseClient';
@@ -27,7 +28,14 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA] p-4">
+      <Image
+        src="/logo.svg"
+        alt="Evoluke logo"
+        width={200}
+        height={60}
+        className="mb-8"
+      />
       <form
         onSubmit={handleSubmit}
         className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
