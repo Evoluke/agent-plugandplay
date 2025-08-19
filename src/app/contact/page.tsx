@@ -2,6 +2,13 @@ import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
 import type { Metadata } from "next";
+import {
+  Building2,
+  Instagram,
+  Linkedin,
+  Mail,
+  Phone,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contato - Evoluke",
@@ -12,35 +19,76 @@ export default function ContactPage() {
   return (
     <>
       <Header />
-      <main className="flex flex-col items-center">
-        <section className="w-full max-w-[1140px] px-3 md:px-4 lg:px-6 py-12">
-          <h1 className="mb-6 text-center text-3xl font-bold">Contato</h1>
-          <ul className="space-y-4 text-center">
-            <li>CNPJ: 12.345.678/0001-90</li>
-            <li>Telefone: (11) 1234-5678</li>
-            <li>
-              Instagram: {" "}
-              <Link
-                href="https://instagram.com/evoluke"
-                className="text-primary hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                @evoluke
-              </Link>
-            </li>
-            <li>
-              LinkedIn: {" "}
-              <Link
-                href="https://www.linkedin.com/company/evoluke"
-                className="text-primary hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Evoluke
-              </Link>
-            </li>
-          </ul>
+      <main>
+        <section className="mx-auto w-full max-w-[1140px] px-3 py-12 md:px-4 lg:px-6">
+          <h1 className="mb-8 text-center text-3xl font-bold">Contato</h1>
+          <address className="mx-auto max-w-md space-y-6 not-italic">
+            <div className="flex items-center gap-4">
+              <Building2
+                className="h-5 w-5 text-primary"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="font-semibold">CNPJ</p>
+                <p>12.345.678/0001-90</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Phone className="h-5 w-5 text-primary" aria-hidden="true" />
+              <div>
+                <p className="font-semibold">Telefone</p>
+                <a href="tel:+551112345678" className="hover:underline">
+                  (11) 1234-5678
+                </a>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Mail className="h-5 w-5 text-primary" aria-hidden="true" />
+              <div>
+                <p className="font-semibold">E-mail</p>
+                <Link
+                  href="mailto:contato@evoluke.com"
+                  className="text-primary hover:underline"
+                >
+                  contato@evoluke.com
+                </Link>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Instagram
+                className="h-5 w-5 text-primary"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="font-semibold">Instagram</p>
+                <Link
+                  href="https://instagram.com/evoluke"
+                  className="text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @evoluke
+                </Link>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Linkedin
+                className="h-5 w-5 text-primary"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="font-semibold">LinkedIn</p>
+                <Link
+                  href="https://www.linkedin.com/company/evoluke"
+                  className="text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Evoluke
+                </Link>
+              </div>
+            </div>
+          </address>
         </section>
       </main>
       <Footer />
