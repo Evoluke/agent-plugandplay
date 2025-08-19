@@ -140,9 +140,9 @@ create table public.agent_specific_instructions (
 -- Tabela de mensagens
 create table public.messages (
   id uuid not null default gen_random_uuid(),
-  created_at timestamp with time zone not null default now(),
   company_id bigint not null,
-  content text not null default ''::text,
+  message_date date not null,
+  message_count integer not null,
   constraint messages_pkey primary key (id),
   constraint messages_company_id_fkey foreign key (company_id) references company (id)
 ) TABLESPACE pg_default;

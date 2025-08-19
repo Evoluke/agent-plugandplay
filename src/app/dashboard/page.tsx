@@ -36,7 +36,8 @@ type Company = {
 };
 
 type Message = {
-  created_at: string;
+  message_date: string;
+  message_count: number;
 };
 
 export default function DashboardPage() {
@@ -76,7 +77,7 @@ export default function DashboardPage() {
     if (!company?.id) return;
     supabasebrowser
       .from('messages')
-      .select('created_at')
+      .select('message_date, message_count')
       .eq('company_id', company.id)
       .then(({ data, error }) => {
         if (error) {
@@ -84,14 +85,8 @@ export default function DashboardPage() {
           return;
         }
         if (!data) return;
-        const messages = data as Message[];
-        const counts: Record<string, number> = {};
-        messages.forEach((msg) => {
-          const date = new Date(msg.created_at).toISOString().split('T')[0];
-          counts[date] = (counts[date] || 0) + 1;
-        });
-        const formatted = Object.entries(counts)
-          .map(([date, count]) => ({ date, count }))
+        const formatted = (data as Message[])
+          .map((msg) => ({ date: msg.message_date, count: msg.message_count }))
           .sort((a, b) => a.date.localeCompare(b.date));
         setDailyMessages(formatted);
       });
