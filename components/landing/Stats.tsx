@@ -4,8 +4,8 @@ import { Users, MessageSquare, Bot } from "lucide-react";
 import CountUp from "react-countup";
 
 const stats = [
-  { icon: Users, end: 500, label: "Clientes" },
-  { icon: MessageSquare, end: 1200, label: "Mensagens/dia" },
+  { icon: Users, end: 130, label: "Leads/dia" },
+  { icon: MessageSquare, end: 2200, label: "Mensagens/dia" },
   { icon: Bot, end: 35, label: "Agentes IA" },
 ];
 

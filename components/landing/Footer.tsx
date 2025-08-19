@@ -29,7 +29,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link href="/terms" className="hover:text-primary">
-              Termos
+                  Termos
                 </Link>
               </li>
               <li>
@@ -43,13 +43,6 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
-          <div>
-            <h4 className="mb-4 font-semibold">Newsletter</h4>
-            <div className="flex gap-2">
-              <Input type="email" placeholder="Seu e-mail" />
-              <Button>Enviar</Button>
-            </div>
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ export default function ContactPage() {
     <>
       <Header />
       <main>
-        <section className="mx-auto w-full max-w-[1140px] px-3 py-12 md:px-4 lg:px-6">
+        <section className="mx-auto w-full max-w-[1140px] px-3 py-12 md:px-4 lg:px-6 mb-12">
           <h1 className="mb-8 text-3xl font-bold">Contato</h1>
           <address className="grid gap-6 not-italic md:grid-cols-2">
             <div className="space-y-6">
