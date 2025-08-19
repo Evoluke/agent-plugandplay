@@ -1,10 +1,10 @@
-import Pricing from "@/components/landing/Pricing";
+import Models from "@/components/landing/Models";
 import Footer from "@/components/landing/Footer";
 
-export default function PricingPage() {
+export default function ModelsPage() {
   return (
     <main className="flex flex-col">
-      <Pricing />
+      <Models />
       <Footer />
     </main>
   );

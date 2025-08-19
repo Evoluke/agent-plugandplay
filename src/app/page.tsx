@@ -6,7 +6,7 @@ import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
-import Pricing from "@/components/landing/Pricing";
+import Models from "@/components/landing/Models";
 import type { Metadata } from "next";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -72,7 +72,7 @@ export default function HomePage() {
           reverse
           primary
         />
-        <Pricing />
+        <Models />
         <Testimonials />
         <FAQ />
         <FinalCTA />

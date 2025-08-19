@@ -28,8 +28,8 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link href="#planos" className="hover:text-primary">
-                Planos
+              <Link href="#modelos" className="hover:text-primary">
+                Modelos
               </Link>
             </li>
             <li>
@@ -78,8 +78,8 @@ export default function Header() {
             <Link href="#solucoes" onClick={() => setOpen(false)}>
               Soluções
             </Link>
-            <Link href="#planos" onClick={() => setOpen(false)}>
-              Planos
+            <Link href="#modelos" onClick={() => setOpen(false)}>
+              Modelos
             </Link>
             <Link href="#contato" onClick={() => setOpen(false)}>
               Contato
