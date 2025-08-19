@@ -23,8 +23,7 @@ const models = [
   },
 ];
 
-const monthlyPrice = "R$ 599/mês";
-
+const price = "R$ 599/mês";
 export default function Pricing() {
   return (
     <section id="modelos" className="bg-[#FAFAFA] py-24">
@@ -32,27 +31,37 @@ export default function Pricing() {
         <h2 className="mb-4 text-center text-3xl font-bold">
           Modelos prontos para uso
         </h2>
-        <p className="mb-12 text-center text-muted-foreground">
-          Cada modelo por {monthlyPrice}
+        <p className="mb-2 text-center text-muted-foreground">
+          Cada modelo por {price}
         </p>
-        <div className="grid gap-6 sm:grid-cols-2">
+        <p className="mb-12 text-center text-sm text-muted-foreground">
+          São pontos de partida prontos, mas você pode personalizar cada
+          detalhe conforme a necessidade da sua empresa.
+        </p>
+        <ul className="grid gap-6 sm:grid-cols-2" role="list">
           {models.map(({ name, description }) => (
-            <Card key={name} className="flex flex-col">
-              <CardHeader>
-                <CardTitle className="text-2xl">{name}</CardTitle>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <p className="mb-4 text-2xl font-bold">{monthlyPrice}</p>
-                <p className="text-sm text-muted-foreground">{description}</p>
-              </CardContent>
-              <CardFooter>
-                <Link href="/signup" className="w-full">
-                  <Button className="w-full">Assinar</Button>
-                </Link>
-              </CardFooter>
-            </Card>
+            <li key={name} role="listitem">
+              <Card className="flex flex-col transition-transform transition-shadow hover:-translate-y-1 hover:shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-2xl">{name}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="mb-4 text-2xl font-bold">{price}</p>
+                  <p className="text-sm text-muted-foreground">{description}</p>
+                </CardContent>
+                <CardFooter>
+                  <Link
+                    href="/signup"
+                    className="w-full"
+                    aria-label={`Assinar o modelo ${name}`}
+                  >
+                    <Button className="w-full">Assinar</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
