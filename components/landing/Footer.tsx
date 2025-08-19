@@ -13,7 +13,7 @@ export default function Footer() {
             <Image src="/logo.svg" alt="Logo" width={120} height={32} />
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="hover:text-primary">
+                <Link href="/sobre-nos" className="hover:text-primary">
                   Sobre nós
                 </Link>
               </li>
