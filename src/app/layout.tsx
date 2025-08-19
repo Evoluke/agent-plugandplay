@@ -38,16 +38,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
- 
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={`${inter.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
-      <body
-        className={`${inter.variable} ${geistMono.variable} antialiased h-full`}
-      >
-        <Toaster position="top-right"/>
+      <body className="font-sans antialiased h-full">
+        <Toaster position="top-right" />
         {children}
       </body>
     </html>
