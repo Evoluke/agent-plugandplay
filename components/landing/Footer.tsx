@@ -83,8 +83,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-primary">
-                  Termos
+                <Link href="/terms" className="hover:text-primary">
+              Termos
                 </Link>
               </li>
               <li>
@@ -115,7 +115,7 @@ export default function Footer() {
             <Link href="#" className="hover:text-primary">
               Privacidade
             </Link>
-            <Link href="#" className="hover:text-primary">
+            <Link href="/terms" className="hover:text-primary">
               Termos
             </Link>
           </div>
