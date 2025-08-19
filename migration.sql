@@ -137,3 +137,12 @@ create table public.agent_specific_instructions (
   constraint agent_specific_instructions_agent_id_fkey foreign key (agent_id) references agents (id)
 ) TABLESPACE pg_default;
 
+-- Tabela de mensagens
+create table public.messages (
+  id uuid not null default gen_random_uuid(),
+  company_id bigint not null,
+  message_date date not null,
+  message_count integer not null,
+  constraint messages_pkey primary key (id),
+  constraint messages_company_id_fkey foreign key (company_id) references company (id)
+) TABLESPACE pg_default;

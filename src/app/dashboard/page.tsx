@@ -14,6 +14,14 @@ import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from "sonner";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 type User = {
   id: string;
@@ -27,9 +35,15 @@ type Company = {
   company_profile_id?: number;
 };
 
+type Message = {
+  message_date: string;
+  message_count: number;
+};
+
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
+  const [dailyMessages, setDailyMessages] = useState<{ date: string; count: number }[]>([]);
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -58,6 +72,25 @@ export default function DashboardPage() {
         }
       });
   }, [user]);
+
+  useEffect(() => {
+    if (!company?.id) return;
+    supabasebrowser
+      .from('messages')
+      .select('message_date, message_count')
+      .eq('company_id', company.id)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Erro ao buscar mensagens:', error.message);
+          return;
+        }
+        if (!data) return;
+        const formatted = (data as Message[])
+          .map((msg) => ({ date: msg.message_date, count: msg.message_count }))
+          .sort((a, b) => a.date.localeCompare(b.date));
+        setDailyMessages(formatted);
+      });
+  }, [company]);
 
   if (!user || !company) return null;
 
@@ -118,6 +151,44 @@ export default function DashboardPage() {
               </Link>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Mensagens por dia</h3>
+        <div className="h-80">
+          {dailyMessages.length ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={dailyMessages}>
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(value) =>
+                    new Date(value).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                    })
+                  }
+                />
+                <YAxis allowDecimals={false} />
+                <Tooltip
+                  labelFormatter={(value) =>
+                    new Date(value as string).toLocaleDateString('pt-BR')
+                  }
+                />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  dot={{ r: 3 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-sm text-gray-500">
+              Nenhuma mensagem registrada
+            </div>
+          )}
         </div>
       </div>
 
