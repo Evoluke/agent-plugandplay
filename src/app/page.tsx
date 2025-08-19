@@ -53,7 +53,7 @@ export default function HomePage() {
             "Escalabilidade",
           ]}
           cta="Saiba mais"
-          href="#"
+          href="/saiba-mais"
           image="/window.svg"
         />
         <Benefit
