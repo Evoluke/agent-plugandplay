@@ -18,11 +18,6 @@ export default function Header() {
         <nav className="hidden flex-1 justify-center md:flex">
           <ul className="flex gap-6 text-sm">
             <li>
-              <Link href="#" className="hover:text-primary">
-                Início
-              </Link>
-            </li>
-            <li>
               <Link href="#solucoes" className="hover:text-primary">
                 Soluções
               </Link>
@@ -72,9 +67,6 @@ export default function Header() {
             </Button>
           </div>
           <nav className="mt-8 flex flex-col items-center gap-4 text-lg">
-            <Link href="#" onClick={() => setOpen(false)}>
-              Início
-            </Link>
             <Link href="#solucoes" onClick={() => setOpen(false)}>
               Soluções
             </Link>

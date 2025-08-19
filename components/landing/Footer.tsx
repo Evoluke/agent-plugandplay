@@ -8,28 +8,13 @@ export default function Footer() {
   return (
     <footer className="bg-[#FAFAFA] text-sm">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6 py-12">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-4">
             <Image src="/logo.svg" alt="Logo" width={120} height={32} />
             <ul className="space-y-2">
               <li>
                 <Link href="/sobre-nos" className="hover:text-primary">
                   Sobre nós
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Carreiras
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Ajuda
                 </Link>
               </li>
               <li>
@@ -40,48 +25,8 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="mb-4 font-semibold">Produto</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Recursos
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Preços
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Integrações
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Status
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  API
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
             <h4 className="mb-4 font-semibold">Empresa</h4>
             <ul className="space-y-2">
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Parceiros
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-primary">
-                  Segurança
-                </Link>
-              </li>
               <li>
                 <Link href="/terms" className="hover:text-primary">
               Termos
