@@ -15,8 +15,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from "sonner";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
+  CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
@@ -159,7 +160,17 @@ export default function DashboardPage() {
         <div className="h-80">
           {dailyMessages.length ? (
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dailyMessages}>
+              <AreaChart
+                data={dailyMessages}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis
                   dataKey="date"
                   tickFormatter={(value) =>
@@ -174,15 +185,19 @@ export default function DashboardPage() {
                   labelFormatter={(value) =>
                     new Date(value as string).toLocaleDateString('pt-BR')
                   }
+                  formatter={(value: number) => [`${value} mensagens`, '']}
+                  contentStyle={{ borderRadius: '0.375rem', borderColor: '#e2e8f0' }}
                 />
-                <Line
+                <Area
                   type="monotone"
                   dataKey="count"
                   stroke="#3b82f6"
                   strokeWidth={2}
+                  fill="url(#colorCount)"
                   dot={{ r: 3 }}
+                  activeDot={{ r: 5 }}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           ) : (
             <div className="flex items-center justify-center h-full text-sm text-gray-500">
