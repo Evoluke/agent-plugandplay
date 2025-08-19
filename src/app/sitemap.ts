@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "verify-email", changefreq: "yearly", priority: 0.3 },
     { path: "update-password", changefreq: "yearly", priority: 0.3 },
     { path: "complete-profile", changefreq: "yearly", priority: 0.3 },
+    { path: "terms", changefreq: "yearly", priority: 0.3 },
   ];
 
   const lastModified = new Date();
