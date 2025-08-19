@@ -33,7 +33,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-primary">
+                <Link href="/contact" className="hover:text-primary">
                   Contato
                 </Link>
               </li>
@@ -93,7 +93,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-primary">
+                <Link href="/contact" className="hover:text-primary">
                   Contato
                 </Link>
               </li>
