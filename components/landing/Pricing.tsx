@@ -10,21 +10,21 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-const plans = [
+const PRICE = "R$ 599,00/mês";
+
+const models = [
   {
     name: "Suporte Atendimento",
-    price: "R$ 599,00/mês",
-    features: ["Consulta base de conhecimento", "Responde seus clientes 24/7"],
+    description:
+      "Consulta sua base de conhecimento e responde seus clientes 24/7.",
   },
   {
     name: "Representante de vendas (SDR)",
-    price: "R$ 599,00/mês",
-    features: ["Todos os recursos do Básico", "CRM completo", "Kanban"],
+    description: "Faz prospecção com CRM completo e Kanban integrado.",
   },
   {
     name: "Enterprise",
-    price: "Sob consulta",
-    features: ["Todos do Pro", "Suporte dedicado", "Recursos avançados"],
+    description: "Modelo customizável com suporte dedicado e recursos avançados.",
   },
 ];
 
@@ -32,23 +32,18 @@ export default function Pricing() {
   return (
     <section id="planos" className="bg-[#FAFAFA] py-24">
       <div className="container mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold">Modelos prontos para uso</h2>
+        <h2 className="mb-2 text-center text-3xl font-bold">Modelos prontos para uso</h2>
+        <p className="mb-12 text-center text-lg font-semibold">
+          Valor único de {PRICE}
+        </p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {plans.map(({ name, price, features }) => (
+          {models.map(({ name, description }) => (
             <Card key={name} className="flex flex-col">
               <CardHeader>
                 <CardTitle className="text-2xl">{name}</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
-                <p className="mb-4 text-3xl font-bold">{price}</p>
-                <ul className="space-y-2 text-sm">
-                  {features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2">
-                      <span>•</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-sm leading-relaxed">{description}</p>
               </CardContent>
               <CardFooter>
                 <Link href="/signup" className="w-full">
