@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 import { toast } from "sonner";
@@ -71,6 +72,11 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-6"
       >
+        <div className="flex justify-center mb-2">
+          <Link href="/">
+            <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
+          </Link>
+        </div>
         <h1 className="text-2xl font-semibold text-center">Login</h1>
 
         <div>

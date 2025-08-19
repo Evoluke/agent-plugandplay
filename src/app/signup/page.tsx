@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,11 @@ export default function SignupPage() {
         onSubmit={handleSubmit}
         className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
       >
+        <div className="flex justify-center mb-2">
+          <Link href="/">
+            <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
+          </Link>
+        </div>
         <h1 className="text-2xl font-semibold text-center">Cadastro</h1>
 
         {error && (

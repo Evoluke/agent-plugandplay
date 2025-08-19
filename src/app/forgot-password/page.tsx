@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -32,6 +33,11 @@ export default function ForgotPasswordPage() {
         onSubmit={handleSubmit}
         className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
       >
+        <div className="flex justify-center mb-2">
+          <Link href="/">
+            <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
+          </Link>
+        </div>
         <h1 className="text-2xl font-semibold text-center">Recuperar senha</h1>
 
         <div>

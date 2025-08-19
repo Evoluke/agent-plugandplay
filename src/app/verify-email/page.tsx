@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,11 @@ function VerifyEmailContent() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4">
+        <div className="flex justify-center mb-2">
+          <Link href="/">
+            <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
+          </Link>
+        </div>
         <h1 className="text-2xl font-semibold text-center">E-mail não verificado</h1>
         {email && (
           <p className="text-center text-sm">{email}</p>
