@@ -1,3 +1,5 @@
+"use client";
+
 import { Users, MessageSquare, Bot } from "lucide-react";
 import CountUp from "react-countup";
 
