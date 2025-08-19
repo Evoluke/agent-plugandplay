@@ -39,8 +39,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${geistMono.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+  const stored = window.localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (stored === 'dark' || (!stored && prefersDark)) {
+    document.documentElement.classList.add('dark');
+  }
+})();`,
+          }}
+        />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className="font-sans antialiased h-full">

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function Header() {
           </ul>
         </nav>
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           <Link href="/login">
             <Button variant="outline" size="sm">
               Login
@@ -44,15 +46,17 @@ export default function Header() {
             <Button size="sm">Criar conta</Button>
           </Link>
         </div>
-        <Button
-          variant="outline"
-          size="icon"
-          className="md:hidden"
-          onClick={() => setOpen(true)}
-          aria-label="Abrir menu"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setOpen(true)}
+            aria-label="Abrir menu"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
       {open && (
         <div className="fixed inset-0 z-50 bg-background/95 p-6 md:hidden">
