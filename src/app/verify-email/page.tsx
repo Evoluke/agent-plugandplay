@@ -38,13 +38,13 @@ function VerifyEmailContent() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4 relative">
+      <div className="absolute top-8 w-full flex justify-center">
+        <Link href="/">
+          <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
+        </Link>
+      </div>
       <div className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4">
-        <div className="flex justify-center mb-2">
-          <Link href="/">
-            <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
-          </Link>
-        </div>
         <h1 className="text-2xl font-semibold text-center">E-mail não verificado</h1>
         {email && (
           <p className="text-center text-sm">{email}</p>

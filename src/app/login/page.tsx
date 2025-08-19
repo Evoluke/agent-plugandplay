@@ -67,16 +67,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] relative">
+      <div className="absolute top-8 w-full flex justify-center">
+        <Link href="/">
+          <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
+        </Link>
+      </div>
       <form
         onSubmit={handleSubmit}
         className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-6"
       >
-        <div className="flex justify-center mb-2">
-          <Link href="/">
-            <Image src="/logo.svg" alt="Evoluke" width={120} height={32} />
-          </Link>
-        </div>
         <h1 className="text-2xl font-semibold text-center">Login</h1>
 
         <div>
