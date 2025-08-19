@@ -21,71 +21,66 @@ export default function ContactPage() {
       <Header />
       <main>
         <section className="mx-auto w-full max-w-[1140px] px-3 py-12 md:px-4 lg:px-6">
-          <h1 className="mb-8 text-center text-3xl font-bold">Contato</h1>
-          <address className="mx-auto max-w-md space-y-6 not-italic">
-            <div className="flex items-center gap-4">
-              <Building2
-                className="h-5 w-5 text-primary"
-                aria-hidden="true"
-              />
-              <div>
-                <p className="font-semibold">CNPJ</p>
-                <p>12.345.678/0001-90</p>
+          <h1 className="mb-8 text-3xl font-bold">Contato</h1>
+          <address className="grid gap-6 not-italic md:grid-cols-2">
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Building2 className="h-5 w-5 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold">CNPJ</p>
+                  <p>12.345.678/0001-90</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Phone className="h-5 w-5 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold">Telefone</p>
+                  <a href="tel:+551112345678" className="hover:underline">
+                    (11) 1234-5678
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Mail className="h-5 w-5 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold">E-mail</p>
+                  <Link
+                    href="mailto:contato@evoluke.com"
+                    className="text-primary hover:underline"
+                  >
+                    contato@evoluke.com
+                  </Link>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Phone className="h-5 w-5 text-primary" aria-hidden="true" />
-              <div>
-                <p className="font-semibold">Telefone</p>
-                <a href="tel:+551112345678" className="hover:underline">
-                  (11) 1234-5678
-                </a>
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Instagram className="h-5 w-5 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold">Instagram</p>
+                  <Link
+                    href="https://instagram.com/evoluke"
+                    className="text-primary hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @evoluke
+                  </Link>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Mail className="h-5 w-5 text-primary" aria-hidden="true" />
-              <div>
-                <p className="font-semibold">E-mail</p>
-                <Link
-                  href="mailto:contato@evoluke.com"
-                  className="text-primary hover:underline"
-                >
-                  contato@evoluke.com
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Instagram
-                className="h-5 w-5 text-primary"
-                aria-hidden="true"
-              />
-              <div>
-                <p className="font-semibold">Instagram</p>
-                <Link
-                  href="https://instagram.com/evoluke"
-                  className="text-primary hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  @evoluke
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Linkedin
-                className="h-5 w-5 text-primary"
-                aria-hidden="true"
-              />
-              <div>
-                <p className="font-semibold">LinkedIn</p>
-                <Link
-                  href="https://www.linkedin.com/company/evoluke"
-                  className="text-primary hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Evoluke
-                </Link>
+              <div className="flex items-center gap-4">
+                <Linkedin className="h-5 w-5 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold">LinkedIn</p>
+                  <Link
+                    href="https://www.linkedin.com/company/evoluke"
+                    className="text-primary hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Evoluke
+                  </Link>
+                </div>
               </div>
             </div>
           </address>
