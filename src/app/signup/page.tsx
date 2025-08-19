@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
@@ -69,14 +68,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA] p-4">
-      <Image
-        src="/logo.svg"
-        alt="Evoluke logo"
-        width={200}
-        height={60}
-        className="mb-8"
-      />
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
       <form
         onSubmit={handleSubmit}
         className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
