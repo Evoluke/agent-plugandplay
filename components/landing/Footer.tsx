@@ -88,7 +88,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-primary">
+                <Link href="/privacy" className="hover:text-primary">
                   Privacidade
                 </Link>
               </li>
@@ -112,7 +112,7 @@ export default function Footer() {
         <div className="mx-auto flex max-w-[1140px] flex-col items-center gap-2 px-3 md:flex-row md:justify-between md:px-4 lg:px-6 py-4 text-muted-foreground">
           <p>© {year} Evoluke. Todos os direitos reservados.</p>
           <div className="flex gap-4">
-            <Link href="#" className="hover:text-primary">
+            <Link href="/privacy" className="hover:text-primary">
               Privacidade
             </Link>
             <Link href="#" className="hover:text-primary">
