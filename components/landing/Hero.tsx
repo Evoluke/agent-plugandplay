@@ -21,9 +21,9 @@ export default function Hero() {
                 Começar agora
               </Button>
             </Link>
-            <Link href="#solucoes" className="w-full sm:w-auto">
+            <Link href="/saiba-mais" className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Ver soluções
+                Saiba mais
               </Button>
             </Link>
           </div>

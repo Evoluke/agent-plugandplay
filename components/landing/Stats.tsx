@@ -18,7 +18,7 @@ export default function Stats() {
             <div key={label} className="flex flex-col items-center">
               <Icon className="mb-2 h-8 w-8 text-primary" />
               <p className="text-3xl font-bold">
-                <CountUp end={end} duration={2} />+
+                <CountUp end={end} duration={2} enableScrollSpy scrollSpyOnce />+
               </p>
               <p className="text-sm text-muted-foreground">{label}</p>
             </div>
