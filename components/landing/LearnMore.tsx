@@ -209,16 +209,9 @@ export default function LearnMore() {
   return (
     <section className="py-8 md:py-12 lg:py-16">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
-        <h1 className="mb-4 text-3xl font-bold">Saiba Mais</h1>
-        <div className="mb-6">
-          <h2 className="mb-4 text-xl font-semibold">{slides[current].title}</h2>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            {slides[current].content}
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-6">
           <button
-            className="rounded border px-3 py-1 text-sm"
+            className="rounded border px-3 py-1 text-sm transition-colors hover:bg-gray-200 hover:text-black"
             onClick={prev}
             aria-label="Anterior"
           >
@@ -230,14 +223,46 @@ export default function LearnMore() {
                 key={i}
                 onClick={() => setCurrent(i)}
                 aria-label={`Ir para seção ${i + 1}`}
-                className={`h-2 w-2 rounded-full ${
-                  i === current ? "bg-primary" : "bg-gray-300"
-                }`}
+                className={`h-2 w-2 rounded-full ${i === current ? "bg-primary" : "bg-gray-300"
+                  }`}
               />
             ))}
           </div>
           <button
-            className="rounded border px-3 py-1 text-sm"
+            className="rounded border px-3 py-1 text-sm transition-colors hover:bg-gray-200 hover:text-black"
+            onClick={next}
+            aria-label="Próximo"
+          >
+            Próximo
+          </button>
+        </div>
+        <div className="mb-6">
+          <h2 className="mb-4 text-xl font-semibold">{slides[current].title}</h2>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            {slides[current].content}
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            className="rounded border px-3 py-1 text-sm transition-colors hover:bg-gray-200 hover:text-black"
+            onClick={prev}
+            aria-label="Anterior"
+          >
+            Anterior
+          </button>
+          <div className="flex items-center gap-2">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                aria-label={`Ir para seção ${i + 1}`}
+                className={`h-2 w-2 rounded-full ${i === current ? "bg-primary" : "bg-gray-300"
+                  }`}
+              />
+            ))}
+          </div>
+          <button
+            className="rounded border px-3 py-1 text-sm transition-colors hover:bg-gray-200 hover:text-black"
             onClick={next}
             aria-label="Próximo"
           >

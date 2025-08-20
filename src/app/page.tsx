@@ -79,7 +79,7 @@ export default function HomePage() {
           primary
         />
         <Pricing />
-        <Testimonials />
+        {/* <Testimonials /> */}
         <FAQ />
         <FinalCTA />
         <Footer />
