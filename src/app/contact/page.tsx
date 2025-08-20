@@ -28,15 +28,15 @@ export default function ContactPage() {
                 <Building2 className="h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
                   <p className="font-semibold">CNPJ</p>
-                  <p>12.345.678/0001-90</p>
+                  <p>60.173.541/0001-43</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <Phone className="h-5 w-5 text-primary" aria-hidden="true" />
                 <div>
                   <p className="font-semibold">Telefone</p>
-                  <a href="tel:+551112345678" className="hover:underline">
-                    (11) 1234-5678
+                  <a href="tel:+554788533553" className="hover:underline">
+                    (47) 8853-3553
                   </a>
                 </div>
               </div>
@@ -59,12 +59,12 @@ export default function ContactPage() {
                 <div>
                   <p className="font-semibold">Instagram</p>
                   <Link
-                    href="https://instagram.com/evoluke"
+                    href="https://instagram.com/e.voluke"
                     className="text-primary hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    @evoluke
+                    @e.voluke
                   </Link>
                 </div>
               </div>
@@ -73,7 +73,7 @@ export default function ContactPage() {
                 <div>
                   <p className="font-semibold">LinkedIn</p>
                   <Link
-                    href="https://www.linkedin.com/company/evoluke"
+                    href="https://www.linkedin.com/company/evoluke-ia"
                     className="text-primary hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"

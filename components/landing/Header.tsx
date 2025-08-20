@@ -28,8 +28,8 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="hover:text-primary">
-                Contato
+              <Link href="/saiba-mais" className="hover:text-primary">
+                Como funciona?
               </Link>
             </li>
           </ul>

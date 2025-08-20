@@ -45,7 +45,7 @@ export default function TermsPage() {
         <h2 className="text-2xl font-semibold">6. Contato</h2>
         <p>
           Para dúvidas sobre estes Termos, entre em contato pelo e-mail
-          suporte@evoluke.com.br.
+          contato@evoluke.com.br.
         </p>
       </main>
       <Footer />

@@ -44,8 +44,8 @@ export default function PrivacyPage() {
           Você tem direito a confirmar a existência de tratamento, acessar,
           corrigir, anonimizar, portar ou eliminar seus dados pessoais, além de
           revogar consentimentos. Para exercer seus direitos, contate
-          <a href="mailto:privacidade@evoluke.com" className="text-teal-600 hover:underline">
-            privacidade@evoluke.com
+          <a href="mailto:contato@evoluke.com" className="text-teal-600 hover:underline">
+            contato@evoluke.com
           </a>
           .
         </p>
@@ -63,8 +63,8 @@ export default function PrivacyPage() {
         <p>
           Se tiver dúvidas ou solicitações sobre esta Política de Privacidade,
           envie um e-mail para
-          <a href="mailto:privacidade@evoluke.com" className="text-teal-600 hover:underline">
-            privacidade@evoluke.com
+          <a href="mailto:contato@evoluke.com" className="text-teal-600 hover:underline">
+            contato@evoluke.com
           </a>
           .
         </p>

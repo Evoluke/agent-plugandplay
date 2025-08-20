@@ -53,9 +53,9 @@ export default function Benefit({
           <Image
             src={image}
             alt="Benefício"
-            width={720}
-            height={540}
-            className="h-auto w-full max-w-[720px] rounded-md"
+            width={300}
+            height={300}
+            className="rounded-md"
           />
         </div>
       </div>
