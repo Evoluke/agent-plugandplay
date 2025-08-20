@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 
 type BenefitProps = {
@@ -10,6 +13,8 @@ type BenefitProps = {
   cta: string;
   href: string;
   image: string;
+  imageWidth?: number;
+  imageHeight?: number;
   reverse?: boolean;
   primary?: boolean;
 };
@@ -22,6 +27,8 @@ export default function Benefit({
   cta,
   href,
   image,
+  imageWidth = 300,
+  imageHeight = 300,
   reverse,
   primary,
 }: BenefitProps) {
@@ -49,14 +56,34 @@ export default function Benefit({
             </Button>
           </Link>
         </div>
-        <div className={`flex justify-center lg:col-span-6 ${reverse ? "md:order-1" : ""}`}>
-          <Image
-            src={image}
-            alt="Benefício"
-            width={300}
-            height={300}
-            className="rounded-md"
-          />
+        <div
+          className={`flex justify-center lg:col-span-6 ${reverse ? "md:order-1" : ""}`}
+        >
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              <button>
+                <Image
+                  src={image}
+                  alt="Benefício"
+                  width={imageWidth}
+                  height={imageHeight}
+                  className="rounded-md cursor-zoom-in"
+                />
+              </button>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+              <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 p-0">
+                <Image
+                  src={image}
+                  alt="Benefício"
+                  width={imageWidth * 2}
+                  height={imageHeight * 2}
+                  className="rounded-md"
+                />
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
         </div>
       </div>
     </section>

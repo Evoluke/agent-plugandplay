@@ -57,6 +57,8 @@ export default function HomePage() {
           cta="Saiba mais"
           href="/saiba-mais"
           image="/window.png"
+          imageWidth={600}
+          imageHeight={400}
         />
         <Benefit
           tag="Omnichannel"
@@ -71,6 +73,8 @@ export default function HomePage() {
           cta="Começar agora"
           href="/signup"
           image="/mobile-app.avif"
+          imageWidth={300}
+          imageHeight={600}
           reverse
           primary
         />
