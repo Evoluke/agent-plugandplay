@@ -1,4 +1,5 @@
 import Pricing from "@/components/landing/Pricing";
+import FAQ from "@/components/landing/FAQ";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import type { Metadata } from "next";
@@ -14,6 +15,7 @@ export default function PricingPage() {
       <Header />
       <main className="flex flex-col">
         <Pricing />
+        <FAQ />
       </main>
       <Footer />
     </>
