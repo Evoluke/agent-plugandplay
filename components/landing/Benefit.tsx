@@ -10,6 +10,8 @@ type BenefitProps = {
   cta: string;
   href: string;
   image: string;
+  imageWidth?: number;
+  imageHeight?: number;
   reverse?: boolean;
   primary?: boolean;
 };
@@ -22,6 +24,8 @@ export default function Benefit({
   cta,
   href,
   image,
+  imageWidth = 300,
+  imageHeight = 300,
   reverse,
   primary,
 }: BenefitProps) {
@@ -53,8 +57,8 @@ export default function Benefit({
           <Image
             src={image}
             alt="Benefício"
-            width={300}
-            height={300}
+            width={imageWidth}
+            height={imageHeight}
             className="rounded-md"
           />
         </div>
