@@ -47,11 +47,11 @@ export default function HomePage() {
         <Benefit
           tag="IA + CRM"
           title="Personalize atendimentos com IA"
-          description="A Evoluke usa inteligência artificial para automatizar respostas e entender o contexto dos seus clientes."
+          description="Personalize seu Agente de IA e transforme cada interação em experiência exclusiva."
           bullets={[
             "Respostas rápidas e precisas",
             "Aprendizado contínuo",
-            "Serviços sob demanda",
+            "Atendimento 24/7",
             "Escalabilidade",
           ]}
           cta="Saiba mais"
@@ -61,11 +61,11 @@ export default function HomePage() {
         <Benefit
           tag="Omnichannel"
           title="Centralize todos os canais"
-          description="Integre e-mail, chat, redes sociais e acompanhe todo o histórico em um único lugar."
+          description="Integre seu WhatsApp e tenha todo o histórico centralizado em um só lugar."
           bullets={[
             "Visão 360º do cliente",
             "Registro automático",
-            "Busca avançada",
+            "Board Kanban",
             "Análises em tempo real",
           ]}
           cta="Começar agora"

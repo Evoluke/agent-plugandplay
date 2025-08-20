@@ -76,13 +76,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!company?.id) return;
+    const today = new Date();
+    const last30Days = new Date();
+    last30Days.setDate(today.getDate() - 30);
+
     supabasebrowser
-      .from('messages')
-      .select('message_date, message_count')
-      .eq('company_id', company.id)
+      .from("messages")
+      .select("message_date, message_count")
+      .eq("company_id", company.id)
+      .gte("message_date", last30Days.toISOString().split("T")[0]) // 👈 só últimos 30 dias
       .then(({ data, error }) => {
         if (error) {
-          console.error('Erro ao buscar mensagens:', error.message);
+          console.error("Erro ao buscar mensagens:", error.message);
           return;
         }
         if (!data) return;
@@ -173,6 +178,7 @@ export default function DashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis
                   dataKey="date"
+                  tick={{ fontSize: 12 }}
                   tickFormatter={(value) =>
                     new Date(value).toLocaleDateString('pt-BR', {
                       day: '2-digit',
@@ -180,7 +186,9 @@ export default function DashboardPage() {
                     })
                   }
                 />
-                <YAxis allowDecimals={false} />
+                <YAxis
+                  tick={{ fontSize: 12 }}
+                  allowDecimals={false} />
                 <Tooltip
                   labelFormatter={(value) =>
                     new Date(value as string).toLocaleDateString('pt-BR')

@@ -37,11 +37,6 @@ export default function Footer() {
                   Privacidade
                 </Link>
               </li>
-              <li>
-                <Link href="/contact" className="hover:text-primary">
-                  Contato
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
