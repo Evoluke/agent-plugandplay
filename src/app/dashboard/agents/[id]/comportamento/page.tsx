@@ -92,7 +92,7 @@ export default function AgentBehaviorPage() {
       <AgentMenu agent={agent} />
       <AgentGuide />
       <div className="flex justify-center">
-        <Card className="w-4/5 p-6">
+        <Card className="w-full md:w-4/5 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="limitations" className="text-sm font-medium">
@@ -169,7 +169,7 @@ export default function AgentBehaviorPage() {
         </Card>
       </div>
       <div className="flex justify-center">
-        <div className="w-4/5 flex justify-end gap-2">
+        <div className="w-full md:w-4/5 flex justify-end gap-2">
           {agent.is_active ? (
             <DeactivateAgentButton
               agentId={id}

@@ -49,8 +49,8 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
 
   return (
     <div className="flex justify-center">
-      <div className="w-4/5 flex gap-4">
-        <Card className="w-52 p-4 flex flex-col items-center justify-center gap-3 text-sm text-center">
+      <div className="w-full md:w-4/5 flex flex-col md:flex-row gap-4">
+        <Card className="w-full md:w-52 p-4 flex flex-col items-center justify-center gap-3 text-sm text-center">
           <div>
             <p className="text-xs text-gray-500">Status do agente</p>
             <p className={`text-base font-semibold ${agent.is_active ? "text-green-600" : "text-red-600"}`}>
@@ -64,8 +64,8 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
             </p>
           </div>
         </Card>
-        <Card className="flex-1 p-6">
-          <nav className="flex items-center justify-around">
+        <Card className="w-full md:flex-1 p-4 md:p-6">
+          <nav className="flex flex-wrap justify-center gap-2 md:flex-nowrap md:items-center md:justify-around md:gap-0">
             {menuItems.map(({ label, icon: Icon, href }, index) => (
               <Fragment key={label}>
                 <Button
@@ -78,7 +78,7 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
                     <span>{label}</span>
                   </Link>
                 </Button>
-                {index < menuItems.length - 1 && <div className="h-8 border-l" />}
+                {index < menuItems.length - 1 && <div className="hidden md:block h-8 border-l" />}
               </Fragment>
             ))}
           </nav>

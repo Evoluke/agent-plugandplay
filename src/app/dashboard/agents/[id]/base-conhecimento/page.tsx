@@ -169,7 +169,7 @@ export default function AgentKnowledgeBasePage() {
       <AgentGuide />
 
       <div className="flex justify-center">
-        <Card className="w-4/5 p-6">
+        <Card className="w-full md:w-4/5 p-6">
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-semibold">Cérebro</h2>
             <div className="flex flex-col gap-6 md:flex-row">
@@ -190,7 +190,7 @@ export default function AgentKnowledgeBasePage() {
                 })}
               </aside>
               <main className="flex-1 space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <Input
                     placeholder="Pesquisar"
                     className="max-w-xs"
@@ -257,7 +257,7 @@ export default function AgentKnowledgeBasePage() {
         </Card>
       </div>
       <div className="flex justify-center">
-        <div className="w-4/5 flex justify-end gap-2">
+        <div className="w-full md:w-4/5 flex justify-end gap-2">
           {agent.is_active ? (
             <DeactivateAgentButton
               agentId={id}

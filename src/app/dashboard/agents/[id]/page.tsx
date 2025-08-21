@@ -106,9 +106,9 @@ export default function AgentDetailPage() {
       <AgentMenu agent={agent} />
       <AgentGuide />
       <div className="flex justify-center">
-        <Card className="w-4/5 p-6">
+        <Card className="w-full md:w-4/5 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="flex gap-4">
+            <div className="flex flex-col gap-4 md:flex-row">
               <div className="flex-1 space-y-2">
                 <label htmlFor="name" className="text-sm font-medium">
                   Nome interno
@@ -191,7 +191,7 @@ export default function AgentDetailPage() {
         </Card>
       </div>
       <div className="flex justify-center">
-        <div className="w-4/5 flex justify-end gap-2">
+        <div className="w-full md:w-4/5 flex justify-end gap-2">
           {agent.is_active ? (
             <DeactivateAgentButton
               agentId={id}
