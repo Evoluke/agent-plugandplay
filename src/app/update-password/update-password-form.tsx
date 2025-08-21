@@ -45,25 +45,28 @@ export default function UpdatePasswordForm() {
 
   if (errorDescription || isExpired) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4 text-center">
-          <p className="text-lg font-medium">
-            {errorDescription || 'O link de recuperação expirou.'}
-          </p>
-          <Button onClick={() => router.push('/login')} className="w-full">
-            Voltar ao login
-          </Button>
+      <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
+        <div className="w-full px-4 sm:max-w-md md:max-w-lg">
+          <div className="w-full bg-white rounded-lg shadow p-6 space-y-4 text-center">
+            <p className="text-lg font-medium">
+              {errorDescription || 'O link de recuperação expirou.'}
+            </p>
+            <Button onClick={() => router.push('/login')} className="w-full">
+              Voltar ao login
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
-      >
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
+      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full bg-white rounded-lg shadow p-6 space-y-4"
+        >
         <h1 className="text-2xl font-semibold text-center">Nova senha</h1>
 
         <div>
@@ -93,6 +96,7 @@ export default function UpdatePasswordForm() {
         </Button>
       </form>
     </div>
+  </div>
   );
 }
 

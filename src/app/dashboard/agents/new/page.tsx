@@ -145,8 +145,8 @@ export default function NewAgentPage() {
   const isFormValid = isValidAgentName(name) && type !== "";
 
   return (
-    <div className="bg-[#FAFAFA] flex items-center justify-center p-6">
-      <div className="h-full w-full max-w-lg">
+    <div className="bg-[#FAFAFA] flex items-center justify-center py-6">
+      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
         <Card className="border shadow-lg rounded-lg overflow-hidden">
           <form onSubmit={handleSubmit}>
             <CardHeader className="bg-white px-6 py-4 border-b mb-2">
@@ -195,9 +195,10 @@ export default function NewAgentPage() {
               </div>
             </CardContent>
 
-            <CardFooter className="flex space-x-2 mt-6 justify-center">
+            <CardFooter className="flex flex-col sm:flex-row gap-2 sm:space-x-2 mt-6 justify-center">
               <Button
                 type="submit"
+                className="w-full sm:w-auto"
                 disabled={!isFormValid || agentCount >= MAX_AGENTS_PER_COMPANY || isSubmitting}
               >
                 Criar Agente de IA
@@ -205,6 +206,7 @@ export default function NewAgentPage() {
               <Button
                 type="button"
                 variant="outline"
+                className="w-full sm:w-auto"
                 onClick={() => router.push("/dashboard")}
               >
                 Cancelar

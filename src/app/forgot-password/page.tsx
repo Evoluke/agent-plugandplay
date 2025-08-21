@@ -27,11 +27,12 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
-      >
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
+      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full bg-white rounded-lg shadow p-6 space-y-4"
+        >
         <h1 className="text-2xl font-semibold text-center">Recuperar senha</h1>
 
         <div>
@@ -57,6 +58,7 @@ export default function ForgotPasswordPage() {
         </p>
       </form>
     </div>
+  </div>
   );
 }
 

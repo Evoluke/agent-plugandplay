@@ -37,20 +37,22 @@ function VerifyEmailContent() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4">
-        <h1 className="text-2xl font-semibold text-center">E-mail não verificado</h1>
-        {email && (
-          <p className="text-center text-sm">{email}</p>
-        )}
-        <Button onClick={handleResend} className="w-full" disabled={cooldown > 0}>
-          {cooldown > 0 ? `Reenviar em ${cooldown}s` : 'Reenviar e-mail de verificação'}
-        </Button>
-        <p className="text-center text-sm">
-          <Link href="/login" className="text-teal-600 hover:underline">
-            Voltar ao login
-          </Link>
-        </p>
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
+      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
+        <div className="w-full bg-white rounded-lg shadow p-6 space-y-4">
+          <h1 className="text-2xl font-semibold text-center">E-mail não verificado</h1>
+          {email && (
+            <p className="text-center text-sm">{email}</p>
+          )}
+          <Button onClick={handleResend} className="w-full" disabled={cooldown > 0}>
+            {cooldown > 0 ? `Reenviar em ${cooldown}s` : 'Reenviar e-mail de verificação'}
+          </Button>
+          <p className="text-center text-sm">
+            <Link href="/login" className="text-teal-600 hover:underline">
+              Voltar ao login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

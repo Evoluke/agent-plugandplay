@@ -176,15 +176,15 @@ export default function CompleteProfilePage() {
     );
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] p-4">
-      <div className="h-full w-full max-w-lg">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
+      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
         <Button variant="ghost" className="mb-4" onClick={handleBack}>
           ← Voltar
         </Button>
 
         <form
           onSubmit={handleSubmit}
-          className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-4"
+          className="w-full bg-white rounded-lg shadow p-6 space-y-4"
         >
 
           <h1 className="text-2xl font-semibold text-center">

@@ -161,8 +161,8 @@ export default function NewSupportPage() {
     if (!user) return <p className="text-center py-10">Carregando...</p>;
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-[#FAFAFA] p-4">
-            <div className="h-full w-full max-w-lg">
+        <main className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
+            <div className="w-full px-4 sm:max-w-md md:max-w-lg">
                 <Link href="/dashboard/support">
                     <Button variant="ghost" className="mb-4">
                         ← Voltar
@@ -170,7 +170,7 @@ export default function NewSupportPage() {
                 </Link>
                 <form
                     onSubmit={handleSubmit}
-                    className="w-full max-w-md bg-white p-6 rounded-lg shadow"
+                    className="w-full bg-white p-6 rounded-lg shadow"
                 >
                     <CardTitle className="text-xl font-semibold text-gray-800 mb-6">Novo Chamado</CardTitle>
 
