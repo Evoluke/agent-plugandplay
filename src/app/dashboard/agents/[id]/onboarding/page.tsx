@@ -129,7 +129,7 @@ export default function AgentOnboardingPage() {
       <AgentMenu agent={agent} />
       <AgentGuide />
       <div className="flex justify-center">
-        <Card className="w-4/5 p-6">
+        <Card className="w-full max-w-xl mx-auto p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="welcome" className="text-sm font-medium">
@@ -154,7 +154,7 @@ export default function AgentOnboardingPage() {
             </div>
 
             {collection.map((item, index) => (
-              <div key={index} className="flex items-start gap-4">
+              <div key={index} className="flex flex-col gap-4 md:flex-row">
                 <div className="flex-1 space-y-2">
                   <label
                     htmlFor={`question-${index}`}
