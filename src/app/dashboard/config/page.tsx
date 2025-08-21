@@ -229,9 +229,9 @@ export default function ConfigPage() {
     );
 
   return (
-    <div className=" bg-[#FAFAFA] flex items-center justify-center p-6">
+    <div className=" bg-[#FAFAFA] flex items-center justify-center py-6">
       {/* <div className="h-full w-full max-w-lg"> */}
-      <div className="h-full w-full max-w-lg">
+      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
         <Card className="border shadow-lg rounded-lg overflow-hidden">
           <CardHeader className="bg-white px-6 py-4 border-b">
             <CardTitle className="text-xl font-semibold text-gray-800 text-center">Configurações</CardTitle>

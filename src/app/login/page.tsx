@@ -68,17 +68,18 @@ export default function LoginPage() {
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA]">
-      <Image
-        src="/logo.svg"
-        alt="Evoluke logo"
-        width={200}
-        height={60}
-        className="mb-8"
-      />
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-md w-full bg-white rounded-lg shadow p-6 space-y-6"
-      >
+      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
+        <Image
+          src="/logo.svg"
+          alt="Evoluke logo"
+          width={200}
+          height={60}
+          className="mb-8 mx-auto"
+        />
+        <form
+          onSubmit={handleSubmit}
+          className="w-full bg-white rounded-lg shadow p-6 space-y-6"
+        >
         <h1 className="text-2xl font-semibold text-center">Login</h1>
 
         <div>
@@ -121,5 +122,6 @@ export default function LoginPage() {
         </p>
       </form>
     </div>
+  </div>
   );
 }

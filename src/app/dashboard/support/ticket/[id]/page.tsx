@@ -66,8 +66,8 @@ export default function TicketPage() {
     if (!ticket) return <p className="text-center py-10">Chamado não encontrado.</p>;
 
     return (
-        <div className="bg-[#FAFAFA] flex items-center justify-center p-6">
-            <div className="w-full max-w-lg">
+        <div className="bg-[#FAFAFA] flex items-center justify-center py-6">
+            <div className="w-full px-4 sm:max-w-md md:max-w-lg">
                 <Link href="/dashboard/support">
                     <Button variant="ghost" className="mb-4">← Voltar</Button>
                 </Link>
