@@ -74,7 +74,7 @@ export default function LoginPage() {
           alt="Evoluke logo"
           width={200}
           height={60}
-          className="mb-8"
+          className="mb-8 mx-auto"
         />
         <form
           onSubmit={handleSubmit}
