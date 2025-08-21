@@ -129,7 +129,7 @@ export default function AgentOnboardingPage() {
       <AgentMenu agent={agent} />
       <AgentGuide />
       <div className="flex justify-center">
-        <Card className="w-4/5 p-6">
+        <Card className="w-full md:w-4/5 p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="welcome" className="text-sm font-medium">
@@ -154,7 +154,7 @@ export default function AgentOnboardingPage() {
             </div>
 
             {collection.map((item, index) => (
-              <div key={index} className="flex items-start gap-4">
+              <div key={index} className="flex flex-col gap-4 md:flex-row">
                 <div className="flex-1 space-y-2">
                   <label
                     htmlFor={`question-${index}`}
@@ -208,6 +208,7 @@ export default function AgentOnboardingPage() {
                   type="button"
                   variant="ghost"
                   onClick={() => removeItem(index)}
+                  className="self-start md:self-auto"
                 >
                   Remover
                 </Button>
@@ -235,7 +236,7 @@ export default function AgentOnboardingPage() {
         </Card>
       </div>
       <div className="flex justify-center">
-        <div className="w-4/5 flex justify-end gap-2">
+        <div className="w-full md:w-4/5 flex justify-end gap-2">
           {agent.is_active ? (
             <DeactivateAgentButton
               agentId={id}
