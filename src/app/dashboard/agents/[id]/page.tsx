@@ -191,7 +191,7 @@ export default function AgentDetailPage() {
         </Card>
       </div>
       <div className="flex justify-center">
-        <div className="w-4/5 flex justify-end gap-2">
+        <div className="w-full max-w-xl mx-auto flex justify-end gap-2">
           {agent.is_active ? (
             <DeactivateAgentButton
               agentId={id}
