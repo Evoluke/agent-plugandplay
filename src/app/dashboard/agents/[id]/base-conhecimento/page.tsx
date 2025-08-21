@@ -172,8 +172,8 @@ export default function AgentKnowledgeBasePage() {
         <Card className="w-4/5 p-6">
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-semibold">Cérebro</h2>
-            <div className="flex gap-6">
-              <aside className="w-40 flex-shrink-0 space-y-2">
+            <div className="flex flex-col gap-6 md:flex-row">
+              <aside className="w-full md:w-40 md:flex-shrink-0 space-y-2">
                 {sidebarItems.map(({ label, icon: Icon }) => {
                   const active = activeSection === label;
                   return (
@@ -212,33 +212,35 @@ export default function AgentKnowledgeBasePage() {
                 {activeSection === "Arquivos" ? (
                   <>
                     <h3 className="text-lg font-medium">Arquivos</h3>
-                    <div className="rounded-md border divide-y">
-                      {filteredFiles.map((file) => (
-                        <div
-                          key={file.id}
-                          className="flex items-center justify-between px-4 py-3"
-                        >
-                          <div className="flex items-center gap-2">
-                            <File className="h-4 w-4" />
-                            <span>{file.name}</span>
+                    <div className="overflow-x-auto">
+                      <div className="rounded-md border divide-y">
+                        {filteredFiles.map((file) => (
+                          <div
+                            key={file.id}
+                            className="flex items-center justify-between px-4 py-3"
+                          >
+                            <div className="flex items-center gap-2">
+                              <File className="h-4 w-4" />
+                              <span>{file.name}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span>{file.tokens.toLocaleString()} tokens</span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRemove(file)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <span>{file.tokens.toLocaleString()} tokens</span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleRemove(file)}
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
+                        ))}
+                        {filteredFiles.length === 0 && (
+                          <div className="p-4 text-sm text-muted-foreground">
+                            Nenhum arquivo
                           </div>
-                        </div>
-                      ))}
-                      {filteredFiles.length === 0 && (
-                        <div className="p-4 text-sm text-muted-foreground">
-                          Nenhum arquivo
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                     <p className="text-sm text-right text-gray-500">
                       {totalTokens.toLocaleString()} / {MAX_TOKENS.toLocaleString()} tokens
