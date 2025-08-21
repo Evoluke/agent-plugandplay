@@ -139,7 +139,7 @@ export default function AgentSpecificInstructionsPage() {
       <AgentMenu agent={agent} />
       <AgentGuide />
       <div className="flex justify-center">
-        <Card className="w-4/5 p-6">
+        <Card className="w-full max-w-xl mx-auto p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {faqs.map((faq, index) => (
               <div
@@ -165,6 +165,7 @@ export default function AgentSpecificInstructionsPage() {
                     Contexto
                   </label>
                   <Input
+                    className="w-full"
                     id={`context-${index}`}
                     value={faq.context}
                     onChange={(e) =>
@@ -199,6 +200,7 @@ export default function AgentSpecificInstructionsPage() {
                     Usuário diz
                   </label>
                   <Input
+                    className="w-full"
                     id={`userSays-${index}`}
                     value={faq.userSays}
                     onChange={(e) =>
@@ -233,6 +235,7 @@ export default function AgentSpecificInstructionsPage() {
                     Aja assim
                   </label>
                   <Textarea
+                    className="w-full resize-y max-h-50 overflow-auto"
                     id={`action-${index}`}
                     value={faq.action}
                     onChange={(e) =>
@@ -242,7 +245,6 @@ export default function AgentSpecificInstructionsPage() {
                         )
                       )
                     }
-                    className="resize-y max-h-50 overflow-auto"
                     maxLength={500}
                   />
                   <div className="flex justify-between text-xs text-gray-500">
