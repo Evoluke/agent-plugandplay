@@ -1,7 +1,7 @@
 // src/app/dashboard/layout.client.tsx
 'use client'
 import React, { ReactNode, useEffect, useState } from 'react'
-import { Sidebar } from '@/components/ui/sidebar'
+import { Sidebar, MobileSidebar } from '@/components/ui/sidebar'
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
@@ -34,8 +34,9 @@ export default function DashboardClientLayout({ children }: Props) {
 
   return (
     <div className="flex h-screen">
-      <Sidebar />
+      <Sidebar className="hidden sm:flex" />
       <main className="flex-1 bg-[#FAFAFA] p-6 h-full overflow-auto">
+        <MobileSidebar />
         {children}
       </main>
     </div>

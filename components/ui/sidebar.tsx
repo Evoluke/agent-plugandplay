@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
+import * as Dialog from '@radix-ui/react-dialog';
 import {
   Home,
   Settings,
@@ -18,8 +19,10 @@ import {
   HelpCircle,
   Brain,
   LogOut,
+  Menu,
 } from 'lucide-react';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
+import { cn } from './utils';
 
 interface NavItem {
   label: string;
@@ -44,34 +47,40 @@ type Agent = {
   name: string;
 };
 
-export function Sidebar() {
-  const router = useRouter();
+function useAgents() {
   const [agents, setAgents] = useState<Agent[]>([]);
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  const fetchAgents = async () => {
-    const { data } = await supabasebrowser.auth.getUser();
-    const user = data?.user;
-    if (!user) return;
-    const { data: company } = await supabasebrowser
-      .from('company')
-      .select('id')
-      .eq('user_id', user.id)
-      .single();
-    if (!company?.id) return;
-    const { data: agentData } = await supabasebrowser
-      .from('agents')
-      .select('id,name')
-      .eq('company_id', company.id);
-    setAgents(agentData || []);
-  };
 
   useEffect(() => {
+    const fetchAgents = async () => {
+      const { data } = await supabasebrowser.auth.getUser();
+      const user = data?.user;
+      if (!user) return;
+      const { data: company } = await supabasebrowser
+        .from('company')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+      if (!company?.id) return;
+      const { data: agentData } = await supabasebrowser
+        .from('agents')
+        .select('id,name')
+        .eq('company_id', company.id);
+      setAgents(agentData || []);
+    };
+
     fetchAgents();
     window.addEventListener('agentsUpdated', fetchAgents);
     return () => window.removeEventListener('agentsUpdated', fetchAgents);
   }, []);
+
+  return agents;
+}
+
+export function Sidebar({ className }: { className?: string }) {
+  const router = useRouter();
+  const agents = useAgents();
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = async () => {
     const { error } = await supabasebrowser.auth.signOut();
@@ -95,7 +104,12 @@ export function Sidebar() {
   }, []);
 
   return (
-    <aside className="w-16 bg-white border-r h-full flex flex-col items-center py-4 space-y-4">
+    <aside
+      className={cn(
+        'w-16 bg-white border-r h-full flex flex-col items-center py-4 space-y-4',
+        className,
+      )}
+    >
       <div className="w-10 h-10 bg-[#0D0D0D] rounded-xl flex items-center justify-center p-1">
               <img
         src="/logo-sidebar.svg"
@@ -200,5 +214,96 @@ export function Sidebar() {
         </Tooltip>
       </div>
     </aside>
+  );
+}
+
+export function MobileSidebar() {
+  const router = useRouter();
+  const agents = useAgents();
+  const [open, setOpen] = useState(false);
+
+  const handleLogout = async () => {
+    const { error } = await supabasebrowser.auth.signOut();
+
+    if (error) {
+      console.error('Erro ao fazer logout:', error.message);
+      return;
+    }
+    setOpen(false);
+    router.replace('/login');
+  };
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger asChild>
+        <button className="mb-4 inline-flex items-center justify-center rounded-md border p-2 sm:hidden">
+          <Menu size={24} />
+        </button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 sm:hidden" />
+        <Dialog.Content className="fixed inset-y-0 left-0 z-50 w-64 bg-white p-4 shadow sm:hidden flex flex-col">
+          <nav className="flex-1 space-y-2">
+            <Link
+              href={mainItem.href}
+              className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
+              onClick={() => setOpen(false)}
+            >
+              {mainItem.icon}
+              <span>{mainItem.label}</span>
+            </Link>
+
+            <div>
+              <span className="block px-2 pt-2 text-xs font-semibold text-gray-500">
+                Agentes IA
+              </span>
+              {agents.map((agent) => (
+                <Link
+                  key={agent.id}
+                  href={`/dashboard/agents/${agent.id}`}
+                  className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  onClick={() => setOpen(false)}
+                >
+                  🤖 {agent.name}
+                </Link>
+              ))}
+              {agents.length < MAX_AGENTS_PER_COMPANY ? (
+                <Link
+                  href="/dashboard/agents/new"
+                  className="block px-4 py-2 text-sm font-semibold text-[#0E4DE0] hover:bg-gray-100"
+                  onClick={() => setOpen(false)}
+                >
+                  Criar novo Agente IA
+                </Link>
+              ) : (
+                <span className="block px-4 py-2 text-sm text-gray-500">
+                  Limite de agentes atingido
+                </span>
+              )}
+            </div>
+
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
+                onClick={() => setOpen(false)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </nav>
+
+          <button
+            onClick={handleLogout}
+            className="mt-4 flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
+          >
+            <LogOut size={20} />
+            <span>Logout</span>
+          </button>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
