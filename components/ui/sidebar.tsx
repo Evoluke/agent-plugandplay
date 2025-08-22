@@ -20,6 +20,7 @@ import {
   Brain,
   LogOut,
   Menu,
+  MessageSquare,
 } from 'lucide-react';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 import { cn } from './utils';
@@ -76,9 +77,33 @@ function useAgents() {
   return agents;
 }
 
+function useChatwootId() {
+  const [chatwootId, setChatwootId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchChatwootId = async () => {
+      const { data } = await supabasebrowser.auth.getUser();
+      const user = data?.user;
+      if (!user) return;
+      const { data: company } = await supabasebrowser
+        .from('company')
+        .select('chatwoot_id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (company?.chatwoot_id) setChatwootId(company.chatwoot_id);
+    };
+
+    fetchChatwootId();
+  }, []);
+
+  return chatwootId;
+}
+
 export function Sidebar({ className }: { className?: string }) {
   const router = useRouter();
   const agents = useAgents();
+  const chatwootId = useChatwootId();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -181,6 +206,28 @@ export function Sidebar({ className }: { className?: string }) {
           )}
         </div>
 
+        <Tooltip disableHoverableContent>
+          <TooltipTrigger asChild>
+            {chatwootId ? (
+              <a
+                href={`https://app.chatwoot.com/app/accounts/${chatwootId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
+              >
+                <MessageSquare size={20} />
+              </a>
+            ) : (
+              <span className="p-2 rounded text-gray-400 flex items-center justify-center cursor-not-allowed">
+                <MessageSquare size={20} />
+              </span>
+            )}
+          </TooltipTrigger>
+          <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
+            <span>CRM</span>
+          </TooltipContent>
+        </Tooltip>
+
         {navItems.map((item) => (
           <Tooltip key={item.href} disableHoverableContent>
             <TooltipTrigger asChild>
@@ -220,6 +267,7 @@ export function Sidebar({ className }: { className?: string }) {
 export function MobileSidebar() {
   const router = useRouter();
   const agents = useAgents();
+  const chatwootId = useChatwootId();
   const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -281,6 +329,24 @@ export function MobileSidebar() {
                 </span>
               )}
             </div>
+
+            {chatwootId ? (
+              <a
+                href={`https://app.chatwoot.com/app/accounts/${chatwootId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
+                onClick={() => setOpen(false)}
+              >
+                <MessageSquare size={20} />
+                <span>CRM</span>
+              </a>
+            ) : (
+              <div className="flex items-center gap-2 rounded px-2 py-2 text-gray-400">
+                <MessageSquare size={20} />
+                <span>CRM</span>
+              </div>
+            )}
 
             {navItems.map((item) => (
               <Link
