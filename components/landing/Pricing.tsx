@@ -19,7 +19,7 @@ const plans = [
   {
     name: "Suporte Atendimento",
     tagline: "Resposta automática para clientes.",
-    features: ["Atende 24/7", "Integra CRM", "Cancelamento fácil"],
+    features: ["Consulta base de conhecimento", "Integra CRM", "Atende 24/7"],
   },
   {
     name: "Representante de vendas (SDR)",
@@ -47,28 +47,9 @@ export default function Pricing() {
   return (
     <section id="modelos" className="bg-[#FAFAFA] py-24">
       <div className="container mx-auto max-w-6xl px-4">
-        <h2 className="mb-4 text-center text-3xl font-bold">
+        <h2 className="mb-4 text-center text-3xl font-bold mb-8">
           Modelos prontos para uso
         </h2>
-        <div className="mb-8 flex justify-center gap-2">
-          <Button
-            size="sm"
-            variant={billing === "monthly" ? "default" : "outline"}
-            onClick={() => setBilling("monthly")}
-          >
-            Mensal
-          </Button>
-          <Button
-            size="sm"
-            variant={billing === "annual" ? "default" : "outline"}
-            onClick={() => setBilling("annual")}
-          >
-            Anual
-            <span className="ml-2 rounded bg-primary/10 px-1 text-xs text-primary">
-              2 meses grátis
-            </span>
-          </Button>
-        </div>
         <ul className="grid gap-6 sm:grid-cols-2" role="list">
           {plans.map(({ name, tagline, features, popular }) => (
             <li key={name} role="listitem">
@@ -118,21 +99,6 @@ export default function Pricing() {
             </li>
           ))}
         </ul>
-        <div className="mt-16">
-          <h3 className="mb-4 text-center text-xl font-semibold">
-            Dúvidas frequentes
-          </h3>
-          <dl className="mx-auto max-w-2xl space-y-4 text-sm">
-            <div>
-              <dt className="font-medium">Posso cancelar quando quiser?</dt>
-              <dd className="text-muted-foreground">Sim, sem burocracia.</dd>
-            </div>
-            <div>
-              <dt className="font-medium">O suporte é 24/7?</dt>
-              <dd className="text-muted-foreground">Sim, estamos sempre disponíveis.</dd>
-            </div>
-          </dl>
-        </div>
       </div>
     </section>
   );
