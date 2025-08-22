@@ -146,3 +146,13 @@ create table public.messages (
   constraint messages_pkey primary key (id),
   constraint messages_company_id_fkey foreign key (company_id) references company (id)
 ) TABLESPACE pg_default;
+
+-- Tabela de alertas do dashboard
+create table public.dashboard_alerts (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  message text not null,
+  start_date date not null,
+  end_date date not null,
+  constraint dashboard_alerts_pkey primary key (id)
+) TABLESPACE pg_default;
