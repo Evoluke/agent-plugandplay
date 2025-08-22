@@ -22,6 +22,7 @@ create table public.company (
   user_id uuid not null,
   company_name text null,
   company_profile_id bigint null,
+  chatwoot_id text null,
   profile_complete boolean not null default false,
   constraint company_pkey primary key (id),
   constraint company_id_key unique (id),
