@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Sidebar, MobileSidebar } from '@/components/ui/sidebar'
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
+import AlertBanner from '@/components/dashboard/alert-banner'
 
 interface Props { children: ReactNode }
 
@@ -37,6 +38,7 @@ export default function DashboardClientLayout({ children }: Props) {
       <Sidebar className="hidden sm:flex" />
       <main className="flex-1 bg-[#FAFAFA] p-6 h-full overflow-auto">
         <MobileSidebar />
+        <AlertBanner />
         {children}
       </main>
     </div>
