@@ -223,8 +223,17 @@ export function Sidebar({ className }: { className?: string }) {
               </span>
             )}
           </TooltipTrigger>
-          <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
-            <span>CRM</span>
+          <TooltipContent
+            side="bottom"
+            align="end"
+            sideOffset={6}
+            className="pointer-events-none"
+          >
+            {chatwootId ? (
+              <span>CRM</span>
+            ) : (
+              <span>CRM desabilitado: nenhum agente habilitado</span>
+            )}
           </TooltipContent>
         </Tooltip>
 
@@ -342,7 +351,10 @@ export function MobileSidebar() {
                 <span>CRM</span>
               </a>
             ) : (
-              <div className="flex items-center gap-2 rounded px-2 py-2 text-gray-400">
+              <div
+                className="flex items-center gap-2 rounded px-2 py-2 text-gray-400"
+                title="CRM desabilitado: nenhum agente habilitado"
+              >
                 <MessageSquare size={20} />
                 <span>CRM</span>
               </div>
