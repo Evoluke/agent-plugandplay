@@ -133,7 +133,7 @@ export default function AgentKnowledgeBasePage() {
     }
     try {
       const response = await fetch(
-        `https://n8nwebhookplatform.tracelead.com.br/webhook/add-file-vector?id=${fileId}`,
+        `https://n8nwebhookplatform.tracelead.com.br/webhook/add-file-vector?path_id=${fileId}&company_id=${agent.company_id}&agent_id=${id}`,
         {
           method: "POST",
           body: file,
@@ -160,6 +160,8 @@ export default function AgentKnowledgeBasePage() {
   };
 
   const handleRemove = async (file: KnowledgeFile) => {
+    if (!agent) return;
+
     const { error } = await supabasebrowser
       .from("agent_knowledge_files")
       .delete()
@@ -168,6 +170,29 @@ export default function AgentKnowledgeBasePage() {
       toast.error("Falha ao remover arquivo");
       return;
     }
+
+    // Remove the document embedding associated with this file
+    const { error: docError } = await supabasebrowser
+      .from("documents")
+      .delete()
+      .contains("metadata", {
+        company_id: agent.company_id,
+        agent_id: id,
+        path_id: file.id,
+      });
+
+    if (docError) {
+      await supabasebrowser.from("agent_knowledge_files").insert({
+        id: file.id,
+        agent_id: id,
+        company_id: agent.company_id,
+        name: file.name,
+        tokens: file.tokens,
+      });
+      toast.error("Falha ao remover arquivo");
+      return;
+    }
+
     setFiles((prev) => prev.filter((f) => f.id !== file.id));
     toast.success("Arquivo removido");
   };
