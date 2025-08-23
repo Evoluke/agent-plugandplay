@@ -6,6 +6,7 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import * as Dialog from "@radix-ui/react-dialog";
 import {
   Globe,
   FileText,
@@ -47,6 +48,10 @@ export default function AgentKnowledgeBasePage() {
   const [search, setSearch] = useState("");
   const [files, setFiles] = useState<KnowledgeFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<KnowledgeFile | null>(null);
+  const [confirmName, setConfirmName] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -159,15 +164,17 @@ export default function AgentKnowledgeBasePage() {
     e.target.value = "";
   };
 
-  const handleRemove = async (file: KnowledgeFile) => {
-    if (!agent) return;
+  const handleRemove = async () => {
+    if (!agent || !fileToDelete) return;
+    setDeleteLoading(true);
 
     const { error } = await supabasebrowser
       .from("agent_knowledge_files")
       .delete()
-      .eq("id", file.id);
+      .eq("id", fileToDelete.id);
     if (error) {
       toast.error("Falha ao remover arquivo");
+      setDeleteLoading(false);
       return;
     }
 
@@ -177,22 +184,27 @@ export default function AgentKnowledgeBasePage() {
       .delete()
       .eq("metadata->>company_id", agent.company_id.toString())
       .eq("metadata->>agent_id", id)
-      .eq("metadata->>path_id", file.id);
+      .eq("metadata->>path_id", fileToDelete.id);
 
     if (docError) {
       await supabasebrowser.from("agent_knowledge_files").insert({
-        id: file.id,
+        id: fileToDelete.id,
         agent_id: id,
         company_id: agent.company_id,
-        name: file.name,
-        tokens: file.tokens,
+        name: fileToDelete.name,
+        tokens: fileToDelete.tokens,
       });
       toast.error("Falha ao remover arquivo");
+      setDeleteLoading(false);
       return;
     }
 
-    setFiles((prev) => prev.filter((f) => f.id !== file.id));
+    setFiles((prev) => prev.filter((f) => f.id !== fileToDelete.id));
     toast.success("Arquivo removido");
+    setDeleteLoading(false);
+    setDeleteOpen(false);
+    setFileToDelete(null);
+    setConfirmName("");
   };
 
   const filteredFiles = files.filter((file) =>
@@ -265,7 +277,11 @@ export default function AgentKnowledgeBasePage() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => handleRemove(file)}
+                                onClick={() => {
+                                  setFileToDelete(file);
+                                  setConfirmName("");
+                                  setDeleteOpen(true);
+                                }}
                               >
                                 <Trash className="h-4 w-4" />
                               </Button>
@@ -313,6 +329,42 @@ export default function AgentKnowledgeBasePage() {
           <UpdateAgentButton agentId={id} />
         </div>
       </div>
+      <Dialog.Root open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-6 shadow space-y-4">
+            <Dialog.Title className="text-lg font-semibold">
+              Excluir arquivo
+            </Dialog.Title>
+            <Dialog.Description className="text-sm text-gray-600">
+              Digite o nome do arquivo ({""}
+              <span className="font-semibold">{fileToDelete?.name}</span>
+              {""}) para confirmar.
+            </Dialog.Description>
+            <Input
+              placeholder="Nome do arquivo"
+              value={confirmName}
+              onChange={(e) => setConfirmName(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteOpen(false)}
+                disabled={deleteLoading}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleRemove}
+                disabled={confirmName !== fileToDelete?.name || deleteLoading}
+              >
+                {deleteLoading ? "Excluindo..." : "Excluir"}
+              </Button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }
