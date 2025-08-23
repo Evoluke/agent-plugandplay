@@ -175,11 +175,9 @@ export default function AgentKnowledgeBasePage() {
     const { error: docError } = await supabasebrowser
       .from("documents")
       .delete()
-      .contains("metadata", {
-        company_id: agent.company_id.toString(),
-        agent_id: id,
-        path_id: file.id,
-      });
+      .eq("metadata->>company_id", agent.company_id.toString())
+      .eq("metadata->>agent_id", id)
+      .eq("metadata->>path_id", file.id);
 
     if (docError) {
       await supabasebrowser.from("agent_knowledge_files").insert({
