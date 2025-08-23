@@ -176,7 +176,7 @@ export default function AgentKnowledgeBasePage() {
       .from("documents")
       .delete()
       .contains("metadata", {
-        company_id: agent.company_id,
+        company_id: agent.company_id.toString(),
         agent_id: id,
         path_id: file.id,
       });
