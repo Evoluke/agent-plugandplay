@@ -133,22 +133,26 @@ export default function AgentKnowledgeBasePage() {
       e.target.value = "";
       return;
     }
-    const response = await fetch(
-      `https://n8nwebhookplatform.tracelead.com.br/webhook/add-file-vector?id=${fileId}`,
-      {
-        method: "POST",
-        body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
+    try {
+      const response = await fetch(
+        `https://n8nwebhookplatform.tracelead.com.br/webhook/add-file-vector?id=${fileId}`,
+        {
+          method: "POST",
+          body: file,
+          headers: {
+            "Content-Type": file.type,
+          },
+        }
+      );
+      if (!response.ok) {
+        await supabasebrowser.from("agent_knowledge_files").delete().eq("id", fileId);
+        toast.error("Falha ao processar arquivo");
+        e.target.value = "";
+        return;
       }
-    );
-    if (!response.ok) {
-      await supabasebrowser
-        .from("agent_knowledge_files")
-        .delete()
-        .eq("id", fileId);
-      toast.error("Falha ao processar arquivo");
+    } catch {
+      await supabasebrowser.from("agent_knowledge_files").delete().eq("id", fileId);
+      toast.error("Erro ao enviar arquivo");
       e.target.value = "";
       return;
     }
