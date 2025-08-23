@@ -120,7 +120,6 @@ create table public.agent_knowledge_files (
   agent_id uuid not null,
   name text not null,
   tokens integer not null,
-  path text not null,
   constraint agent_knowledge_files_pkey primary key (id),
   constraint agent_knowledge_files_agent_id_fkey foreign key (agent_id) references agents (id),
   constraint agent_knowledge_files_company_id_fkey foreign key (company_id) references company (id)

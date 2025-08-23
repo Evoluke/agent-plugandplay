@@ -37,7 +37,6 @@ interface KnowledgeFile {
   id: string;
   name: string;
   tokens: number;
-  path: string;
 }
 
 export default function AgentKnowledgeBasePage() {
@@ -61,7 +60,7 @@ export default function AgentKnowledgeBasePage() {
 
       const { data: fileData } = await supabasebrowser
         .from("agent_knowledge_files")
-        .select("id,name,tokens,path")
+        .select("id,name,tokens")
         .eq("agent_id", id);
       setFiles(fileData || []);
     };
@@ -77,7 +76,7 @@ export default function AgentKnowledgeBasePage() {
     { label: "Vídeos", icon: Video },
   ];
 
-  const MAX_TOKENS = 1_000_000;
+  const MAX_TOKENS = 10_000_000;
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -124,7 +123,6 @@ export default function AgentKnowledgeBasePage() {
         company_id: agent.company_id,
         name: file.name,
         tokens,
-        path: fileId,
       })
       .select()
       .single();
