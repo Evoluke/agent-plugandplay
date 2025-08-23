@@ -75,10 +75,10 @@ export default function AgentKnowledgeBasePage() {
   if (!agent) return <div>Carregando...</div>;
 
   const sidebarItems = [
-    { label: "Websites", icon: Globe },
+    // { label: "Websites", icon: Globe },
     { label: "Arquivos", icon: FileText },
-    { label: "FAQ", icon: HelpCircle },
-    { label: "Vídeos", icon: Video },
+    // { label: "FAQ", icon: HelpCircle },
+    // { label: "Vídeos", icon: Video },
   ];
 
   const MAX_TOKENS = 10_000_000;
@@ -337,9 +337,9 @@ export default function AgentKnowledgeBasePage() {
               Excluir arquivo
             </Dialog.Title>
             <Dialog.Description className="text-sm text-gray-600">
-              Digite o nome do arquivo ({""}
+              Digite o nome do arquivo "{""}
               <span className="font-semibold">{fileToDelete?.name}</span>
-              {""}) para confirmar.
+              {""}" para confirmar.
             </Dialog.Description>
             <Input
               placeholder="Nome do arquivo"
