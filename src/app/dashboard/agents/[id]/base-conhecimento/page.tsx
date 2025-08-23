@@ -115,37 +115,49 @@ export default function AgentKnowledgeBasePage() {
       e.target.value = "";
       return;
     }
-    const path = `${agent.company_id}/${id}/${Date.now()}_${file.name}`;
-    const { error: uploadError } = await supabasebrowser.storage
-      .from("knowledge-base")
-      .upload(path, file);
-    if (uploadError) {
-      toast.error("Falha no upload do arquivo");
-      e.target.value = "";
-      return;
-    }
+    const fileId = crypto.randomUUID();
     const { data, error } = await supabasebrowser
       .from("agent_knowledge_files")
       .insert({
+        id: fileId,
         agent_id: id,
         company_id: agent.company_id,
         name: file.name,
         tokens,
-        path,
+        path: fileId,
       })
       .select()
       .single();
     if (error || !data) {
       toast.error("Falha ao salvar arquivo");
-    } else {
-      setFiles((prev) => [...prev, data]);
-      toast.success("Arquivo adicionado");
+      e.target.value = "";
+      return;
     }
+    const response = await fetch(
+      `https://n8nwebhookplatform.tracelead.com.br/webhook/add-file-vector?id=${fileId}`,
+      {
+        method: "POST",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      }
+    );
+    if (!response.ok) {
+      await supabasebrowser
+        .from("agent_knowledge_files")
+        .delete()
+        .eq("id", fileId);
+      toast.error("Falha ao processar arquivo");
+      e.target.value = "";
+      return;
+    }
+    setFiles((prev) => [...prev, data]);
+    toast.success("Arquivo adicionado");
     e.target.value = "";
   };
 
   const handleRemove = async (file: KnowledgeFile) => {
-    await supabasebrowser.storage.from("knowledge-base").remove([file.path]);
     const { error } = await supabasebrowser
       .from("agent_knowledge_files")
       .delete()
