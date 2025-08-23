@@ -6,15 +6,13 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import * as Dialog from "@radix-ui/react-dialog";
 import {
-  Globe,
-  FileText,
-  HelpCircle,
-  Video,
-  File,
-  Trash,
-} from "lucide-react";
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import * as Dialog from "@radix-ui/react-dialog";
+import { FileText, HelpCircle, File, Trash } from "lucide-react";
 import { toast } from "sonner";
 import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import {
@@ -52,6 +50,18 @@ export default function AgentKnowledgeBasePage() {
   const [fileToDelete, setFileToDelete] = useState<KnowledgeFile | null>(null);
   const [confirmName, setConfirmName] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [fileTypesOpen, setFileTypesOpen] = useState(false);
+
+  const mimeToExt: Record<string, string> = {
+    "application/pdf": "PDF",
+    "text/plain": "TXT",
+    "text/csv": "CSV",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX",
+    "application/msword": "DOC",
+  };
+  const allowedFileTypes = ALLOWED_KNOWLEDGE_MIME_TYPES.map(
+    (type) => mimeToExt[type] || type
+  ).join(", ");
 
   useEffect(() => {
     if (!id) return;
@@ -246,17 +256,31 @@ export default function AgentKnowledgeBasePage() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
-                  <>
+                  <div className="flex items-center gap-2">
                     <Button onClick={() => fileInputRef.current?.click()}>
                       Adicionar Fonte
                     </Button>
+                    <Tooltip
+                      open={fileTypesOpen}
+                      onOpenChange={setFileTypesOpen}
+                    >
+                      <TooltipTrigger asChild>
+                        <HelpCircle
+                          className="h-4 w-4 cursor-pointer"
+                          onClick={() => setFileTypesOpen(!fileTypesOpen)}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        Tipos de arquivos suportados: {allowedFileTypes}
+                      </TooltipContent>
+                    </Tooltip>
                     <input
                       ref={fileInputRef}
                       type="file"
                       className="hidden"
                       onChange={handleFileChange}
                     />
-                  </>
+                  </div>
                 </div>
                 {activeSection === "Arquivos" ? (
                   <>
@@ -337,9 +361,9 @@ export default function AgentKnowledgeBasePage() {
               Excluir arquivo
             </Dialog.Title>
             <Dialog.Description className="text-sm text-gray-600">
-              Digite o nome do arquivo "{""}
+              Digite o nome do arquivo &quot;
               <span className="font-semibold">{fileToDelete?.name}</span>
-              {""}" para confirmar.
+              &quot; para confirmar.
             </Dialog.Description>
             <Input
               placeholder="Nome do arquivo"
