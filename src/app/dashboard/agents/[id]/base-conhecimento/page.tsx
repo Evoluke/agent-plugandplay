@@ -108,6 +108,14 @@ export default function AgentKnowledgeBasePage() {
       e.target.value = "";
       return;
     }
+    const tokens = Math.ceil(file.size / 4);
+    const totalTokens = files.reduce((sum, f) => sum + f.tokens, 0);
+    if (totalTokens + tokens > MAX_TOKENS) {
+      toast.error("Limite de tokens excedido");
+      e.target.value = "";
+      return;
+    }
+    const t = toast.loading("Carregando arquivo...");
     const formData = new FormData();
     formData.append("file", file);
     const validation = await fetch("/api/knowledge-base/validate", {
@@ -115,17 +123,10 @@ export default function AgentKnowledgeBasePage() {
       body: formData,
     });
     if (!validation.ok) {
-      const { error } = await validation
+      await validation
         .json()
         .catch(() => ({ error: "Arquivo inválido" }));
-      toast.error(error);
-      e.target.value = "";
-      return;
-    }
-    const tokens = Math.ceil(file.size / 4);
-    const totalTokens = files.reduce((sum, f) => sum + f.tokens, 0);
-    if (totalTokens + tokens > MAX_TOKENS) {
-      toast.error("Limite de tokens excedido");
+      toast.error("Falha no upload", { id: t });
       e.target.value = "";
       return;
     }
@@ -142,7 +143,7 @@ export default function AgentKnowledgeBasePage() {
       .select()
       .single();
     if (error || !data) {
-      toast.error("Falha ao salvar arquivo");
+      toast.error("Falha no upload", { id: t });
       e.target.value = "";
       return;
     }
@@ -159,18 +160,18 @@ export default function AgentKnowledgeBasePage() {
       );
       if (!response.ok) {
         await supabasebrowser.from("agent_knowledge_files").delete().eq("id", fileId);
-        toast.error("Falha ao processar arquivo");
+        toast.error("Falha no upload", { id: t });
         e.target.value = "";
         return;
       }
     } catch {
       await supabasebrowser.from("agent_knowledge_files").delete().eq("id", fileId);
-      toast.error("Erro ao enviar arquivo");
+      toast.error("Falha no upload", { id: t });
       e.target.value = "";
       return;
     }
     setFiles((prev) => [...prev, data]);
-    toast.success("Arquivo adicionado");
+    toast.success("Arquivo carregado!", { id: t });
     e.target.value = "";
   };
 
