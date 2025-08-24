@@ -130,6 +130,15 @@ export default function AgentKnowledgeBasePage() {
       e.target.value = "";
       return;
     }
+    const extension = file.name.includes(".")
+      ? file.name.substring(file.name.lastIndexOf("."))
+      : "";
+    const baseName = file.name.replace(/\.[^/.]+$/, "");
+    const finalFileName = baseName.slice(0, 50) + extension;
+    const uploadFile =
+      finalFileName === file.name
+        ? file
+        : new File([file], finalFileName, { type: file.type });
     const fileId = crypto.randomUUID();
     const { data, error } = await supabasebrowser
       .from("agent_knowledge_files")
@@ -137,7 +146,7 @@ export default function AgentKnowledgeBasePage() {
         id: fileId,
         agent_id: id,
         company_id: agent.company_id,
-        name: file.name,
+        name: finalFileName,
         tokens,
       })
       .select()
@@ -152,7 +161,7 @@ export default function AgentKnowledgeBasePage() {
         `https://n8nwebhookplatform.tracelead.com.br/webhook/add-file-vector?path_id=${fileId}&company_id=${agent.company_id}&agent_id=${id}`,
         {
           method: "POST",
-          body: file,
+          body: uploadFile,
           headers: {
             "Content-Type": file.type,
           },
