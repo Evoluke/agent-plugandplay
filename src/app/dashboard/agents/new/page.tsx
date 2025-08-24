@@ -16,7 +16,7 @@ import {
 import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
-import { MAX_AGENTS_PER_COMPANY } from "@/lib/constants";
+import { MAX_AGENTS_PER_COMPANY, ALLOWED_AGENT_TYPES } from "@/lib/constants";
 import { AGENT_TEMPLATES } from "@/lib/agentTemplates";
 
 export default function NewAgentPage() {
@@ -69,6 +69,11 @@ export default function NewAgentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid || !companyId || isSubmitting) return;
+
+    if (!ALLOWED_AGENT_TYPES.includes(type)) {
+      toast.error("Tipo de agente inválido.");
+      return;
+    }
 
     setIsSubmitting(true);
 
