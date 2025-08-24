@@ -12,7 +12,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import * as Dialog from "@radix-ui/react-dialog";
-import { FileText, HelpCircle, File, Trash } from "lucide-react";
+import { FileText, HelpCircle, File as FileIcon, Trash } from "lucide-react";
 import { toast } from "sonner";
 import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import {
@@ -303,7 +303,7 @@ export default function AgentKnowledgeBasePage() {
                             className="flex items-center justify-between px-4 py-3"
                           >
                             <div className="flex items-center gap-2">
-                              <File className="h-4 w-4" />
+                              <FileIcon className="h-4 w-4" />
                               <span>{file.name}</span>
                             </div>
                             <div className="flex items-center gap-4">
