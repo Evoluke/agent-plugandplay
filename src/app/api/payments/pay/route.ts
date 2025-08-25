@@ -67,21 +67,6 @@ export async function POST(request: Request) {
 
   console.log(`[payment] user=${userId} id=${id} total=${total}`);
 
-  const { data: paymentRecord, error: paymentError } = await supabaseadmin
-    .from('payments')
-    .select('id, company_id, asaas_id, payment_link, due_date, amount')
-    .or(`id.eq.${id},reference.eq.${id}`)
-    .maybeSingle();
-  if (paymentError) {
-    console.error(paymentError);
-  }
-  if (!paymentRecord) {
-    return NextResponse.json(
-      { error: 'Payment not found' },
-      { status: 404 }
-    );
-  }
-
   const { data: company, error: companyError } = await supabaseadmin
     .from('company')
     .select(
@@ -94,6 +79,23 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: 'Company profile not found' },
       { status: 400 }
+    );
+  }
+
+  const { data: paymentRecord, error: paymentError } = await supabaseadmin
+    .from('payments')
+    .select('id, company_id, asaas_id, payment_link, due_date, amount')
+    .eq('company_id', company.id)
+    .or(`id.eq.${id},reference.eq.${id}`)
+    .maybeSingle();
+
+  if (paymentError) {
+    console.error(paymentError);
+  }
+  if (!paymentRecord) {
+    return NextResponse.json(
+      { error: 'Payment not found' },
+      { status: 404 }
     );
   }
 
