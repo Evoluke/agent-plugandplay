@@ -33,8 +33,10 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
    ```
 
 2. Faça o deploy na [Vercel](https://vercel.com/) (via CLI ou integração com Git). O processo padrão consiste em:
-   - Configurar as variáveis de ambiente no painel da Vercel.
+   - Configurar as variáveis de ambiente no painel da Vercel (incluindo `N8N_WEBHOOK_URL` e `N8N_WEBHOOK_TOKEN`, usadas pelo endpoint interno `/api/knowledge-base/upload`).
    - Realizar o push para o branch principal para disparar o deploy automático **ou** utilizar o comando `vercel --prod`.
+
+> O fluxo do N8N deve validar o token enviado no header `Authorization` antes de aceitar o upload.
 
 ## 🔗 Links Úteis
 
