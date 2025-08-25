@@ -55,8 +55,6 @@ export default function AgentKnowledgeBasePage() {
   const mimeToExt: Record<string, string> = {
     "application/pdf": "PDF",
     "text/plain": "TXT",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX",
-    "application/msword": "DOC",
   };
   const allowedFileTypes = ALLOWED_KNOWLEDGE_MIME_TYPES.map(
     (type) => mimeToExt[type] || type
