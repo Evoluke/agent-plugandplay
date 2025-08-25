@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     .single();
   const { data: behavior } = await supabaseadmin
     .from('agent_behavior')
-    .select('limitations, forbidden_words, default_fallback')
+    .select('limitations, forbidden_words, default_fallback, qualification_transfer_rule')
     .eq('agent_id', agentId)
     .single();
   const { data: onboarding } = await supabaseadmin
@@ -75,6 +75,7 @@ export async function POST(request: Request) {
       limitations: '',
       forbidden_words: '',
       default_fallback: '',
+      qualification_transfer_rule: '',
     },
     onboarding: onboarding ?? {
       welcome_message: '',

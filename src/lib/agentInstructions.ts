@@ -8,6 +8,7 @@ export interface AgentInstructionsData {
     limitations: string;
     forbidden_words: string;
     default_fallback: string;
+    qualification_transfer_rule: string;
   };
   onboarding: {
     welcome_message: string;
@@ -28,6 +29,9 @@ export function buildAgentInstructions(data: AgentInstructionsData): string {
   lines.push(`    <limitations>${data.behavior.limitations}</limitations>`);
   lines.push(`    <forbidden_words>${data.behavior.forbidden_words}</forbidden_words>`);
   lines.push(`    <default_fallback>${data.behavior.default_fallback}</default_fallback>`);
+  lines.push(
+    `    <qualification_transfer_rule>${data.behavior.qualification_transfer_rule}</qualification_transfer_rule>`,
+  );
   lines.push('  </behavior>');
   lines.push('  <onboarding>');
   lines.push(`    <welcome_message>${data.onboarding.welcome_message}</welcome_message>`);

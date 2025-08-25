@@ -28,6 +28,7 @@ export default function AgentBehaviorPage() {
   const [limitations, setLimitations] = useState("");
   const [forbiddenWords, setForbiddenWords] = useState("");
   const [fallback, setFallback] = useState("");
+  const [qualificationTransferRule, setQualificationTransferRule] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function AgentBehaviorPage() {
 
     supabasebrowser
       .from("agent_behavior")
-      .select("limitations, forbidden_words, default_fallback")
+      .select("limitations, forbidden_words, default_fallback, qualification_transfer_rule")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
@@ -51,6 +52,7 @@ export default function AgentBehaviorPage() {
           setLimitations(data.limitations);
           setForbiddenWords(data.forbidden_words);
           setFallback(data.default_fallback);
+          setQualificationTransferRule(data.qualification_transfer_rule);
         }
       });
   }, [id]);
@@ -60,7 +62,13 @@ export default function AgentBehaviorPage() {
   const limitationsValid = limitations.trim().length <= 500;
   const forbiddenWordsValid = forbiddenWords.trim().length <= 500;
   const fallbackValid = fallback.trim().length >= 10 && fallback.trim().length <= 200;
-  const isFormValid = limitationsValid && forbiddenWordsValid && fallbackValid;
+  const qualificationTransferRuleValid =
+    qualificationTransferRule.trim().length <= 200;
+  const isFormValid =
+    limitationsValid &&
+    forbiddenWordsValid &&
+    fallbackValid &&
+    qualificationTransferRuleValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +83,7 @@ export default function AgentBehaviorPage() {
           limitations,
           forbidden_words: forbiddenWords,
           default_fallback: fallback,
+          qualification_transfer_rule: qualificationTransferRule,
         },
         { onConflict: "agent_id" }
       );
@@ -158,6 +167,30 @@ export default function AgentBehaviorPage() {
               {fallback && !fallbackValid && (
                 <p className="text-xs text-red-500">
                   O fallback deve ter entre 10 e 200 caracteres
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="qualificationTransferRule"
+                className="text-sm font-medium"
+              >
+                Quando transferir para humano após a qualificação
+              </label>
+              <Input
+                id="qualificationTransferRule"
+                value={qualificationTransferRule}
+                onChange={(e) => setQualificationTransferRule(e.target.value)}
+                maxLength={200}
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <p>Defina a regra para transferência após qualificar o lead.</p>
+                <p className="text-gray-400">0 a 200 caracteres</p>
+              </div>
+              {qualificationTransferRule && !qualificationTransferRuleValid && (
+                <p className="text-xs text-red-500">
+                  A regra deve ter no máximo 200 caracteres
                 </p>
               )}
             </div>
