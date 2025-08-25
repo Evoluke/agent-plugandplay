@@ -72,7 +72,7 @@ export default function Features() {
     <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16" id="solucoes">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
         <h2 className="mb-8 text-center text-3xl font-bold">Soluções</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6">
           {items.map(({ title, description, icon: Icon }, index) => (
             <div
               key={title}
@@ -82,12 +82,12 @@ export default function Features() {
               className="h-full opacity-0 translate-y-4 transition-all duration-500"
             >
               <Card className="h-full transition-transform duration-300 hover:shadow-lg hover:scale-105">
-                <CardHeader>
-                  <Icon className="mb-2 h-6 w-6 text-primary" />
-                  <CardTitle>{title}</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <Icon className="mb-2 h-5 w-5 text-primary sm:h-6 sm:w-6" />
+                  <CardTitle className="text-base sm:text-lg">{title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{description}</p>
+                <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+                  <p className="text-xs text-muted-foreground sm:text-sm">{description}</p>
                 </CardContent>
               </Card>
             </div>
