@@ -11,6 +11,7 @@ export interface AgentTemplate {
     forbidden_words: string;
     default_fallback: string;
     qualification_transfer_rule: QualificationTransferRule;
+    qualification_transfer_conditions: string;
   };
   onboarding: {
     welcome_message: string;
@@ -31,7 +32,9 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       forbidden_words: 'gírias, palavras ofensivas',
       default_fallback:
         'Não consegui compreender, poderia reformular o pedido de agendamento?',
-      qualification_transfer_rule: 'user_request',
+      qualification_transfer_rule: 'personalized',
+      qualification_transfer_conditions:
+        'Quando o usuário solicitar atendimento humano.',
     },
     onboarding: {
       welcome_message: 'Olá! Vou ajudar com seus agendamentos.',
@@ -65,7 +68,8 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       forbidden_words: 'promessas de preço, descontos garantidos, agendamento de reuniões/consultas',
       default_fallback:
         'Agora não consigo te ajudar, mas vou te direcionar para um de nossos atendentes que poderá atender você.',
-      qualification_transfer_rule: 'lead_interested',
+      qualification_transfer_rule: 'filled_collection_questions',
+      qualification_transfer_conditions: '',
     },
     onboarding: {
       welcome_message:
@@ -101,7 +105,9 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       forbidden_words: 'termos técnicos complexos',
       default_fallback:
         'Ainda não sei responder isso, mas vou te direcionar para um de nossos atendentes que poderá atender você.',
-      qualification_transfer_rule: 'user_request',
+      qualification_transfer_rule: 'personalized',
+      qualification_transfer_conditions:
+        'Quando o usuário solicitar atendimento humano.',
     },
     onboarding: {
       welcome_message: 'Olá! Estou aqui para ajudar com o suporte.',

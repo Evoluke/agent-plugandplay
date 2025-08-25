@@ -87,7 +87,7 @@ create table public.agent_personality (
 ) TABLESPACE pg_default;
 
 -- Enum para regra de transferência após qualificação
-create type public.qualification_transfer_rule as enum ('never', 'user_request', 'lead_interested');
+create type public.qualification_transfer_rule as enum ('never', 'filled_collection_questions', 'personalized');
 
 -- Tabela de comportamento dos agentes
 create table public.agent_behavior (
@@ -98,6 +98,7 @@ create table public.agent_behavior (
   forbidden_words text not null default ''::text,
   default_fallback text not null,
   qualification_transfer_rule public.qualification_transfer_rule not null default 'never'::qualification_transfer_rule,
+  qualification_transfer_conditions text not null default ''::text,
   constraint agent_behavior_pkey primary key (id),
   constraint agent_behavior_agent_id_key unique (agent_id),
   constraint agent_behavior_agent_id_fkey foreign key (agent_id) references agents (id)
