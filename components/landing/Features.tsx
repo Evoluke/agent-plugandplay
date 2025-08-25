@@ -2,24 +2,45 @@
 
 import { useEffect, useRef } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Bot, MessageSquare, Users } from "lucide-react";
+import {
+  Smile,
+  Stethoscope,
+  Scissors,
+  Scale,
+  PawPrint,
+  TrendingUp,
+} from "lucide-react";
 
 const items = [
   {
-    title: "IA integrada",
-    description:
-      "Automatize e personalize atendimentos com inteligência artificial.",
-    icon: Bot,
+    title: "Dentistas",
+    description: "Agende mais consultas com um atendente 24h",
+    icon: Smile,
   },
   {
-    title: "CRM Omnichannel",
-    description: "Conecte Whatsapp com multiplos usuários interagindo em uma plataforma única.",
-    icon: MessageSquare,
+    title: "Médicos",
+    description: "Automatize agendamentos e reduza o tempo de resposta.",
+    icon: Stethoscope,
   },
   {
-    title: "Suporte especializado",
-    description: "Oferecemos serviços de automações e soluções sob medida.",
-    icon: Users,
+    title: "Salão e Barbearia",
+    description: "Responda clientes instantaneamente e tenha mais agendamentos",
+    icon: Scissors,
+  },
+  {
+    title: "Advogados",
+    description: "Qualifique clientes e agilize seu atendimento jurídico.",
+    icon: Scale,
+  },
+  {
+    title: "Pet Shops",
+    description: "Aumente suas vendas e marque serviços de forma rápida.",
+    icon: PawPrint,
+  },
+  {
+    title: "Info Produtores",
+    description: "Venda mais com um atendimento humanizado.",
+    icon: TrendingUp,
   },
 ];
 
