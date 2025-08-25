@@ -156,14 +156,13 @@ export default function AgentKnowledgeBasePage() {
       return;
     }
     try {
+      const uploadData = new FormData();
+      uploadData.append("file", uploadFile);
       const response = await fetch(
-        `https://n8nwebhookplatform.tracelead.com.br/webhook/add-file-vector?path_id=${fileId}&company_id=${agent.company_id}&agent_id=${id}`,
+        `/api/knowledge-base/upload?path_id=${fileId}&company_id=${agent.company_id}&agent_id=${id}`,
         {
           method: "POST",
-          body: uploadFile,
-          headers: {
-            "Content-Type": file.type,
-          },
+          body: uploadData,
         }
       );
       if (!response.ok) {
