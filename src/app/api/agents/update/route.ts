@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       limitations: '',
       forbidden_words: '',
       default_fallback: '',
-      qualification_transfer_rule: '',
+      qualification_transfer_rule: 'never',
     },
     onboarding: onboarding ?? {
       welcome_message: '',

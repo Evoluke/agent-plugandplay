@@ -5,14 +5,25 @@ import { useParams } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
+import {
+  QUALIFICATION_TRANSFER_RULES,
+  QualificationTransferRule,
+} from "@/lib/qualificationTransferRules";
 
 type Agent = {
   id: string;
@@ -28,7 +39,8 @@ export default function AgentBehaviorPage() {
   const [limitations, setLimitations] = useState("");
   const [forbiddenWords, setForbiddenWords] = useState("");
   const [fallback, setFallback] = useState("");
-  const [qualificationTransferRule, setQualificationTransferRule] = useState("");
+  const [qualificationTransferRule, setQualificationTransferRule] =
+    useState<QualificationTransferRule>("never");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -52,7 +64,9 @@ export default function AgentBehaviorPage() {
           setLimitations(data.limitations);
           setForbiddenWords(data.forbidden_words);
           setFallback(data.default_fallback);
-          setQualificationTransferRule(data.qualification_transfer_rule);
+          setQualificationTransferRule(
+            data.qualification_transfer_rule as QualificationTransferRule,
+          );
         }
       });
   }, [id]);
@@ -62,8 +76,9 @@ export default function AgentBehaviorPage() {
   const limitationsValid = limitations.trim().length <= 500;
   const forbiddenWordsValid = forbiddenWords.trim().length <= 500;
   const fallbackValid = fallback.trim().length >= 10 && fallback.trim().length <= 200;
-  const qualificationTransferRuleValid =
-    qualificationTransferRule.trim().length <= 200;
+  const qualificationTransferRuleValid = QUALIFICATION_TRANSFER_RULES.some(
+    (r) => r.value === qualificationTransferRule,
+  );
   const isFormValid =
     limitationsValid &&
     forbiddenWordsValid &&
@@ -172,27 +187,29 @@ export default function AgentBehaviorPage() {
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="qualificationTransferRule"
-                className="text-sm font-medium"
-              >
+              <label className="text-sm font-medium">
                 Quando transferir para humano após a qualificação
               </label>
-              <Input
-                id="qualificationTransferRule"
+              <Select
                 value={qualificationTransferRule}
-                onChange={(e) => setQualificationTransferRule(e.target.value)}
-                maxLength={200}
-              />
-              <div className="flex justify-between text-xs text-gray-500">
-                <p>Defina a regra para transferência após qualificar o lead.</p>
-                <p className="text-gray-400">0 a 200 caracteres</p>
-              </div>
-              {qualificationTransferRule && !qualificationTransferRuleValid && (
-                <p className="text-xs text-red-500">
-                  A regra deve ter no máximo 200 caracteres
-                </p>
-              )}
+                onValueChange={(v) =>
+                  setQualificationTransferRule(v as QualificationTransferRule)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a regra" />
+                </SelectTrigger>
+                <SelectContent>
+                  {QUALIFICATION_TRANSFER_RULES.map((r) => (
+                    <SelectItem key={r.value} value={r.value}>
+                      {r.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500">
+                Defina a regra para transferência após qualificar o lead.
+              </p>
             </div>
 
             <Button type="submit" disabled={!isFormValid || isSubmitting}>
