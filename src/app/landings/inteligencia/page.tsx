@@ -1,5 +1,6 @@
 import Hero from "@/components/landings/inteligencia/Hero";
 import Features from "@/components/landings/inteligencia/Features";
+import Steps from "@/components/landings/inteligencia/Steps";
 import CTA from "@/components/landings/inteligencia/CTA";
 import type { Metadata } from "next";
 
@@ -13,6 +14,7 @@ export default function InteligenciaPage() {
     <>
       <Hero />
       <Features />
+      <Steps />
       <CTA />
     </>
   );

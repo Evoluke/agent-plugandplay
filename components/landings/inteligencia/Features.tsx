@@ -1,23 +1,28 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Bot, MessageSquare, LineChart } from "lucide-react";
+import { TrendingDown, ShoppingCart, Layers, Users } from "lucide-react";
 
 const items = [
   {
-    title: "Chatbots treinados",
-    description: "Configure assistentes virtuais que entendem o contexto das conversas.",
-    icon: Bot,
+    title: "Redução de custo",
+    description: "Automatize conversas e diminua despesas com atendimento.",
+    icon: TrendingDown,
   },
   {
-    title: "Centralização de canais",
-    description: "Integre WhatsApp e outros canais em um único painel.",
-    icon: MessageSquare,
+    title: "Conversão em vendas",
+    description: "Transforme leads em clientes com respostas instantâneas.",
+    icon: ShoppingCart,
   },
   {
-    title: "Relatórios em tempo real",
-    description: "Acompanhe métricas de atendimento com dashboards intuitivos.",
-    icon: LineChart,
+    title: "Segmentos",
+    description: "Adapte o agente para diferentes setores do mercado.",
+    icon: Layers,
+  },
+  {
+    title: "Usuários",
+    description: "Permita que vários colaboradores acompanhem as conversas.",
+    icon: Users,
   },
 ];
 
@@ -25,8 +30,8 @@ export default function Features() {
   return (
     <section className="py-12 md:py-20" id="features">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
-        <h2 className="mb-8 text-center text-3xl font-bold">Recursos</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <h2 className="mb-8 text-center text-3xl font-bold">Vantagens</h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {items.map(({ title, description, icon: Icon }) => (
             <Card key={title} className="h-full">
               <CardHeader>

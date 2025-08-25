@@ -7,11 +7,14 @@ export default function CTA() {
   return (
     <section className="bg-primary text-primary-foreground py-12 md:py-20">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6 text-center space-y-6">
-        <h2 className="text-3xl font-bold">Pronto para oferecer atendimento inteligente?</h2>
-        <p>Crie sua conta gratuitamente e implemente IA no seu atendimento hoje mesmo.</p>
-        <Link href="/signup">
+        <h2 className="text-3xl font-bold">Investimento baixo</h2>
+        <p>
+          Entre em contato e veja como implementar IA no atendimento com um custo
+          acessível.
+        </p>
+        <Link href="/contact">
           <Button size="lg" variant="secondary">
-            Criar conta
+            Fale conosco
           </Button>
         </Link>
       </div>
