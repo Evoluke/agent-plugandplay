@@ -1,3 +1,8 @@
+import {
+  QualificationTransferRule,
+  QUALIFICATION_TRANSFER_RULE_TEXT,
+} from './qualificationTransferRules';
+
 export interface AgentInstructionsData {
   personality: {
     voice_tone: string;
@@ -8,6 +13,8 @@ export interface AgentInstructionsData {
     limitations: string;
     forbidden_words: string;
     default_fallback: string;
+    qualification_transfer_rule: QualificationTransferRule;
+    qualification_transfer_conditions: string;
   };
   onboarding: {
     welcome_message: string;
@@ -28,6 +35,14 @@ export function buildAgentInstructions(data: AgentInstructionsData): string {
   lines.push(`    <limitations>${data.behavior.limitations}</limitations>`);
   lines.push(`    <forbidden_words>${data.behavior.forbidden_words}</forbidden_words>`);
   lines.push(`    <default_fallback>${data.behavior.default_fallback}</default_fallback>`);
+  lines.push(
+    `    <qualification_transfer_rule>${QUALIFICATION_TRANSFER_RULE_TEXT[data.behavior.qualification_transfer_rule]}</qualification_transfer_rule>`,
+  );
+  if (data.behavior.qualification_transfer_rule === 'personalized') {
+    lines.push(
+      `    <qualification_transfer_conditions>${data.behavior.qualification_transfer_conditions}</qualification_transfer_conditions>`,
+    );
+  }
   lines.push('  </behavior>');
   lines.push('  <onboarding>');
   lines.push(`    <welcome_message>${data.onboarding.welcome_message}</welcome_message>`);
