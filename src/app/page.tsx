@@ -1,6 +1,7 @@
 import Header from "@/components/landing/Header";
 import Hero from "@/components/landing/Hero";
 import Features from "@/components/landing/Features";
+import Video from "@/components/landing/Video";
 import Stats from "@/components/landing/Stats";
 import Benefit from "@/components/landing/Benefit";
 import Testimonials from "@/components/landing/Testimonials";
@@ -43,6 +44,7 @@ export default function HomePage() {
       <main className="flex flex-col">
         <Hero />
         <Features />
+        <Video />
         <Stats />
         <Benefit
           tag="IA + CRM"
