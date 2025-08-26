@@ -2,24 +2,45 @@
 
 import { useEffect, useRef } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Bot, MessageSquare, Users } from "lucide-react";
+import {
+  Smile,
+  Stethoscope,
+  Scissors,
+  Scale,
+  PawPrint,
+  TrendingUp,
+} from "lucide-react";
 
 const items = [
   {
-    title: "IA integrada",
-    description:
-      "Automatize e personalize atendimentos com inteligência artificial.",
-    icon: Bot,
+    title: "Dentistas",
+    description: "Agende mais consultas com um atendente 24h",
+    icon: Smile,
   },
   {
-    title: "CRM Omnichannel",
-    description: "Conecte Whatsapp com multiplos usuários interagindo em uma plataforma única.",
-    icon: MessageSquare,
+    title: "Médicos",
+    description: "Automatize agendamentos e reduza o tempo de resposta.",
+    icon: Stethoscope,
   },
   {
-    title: "Suporte especializado",
-    description: "Oferecemos serviços de automações e soluções sob medida.",
-    icon: Users,
+    title: "Salão e Barbearia",
+    description: "Responda clientes instantaneamente e tenha mais agendamentos",
+    icon: Scissors,
+  },
+  {
+    title: "Advogados",
+    description: "Qualifique clientes e agilize seu atendimento jurídico.",
+    icon: Scale,
+  },
+  {
+    title: "Pet Shops",
+    description: "Aumente suas vendas e marque serviços de forma rápida.",
+    icon: PawPrint,
+  },
+  {
+    title: "Info Produtores",
+    description: "Venda mais com um atendimento humanizado.",
+    icon: TrendingUp,
   },
 ];
 
@@ -51,7 +72,7 @@ export default function Features() {
     <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16" id="solucoes">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
         <h2 className="mb-8 text-center text-3xl font-bold">Soluções</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6">
           {items.map(({ title, description, icon: Icon }, index) => (
             <div
               key={title}
@@ -61,12 +82,12 @@ export default function Features() {
               className="h-full opacity-0 translate-y-4 transition-all duration-500"
             >
               <Card className="h-full transition-transform duration-300 hover:shadow-lg hover:scale-105">
-                <CardHeader>
-                  <Icon className="mb-2 h-6 w-6 text-primary" />
-                  <CardTitle>{title}</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <Icon className="mb-2 h-5 w-5 text-primary sm:h-6 sm:w-6" />
+                  <CardTitle className="text-base sm:text-lg">{title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{description}</p>
+                <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+                  <p className="text-xs text-muted-foreground sm:text-sm">{description}</p>
                 </CardContent>
               </Card>
             </div>
