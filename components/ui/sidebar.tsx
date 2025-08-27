@@ -132,8 +132,9 @@ export function Sidebar({ className }: { className?: string }) {
 
   useEffect(() => {
     if (open && dropdownRef.current && triggerRef.current) {
-      const triggerHeight = triggerRef.current.offsetHeight;
-      dropdownRef.current.style.top = `${triggerHeight / 2}px`;
+      const triggerRect = triggerRef.current.getBoundingClientRect();
+      dropdownRef.current.style.top = `${triggerRect.height / 2}px`;
+      dropdownRef.current.style.left = `${triggerRect.width / 2}px`;
     }
   }, [open]);
 
@@ -186,8 +187,8 @@ export function Sidebar({ className }: { className?: string }) {
           {open && (
             <div
               ref={dropdownRef}
-              className="absolute left-12 -translate-y-1/2 transform z-10 w-64 bg-white border rounded shadow-md"
-              style={{ top: 0 }}
+              className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10 w-64 bg-white border rounded shadow-md"
+              style={{ top: 0, left: 0 }}
             >
               {agents.map((agent) => (
                 <Link
