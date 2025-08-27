@@ -51,7 +51,7 @@ export default function Testimonials() {
   );
 
   return (
-    <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16">
+    <section className="bg-background py-8 md:py-12 lg:py-16">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6 text-center">
         <h2 className="text-3xl font-bold">Depoimentos</h2>
         <p className="mb-8 text-muted-foreground">Quem já utiliza a Evoluke</p>

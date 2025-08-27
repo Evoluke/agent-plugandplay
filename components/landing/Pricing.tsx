@@ -37,7 +37,7 @@ const formatPrice = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function Pricing() {
-  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const [billing] = useState<"monthly" | "annual">("monthly");
   const price =
     billing === "monthly" ?
       formatPrice(PRICE_MONTHLY) :
@@ -45,7 +45,7 @@ export default function Pricing() {
   const suffix = billing === "monthly" ? "/mês" : "/ano";
 
   return (
-    <section id="modelos" className="bg-[#FAFAFA] py-24">
+    <section id="modelos" className="bg-background py-24">
       <div className="container mx-auto max-w-6xl px-4">
         <h2 className="mb-4 text-center text-3xl font-bold mb-8">
           Modelos prontos para uso
@@ -54,9 +54,9 @@ export default function Pricing() {
           {plans.map(({ name, tagline, features, popular }) => (
             <li key={name} role="listitem">
               <div className="group rounded-xl bg-gradient-to-br from-purple-500/40 to-blue-500/40 p-[2px] transition-all hover:-translate-y-1 hover:shadow-xl">
-                <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-white/90 p-6 backdrop-blur">
+                <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-card/90 p-6 backdrop-blur">
                   {popular && (
-                    <span className="absolute right-4 top-4 rounded-full bg-primary px-2 py-1 text-xs font-medium text-white">
+                    <span className="absolute right-4 top-4 rounded-full bg-primary px-2 py-1 text-xs font-medium text-primary-foreground">
                       Mais popular
                     </span>
                   )}
