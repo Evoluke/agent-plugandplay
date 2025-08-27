@@ -59,15 +59,24 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
         <Card className="w-full md:w-52 p-4 flex flex-col items-center justify-center gap-3 text-sm text-center">
           <div>
             <p className="text-xs text-gray-500">Status do agente</p>
-            <p className={`text-base font-semibold ${agent.is_active ? "text-green-600" : "text-red-600"}`}>
+            <p
+              className={`text-base font-semibold ${agent.is_active ? "text-green-600" : "text-red-600"}`}
+            >
               {agent.is_active ? "Ativo" : "Inativo"}
             </p>
-            <p className="text-xs">{typeLabels[agent.type] || agent.type}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Tipo do agente</p>
+            <p className="text-base font-semibold">
+              {typeLabels[agent.type] || agent.type}
+            </p>
           </div>
           <div>
             <p className="text-xs text-gray-500">Vencimento último pagamento</p>
             <p>
-              {lastPayment ? new Date(lastPayment).toLocaleDateString("pt-BR") : "Não existe"}
+              {lastPayment
+                ? new Date(lastPayment).toLocaleDateString("pt-BR")
+                : "Não existe"}
             </p>
           </div>
         </Card>
