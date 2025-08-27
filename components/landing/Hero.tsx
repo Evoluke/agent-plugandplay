@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Mascot from "@/components/landing/Mascot";
 import { Button } from "@/components/ui/button";
 
 export default function Hero() {
@@ -28,7 +29,7 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-        <div className="flex justify-center lg:col-span-6">
+        <div className="relative flex justify-center lg:col-span-6">
           <Image
             src="/hero.png"
             alt="Ilustração"
@@ -36,6 +37,7 @@ export default function Hero() {
             height={600}
             className="h-auto w-full max-w-[600px] rounded-md"
           />
+          <Mascot className="absolute -right-4 -bottom-4 w-24 h-24" />
         </div>
       </div>
     </section>
