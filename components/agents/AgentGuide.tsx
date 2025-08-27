@@ -6,6 +6,7 @@ import Link from "next/link";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { supabasebrowser } from "@/lib/supabaseClient";
+import { HelpCircle } from "lucide-react";
 
 export default function AgentGuide() {
   const params = useParams();
@@ -103,9 +104,10 @@ export default function AgentGuide() {
       {!introOpen && (
         <Button
           className="fixed bottom-4 right-4 z-50 rounded-full shadow-lg"
+          size="icon"
           onClick={() => handleIntroOpenChange(true)}
         >
-          Guia
+          <HelpCircle className="size-8" />
         </Button>
       )}
     </>
