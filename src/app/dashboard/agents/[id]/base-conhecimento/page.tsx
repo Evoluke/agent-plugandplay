@@ -235,6 +235,9 @@ export default function AgentKnowledgeBasePage() {
 
       <div className="flex justify-center">
         <Card className="w-full md:w-4/5 p-6">
+          <p className="text-xs italic text-gray-500 mb-4">
+            Adicione arquivos para compor a base de conhecimento do agente.
+          </p>
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-semibold">Cérebro</h2>
             <div className="flex flex-col gap-6 md:flex-row">

@@ -107,6 +107,9 @@ export default function AgentDetailPage() {
       <AgentGuide />
       <div className="flex justify-center">
         <Card className="w-full md:w-4/5 p-6">
+          <p className="text-xs italic text-gray-500 mb-4">
+            Defina a personalidade e os objetivos do agente.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col gap-4 md:flex-row">
               <div className="flex-1 space-y-2">
