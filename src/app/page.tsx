@@ -64,7 +64,7 @@ export default function HomePage() {
         />
         <Benefit
           tag="Omnichannel"
-          title="Centralize todos os canais"
+          title="Centralize todas as conversas"
           description="Integre seu WhatsApp e tenha todo o histórico centralizado em um só lugar."
           bullets={[
             "Visão 360º do cliente",
