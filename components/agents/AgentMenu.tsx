@@ -80,7 +80,7 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
             </p>
           </div>
         </Card>
-        <Card className="w-full md:flex-1 p-4 md:p-6">
+        <Card className="w-full md:flex-1 p-4 md:p-6 flex items-center justify-center">
           <nav className="flex flex-wrap justify-center gap-2 md:flex-nowrap md:items-center md:justify-around md:gap-0">
             {menuItems.map(({ label, icon: Icon, href }, index) => (
               <Fragment key={label}>
