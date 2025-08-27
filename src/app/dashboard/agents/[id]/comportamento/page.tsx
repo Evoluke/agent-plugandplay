@@ -130,6 +130,9 @@ export default function AgentBehaviorPage() {
       <AgentGuide />
       <div className="flex justify-center">
         <Card className="w-full md:w-4/5 p-6">
+          <p className="text-xs italic text-gray-500 mb-4">
+            Configure como o agente deve se comportar durante as interações.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="limitations" className="text-sm font-medium">

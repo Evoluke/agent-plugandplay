@@ -140,6 +140,9 @@ export default function AgentSpecificInstructionsPage() {
       <AgentGuide />
       <div className="flex justify-center">
         <Card className="w-full md:w-4/5 p-6">
+          <p className="text-xs italic text-gray-500 mb-4">
+            Crie respostas específicas para situações ou perguntas frequentes.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-6">
             {faqs.map((faq, index) => (
               <div
