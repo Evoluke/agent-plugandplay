@@ -106,6 +106,8 @@ export function Sidebar({ className }: { className?: string }) {
   const chatwootId = useChatwootId();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const handleLogout = async () => {
     const { error } = await supabasebrowser.auth.signOut();
@@ -127,6 +129,13 @@ export function Sidebar({ className }: { className?: string }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (open && dropdownRef.current && triggerRef.current) {
+      const triggerHeight = triggerRef.current.offsetHeight;
+      dropdownRef.current.style.top = `${triggerHeight / 2}px`;
+    }
+  }, [open]);
 
   return (
     <aside
@@ -163,6 +172,7 @@ export function Sidebar({ className }: { className?: string }) {
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <button
+                ref={triggerRef}
                 onClick={() => setOpen((o) => !o)}
                 className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
               >
@@ -174,7 +184,11 @@ export function Sidebar({ className }: { className?: string }) {
             </TooltipContent>
           </Tooltip>
           {open && (
-            <div className="absolute left-12 top-1/2 -translate-y-1/2 transform z-10 w-64 bg-white border rounded shadow-md">
+            <div
+              ref={dropdownRef}
+              className="absolute left-12 -translate-y-1/2 transform z-10 w-64 bg-white border rounded shadow-md"
+              style={{ top: 0 }}
+            >
               {agents.map((agent) => (
                 <Link
                   key={agent.id}
