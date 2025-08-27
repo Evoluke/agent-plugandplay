@@ -174,7 +174,7 @@ export function Sidebar({ className }: { className?: string }) {
             </TooltipContent>
           </Tooltip>
           {open && (
-            <div className="absolute left-12 top-0 z-10 w-64 bg-white border rounded shadow-md">
+            <div className="absolute left-12 top-1/2 -translate-y-1/2 transform z-10 w-64 bg-white border rounded shadow-md">
               {agents.map((agent) => (
                 <Link
                   key={agent.id}
