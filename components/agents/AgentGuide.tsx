@@ -107,7 +107,7 @@ export default function AgentGuide() {
           size="icon"
           onClick={() => handleIntroOpenChange(true)}
         >
-          <HelpCircle className="h-8 w-8" />
+          <HelpCircle className="size-8" />
         </Button>
       )}
     </>
