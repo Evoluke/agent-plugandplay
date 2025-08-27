@@ -21,6 +21,12 @@ type Agent = {
   is_active: boolean;
 };
 
+const typeLabels: Record<string, string> = {
+  agendamento: "Agendamento",
+  sdr: "SDR",
+  suporte: "Suporte",
+};
+
 export default function AgentMenu({ agent }: { agent: Agent }) {
   const pathname = usePathname();
   const [lastPayment, setLastPayment] = useState<string | null>(null);
@@ -56,6 +62,7 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
             <p className={`text-base font-semibold ${agent.is_active ? "text-green-600" : "text-red-600"}`}>
               {agent.is_active ? "Ativo" : "Inativo"}
             </p>
+            <p className="text-xs">{typeLabels[agent.type] || agent.type}</p>
           </div>
           <div>
             <p className="text-xs text-gray-500">Vencimento último pagamento</p>
