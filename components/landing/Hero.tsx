@@ -34,7 +34,7 @@ export default function Hero() {
             alt="Ilustração"
             width={600}
             height={600}
-            className="h-auto w-full max-w-[600px] rounded-md"
+            className="h-auto w-full max-w-[600px] rounded-md animate-pulse-scale"
           />
         </div>
       </div>
