@@ -13,11 +13,12 @@ import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
+import { AgentType } from "@/lib/types";
 
 type Agent = {
   id: string;
   name: string;
-  type: string;
+  type: AgentType;
   is_active: boolean;
 };
 

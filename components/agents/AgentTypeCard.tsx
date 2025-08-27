@@ -1,13 +1,14 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn } from "@/components/ui/utils";
+import { AgentType } from "@/lib/types";
 
 interface AgentTypeCardProps {
-  value: string;
+  value: AgentType;
   title: string;
   description: string;
   selected: boolean;
   disabled?: boolean;
-  onSelect: (value: string) => void;
+  onSelect: (value: AgentType) => void;
 }
 
 export function AgentTypeCard({

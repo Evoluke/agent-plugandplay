@@ -24,11 +24,12 @@ import {
   QUALIFICATION_TRANSFER_RULES,
   QualificationTransferRule,
 } from "@/lib/qualificationTransferRules";
+import { AgentType } from "@/lib/types";
 
 type Agent = {
   id: string;
   name: string;
-  type: string;
+  type: AgentType;
   is_active: boolean;
 };
 

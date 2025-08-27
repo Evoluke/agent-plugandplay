@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { isValidAgentName } from "@/lib/validators";
+import { AgentType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,7 @@ import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
 type Agent = {
   id: string;
   name: string;
-  type: string;
+  type: AgentType;
   is_active: boolean;
 };
 

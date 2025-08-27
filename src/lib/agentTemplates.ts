@@ -1,4 +1,5 @@
 import { QualificationTransferRule } from './qualificationTransferRules';
+import { AgentType } from './types';
 
 export interface AgentTemplate {
   personality: {
@@ -20,7 +21,7 @@ export interface AgentTemplate {
   specificInstructions: { context: string; user_says: string; action: string }[];
 }
 
-export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
+export const AGENT_TEMPLATES: Record<AgentType, AgentTemplate> = {
   agendamento: {
     personality: {
       voice_tone: 'formal',

@@ -13,11 +13,12 @@ import {
   Database,
   ClipboardList,
 } from "lucide-react";
+import { AgentType } from "@/lib/types";
 
 type Agent = {
   id: string;
   name: string;
-  type: string;
+  type: AgentType;
   is_active: boolean;
 };
 

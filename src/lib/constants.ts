@@ -1,6 +1,8 @@
+import { AgentType } from "./types";
+
 export const MAX_AGENTS_PER_COMPANY = 5;
 
-export const ALLOWED_AGENT_TYPES = [
+export const ALLOWED_AGENT_TYPES: AgentType[] = [
   "agendamento",
   "sdr",
   "suporte",

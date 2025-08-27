@@ -18,16 +18,22 @@ import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
 import { MAX_AGENTS_PER_COMPANY, ALLOWED_AGENT_TYPES } from "@/lib/constants";
 import { AGENT_TEMPLATES } from "@/lib/agentTemplates";
+import { AgentType } from "@/lib/types";
 
 export default function NewAgentPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState<AgentType | "">("");
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [agentCount, setAgentCount] = useState(0);
 
-  const agentTypes = [
+  const agentTypes: {
+    value: AgentType;
+    title: string;
+    description: string;
+    disabled?: boolean;
+  }[] = [
     {
       value: "agendamento",
       title: "Agendamento",
@@ -70,7 +76,7 @@ export default function NewAgentPage() {
     e.preventDefault();
     if (!isFormValid || !companyId || isSubmitting) return;
 
-    if (!ALLOWED_AGENT_TYPES.includes(type)) {
+    if (!type || !ALLOWED_AGENT_TYPES.includes(type)) {
       toast.error("Tipo de agente inválido.");
       return;
     }
@@ -180,7 +186,7 @@ export default function NewAgentPage() {
                       description={option.description}
                       disabled={option.disabled}
                       selected={type === option.value}
-                      onSelect={setType}
+                      onSelect={(value) => setType(value)}
                     />
                   ))}
                 </div>
