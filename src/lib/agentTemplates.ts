@@ -105,9 +105,8 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       forbidden_words: 'termos técnicos complexos',
       default_fallback:
         'Ainda não sei responder isso, mas vou te direcionar para um de nossos atendentes que poderá atender você.',
-      qualification_transfer_rule: 'personalized',
-      qualification_transfer_conditions:
-        'Quando o usuário solicitar atendimento humano.',
+      qualification_transfer_rule: 'never',
+      qualification_transfer_conditions: '',
     },
     onboarding: {
       welcome_message: 'Olá! Estou aqui para ajudar com o suporte.',
