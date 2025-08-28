@@ -104,18 +104,6 @@ export default function HomePage() {
         strategy="afterInteractive"
         defer
       />
-      <style jsx global>{`
-        #dify-chatbot-bubble-button {
-          background-color: #1C64F2 !important;
-          border-radius: 50% !important;
-        }
-
-        #dify-chatbot-bubble-window {
-          width: 24rem !important;
-          height: 40rem !important;
-          border-radius: 1rem !important;
-        }
-      `}</style>
     </>
   );
 }
