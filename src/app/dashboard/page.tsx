@@ -104,7 +104,7 @@ export default function DashboardPage() {
 
   const actionItems = [
     { icon: <Folder className="w-5 h-5 text-[#2F6F68]" />, title: "Criar Agentes", desc: "Criar novo agente de IA", href: "/dashboard/agents/new", disabled: false },
-    { icon: <Users className="w-5 h-5 text-[#E5E7EB]" />, title: "Monitoramento", desc: "Monitore seus agentes de IA", href: "/dashboard/", disabled: true },
+    { icon: <Users className="w-5 h-5 text-[#97B7B4]" />, title: "Monitoramento", desc: "Monitore seus agentes de IA", href: "/dashboard/", disabled: true },
     { icon: <FileText className="w-5 h-5 text-[#2F6F68]" />, title: "Gerar Relatórios", href: "/dashboard/", desc: "Compartilhe insights com as partes interessadas", disabled: true },
   ];
 

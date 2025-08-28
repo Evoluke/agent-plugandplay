@@ -11,8 +11,8 @@ Utilizamos variáveis CSS para garantir consistência. Valores atuais:
 | `--foreground` | `oklch(0.145 0 0)` | Cor de texto principal |
 | `--primary` | `#2F6F68` | Ações primárias e elementos de destaque |
 | `--primary-hover` | `#255852` | Estado _hover_ de ações primárias |
-| `--secondary` | `#E5E7EB` | Elementos neutros e secundários |
-| `--accent` | `#E5E7EB` | Chamadas de atenção específicas |
+| `--secondary` | `#97B7B4` | Elementos neutros e secundários |
+| `--accent` | `#97B7B4` | Chamadas de atenção específicas |
 
 ## Tipografia
 A família tipográfica oficial é **Geist**, nas variantes Sans e Mono. Utilize Geist Sans para textos e Geist Mono para trechos de código ou números alinhados.
