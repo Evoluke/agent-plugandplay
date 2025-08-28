@@ -35,8 +35,7 @@ const formatPrice = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function Pricing() {
-  // eslint-disable-next-line prefer-const
-  let billing: "monthly" | "annual" = "monthly";
+  const billing: "monthly" | "annual" = "monthly";
   const price =
     billing === "monthly"
       ? formatPrice(PRICE_MONTHLY)
@@ -46,7 +45,7 @@ export default function Pricing() {
   return (
     <section id="modelos" className="bg-[#FAFAFA] py-24">
       <div className="container mx-auto max-w-6xl px-4">
-        <h2 className="mb-4 text-center text-3xl font-bold mb-8">
+        <h2 className="mb-8 text-center text-3xl font-bold">
           Modelos prontos para uso
         </h2>
         <ul

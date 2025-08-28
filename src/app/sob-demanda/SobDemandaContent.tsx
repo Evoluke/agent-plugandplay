@@ -147,7 +147,7 @@ export default function SobDemandaContent() {
   }
 
 @media (max-width:768px){
-  .plan-container{ padding:0 !important; }        /* antes 0 16px */
+  .plan-container{ margin:0 10%; padding:0; }        /* antes 0 16px */
   .table-wrapper{ padding:0; margin:0 0 var(--space); } /* remove auto nas laterais */
 }
 
