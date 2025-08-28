@@ -9,6 +9,7 @@ import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
 import Pricing from "@/components/landing/Pricing";
 import type { Metadata } from "next";
+import Script from "next/script";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
@@ -39,6 +40,32 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
+      <Script id="dify-chatbot-config" strategy="afterInteractive">
+        {`
+          window.difyChatbotConfig = {
+            token: '69wjfGN2b8dN8Unn',
+            baseUrl: 'https://difyplatform.tracelead.com.br',
+            inputs: {},
+            systemVariables: {},
+            userVariables: {},
+          }
+        `}
+      </Script>
+      <Script
+        src="https://difyplatform.tracelead.com.br/embed.min.js"
+        id="69wjfGN2b8dN8Unn"
+        strategy="afterInteractive"
+        defer
+      />
+      <style jsx global>{`
+        #dify-chatbot-bubble-button {
+          background-color: #1C64F2 !important;
+        }
+        #dify-chatbot-bubble-window {
+          width: 24rem !important;
+          height: 40rem !important;
+        }
+      `}</style>
       <Header />
       <main className="flex flex-col">
         <Hero />
