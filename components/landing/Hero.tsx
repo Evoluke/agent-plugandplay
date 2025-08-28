@@ -31,7 +31,7 @@ export default function Hero() {
         <div className="relative flex justify-center lg:col-span-5">
           <Image
             src="/mascot.png"
-            alt="Ilustração"
+            alt="Mascote representando o agente de IA da Evoluke"
             width={600}
             height={600}
             className="h-auto w-full max-w-[600px] rounded-md"
