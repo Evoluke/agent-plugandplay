@@ -1,6 +1,4 @@
 "use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,11 +35,12 @@ const formatPrice = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function Pricing() {
-  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  // eslint-disable-next-line prefer-const
+  let billing: "monthly" | "annual" = "monthly";
   const price =
-    billing === "monthly" ?
-      formatPrice(PRICE_MONTHLY) :
-      formatPrice(PRICE_ANNUAL);
+    billing === "monthly"
+      ? formatPrice(PRICE_MONTHLY)
+      : formatPrice(PRICE_ANNUAL);
   const suffix = billing === "monthly" ? "/mês" : "/ano";
 
   return (
@@ -50,9 +49,16 @@ export default function Pricing() {
         <h2 className="mb-4 text-center text-3xl font-bold mb-8">
           Modelos prontos para uso
         </h2>
-        <ul className="grid gap-6 sm:grid-cols-2" role="list">
+        <ul
+          className="flex snap-x snap-mandatory gap-6 overflow-x-auto sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none"
+          role="list"
+        >
           {plans.map(({ name, tagline, features, popular }) => (
-            <li key={name} role="listitem">
+            <li
+              key={name}
+              role="listitem"
+              className="w-80 flex-shrink-0 snap-center sm:w-auto sm:flex-shrink"
+            >
               <div className="group rounded-xl bg-gradient-to-br from-purple-500/40 to-blue-500/40 p-[2px] transition-all hover:-translate-y-1 hover:shadow-xl">
                 <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-white/90 p-6 backdrop-blur">
                   {popular && (
@@ -70,9 +76,6 @@ export default function Pricing() {
                         {suffix}
                       </span>
                     </p>
-                    {billing === "annual" && (
-                      <p className="mb-4 text-sm text-primary">2 meses grátis</p>
-                    )}
                     <p className="mb-4 text-sm text-muted-foreground">{tagline}</p>
                     <ul className="space-y-2">
                       {features.map((feature) => (
