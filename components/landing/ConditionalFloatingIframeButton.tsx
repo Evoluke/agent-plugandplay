@@ -11,6 +11,7 @@ const excludedRoutes = [
   "/complete-profile",
   "/update-password",
   "/dashboard",
+  "/bni",
 ];
 
 export default function ConditionalFloatingIframeButton() {
