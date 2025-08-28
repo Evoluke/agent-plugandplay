@@ -7,13 +7,13 @@ export const metadata: Metadata = {
 
 export default function BniPage() {
   return (
-    <iframe
-      src="https://difyplatform.tracelead.com.br/chatbot/pvKADqaaY0eWXy68"
-      title="iframe"
-      style={{ width: "100%", height: "100%", minHeight: "700px" }}
-      frameBorder={0}
-      allow="microphone"
-      className="border-0"
-    />
+    <div className="min-h-screen w-full flex items-center justify-center">
+      <iframe
+        src="https://difyplatform.tracelead.com.br/chatbot/pvKADqaaY0eWXy68"
+        title="iframe"
+        allow="microphone"
+        className="border-0 w-[60vw] h-[90vh]" // 60% da largura e 90% da altura da viewport
+      />
+    </div>
   );
 }
