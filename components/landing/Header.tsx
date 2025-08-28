@@ -73,6 +73,9 @@ export default function Header() {
             <Link href="/#modelos" onClick={() => setOpen(false)}>
               Modelos
             </Link>
+            <Link href="/saiba-mais" onClick={() => setOpen(false)}>
+              Como funciona?
+            </Link>
             <Link href="/contact" onClick={() => setOpen(false)}>
               Contato
             </Link>
