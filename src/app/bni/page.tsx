@@ -8,10 +8,12 @@ export const metadata: Metadata = {
 export default function BniPage() {
   return (
     <iframe
-      src="https://www.bni.com"
-      className="w-full h-screen"
+      src="https://difyplatform.tracelead.com.br/chatbot/pvKADqaaY0eWXy68"
+      title="iframe"
+      style={{ width: "100%", height: "100%", minHeight: "700px" }}
       frameBorder={0}
-      allowFullScreen
+      allow="microphone"
+      className="border-0"
     />
   );
 }
