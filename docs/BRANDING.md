@@ -21,7 +21,7 @@ A família tipográfica oficial é **Geist**, nas variantes Sans e Mono. Utilize
 A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize margens e paddings em múltiplos desta unidade: 4, 8, 12, 16, 24 px etc.
 
 ## Uso de logotipos
-- O logotipo principal está disponível em `public/logo.svg`.
+- O logotipo principal está disponível em `public/logo.png`.
 - Mantenha uma margem de segurança ao redor do logotipo equivalente a 1× a altura do símbolo.
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.

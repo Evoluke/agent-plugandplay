@@ -13,7 +13,7 @@ export default function Header() {
     <header className="border-b bg-background">
       <div className="mx-auto flex h-16 max-w-[1140px] items-center justify-between px-3 md:px-4 lg:px-6">
         <Link href="/" className="flex items-center">
-          <Image src="/logo.svg" alt="Logotipo da Evoluke" width={120} height={32} />
+          <Image src="/logo.png" alt="Logotipo da Evoluke" width={120} height={32} />
         </Link>
         <nav className="hidden flex-1 justify-center md:flex">
           <ul className="flex gap-6 text-sm">

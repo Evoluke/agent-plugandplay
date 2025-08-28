@@ -70,7 +70,7 @@ export default function LoginPage() {
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA]">
       <div className="w-full px-4 sm:max-w-md md:max-w-lg">
         <Image
-          src="/logo.svg"
+          src="/logo.png"
           alt="Evoluke logo"
           width={200}
           height={60}

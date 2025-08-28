@@ -7,19 +7,19 @@ const testimonials = [
     name: "Christiane",
     role: "Proprietária, Alecrim Flor & Cultura",
     text: "A Evoluke nos ajudou a escalar o atendimento sem perder qualidade.",
-    avatar: "/logo.svg",
+    avatar: "/logo.png",
   },
   // {
   //   name: "João Souza",
   //   role: "Gerente, Loja Y",
   //   text: "Agora conseguimos responder clientes de todos os canais em um só lugar com a Evoluke.",
-  //   avatar: "/logo.svg",
+  //   avatar: "/logo.png",
   // },
   // {
   //   name: "Ana Costa",
   //   role: "Suporte, Startup Z",
   //   text: "Os agentes de IA da Evoluke reduziram pela metade o volume de tickets manuais.",
-  //   avatar: "/logo.svg",
+  //   avatar: "/logo.png",
   // },
 ];
 

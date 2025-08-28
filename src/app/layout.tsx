@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "Evoluke",
     images: [
       {
-        url: "/logo.svg",
+        url: "/logo.png",
         alt: "Evoluke",
       },
     ],
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Evoluke",
     description,
-    images: ["/logo.svg"],
+    images: ["/logo.png"],
   },
 };
 
