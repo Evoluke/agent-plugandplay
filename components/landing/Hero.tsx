@@ -34,7 +34,8 @@ export default function Hero() {
             alt="Mascote representando o agente de IA da Evoluke"
             width={600}
             height={600}
-            className="h-auto w-full max-w-[600px] rounded-md"
+            className="h-auto w-full max-w-[300px] md:max-w-[600px] rounded-md"
+            sizes="(max-width: 768px) 300px, 600px"
           />
         </div>
       </div>
