@@ -12,7 +12,7 @@ export default function PricingPage() {
   return (
     <>
       <Header />
-      <main className="flex flex-col">
+      <main className="flex flex-col w-[70%] mx-auto">
         <Pricing />
       </main>
       <Footer />
