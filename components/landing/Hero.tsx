@@ -29,14 +29,15 @@ export default function Hero() {
           </div>
         </div>
         <div className="relative flex justify-center lg:col-span-3">
-          <Image
-            src="/mascot.png"
-            alt="Mascote representando o agente de IA da Evoluke"
-            width={600}
-            height={600}
-            className="h-auto w-full max-w-[300px] md:max-w-[600px] rounded-md"
-            sizes="(max-width: 768px) 300px, 600px"
-          />
+          <div className="relative h-[200px] w-[200px] md:h-[600px] md:w-[600px]">
+            <Image
+              src="/mascot.png"
+              alt="Mascote representando o agente de IA da Evoluke"
+              fill
+              className="rounded-md object-contain"
+              sizes="(max-width: 768px) 200px, 600px"
+            />
+          </div>
         </div>
       </div>
     </section>
