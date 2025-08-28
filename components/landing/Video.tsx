@@ -17,9 +17,12 @@ export default function Video() {
           />
           */}
           <iframe
-            src="https://example.com"
+            src="https://difyplatform.tracelead.com.br/chatbot/pvKADqaaY0eWXy68"
             title="iframe"
-            className="h-full w-full border-0"
+            style={{ width: "100%", height: "100%" }}
+            frameBorder={0}
+            allow="microphone"
+            className="border-0"
           />
         </div>
       </div>
