@@ -32,6 +32,11 @@ export default function Header() {
                 Como funciona?
               </Link>
             </li>
+            <li>
+              <Link href="/sob-demanda" className="hover:text-primary">
+                Sob demanda
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="hidden items-center gap-2 md:flex">
@@ -75,6 +80,9 @@ export default function Header() {
             </Link>
             <Link href="/saiba-mais" onClick={() => setOpen(false)}>
               Como funciona?
+            </Link>
+            <Link href="/sob-demanda" onClick={() => setOpen(false)}>
+              Sob demanda
             </Link>
             <Link href="/contact" onClick={() => setOpen(false)}>
               Contato
