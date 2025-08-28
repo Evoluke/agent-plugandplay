@@ -143,20 +143,20 @@ export default function PaymentsPage() {
                     <span className="font-medium">Valor (R$)</span>
                     <span>R${p.amount.toFixed(2)}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Status</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-medium text-xs">Status</span>
                     {p.status === "pago" ? (
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                      <span className="px-2 py-1 text-[10px] font-semibold rounded-full bg-green-100 text-green-800 whitespace-nowrap">
                         Quitado
                       </span>
                     ) : p.status === "estorno" ? (
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                      <span className="px-2 py-1 text-[10px] font-semibold rounded-full bg-red-100 text-red-800 whitespace-nowrap">
                         Estornado
                       </span>
                     ) : (
                       <button
                         onClick={() => handlePay(p.id)}
-                        className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                        className="px-2 py-1 text-[10px] font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 whitespace-nowrap"
                       >
                         Pagar
                       </button>
