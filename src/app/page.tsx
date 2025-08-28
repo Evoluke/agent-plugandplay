@@ -59,6 +59,7 @@ export default function HomePage() {
           cta="Saiba mais"
           href="/saiba-mais"
           image="/window.png"
+          imageAlt="Interface da plataforma Evoluke integrando IA ao atendimento"
           imageWidth={600}
           imageHeight={400}
         />
@@ -75,6 +76,7 @@ export default function HomePage() {
           cta="Começar agora"
           href="/signup"
           image="/mobile-app.avif"
+          imageAlt="Aplicativo móvel da Evoluke centralizando conversas"
           imageWidth={300}
           imageHeight={600}
           reverse

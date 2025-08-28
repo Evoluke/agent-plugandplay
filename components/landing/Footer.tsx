@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-4">
-            <Image src="/logo.svg" alt="Logo" width={120} height={32} />
+            <Image src="/logo.svg" alt="Logotipo da Evoluke" width={120} height={32} />
             <ul className="space-y-2">
               <li>
                 <Link href="/sobre-nos" className="hover:text-primary">

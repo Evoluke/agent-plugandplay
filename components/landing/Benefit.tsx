@@ -13,6 +13,7 @@ type BenefitProps = {
   cta: string;
   href: string;
   image: string;
+  imageAlt: string;
   imageWidth?: number;
   imageHeight?: number;
   reverse?: boolean;
@@ -27,6 +28,7 @@ export default function Benefit({
   cta,
   href,
   image,
+  imageAlt,
   imageWidth = 300,
   imageHeight = 300,
   reverse,
@@ -64,7 +66,7 @@ export default function Benefit({
               <button>
                 <Image
                   src={image}
-                  alt="Benefício"
+                  alt={imageAlt}
                   width={imageWidth}
                   height={imageHeight}
                   className="rounded-md cursor-zoom-in"
@@ -76,7 +78,7 @@ export default function Benefit({
               <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 p-0">
                 <Image
                   src={image}
-                  alt="Benefício"
+                  alt={imageAlt}
                   width={imageWidth * 2}
                   height={imageHeight * 2}
                   className="rounded-md"

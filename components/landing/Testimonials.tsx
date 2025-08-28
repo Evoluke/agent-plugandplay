@@ -36,7 +36,7 @@ export default function Testimonials() {
         <div className="flex items-center gap-3">
           <Image
             src={t.avatar}
-            alt={t.name}
+            alt={`Foto de ${t.name}`}
             width={48}
             height={48}
             className="h-12 w-12 rounded-full object-cover"
