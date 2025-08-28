@@ -1,4 +1,5 @@
 import React from "react";
+import { IFRAME_SRC } from "./iframeConfig";
 
 export default function Video() {
   return (
@@ -17,9 +18,12 @@ export default function Video() {
           />
           */}
           <iframe
-            src="https://example.com"
+            src={IFRAME_SRC}
             title="iframe"
-            className="h-full w-full border-0"
+            style={{ width: "100%", height: "100%" }}
+            frameBorder={0}
+            allow="microphone"
+            className="border-0"
           />
         </div>
       </div>

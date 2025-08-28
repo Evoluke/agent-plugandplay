@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { IFRAME_SRC } from "./iframeConfig";
 
 export default function FloatingIframeButton() {
   const [open, setOpen] = useState(false);
@@ -26,7 +27,7 @@ export default function FloatingIframeButton() {
               ×
             </button>
             <iframe
-              src="https://difyplatform.tracelead.com.br/chatbot/pvKADqaaY0eWXy68"
+              src={IFRAME_SRC}
               title="iframe"
               style={{ width: "100%", height: "100%" }}
               frameBorder={0}
