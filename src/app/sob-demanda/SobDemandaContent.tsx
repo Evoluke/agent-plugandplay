@@ -180,7 +180,7 @@ export default function SobDemandaContent() {
   }
       `}</style>
       <div className="plan-container">
-        <div className="selector">
+        <div className="selector mt-8">
           <label htmlFor="whatsapp-demand">Qual sua demanda mensal de conversas:</label>
           <select
             id="whatsapp-demand"

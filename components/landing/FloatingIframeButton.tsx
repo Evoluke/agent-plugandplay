@@ -13,7 +13,7 @@ export default function FloatingIframeButton() {
         className="fixed bottom-4 right-4 z-50"
         aria-label="Abrir iframe"
       >
-        <Image src="/logo.png" alt="Abrir iframe" width={64} height={64} />
+        <Image src="/iframe_contato.png" alt="Abrir iframe" width={64} height={64} />
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -26,9 +26,12 @@ export default function FloatingIframeButton() {
               ×
             </button>
             <iframe
-              src="https://example.com"
+              src="https://difyplatform.tracelead.com.br/chatbot/pvKADqaaY0eWXy68"
               title="iframe"
-              className="h-full w-full border-0"
+              style={{ width: "100%", height: "100%" }}
+              frameBorder={0}
+              allow="microphone"
+              className="border-0"
             />
           </div>
         </div>
