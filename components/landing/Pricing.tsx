@@ -45,7 +45,7 @@ export default function Pricing() {
   const suffix = billing === "monthly" ? "/mês" : "/ano";
 
   return (
-    <section id="modelos" className="bg-[#FAFAFA] py-24">
+    <section id="modelos" className="bg-[#0D0D0D] text-white py-24">
       <div className="container mx-auto max-w-6xl px-4">
         <h2 className="mb-4 text-center text-3xl font-bold mb-8">
           Modelos prontos para uso

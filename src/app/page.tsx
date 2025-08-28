@@ -47,6 +47,7 @@ export default function HomePage() {
         <Video />
         <Stats />
         <Benefit
+          className="bg-[#0D0D0D] text-white"
           tag="IA + CRM"
           title="Personalize atendimentos com IA"
           description="Personalize seu Agente de IA e transforme cada interação em experiência exclusiva."
@@ -63,6 +64,7 @@ export default function HomePage() {
           imageHeight={400}
         />
         <Benefit
+          className="bg-white text-black"
           tag="Omnichannel"
           title="Centralize todas as conversas"
           description="Integre seu WhatsApp e tenha todo o histórico centralizado em um só lugar."

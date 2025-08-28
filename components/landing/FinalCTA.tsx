@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function FinalCTA() {
   return (
-    <section className="bg-primary/10 py-12 md:py-16 lg:py-20">
+    <section className="bg-[#0D0D0D] text-white py-12 md:py-16 lg:py-20">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6 text-center">
         <div className="mb-4">
           <h2 className="text-3xl font-bold">Pronto para transformar seu atendimento?</h2>

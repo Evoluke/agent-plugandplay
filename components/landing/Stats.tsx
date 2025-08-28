@@ -11,7 +11,7 @@ const stats = [
 
 export default function Stats() {
   return (
-    <section className="bg-gradient-to-r from-primary/5 to-primary/10 py-8 md:py-12 lg:py-16">
+    <section className="bg-white text-black py-8 md:py-12 lg:py-16">
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
         <div className="grid gap-6 text-center sm:grid-cols-3">
           {stats.map(({ icon: Icon, end, label }) => (

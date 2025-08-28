@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/components/ui/utils";
 
 type BenefitProps = {
   tag: string;
@@ -17,6 +18,7 @@ type BenefitProps = {
   imageHeight?: number;
   reverse?: boolean;
   primary?: boolean;
+  className?: string;
 };
 
 export default function Benefit({
@@ -31,9 +33,10 @@ export default function Benefit({
   imageHeight = 300,
   reverse,
   primary,
+  className,
 }: BenefitProps) {
   return (
-    <section className="py-8 md:py-12 lg:py-16">
+    <section className={cn("py-8 md:py-12 lg:py-16", className)}>
       <div className="mx-auto grid max-w-[1140px] items-center gap-6 md:gap-8 lg:gap-6 px-3 md:px-4 lg:px-6 md:grid-cols-2 lg:grid-cols-12">
         <div className={`space-y-4 lg:col-span-6 ${reverse ? "md:order-2" : ""}`}>
           <span className="text-sm uppercase text-primary">{tag}</span>
