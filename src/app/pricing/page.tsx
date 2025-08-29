@@ -2,6 +2,12 @@ import Pricing from "@/components/landing/Pricing";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
+
+const ChatwootWidget = dynamic(
+  () => import("@/components/ChatwootWidget"),
+  { ssr: false }
+);
 
 export const metadata: Metadata = {
   title: "Planos - Evoluke",
@@ -16,6 +22,7 @@ export default function PricingPage() {
         <Pricing />
       </main>
       <Footer />
+      <ChatwootWidget />
     </>
   );
 }
