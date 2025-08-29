@@ -28,13 +28,13 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-        <div className="relative flex justify-center lg:col-span-3">
+        <div className="relative flex items-center justify-center lg:col-span-3">
           <Image
             src="/mascot.png"
             alt="Mascote representando o agente de IA da Evoluke"
             width={600}
             height={600}
-            className="h-auto w-full max-w-[600px] rounded-md"
+            className="mx-auto h-auto w-full max-w-[280px] md:max-w-[400px] lg:max-w-[600px] rounded-md"
           />
         </div>
       </div>
