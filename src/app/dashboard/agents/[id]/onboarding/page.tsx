@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
@@ -255,7 +254,6 @@ export default function AgentOnboardingPage() {
               }
             />
           )}
-          <UpdateAgentButton agentId={id} />
         </div>
       </div>
     </div>

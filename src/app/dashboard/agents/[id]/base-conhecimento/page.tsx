@@ -14,7 +14,6 @@ import {
 import * as Dialog from "@radix-ui/react-dialog";
 import { FileText, HelpCircle, File as FileIcon, Trash } from "lucide-react";
 import { toast } from "sonner";
-import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import {
   ALLOWED_KNOWLEDGE_MIME_TYPES,
   MAX_KNOWLEDGE_FILE_SIZE,
@@ -359,7 +358,6 @@ export default function AgentKnowledgeBasePage() {
               }
             />
           )}
-          <UpdateAgentButton agentId={id} />
         </div>
       </div>
       <Dialog.Root open={deleteOpen} onOpenChange={setDeleteOpen}>
