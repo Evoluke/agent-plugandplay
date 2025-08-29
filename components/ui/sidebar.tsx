@@ -135,11 +135,11 @@ export function Sidebar({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="w-10 h-10 bg-[#0D0D0D] rounded-xl flex items-center justify-center p-1">
+      <div>
               <img
-        src="/logo-sidebar.svg"
+        src="/logo-sidebar.png"
         alt="Logomarca Evoluke"
-        className="w-8 h-8"
+        className="w-10 h-11"
       />
 
       </div>

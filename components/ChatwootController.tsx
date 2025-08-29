@@ -20,7 +20,7 @@ declare global {
 }
 
 // Hide the widget on authentication routes
-const BLOCK = ["/login", "/signup"];
+const BLOCK = ["/login", "/signup", "/dashboard", "/forgot-password", "/complete-profile", "/verify-email" ];
 
 const isBlocked = (path: string) => BLOCK.some((p) => path.startsWith(p));
 

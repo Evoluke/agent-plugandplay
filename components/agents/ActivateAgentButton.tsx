@@ -29,7 +29,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
 
     if (!agent || !agent.expiration_date) {
       toast.error(
-        "Primeiramente é necessário atualizar o agente de IA."
+        "Nenhum pagamento encontrado. Realize o pagamento para ativar seu Agente."
       );
       setLoading(false);
       return;

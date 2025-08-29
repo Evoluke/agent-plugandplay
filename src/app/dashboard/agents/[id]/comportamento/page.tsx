@@ -201,7 +201,7 @@ export default function AgentBehaviorPage() {
 
             <div className="space-y-2">
               <label htmlFor="fallback" className="text-sm font-medium">
-                Fallback padrão
+                Saída de segurança
               </label>
               <Input
                 id="fallback"
@@ -218,7 +218,7 @@ export default function AgentBehaviorPage() {
               </div>
               {fallback && !fallbackValid && (
                 <p className="text-xs text-red-500">
-                  O fallback deve ter entre 10 e 200 caracteres
+                  A saída de segurança deve ter entre 10 e 200 caracteres
                 </p>
               )}
             </div>

@@ -70,7 +70,12 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
           </div>
           <div>
             <p className="text-xs text-gray-500">Data de expiração</p>
-            <p>
+            <p
+              className={`text-base font-semibold ${expirationDate && new Date(expirationDate) < new Date()
+                  ? "text-base font-semibold"
+                  : "text-base font-semibold"
+                }`}
+            >
               {expirationDate
                 ? new Date(expirationDate).toLocaleDateString("pt-BR")
                 : "Não definida"}

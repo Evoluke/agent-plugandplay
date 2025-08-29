@@ -53,7 +53,7 @@ export default function AgentGuide() {
                   </Button>
                 </li>
                 <li>
-                  <strong>Comportamento</strong>: defina limitações, palavras proibidas e fallback padrão.
+                  <strong>Comportamento</strong>: defina limitações, palavras proibidas e saída de segurança padrão.
                   <Button variant="link" asChild className="px-1">
                     <Link href={`/dashboard/agents/${id}/comportamento`}>
                       Ir para comportamento
