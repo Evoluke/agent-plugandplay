@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import {
@@ -46,6 +46,7 @@ export default function NewSupportPage() {
     const router = useRouter();
     const [company, setCompany] = useState<Company | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -218,12 +219,27 @@ export default function NewSupportPage() {
                             </div>
                             <div className="space-y-2">
                                 <label className="block mb-1">Anexo (PNG, JPG, PDF)</label>
-                                <input
-                                    type="file"
-                                    accept=".png,.jpg,.jpeg,.pdf"
-                                    onChange={handleFileChange}
-                                    className="text-blue-600 hover:text-blue-800"
-                                />
+                                <div className="flex flex-col gap-2">
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept=".png,.jpg,.jpeg,.pdf"
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        {arquivo ? "Trocar arquivo" : "Selecionar arquivo"}
+                                    </Button>
+                                    {arquivo && (
+                                        <p className="text-sm text-gray-600 break-words">
+                                            {arquivo.name}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                             {fileError && <p className="text-sm text-destructive">{fileError}</p>}
                         </CardContent>
