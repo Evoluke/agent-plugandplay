@@ -19,7 +19,11 @@ declare global {
   }
 }
 
-const ALLOW = ["/contato", "/orcamento"];
+// Render the widget only on these routes. Include "/" for just the landing page.
+const ALLOW = ["/"];
+
+const isAllowed = (path: string) =>
+  ALLOW.some((p) => (p === "/" ? path === "/" : path.startsWith(p)));
 
 export default function ChatwootController() {
   const pathname = usePathname();
@@ -36,28 +40,25 @@ export default function ChatwootController() {
 
     const apply = () => {
       const path = window.location.pathname;
-      const ok = ALLOW.some((p) => path.startsWith(p));
+      const ok = isAllowed(path);
       window.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
     };
 
     window.addEventListener("chatwoot:ready", apply, { once: true });
 
-    (function (d: Document, t: string) {
-      const g = d.createElement(t) as HTMLScriptElement;
-      const s = d.getElementsByTagName(t)[0]!;
-      g.src = `${BASE_URL}/packs/js/sdk.js`;
-      g.defer = true;
-      g.async = true;
-      s.parentNode!.insertBefore(g, s);
-      g.onload = function () {
-        window.chatwootSDK.run({ websiteToken: TOKEN, baseUrl: BASE_URL });
-        if (window.$chatwoot) apply();
-      };
-    })(document, "script");
+    const g = document.createElement("script");
+    g.src = `${BASE_URL}/packs/js/sdk.js`;
+    g.defer = true;
+    g.async = true;
+    g.onload = function () {
+      window.chatwootSDK.run({ websiteToken: TOKEN, baseUrl: BASE_URL });
+      if (window.$chatwoot) apply();
+    };
+    document.head.appendChild(g);
   }, []);
 
   useEffect(() => {
-    const ok = ALLOW.some((p) => pathname.startsWith(p));
+    const ok = isAllowed(pathname);
     const w = window;
     if (w.$chatwoot) {
       w.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
