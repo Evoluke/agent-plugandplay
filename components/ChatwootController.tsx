@@ -19,11 +19,10 @@ declare global {
   }
 }
 
-// Render the widget only on these routes. Include "/" for just the landing page.
-const ALLOW = ["/"];
+// Hide the widget on authentication routes
+const BLOCK = ["/login", "/signup"];
 
-const isAllowed = (path: string) =>
-  ALLOW.some((p) => (p === "/" ? path === "/" : path.startsWith(p)));
+const isBlocked = (path: string) => BLOCK.some((p) => path.startsWith(p));
 
 export default function ChatwootController() {
   const pathname = usePathname();
@@ -40,7 +39,7 @@ export default function ChatwootController() {
 
     const apply = () => {
       const path = window.location.pathname;
-      const ok = isAllowed(path);
+      const ok = !isBlocked(path);
       window.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
     };
 
@@ -58,7 +57,7 @@ export default function ChatwootController() {
   }, []);
 
   useEffect(() => {
-    const ok = isAllowed(pathname);
+    const ok = !isBlocked(pathname);
     const w = window;
     if (w.$chatwoot) {
       w.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
