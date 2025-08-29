@@ -8,7 +8,6 @@ Rotas atuais que dependem do `supabaseadmin`:
 - `/api/profile/complete`
 - `/api/auth/signup`
 - `/api/support/new`
-- `/api/agents/update`
 - `/api/payments/pay`
 - `/api/payments/client`
 

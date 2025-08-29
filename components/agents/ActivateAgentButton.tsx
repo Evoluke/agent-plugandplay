@@ -15,22 +15,19 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
 
   const handleActivate = async () => {
     setLoading(true);
-    const { data: payment, error: paymentError } = await supabasebrowser
-      .from("payments")
-      .select("due_date")
-      .eq("agent_id", agentId)
-      .eq("status", "pendente")
-      .order("due_date", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const { data: agent, error: agentError } = await supabasebrowser
+      .from("agents")
+      .select("expiration_date")
+      .eq("id", agentId)
+      .single();
 
-    if (paymentError) {
-      toast.error("Erro ao verificar pagamentos.");
+    if (agentError) {
+      toast.error("Erro ao verificar expiração.");
       setLoading(false);
       return;
     }
 
-    if (!payment) {
+    if (!agent || !agent.expiration_date) {
       toast.error(
         "Primeiramente é necessário atualizar o agente de IA."
       );
@@ -40,12 +37,12 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const dueDate = new Date(payment.due_date);
-    dueDate.setHours(0, 0, 0, 0);
+    const expiration = new Date(agent.expiration_date);
+    expiration.setHours(0, 0, 0, 0);
 
-    if (dueDate < today) {
+    if (expiration < today) {
       toast.error(
-        "Pagamento pendente vencido. Não é possível ativar o agente."
+        "Data de expiração vencida. Não é possível ativar o agente."
       );
       setLoading(false);
       return;

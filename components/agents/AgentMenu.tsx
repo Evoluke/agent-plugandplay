@@ -29,19 +29,16 @@ const typeLabels: Record<string, string> = {
 
 export default function AgentMenu({ agent }: { agent: Agent }) {
   const pathname = usePathname();
-  const [lastPayment, setLastPayment] = useState<string | null>(null);
+  const [expirationDate, setExpirationDate] = useState<string | null>(null);
 
   useEffect(() => {
     supabasebrowser
-      .from("payments")
-      .select("due_date")
-      .eq("agent_id", agent.id)
-      .eq("status", "pendente")
-      .order("due_date", { ascending: false })
-      .limit(1)
-      .maybeSingle()
+      .from("agents")
+      .select("expiration_date")
+      .eq("id", agent.id)
+      .single()
       .then(({ data }) => {
-        setLastPayment(data?.due_date ?? null);
+        setExpirationDate(data?.expiration_date ?? null);
       });
   }, [agent.id]);
 
@@ -72,11 +69,11 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Vencimento último pagamento</p>
+            <p className="text-xs text-gray-500">Data de expiração</p>
             <p>
-              {lastPayment
-                ? new Date(lastPayment).toLocaleDateString("pt-BR")
-                : "Não existe"}
+              {expirationDate
+                ? new Date(expirationDate).toLocaleDateString("pt-BR")
+                : "Não definida"}
             </p>
           </div>
         </Card>

@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import UpdateAgentButton from "@/components/agents/UpdateAgentButton";
 import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
@@ -312,7 +311,6 @@ export default function AgentBehaviorPage() {
               }
             />
           )}
-          <UpdateAgentButton agentId={id} />
         </div>
       </div>
     </div>
