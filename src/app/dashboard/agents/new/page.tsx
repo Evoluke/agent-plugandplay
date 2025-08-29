@@ -16,7 +16,11 @@ import {
 import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
-import { MAX_AGENTS_PER_COMPANY, ALLOWED_AGENT_TYPES } from "@/lib/constants";
+import {
+  MAX_AGENTS_PER_COMPANY,
+  ALLOWED_AGENT_TYPES,
+  AGENT_PRICE,
+} from "@/lib/constants";
 import { AGENT_TEMPLATES } from "@/lib/agentTemplates";
 
 export default function NewAgentPage() {
@@ -144,6 +148,40 @@ export default function NewAgentPage() {
         toast.error("Erro ao aplicar template do agente.");
         setIsSubmitting(false);
         return;
+      }
+    }
+
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+
+    const { data: payment, error: paymentError } = await supabasebrowser
+      .from("payments")
+      .insert({
+        company_id: companyId,
+        agent_id: data.id,
+        amount: AGENT_PRICE,
+        due_date: dueDate.toISOString(),
+        reference: `Agente ${name}`,
+      })
+      .select("id, amount, due_date")
+      .single();
+
+    if (!paymentError && payment) {
+      const { data: sessionData } = await supabasebrowser.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (token) {
+        await fetch("/api/payments/pay", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            id: payment.id,
+            date: payment.due_date.slice(0, 10),
+            total: payment.amount,
+          }),
+        });
       }
     }
 
