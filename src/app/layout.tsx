@@ -49,9 +49,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Toaster position="top-right" />
         <Script id="tracelead-chatwoot" strategy="afterInteractive">
           {`(function(d,t){
-  var allowed=["/bni","/contact","/pricing","/saiba-mais","/sob-demanda","/sobre-nos","/terms","/privacy","/signup","/login"];
-  if(location.pathname!=="/"&&!allowed.some(p=>location.pathname.startsWith(p))) return;
   var BASE_URL="https://platform.tracelead.com.br";
+  var allowed=["/contato","/orcamento"];
   var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
   g.src=BASE_URL+"/packs/js/sdk.js";
   g.defer=true;g.async=true;
@@ -60,6 +59,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     window.chatwootSDK.run({
       websiteToken:"EioqiGzk1toeBkQgLiRNxMuG",
       baseUrl:BASE_URL
+    });
+    window.addEventListener("chatwoot:ready",function(){
+      var show=allowed.some(p=>location.pathname.startsWith(p));
+      window.$chatwoot.toggleBubbleVisibility(show?"show":"hide");
     });
   };
 })(document,"script");`}
