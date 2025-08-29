@@ -9,12 +9,6 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
-import dynamic from "next/dynamic";
-
-const ChatwootWidget = dynamic(
-  () => import("@/components/ChatwootWidget"),
-  { ssr: false }
-);
 
 export const metadata: Metadata = {
   title: "Contato - Evoluke",
@@ -93,7 +87,6 @@ export default function ContactPage() {
         </section>
       </main>
       <Footer />
-      <ChatwootWidget />
     </>
   );
 }
