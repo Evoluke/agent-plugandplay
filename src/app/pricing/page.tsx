@@ -2,6 +2,7 @@ import Pricing from "@/components/landing/Pricing";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import type { Metadata } from "next";
+import Chatwoot from "@/components/landing/Chatwoot";
 
 export const metadata: Metadata = {
   title: "Planos - Evoluke",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function PricingPage() {
   return (
     <>
+      <Chatwoot />
       <Header />
       <main className="flex flex-col w-full max-w-6xl px-4 mx-auto">
         <Pricing />
