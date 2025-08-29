@@ -34,6 +34,14 @@ export default function ChatwootController() {
 
     window.chatwootSettings = { hideMessageBubble: true, position: "right", type: "standard" };
 
+    const apply = () => {
+      const path = window.location.pathname;
+      const ok = ALLOW.some((p) => path.startsWith(p));
+      window.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
+    };
+
+    window.addEventListener("chatwoot:ready", apply, { once: true });
+
     (function (d: Document, t: string) {
       const g = d.createElement(t) as HTMLScriptElement;
       const s = d.getElementsByTagName(t)[0]!;
@@ -43,14 +51,10 @@ export default function ChatwootController() {
       s.parentNode!.insertBefore(g, s);
       g.onload = function () {
         window.chatwootSDK.run({ websiteToken: TOKEN, baseUrl: BASE_URL });
-        const apply = () => {
-          const ok = ALLOW.some((p) => pathname.startsWith(p));
-          window.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
-        };
-        window.addEventListener("chatwoot:ready", apply, { once: true });
+        if (window.$chatwoot) apply();
       };
     })(document, "script");
-  }, [pathname]);
+  }, []);
 
   useEffect(() => {
     const ok = ALLOW.some((p) => pathname.startsWith(p));
