@@ -1,5 +1,7 @@
 export const MAX_AGENTS_PER_COMPANY = 5;
 
+export const AGENT_PRICE = 599;
+
 export const ALLOWED_AGENT_TYPES = [
   "agendamento",
   "sdr",

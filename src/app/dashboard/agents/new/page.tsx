@@ -16,7 +16,11 @@ import {
 import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
-import { MAX_AGENTS_PER_COMPANY, ALLOWED_AGENT_TYPES } from "@/lib/constants";
+import {
+  MAX_AGENTS_PER_COMPANY,
+  ALLOWED_AGENT_TYPES,
+  AGENT_PRICE,
+} from "@/lib/constants";
 import { AGENT_TEMPLATES } from "@/lib/agentTemplates";
 
 export default function NewAgentPage() {
@@ -155,7 +159,7 @@ export default function NewAgentPage() {
       .insert({
         company_id: companyId,
         agent_id: data.id,
-        amount: 0,
+        amount: AGENT_PRICE,
         due_date: dueDate.toISOString(),
         reference: `Agente ${name}`,
       })
