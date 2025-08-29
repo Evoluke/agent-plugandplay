@@ -8,7 +8,7 @@ export default function Hero() {
   return (
     <section className="bg-[#FAFAFA] py-8 md:py-12 lg:py-16">
       <div className="mx-auto grid max-w-[1140px] items-center gap-6 md:gap-8 lg:gap-6 px-3 md:px-4 lg:px-6 md:grid-cols-2 lg:grid-cols-12">
-        <div className="space-y-4 text-center md:text-left lg:col-span-7">
+        <div className="space-y-4 text-center md:text-left lg:col-span-8">
           <h1 className="text-4xl font-bold sm:text-5xl">
             Empresas inteligentes já usam IA no atendimento
           </h1>
@@ -28,13 +28,13 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-        <div className="relative flex justify-center lg:col-span-3">
+        <div className="relative flex items-center justify-center lg:col-span-4">
           <Image
             src="/mascot.png"
             alt="Mascote representando o agente de IA da Evoluke"
             width={600}
             height={600}
-            className="h-auto w-full max-w-[600px] rounded-md"
+            className="mx-auto h-auto w-full max-w-[168px] md:max-w-[400px] lg:max-w-[600px] rounded-md"
           />
         </div>
       </div>
