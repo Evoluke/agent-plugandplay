@@ -9,7 +9,13 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { toast } from "sonner";
-import { CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+    CardFooter,
+} from "@/components/ui/card";
 import type { User } from "@supabase/supabase-js";
 import {
     Select,
@@ -161,69 +167,74 @@ export default function NewSupportPage() {
     if (!user) return <p className="text-center py-10">Carregando...</p>;
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
+        <div className="bg-[#FAFAFA] flex items-center justify-center py-6">
             <div className="w-full px-4 sm:max-w-md md:max-w-lg">
                 <Link href="/dashboard/support">
                     <Button variant="ghost" className="mb-4">
                         ← Voltar
                     </Button>
                 </Link>
-                <form
-                    onSubmit={handleSubmit}
-                    className="w-full bg-white p-6 rounded-lg shadow"
-                >
-                    <CardTitle className="text-xl font-semibold text-gray-800 mb-6">Novo Chamado</CardTitle>
-
-                    <label className="block mb-1">Título do Chamado</label>
-                    <Input
-                        value={titulo}
-                        onChange={e => setTitulo(e.target.value)}
-                        placeholder="Digite o título"
-                        required
-                        maxLength={100}
-                        className="mb-4"
-                    />
-
-                    <label className="block mb-1">Motivo</label>
-                    <Select onValueChange={setMotivo} value={motivo}>
-                        <SelectTrigger className="w-full mb-4">
-                            <SelectValue placeholder="Selecione o motivo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {motivos.map(m => (
-                                <SelectItem key={m.value} value={m.value}>
-                                    {m.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-
-                    <label className="block mb-1">Descrição</label>
-                    <Textarea
-                        value={descricao}
-                        onChange={e => setDescricao(e.target.value)}
-                        placeholder="Explique em detalhes"
-                        required
-                        rows={5}
-                        maxLength={800}
-                        className="mb-4"
-                    />
-
-                    <label className="block mb-1">Anexo (PNG, JPG, PDF)</label>
-                    <input
-                        type="file"
-                        accept=".png,.jpg,.jpeg,.pdf"
-                        onChange={handleFileChange}
-                        className="mb-6 text-blue-600 hover:text-blue-800"
-                    />
-
-                    {fileError && <p className="text-sm text-destructive mb-4">{fileError}</p>}
-
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
-                        {isSubmitting ? "Enviando..." : "Enviar"}
-                    </Button>
-                </form>
+                <Card className="border shadow-lg rounded-lg overflow-hidden">
+                    <form onSubmit={handleSubmit}>
+                        <CardHeader className="bg-white px-6 py-4 border-b mb-2">
+                            <CardTitle className="text-xl font-semibold text-gray-800 text-center">Novo Chamado</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="block mb-1">Título do Chamado</label>
+                                <Input
+                                    value={titulo}
+                                    onChange={e => setTitulo(e.target.value)}
+                                    placeholder="Digite o título"
+                                    required
+                                    maxLength={100}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block mb-1">Motivo</label>
+                                <Select onValueChange={setMotivo} value={motivo}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Selecione o motivo" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {motivos.map(m => (
+                                            <SelectItem key={m.value} value={m.value}>
+                                                {m.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block mb-1">Descrição</label>
+                                <Textarea
+                                    value={descricao}
+                                    onChange={e => setDescricao(e.target.value)}
+                                    placeholder="Explique em detalhes"
+                                    required
+                                    rows={5}
+                                    maxLength={800}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block mb-1">Anexo (PNG, JPG, PDF)</label>
+                                <input
+                                    type="file"
+                                    accept=".png,.jpg,.jpeg,.pdf"
+                                    onChange={handleFileChange}
+                                    className="text-blue-600 hover:text-blue-800"
+                                />
+                            </div>
+                            {fileError && <p className="text-sm text-destructive">{fileError}</p>}
+                        </CardContent>
+                        <CardFooter>
+                            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                                {isSubmitting ? "Enviando..." : "Enviar"}
+                            </Button>
+                        </CardFooter>
+                    </form>
+                </Card>
             </div>
-        </main>
+        </div>
     )
 }
