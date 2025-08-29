@@ -147,6 +147,40 @@ export default function NewAgentPage() {
       }
     }
 
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+
+    const { data: payment, error: paymentError } = await supabasebrowser
+      .from("payments")
+      .insert({
+        company_id: companyId,
+        agent_id: data.id,
+        amount: 0,
+        due_date: dueDate.toISOString(),
+        reference: `Agente ${name}`,
+      })
+      .select("id, amount, due_date")
+      .single();
+
+    if (!paymentError && payment) {
+      const { data: sessionData } = await supabasebrowser.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (token) {
+        await fetch("/api/payments/pay", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            id: payment.id,
+            date: payment.due_date.slice(0, 10),
+            total: payment.amount,
+          }),
+        });
+      }
+    }
+
     toast.success("Agente criado com sucesso...");
     setTimeout(
       () => window.location.assign(`/dashboard/agents/${data.id}`),
