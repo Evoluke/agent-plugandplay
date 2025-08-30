@@ -105,16 +105,22 @@ export function Sidebar({ className }: { className?: string }) {
   const agents = useAgents();
   const chatwootId = useChatwootId();
   const [open, setOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = async () => {
-    const { error } = await supabasebrowser.auth.signOut();
+    setIsLoggingOut(true);
+    try {
+      const { error } = await supabasebrowser.auth.signOut();
 
-    if (error) {
-      console.error('Erro ao fazer logout:', error.message);
-      return;
+      if (error) {
+        console.error('Erro ao fazer logout:', error.message);
+        return;
+      }
+      router.replace('/login');
+    } finally {
+      setIsLoggingOut(false);
     }
-    router.replace('/login');
   };
 
   useEffect(() => {
@@ -259,9 +265,10 @@ export function Sidebar({ className }: { className?: string }) {
           <TooltipTrigger asChild>
             <button
               onClick={handleLogout}
+              disabled={isLoggingOut}
               className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
             >
-              <LogOut size={20} />
+              {isLoggingOut ? 'Saindo...' : <LogOut size={20} />}
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
