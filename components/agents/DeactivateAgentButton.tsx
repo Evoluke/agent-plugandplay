@@ -16,6 +16,7 @@ export default function DeactivateAgentButton({ agentId, onDeactivated }: Props)
   const [loading, setLoading] = useState(false);
 
   const handleDeactivate = async () => {
+    if (loading) return;
     setLoading(true);
     const { error } = await supabasebrowser
       .from("agents")
