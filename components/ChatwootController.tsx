@@ -40,7 +40,7 @@ export default function ChatwootController() {
     const apply = () => {
       const path = window.location.pathname;
       const ok = !isBlocked(path);
-      const bubble = document.querySelector("woot-widget-bubble");
+      const bubble = document.querySelector(".woot-widget-bubble");
       if (bubble && window.$chatwoot) {
         window.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
       }
@@ -62,12 +62,12 @@ export default function ChatwootController() {
   useEffect(() => {
     const ok = !isBlocked(pathname);
     const w = window;
-    const bubble = document.querySelector("woot-widget-bubble");
+    const bubble = document.querySelector(".woot-widget-bubble");
     if (w.$chatwoot && bubble) {
       w.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
     } else {
       const fn = () => {
-        const b = document.querySelector("woot-widget-bubble");
+        const b = document.querySelector(".woot-widget-bubble");
         if (b) w.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
       };
       window.addEventListener("chatwoot:ready", fn, { once: true });
