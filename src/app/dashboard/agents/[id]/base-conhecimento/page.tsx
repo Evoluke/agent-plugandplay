@@ -306,7 +306,7 @@ export default function AgentKnowledgeBasePage() {
                       disabled={uploading}
                     />
                     {uploading && (
-                      <span className="text-sm text-gray-500">Carregando...</span>
+                      <span></span>
                     )}
                   </div>
                 </div>
