@@ -25,6 +25,7 @@ export default function PaymentsPage() {
   const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
 
 
   useEffect(() => {
@@ -73,7 +74,15 @@ export default function PaymentsPage() {
 
   if (!user || !payments) return null;
 
-  const handlePay = (id: string) => router.push(`/dashboard/payments/${id}/`);
+  const handlePay = (id: string) => {
+    setIsNavigating(true);
+    try {
+      router.push(`/dashboard/payments/${id}/`);
+    } catch (error) {
+      setIsNavigating(false);
+      toast.error("Falha ao navegar.");
+    }
+  };
 
   return (
     <div className="p-4 space-y-6 w-full max-w-5xl mx-auto">
@@ -113,8 +122,9 @@ export default function PaymentsPage() {
                         <button
                           onClick={() => handlePay(p.id)}
                           className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                          disabled={isNavigating}
                         >
-                          Pagar
+                          {isNavigating ? "Pagar" : "Pagar"}
                         </button>
                       )}
                     </td>
@@ -157,8 +167,9 @@ export default function PaymentsPage() {
                       <button
                         onClick={() => handlePay(p.id)}
                         className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                        disabled={isNavigating}
                       >
-                        Pagar
+                        {isNavigating ? "Pagar" : "Pagar"}
                       </button>
                     )}
                   </div>
