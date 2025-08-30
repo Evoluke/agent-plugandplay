@@ -14,6 +14,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
   const [loading, setLoading] = useState(false);
 
   const handleActivate = async () => {
+    if (loading) return;
     setLoading(true);
     const { data: agent, error: agentError } = await supabasebrowser
       .from("agents")
@@ -52,12 +53,13 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       .from("agents")
       .update({ is_active: true })
       .eq("id", agentId);
-    setLoading(false);
     if (error) {
       toast.error("Erro ao ativar agente.");
+      setLoading(false);
     } else {
       toast.success("Agente ativado.");
       onActivated();
+      setLoading(false);
     }
   };
 
