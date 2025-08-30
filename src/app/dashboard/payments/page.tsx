@@ -124,7 +124,7 @@ export default function PaymentsPage() {
                           className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                           disabled={isNavigating}
                         >
-                          {isNavigating ? "Carregando..." : "Pagar"}
+                          {isNavigating ? "Pagar" : "Pagar"}
                         </button>
                       )}
                     </td>
@@ -169,7 +169,7 @@ export default function PaymentsPage() {
                         className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                         disabled={isNavigating}
                       >
-                        {isNavigating ? "Carregando..." : "Pagar"}
+                        {isNavigating ? "Pagar" : "Pagar"}
                       </button>
                     )}
                   </div>
