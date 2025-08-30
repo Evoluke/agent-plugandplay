@@ -35,12 +35,15 @@ export default function ChatwootController() {
     const BASE_URL = "https://platform.tracelead.com.br";
     const TOKEN = "EioqiGzk1toeBkQgLiRNxMuG";
 
-    window.chatwootSettings = { hideMessageBubble: true, position: "right", type: "standard" };
+    window.chatwootSettings = { hideMessageBubble: false, position: "right", type: "standard" };
 
     const apply = () => {
       const path = window.location.pathname;
       const ok = !isBlocked(path);
-      window.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
+      const bubble = document.querySelector("woot-widget-bubble");
+      if (bubble && window.$chatwoot) {
+        window.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
+      }
     };
 
     window.addEventListener("chatwoot:ready", apply, { once: true });
@@ -59,10 +62,14 @@ export default function ChatwootController() {
   useEffect(() => {
     const ok = !isBlocked(pathname);
     const w = window;
-    if (w.$chatwoot) {
+    const bubble = document.querySelector("woot-widget-bubble");
+    if (w.$chatwoot && bubble) {
       w.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
     } else {
-      const fn = () => w.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
+      const fn = () => {
+        const b = document.querySelector("woot-widget-bubble");
+        if (b) w.$chatwoot.toggleBubbleVisibility(ok ? "show" : "hide");
+      };
       window.addEventListener("chatwoot:ready", fn, { once: true });
       return () => window.removeEventListener("chatwoot:ready", fn);
     }
