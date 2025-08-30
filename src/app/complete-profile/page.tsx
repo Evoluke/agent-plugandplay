@@ -27,6 +27,7 @@ export default function CompleteProfilePage() {
   const [responsible, setResponsible] = useState("");
   const [phone, setPhone] = useState("");
   // const [language, setLanguage] = useState("");
+  const [loadingBack, setLoadingBack] = useState(false);
 
   const handleCpfCnpjChange = (value: string) => {
     let digits = value.replace(/\D/g, "");
@@ -65,8 +66,13 @@ export default function CompleteProfilePage() {
   };
 
   const handleBack = async () => {
-    await supabasebrowser.auth.signOut();
-    router.replace("/login");
+    setLoadingBack(true);
+    try {
+      await supabasebrowser.auth.signOut();
+      router.replace("/login");
+    } finally {
+      setLoadingBack(false);
+    }
   };
 
   useEffect(() => {
@@ -178,8 +184,13 @@ export default function CompleteProfilePage() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
       <div className="w-full px-4 sm:max-w-md md:max-w-lg">
-        <Button variant="ghost" className="mb-4" onClick={handleBack}>
-          ← Voltar
+        <Button
+          variant="ghost"
+          className="mb-4"
+          onClick={handleBack}
+          disabled={loadingBack}
+        >
+          {loadingBack ? "Voltando..." : "← Voltar"}
         </Button>
 
         <form
