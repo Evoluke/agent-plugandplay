@@ -21,6 +21,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Loader2,
 } from 'lucide-react';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 import { cn } from './utils';
@@ -278,16 +279,20 @@ export function MobileSidebar() {
   const agents = useAgents();
   const chatwootId = useChatwootId();
   const [open, setOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     const { error } = await supabasebrowser.auth.signOut();
 
     if (error) {
       console.error('Erro ao fazer logout:', error.message);
+      setIsLoggingOut(false);
       return;
     }
     setOpen(false);
     router.replace('/login');
+    setIsLoggingOut(false);
   };
 
   return (
@@ -375,10 +380,11 @@ export function MobileSidebar() {
 
           <button
             onClick={handleLogout}
-            className="mt-4 flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
+            disabled={isLoggingOut}
+            className="mt-4 flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <LogOut size={20} />
-            <span>Logout</span>
+            {isLoggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
+            <span>{isLoggingOut ? 'Saindo...' : 'Logout'}</span>
           </button>
         </Dialog.Content>
       </Dialog.Portal>
