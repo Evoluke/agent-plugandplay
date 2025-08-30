@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": (file as File).type || "application/octet-stream",
-        Authorization: `Bearer ${webhookToken}`,
+        Authorization: `${webhookToken}`,
       },
       body: file,
     }
