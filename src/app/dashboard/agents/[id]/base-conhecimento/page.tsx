@@ -50,6 +50,7 @@ export default function AgentKnowledgeBasePage() {
   const [confirmName, setConfirmName] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [fileTypesOpen, setFileTypesOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const mimeToExt: Record<string, string> = {
     "application/pdf": "PDF",
@@ -92,16 +93,22 @@ export default function AgentKnowledgeBasePage() {
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+    setUploading(true);
     const file = e.target.files?.[0];
-    if (!file || !agent) return;
+    if (!file || !agent) {
+      setUploading(false);
+      return;
+    }
     if (!ALLOWED_KNOWLEDGE_MIME_TYPES.includes(file.type)) {
       toast.error("Tipo de arquivo não suportado");
       e.target.value = "";
+      setUploading(false);
       return;
     }
     if (file.size > MAX_KNOWLEDGE_FILE_SIZE) {
       toast.error("Arquivo excede o tamanho máximo de 10MB");
       e.target.value = "";
+      setUploading(false);
       return;
     }
     const tokens = Math.ceil(file.size / 4);
@@ -109,6 +116,7 @@ export default function AgentKnowledgeBasePage() {
     if (totalTokens + tokens > MAX_TOKENS) {
       toast.error("Limite de tokens excedido");
       e.target.value = "";
+      setUploading(false);
       return;
     }
     const t = toast.loading("Carregando arquivo...");
@@ -124,6 +132,7 @@ export default function AgentKnowledgeBasePage() {
         .catch(() => ({ error: "Arquivo inválido" }));
       toast.error("Falha no upload", { id: t });
       e.target.value = "";
+      setUploading(false);
       return;
     }
     const extension = file.name.includes(".")
@@ -150,6 +159,7 @@ export default function AgentKnowledgeBasePage() {
     if (error || !data) {
       toast.error("Falha no upload", { id: t });
       e.target.value = "";
+      setUploading(false);
       return;
     }
     try {
@@ -166,17 +176,20 @@ export default function AgentKnowledgeBasePage() {
         await supabasebrowser.from("agent_knowledge_files").delete().eq("id", fileId);
         toast.error("Falha no upload", { id: t });
         e.target.value = "";
+        setUploading(false);
         return;
       }
     } catch {
       await supabasebrowser.from("agent_knowledge_files").delete().eq("id", fileId);
       toast.error("Falha no upload", { id: t });
       e.target.value = "";
+      setUploading(false);
       return;
     }
     setFiles((prev) => [...prev, data]);
     toast.success("Arquivo carregado!", { id: t });
     e.target.value = "";
+    setUploading(false);
   };
 
   const handleRemove = async () => {
@@ -265,7 +278,10 @@ export default function AgentKnowledgeBasePage() {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                   <div className="flex items-center gap-2">
-                    <Button onClick={() => fileInputRef.current?.click()}>
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                    >
                       Adicionar Fonte
                     </Button>
                     <Tooltip
@@ -287,7 +303,11 @@ export default function AgentKnowledgeBasePage() {
                       type="file"
                       className="hidden"
                       onChange={handleFileChange}
+                      disabled={uploading}
                     />
+                    {uploading && (
+                      <span className="text-sm text-gray-500">Carregando...</span>
+                    )}
                   </div>
                 </div>
                 {activeSection === "Arquivos" ? (
