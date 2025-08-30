@@ -12,6 +12,7 @@ function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
   const [cooldown, setCooldown] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -26,13 +27,18 @@ function VerifyEmailContent() {
       toast.error('Email inválido');
       return;
     }
-    const { error } = await supabasebrowser.auth.resend({ type: 'signup', email });
-    if (error) {
-      console.error('Erro ao reenviar email:', error.message);
-      toast.error('Erro ao reenviar email. Tente novamente mais tarde.');
-    } else {
-      toast.success('Email de verificação reenviado');
-      setCooldown(60);
+    setLoading(true);
+    try {
+      const { error } = await supabasebrowser.auth.resend({ type: 'signup', email });
+      if (error) {
+        console.error('Erro ao reenviar email:', error.message);
+        toast.error('Erro ao reenviar email. Tente novamente mais tarde.');
+      } else {
+        toast.success('Email de verificação reenviado');
+        setCooldown(60);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,8 +50,12 @@ function VerifyEmailContent() {
           {email && (
             <p className="text-center text-sm">{email}</p>
           )}
-          <Button onClick={handleResend} className="w-full" disabled={cooldown > 0}>
-            {cooldown > 0 ? `Reenviar em ${cooldown}s` : 'Reenviar e-mail de verificação'}
+          <Button onClick={handleResend} className="w-full" disabled={loading || cooldown > 0}>
+            {loading
+              ? 'Reenviando...'
+              : cooldown > 0
+                ? `Reenviar em ${cooldown}s`
+                : 'Reenviar e-mail de verificação'}
           </Button>
           <p className="text-center text-sm">
             <Link href="/login" className="text-teal-600 hover:underline">
