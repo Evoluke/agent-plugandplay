@@ -43,16 +43,27 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const setup = async () => {
       const { data: { user } } = await supabasebrowser.auth.getUser();
       if (!user) return;
+      const { data: company } = await supabasebrowser
+        .from('company')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+      if (!company) return;
       const res = await fetch('/api/notifications');
       if (res.ok) {
         const data = await res.json();
         setNotifications(sortAndLimit(data));
       }
       channel = supabasebrowser
-        .channel(`notifications:user:${user.id}`)
+        .channel(`notifications:company:${company.id}`)
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+            filter: `company_id=eq.${company.id}`,
+          },
           (payload) => {
             const newNotif = payload.new as Notification;
             setNotifications((prev) => sortAndLimit([newNotif, ...prev]));
