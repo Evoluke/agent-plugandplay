@@ -38,9 +38,11 @@ export default function DashboardClientLayout({ children }: Props) {
     <div className="flex h-screen">
         <Sidebar className="hidden sm:flex" />
         <main className="flex-1 bg-[#FAFAFA] p-6 h-full overflow-auto">
-          <div className="flex justify-between">
+          <div className="flex w-full items-center mb-4">
             <MobileSidebar />
-            <NotificationBell />
+            <div className="ml-auto">
+              <NotificationBell />
+            </div>
           </div>
           <DashboardAlerts />
           {children}
