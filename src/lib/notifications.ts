@@ -21,7 +21,9 @@ export async function getNotifications(userId: string) {
     .from('notifications')
     .select('*')
     .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+    .order('read_at', { ascending: true, nullsFirst: true })
+    .order('created_at', { ascending: false })
+    .limit(4);
 }
 
 export async function markAsRead(id: string) {

@@ -29,6 +29,15 @@ export function useNotifications() {
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  const sortAndLimit = (list: Notification[]) =>
+    [...list]
+      .sort((a, b) => {
+        if (!a.read_at && b.read_at) return -1;
+        if (a.read_at && !b.read_at) return 1;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      })
+      .slice(0, 4);
+
   useEffect(() => {
     let channel: RealtimeChannel | null = null;
     const setup = async () => {
@@ -37,7 +46,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const res = await fetch('/api/notifications');
       if (res.ok) {
         const data = await res.json();
-        setNotifications(data);
+        setNotifications(sortAndLimit(data));
       }
       channel = supabasebrowser
         .channel(`notifications:user:${user.id}`)
@@ -46,7 +55,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
           (payload) => {
             const newNotif = payload.new as Notification;
-            setNotifications((prev) => [newNotif, ...prev]);
+            setNotifications((prev) => sortAndLimit([newNotif, ...prev]));
             toast(newNotif.message);
           }
         )
@@ -64,7 +73,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
     });
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n)));
+    setNotifications((prev) =>
+      sortAndLimit(
+        prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n))
+      )
+    );
   };
 
   return (
