@@ -64,7 +64,6 @@ create table public.agents (
   type public.agent_type not null,
   is_active boolean not null default false,
   expiration_date timestamp with time zone null,
-  instructions text not null default ''::text,
   created_at timestamp with time zone not null default now(),
   company_id bigint not null,
   constraint agents_pkey primary key (id),
