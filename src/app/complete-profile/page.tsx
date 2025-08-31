@@ -171,7 +171,7 @@ export default function CompleteProfilePage() {
       return;
     }
     toast.success("Perfil atualizado");
-    router.push("/dashboard");
+    router.push("/crm");
   };
 
   if (loading)
