@@ -26,25 +26,30 @@ export default function NotificationBell() {
           )}
         </button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content align="end" className="w-72 bg-white rounded-md shadow p-2">
-        {notifications.length === 0 ? (
-          <div className="p-2 text-sm text-gray-500">Sem notificações</div>
-        ) : (
-          notifications.map((n) => (
-            <div
-              key={n.id}
-              className={cn('p-2 text-sm rounded flex justify-between gap-2', !n.read_at ? 'font-semibold' : 'text-gray-500')}
-            >
-              <span className="flex-1">{n.message}</span>
-              {!n.read_at && (
-                <button onClick={() => markAsRead(n.id)} className="text-xs text-blue-600">
-                  Marcar como lido
-                </button>
-              )}
-            </div>
-          ))
-        )}
-      </DropdownMenu.Content>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="end"
+          className="z-50 w-72 bg-white rounded-md shadow p-2"
+        >
+          {notifications.length === 0 ? (
+            <div className="p-2 text-sm text-gray-500">Sem notificações</div>
+          ) : (
+            notifications.map((n) => (
+              <div
+                key={n.id}
+                className={cn('p-2 text-sm rounded flex justify-between gap-2', !n.read_at ? 'font-semibold' : 'text-gray-500')}
+              >
+                <span className="flex-1">{n.message}</span>
+                {!n.read_at && (
+                  <button onClick={() => markAsRead(n.id)} className="text-xs text-blue-600">
+                    Marcar como lido
+                  </button>
+                )}
+              </div>
+            ))
+          )}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );
 }
