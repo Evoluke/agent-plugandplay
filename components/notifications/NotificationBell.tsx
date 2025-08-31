@@ -15,7 +15,12 @@ export default function NotificationBell() {
         <button className="relative inline-flex items-center justify-center rounded-md p-2 hover:bg-gray-100">
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+            <span
+              className={cn(
+                'absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs',
+                'text-white'
+              )}
+            >
               {unreadCount}
             </span>
           )}
@@ -43,3 +48,4 @@ export default function NotificationBell() {
     </DropdownMenu.Root>
   );
 }
+
