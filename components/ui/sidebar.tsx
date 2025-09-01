@@ -119,18 +119,23 @@ export function Sidebar({ className }: { className?: string }) {
   };
 
   const handleChatwoot = async () => {
+    const popup = window.open('', '_blank', 'noopener,noreferrer');
+    if (!popup) {
+      toast('Permita pop-ups para abrir o CRM');
+      return;
+    }
     try {
       const res = await fetch('/api/chatwoot/sso');
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.url) {
+        popup.close();
         console.error('[Chatwoot SSO] Endpoint error', res.status, data);
         throw new Error();
       }
-      const popup = window.open(data.url, '_blank', 'noopener,noreferrer');
-      if (!popup) {
-        toast('Permita pop-ups para abrir o CRM');
-      }
+      popup.location.href = data.url;
+      popup.focus();
     } catch (err) {
+      popup.close();
       console.error('[Chatwoot SSO] Failed to open CRM', err);
       toast('SSO indisponível, tente novamente mais tarde');
     }
@@ -309,19 +314,24 @@ export function MobileSidebar() {
   };
 
   const handleChatwoot = async () => {
+    const popup = window.open('', '_blank', 'noopener,noreferrer');
+    if (!popup) {
+      toast('Permita pop-ups para abrir o CRM');
+      return;
+    }
     try {
       const res = await fetch('/api/chatwoot/sso');
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.url) {
+        popup.close();
         console.error('[Chatwoot SSO] Endpoint error', res.status, data);
         throw new Error();
       }
+      popup.location.href = data.url;
+      popup.focus();
       setOpen(false);
-      const popup = window.open(data.url, '_blank', 'noopener,noreferrer');
-      if (!popup) {
-        toast('Permita pop-ups para abrir o CRM');
-      }
     } catch (err) {
+      popup.close();
       console.error('[Chatwoot SSO] Failed to open CRM', err);
       toast('SSO indisponível, tente novamente mais tarde');
     }
