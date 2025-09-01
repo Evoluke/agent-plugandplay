@@ -232,7 +232,7 @@ export function Sidebar({ className }: { className?: string }) {
             {chatwootId ? (
               <span>CRM</span>
             ) : (
-              <span>CRM desabilitado: nenhum agente habilitado</span>
+              <span>Ocorreu algum erro, logo mais será normalizado.</span>
             )}
           </TooltipContent>
         </Tooltip>
@@ -353,7 +353,7 @@ export function MobileSidebar() {
             ) : (
               <div
                 className="flex items-center gap-2 rounded px-2 py-2 text-gray-400"
-                title="CRM desabilitado: nenhum agente habilitado"
+                title="Ocorreu algum erro, logo mais será normalizado."
               >
                 <MessageSquare size={20} />
                 <span>CRM</span>

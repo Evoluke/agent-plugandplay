@@ -6,6 +6,7 @@ import { supabasebrowser } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import {
   isValidCpfCnpj,
   isValidAddress,
@@ -176,8 +177,9 @@ export default function CompleteProfilePage() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Carregando...
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <p>Aguarde um momento</p>
       </div>
     );
 

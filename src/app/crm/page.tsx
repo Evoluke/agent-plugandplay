@@ -37,8 +37,8 @@ export default function CrmPage() {
   if (status === "error") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center space-y-4 text-center">
-        <p>Ocorreu um erro ao criar seu CRM. Logo verificaremos a criação.</p>
-        <Button onClick={() => router.replace("/dashboard")}>Seguir</Button>
+        <p>Identificamos um erro ao criar seu CRM. Já estamos verificando e em breve você terá acesso normalmente.</p>
+        <Button onClick={() => router.replace("/dashboard")}>Seguir para plataforma</Button>
       </div>
     );
   }
