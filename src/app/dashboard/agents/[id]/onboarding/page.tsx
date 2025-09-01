@@ -25,12 +25,23 @@ type CollectionItem = {
   information: string;
 };
 
+const ensureAtLeastTwo = (items: CollectionItem[]): CollectionItem[] => {
+  const required = 2;
+  if (items.length >= required) return items;
+  return [
+    ...items,
+    ...Array(required - items.length).fill({ question: "", information: "" }),
+  ];
+};
+
 export default function AgentOnboardingPage() {
   const params = useParams();
   const id = params?.id as string;
   const [agent, setAgent] = useState<Agent | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState("");
-  const [collection, setCollection] = useState<CollectionItem[]>([]);
+  const [collection, setCollection] = useState<CollectionItem[]>(
+    ensureAtLeastTwo([])
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -53,8 +64,10 @@ export default function AgentOnboardingPage() {
         if (data) {
           setWelcomeMessage(data.welcome_message);
           if (Array.isArray(data.collection)) {
-            setCollection(data.collection);
+            setCollection(ensureAtLeastTwo(data.collection));
           }
+        } else {
+          setCollection(ensureAtLeastTwo([]));
         }
       });
   }, [id]);
@@ -62,16 +75,21 @@ export default function AgentOnboardingPage() {
   if (!agent) return <div>Carregando...</div>;
 
   const welcomeMessageValid = welcomeMessage.trim().length <= 500;
-  const collectionValid = collection.every((item) => {
-    const question = item.question.trim();
-    const information = item.information.trim();
+  const filledCollectionCount = collection.filter(
+    (item) => item.question.trim() && item.information.trim()
+  ).length;
+  const collectionValid =
+    filledCollectionCount >= 2 &&
+    collection.every((item) => {
+      const question = item.question.trim();
+      const information = item.information.trim();
 
-    if (!question && !information) return true;
-    if (question && !information) return false;
-    if (!question && information) return false;
+      if (!question && !information) return true;
+      if (question && !information) return false;
+      if (!question && information) return false;
 
-    return question.length <= 200 && information.length <= 200;
-  });
+      return question.length <= 200 && information.length <= 200;
+    });
 
   const isFormValid = welcomeMessageValid && collectionValid;
 
@@ -93,6 +111,7 @@ export default function AgentOnboardingPage() {
   };
 
   const removeItem = (index: number) => {
+    if (collection.length <= 2) return;
     const newCollection = collection.filter((_, i) => i !== index);
     setCollection(newCollection);
   };
@@ -211,6 +230,7 @@ export default function AgentOnboardingPage() {
                   variant="ghost"
                   onClick={() => removeItem(index)}
                   className="self-start md:self-auto"
+                  disabled={collection.length <= 2}
                 >
                   Remover
                 </Button>
@@ -228,6 +248,11 @@ export default function AgentOnboardingPage() {
             {collection.length >= 5 && (
               <p className="text-xs text-gray-500">
                 Máximo de 5 perguntas/explicações
+              </p>
+            )}
+            {filledCollectionCount < 2 && (
+              <p className="text-xs text-red-500">
+                Adicione pelo menos duas perguntas e explicações
               </p>
             )}
 
