@@ -7,23 +7,21 @@ import { Loader2 } from "lucide-react";
 
 export default function CrmPage() {
   const router = useRouter();
-  const [status, setStatus] = useState<"loading" | "error" | "success">("loading");
-  const [crmUrl, setCrmUrl] = useState<string | null>(null);
+  const [status, setStatus] = useState<"loading" | "error">("loading");
 
   useEffect(() => {
     const createCrm = async () => {
       try {
         const res = await fetch("/api/crm/create", { method: "POST" });
         if (!res.ok) throw new Error();
-        const data = await res.json().catch(() => ({}));
-        if (data.crm_url) setCrmUrl(data.crm_url);
-        setStatus("success");
+        await res.json().catch(() => ({}));
+        router.replace("/dashboard");
       } catch {
         setStatus("error");
       }
     };
     createCrm();
-  }, []);
+  }, [router]);
 
   if (status === "loading") {
     return (
@@ -43,17 +41,5 @@ export default function CrmPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center space-y-4 text-center">
-      <p>Seu CRM está criado!</p>
-      <Button
-        onClick={() => {
-          if (crmUrl) window.open(crmUrl, "_blank");
-          router.replace("/dashboard");
-        }}
-      >
-        Abrir CRM
-      </Button>
-    </div>
-  );
+  return null;
 }
