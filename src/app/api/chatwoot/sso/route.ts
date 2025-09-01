@@ -19,11 +19,11 @@ export async function GET() {
 
   const { data: company, error } = await supabaseadmin
     .from("company")
-    .select("chatwoot_id")
+    .select("chatwoot_user_id")
     .eq("user_id", user.id)
     .single();
 
-  if (error || !company?.chatwoot_id) {
+  if (error || !company?.chatwoot_user_id) {
     console.warn("[Chatwoot SSO] Chatwoot ID not found", { error, userId: user.id });
     return NextResponse.json(
       { error: "Chatwoot ID não encontrado" },
@@ -31,7 +31,7 @@ export async function GET() {
     );
   }
 
-  console.log("[Chatwoot SSO] Chatwoot ID", company.chatwoot_id);
+  console.log("[Chatwoot SSO] Chatwoot ID", company.chatwoot_user_id);
 
   const baseUrl = process.env.CHATWOOT_BASE_URL;
   const token = process.env.CHATWOOT_PLATFORM_TOKEN;
@@ -48,10 +48,10 @@ export async function GET() {
 
   try {
     const resp = await fetch(
-      `${baseUrl}/platform/api/v1/users/${company.chatwoot_id}/login`,
+      `${baseUrl}/platform/api/v1/users/${company.chatwoot_user_id}/login`,
       {
         headers: {
-          Authorization: `ApiKey ${token}`,
+          api_access_token: `${token}`,
         },
       }
     );
