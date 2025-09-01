@@ -121,11 +121,14 @@ export function Sidebar({ className }: { className?: string }) {
   const handleChatwoot = async () => {
     try {
       const res = await fetch('/api/chatwoot/sso');
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      if (!data?.url) throw new Error();
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.url) {
+        console.error('[Chatwoot SSO] Endpoint error', res.status, data);
+        throw new Error();
+      }
       window.location.href = data.url;
-    } catch {
+    } catch (err) {
+      console.error('[Chatwoot SSO] Failed to open CRM', err);
       toast('SSO indisponível, tente novamente mais tarde');
     }
   };
@@ -305,12 +308,15 @@ export function MobileSidebar() {
   const handleChatwoot = async () => {
     try {
       const res = await fetch('/api/chatwoot/sso');
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      if (!data?.url) throw new Error();
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.url) {
+        console.error('[Chatwoot SSO] Endpoint error', res.status, data);
+        throw new Error();
+      }
       setOpen(false);
       window.location.href = data.url;
-    } catch {
+    } catch (err) {
+      console.error('[Chatwoot SSO] Failed to open CRM', err);
       toast('SSO indisponível, tente novamente mais tarde');
     }
   };
