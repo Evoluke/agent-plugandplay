@@ -120,10 +120,7 @@ export function Sidebar({ className }: { className?: string }) {
 
   const handleChatwoot = async () => {
     const popup = window.open('', '_blank', 'noopener,noreferrer');
-    if (!popup) {
-      toast('Permita pop-ups para abrir o CRM');
-      return;
-    }
+    if (!popup) return;
     try {
       const res = await fetch('/api/chatwoot/sso');
       const data = await res.json().catch(() => null);
@@ -315,10 +312,7 @@ export function MobileSidebar() {
 
   const handleChatwoot = async () => {
     const popup = window.open('', '_blank', 'noopener,noreferrer');
-    if (!popup) {
-      toast('Permita pop-ups para abrir o CRM');
-      return;
-    }
+    if (!popup) return;
     try {
       const res = await fetch('/api/chatwoot/sso');
       const data = await res.json().catch(() => null);
