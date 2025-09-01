@@ -5,17 +5,13 @@ import { supabaseadmin } from "@/lib/supabaseAdmin";
 export const runtime = "nodejs";
 
 export async function GET() {
-  console.log("[Chatwoot SSO] Request received");
   const { user } = await getUserFromCookie().catch((err) => {
     console.error("[Chatwoot SSO] Error fetching user", err);
     return { user: null };
   });
   if (!user) {
-    console.warn("[Chatwoot SSO] No authenticated user");
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
-
-  console.log("[Chatwoot SSO] User", user.id);
 
   const { data: company, error } = await supabaseadmin
     .from("company")
@@ -24,14 +20,11 @@ export async function GET() {
     .single();
 
   if (error || !company?.chatwoot_user_id) {
-    console.warn("[Chatwoot SSO] Chatwoot ID not found", { error, userId: user.id });
     return NextResponse.json(
       { error: "Chatwoot ID não encontrado" },
       { status: 404 }
     );
   }
-
-  console.log("[Chatwoot SSO] Chatwoot ID", company.chatwoot_user_id);
 
   const baseUrl = process.env.CHATWOOT_BASE_URL;
   const token = process.env.CHATWOOT_PLATFORM_TOKEN;
@@ -57,7 +50,6 @@ export async function GET() {
     );
 
     const text = await resp.text();
-    console.log("[Chatwoot SSO] Chatwoot response", resp.status, text);
     let data: { url?: string } = {};
     try {
       data = JSON.parse(text);
@@ -66,14 +58,12 @@ export async function GET() {
     }
 
     if (!resp.ok || !data.url) {
-      console.warn("[Chatwoot SSO] Invalid response from Chatwoot", resp.status);
       return NextResponse.json(
         { error: "SSO indisponível" },
         { status: resp.status || 500 }
       );
     }
 
-    console.log("[Chatwoot SSO] SSO link generated");
     return NextResponse.json({ url: data.url });
   } catch (err) {
     console.error("[Chatwoot SSO] Error calling Chatwoot API", err);
