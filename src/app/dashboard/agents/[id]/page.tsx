@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { isValidAgentName } from "@/lib/validators";
+import { updateAgentInstructions } from "@/lib/updateAgentInstructions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -94,6 +95,7 @@ export default function AgentDetailPage() {
     if (agentError || personalityError) {
       toast.error("Erro ao salvar personalidade.");
     } else {
+      await updateAgentInstructions(id);
       toast.success("Personalidade salva com sucesso.");
       window.dispatchEvent(new Event("agentsUpdated"));
     }

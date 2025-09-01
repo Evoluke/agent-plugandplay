@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
+import { updateAgentInstructions } from "@/lib/updateAgentInstructions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -128,6 +129,7 @@ export default function AgentSpecificInstructionsPage() {
     if (error) {
       toast.error("Erro ao salvar instruções específicas.");
     } else {
+      await updateAgentInstructions(id);
       toast.success("Instruções específicas salvas com sucesso.");
     }
     setIsSubmitting(false);

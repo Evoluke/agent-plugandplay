@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
+import { updateAgentInstructions } from "@/lib/updateAgentInstructions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -150,6 +151,8 @@ export default function NewAgentPage() {
         return;
       }
     }
+
+    await updateAgentInstructions(data.id);
 
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 30);

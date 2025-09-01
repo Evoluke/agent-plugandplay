@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
+import { updateAgentInstructions } from "@/lib/updateAgentInstructions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -137,6 +138,7 @@ export default function AgentOnboardingPage() {
     if (error) {
       toast.error("Erro ao salvar onboarding.");
     } else {
+      await updateAgentInstructions(id);
       toast.success("Onboarding salvo com sucesso.");
     }
     setIsSubmitting(false);
