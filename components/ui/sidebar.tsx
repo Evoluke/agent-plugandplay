@@ -22,6 +22,7 @@ import {
   Menu,
   MessageSquare,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 import { cn } from './utils';
 
@@ -125,7 +126,7 @@ export function Sidebar({ className }: { className?: string }) {
       if (!data?.url) throw new Error();
       window.location.href = data.url;
     } catch {
-      alert('SSO indisponível, tente novamente mais tarde');
+      toast('SSO indisponível, tente novamente mais tarde');
     }
   };
 
@@ -310,7 +311,7 @@ export function MobileSidebar() {
       setOpen(false);
       window.location.href = data.url;
     } catch {
-      alert('SSO indisponível, tente novamente mais tarde');
+      toast('SSO indisponível, tente novamente mais tarde');
     }
   };
 
