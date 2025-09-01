@@ -25,6 +25,15 @@ type CollectionItem = {
   information: string;
 };
 
+const ensureAtLeastTwo = (items: CollectionItem[]): CollectionItem[] => {
+  const required = 2;
+  if (items.length >= required) return items;
+  return [
+    ...items,
+    ...Array(required - items.length).fill({ question: "", information: "" }),
+  ];
+};
+
 export default function AgentOnboardingPage() {
   const params = useParams();
   const id = params?.id as string;
@@ -43,7 +52,12 @@ export default function AgentOnboardingPage() {
       .then(({ data }) => {
         setAgent(data);
       });
+  }, [id]);
 
+  useEffect(() => {
+    if (!id || !agent) return;
+    const shouldCollect =
+      agent.type === "sdr" || agent.type === "agendamento";
     supabasebrowser
       .from("agent_onboarding")
       .select("welcome_message, collection")
@@ -53,25 +67,40 @@ export default function AgentOnboardingPage() {
         if (data) {
           setWelcomeMessage(data.welcome_message);
           if (Array.isArray(data.collection)) {
-            setCollection(data.collection);
+            setCollection(shouldCollect
+              ? ensureAtLeastTwo(data.collection)
+              : []);
+          } else {
+            setCollection(shouldCollect ? ensureAtLeastTwo([]) : []);
           }
+        } else {
+          setCollection(shouldCollect ? ensureAtLeastTwo([]) : []);
         }
       });
-  }, [id]);
+  }, [id, agent]);
 
   if (!agent) return <div>Carregando...</div>;
 
+  const shouldShowCollection =
+    agent.type === "sdr" || agent.type === "agendamento";
   const welcomeMessageValid = welcomeMessage.trim().length <= 500;
-  const collectionValid = collection.every((item) => {
-    const question = item.question.trim();
-    const information = item.information.trim();
+  const filledCollectionCount = shouldShowCollection
+    ? collection.filter(
+        (item) => item.question.trim() && item.information.trim()
+      ).length
+    : 0;
+  const collectionValid = !shouldShowCollection ||
+    (filledCollectionCount >= 2 &&
+      collection.every((item) => {
+        const question = item.question.trim();
+        const information = item.information.trim();
 
-    if (!question && !information) return true;
-    if (question && !information) return false;
-    if (!question && information) return false;
+        if (!question && !information) return true;
+        if (question && !information) return false;
+        if (!question && information) return false;
 
-    return question.length <= 200 && information.length <= 200;
-  });
+        return question.length <= 200 && information.length <= 200;
+      }));
 
   const isFormValid = welcomeMessageValid && collectionValid;
 
@@ -93,6 +122,7 @@ export default function AgentOnboardingPage() {
   };
 
   const removeItem = (index: number) => {
+    if (collection.length <= 2) return;
     const newCollection = collection.filter((_, i) => i !== index);
     setCollection(newCollection);
   };
@@ -101,9 +131,11 @@ export default function AgentOnboardingPage() {
     e.preventDefault();
     if (!isFormValid || isSubmitting) return;
     setIsSubmitting(true);
-    const filtered = collection.filter(
-      (item) => item.question.trim() && item.information.trim()
-    );
+    const filtered = shouldShowCollection
+      ? collection.filter(
+          (item) => item.question.trim() && item.information.trim()
+        )
+      : [];
     const { error } = await supabasebrowser
       .from("agent_onboarding")
       .upsert(
@@ -155,80 +187,92 @@ export default function AgentOnboardingPage() {
               )}
             </div>
 
-            {collection.map((item, index) => (
-              <div key={index} className="flex flex-col gap-4 md:flex-row">
-                <div className="flex-1 space-y-2">
-                  <label
-                    htmlFor={`question-${index}`}
-                    className="text-sm font-medium"
-                  >
-                    Pergunta de coleta
-                  </label>
-                  <Input
-                    id={`question-${index}`}
-                    value={item.question}
-                    onChange={(e) => handleQuestionChange(index, e.target.value)}
-                    maxLength={200}
-                  />
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <p>Nome, telefone, preferência de horário.</p>
-                    <p className="text-gray-400">0 a 200 caracteres</p>
+            {shouldShowCollection && (
+              <>
+                {collection.map((item, index) => (
+                  <div key={index} className="flex flex-col gap-4 md:flex-row">
+                    <div className="flex-1 space-y-2">
+                      <label
+                        htmlFor={`question-${index}`}
+                        className="text-sm font-medium"
+                      >
+                        Pergunta de coleta
+                      </label>
+                      <Input
+                        id={`question-${index}`}
+                        value={item.question}
+                        onChange={(e) =>
+                          handleQuestionChange(index, e.target.value)
+                        }
+                        maxLength={200}
+                      />
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <p>Nome, telefone, preferência de horário.</p>
+                        <p className="text-gray-400">0 a 200 caracteres</p>
+                      </div>
+                      {item.question && item.question.trim().length > 200 && (
+                        <p className="text-xs text-red-500">
+                          A pergunta deve ter no máximo 200 caracteres
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <label
+                        htmlFor={`information-${index}`}
+                        className="text-sm font-medium"
+                      >
+                        Explique o que é essa informação
+                      </label>
+                      <Input
+                        id={`information-${index}`}
+                        placeholder="Ex: Nome completo do cliente"
+                        value={item.information}
+                        onChange={(e) =>
+                          handleInformationChange(index, e.target.value)
+                        }
+                        maxLength={200}
+                      />
+                      <div className="flex justify-end text-xs text-gray-500">
+                        <p className="text-gray-400">0 a 200 caracteres</p>
+                      </div>
+                      {item.information &&
+                        item.information.trim().length > 200 && (
+                          <p className="text-xs text-red-500">
+                            A explicação deve ter no máximo 200 caracteres
+                          </p>
+                        )}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => removeItem(index)}
+                      className="self-start md:self-auto"
+                      disabled={collection.length <= 2}
+                    >
+                      Remover
+                    </Button>
                   </div>
-                  {item.question && item.question.trim().length > 200 && (
-                    <p className="text-xs text-red-500">
-                      A pergunta deve ter no máximo 200 caracteres
-                    </p>
-                  )}
-                </div>
-                <div className="flex-1 space-y-2">
-                  <label
-                    htmlFor={`information-${index}`}
-                    className="text-sm font-medium"
-                  >
-                    Explique o que é essa informação
-                  </label>
-                  <Input
-                    id={`information-${index}`}
-                    placeholder="Ex: Nome completo do cliente"
-                    value={item.information}
-                    onChange={(e) =>
-                      handleInformationChange(index, e.target.value)
-                    }
-                    maxLength={200}
-                  />
-                  <div className="flex justify-end text-xs text-gray-500">
-                    <p className="text-gray-400">0 a 200 caracteres</p>
-                  </div>
-                  {item.information &&
-                    item.information.trim().length > 200 && (
-                      <p className="text-xs text-red-500">
-                        A explicação deve ter no máximo 200 caracteres
-                      </p>
-                    )}
-                </div>
+                ))}
+
                 <Button
                   type="button"
-                  variant="ghost"
-                  onClick={() => removeItem(index)}
-                  className="self-start md:self-auto"
+                  variant="outline"
+                  onClick={addItem}
+                  disabled={collection.length >= 5}
                 >
-                  Remover
+                  Adicionar pergunta/explicação
                 </Button>
-              </div>
-            ))}
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addItem}
-              disabled={collection.length >= 5}
-            >
-              Adicionar pergunta/explicação
-            </Button>
-            {collection.length >= 5 && (
-              <p className="text-xs text-gray-500">
-                Máximo de 5 perguntas/explicações
-              </p>
+                {collection.length >= 5 && (
+                  <p className="text-xs text-gray-500">
+                    Máximo de 5 perguntas/explicações
+                  </p>
+                )}
+                {filledCollectionCount < 2 && (
+                  <p className="text-xs text-red-500">
+                    Adicione pelo menos duas perguntas e explicações
+                  </p>
+                )}
+              </>
             )}
 
             <Button type="submit" disabled={!isFormValid || isSubmitting}>
