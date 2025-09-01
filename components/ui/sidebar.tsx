@@ -22,6 +22,7 @@ import {
   Menu,
   MessageSquare,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 import { cn } from './utils';
 
@@ -117,6 +118,21 @@ export function Sidebar({ className }: { className?: string }) {
     router.replace('/login');
   };
 
+  const handleChatwoot = async () => {
+    try {
+      const res = await fetch('/api/chatwoot/sso');
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.url) {
+        console.error('[Chatwoot SSO] Endpoint error', res.status, data);
+        throw new Error();
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      console.error('[Chatwoot SSO] Failed to open CRM', err);
+      toast('SSO indisponível, tente novamente mais tarde');
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -209,14 +225,13 @@ export function Sidebar({ className }: { className?: string }) {
         <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             {chatwootId ? (
-              <a
-                href={`https://app.chatwoot.com/app/accounts/${chatwootId}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={handleChatwoot}
                 className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
+                type="button"
               >
                 <MessageSquare size={20} />
-              </a>
+              </button>
             ) : (
               <span className="p-2 rounded text-gray-400 flex items-center justify-center cursor-not-allowed">
                 <MessageSquare size={20} />
@@ -290,6 +305,22 @@ export function MobileSidebar() {
     router.replace('/login');
   };
 
+  const handleChatwoot = async () => {
+    try {
+      const res = await fetch('/api/chatwoot/sso');
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.url) {
+        console.error('[Chatwoot SSO] Endpoint error', res.status, data);
+        throw new Error();
+      }
+      setOpen(false);
+      window.location.href = data.url;
+    } catch (err) {
+      console.error('[Chatwoot SSO] Failed to open CRM', err);
+      toast('SSO indisponível, tente novamente mais tarde');
+    }
+  };
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
@@ -340,16 +371,14 @@ export function MobileSidebar() {
             </div>
 
             {chatwootId ? (
-              <a
-                href={`https://app.chatwoot.com/app/accounts/${chatwootId}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={handleChatwoot}
                 className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
-                onClick={() => setOpen(false)}
+                type="button"
               >
                 <MessageSquare size={20} />
                 <span>CRM</span>
-              </a>
+              </button>
             ) : (
               <div
                 className="flex items-center gap-2 rounded px-2 py-2 text-gray-400"
