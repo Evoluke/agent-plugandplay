@@ -126,7 +126,10 @@ export function Sidebar({ className }: { className?: string }) {
         console.error('[Chatwoot SSO] Endpoint error', res.status, data);
         throw new Error();
       }
-      window.location.href = data.url;
+      const popup = window.open(data.url, '_blank', 'noopener,noreferrer');
+      if (!popup) {
+        toast('Permita pop-ups para abrir o CRM');
+      }
     } catch (err) {
       console.error('[Chatwoot SSO] Failed to open CRM', err);
       toast('SSO indisponível, tente novamente mais tarde');
@@ -314,7 +317,10 @@ export function MobileSidebar() {
         throw new Error();
       }
       setOpen(false);
-      window.location.href = data.url;
+      const popup = window.open(data.url, '_blank', 'noopener,noreferrer');
+      if (!popup) {
+        toast('Permita pop-ups para abrir o CRM');
+      }
     } catch (err) {
       console.error('[Chatwoot SSO] Failed to open CRM', err);
       toast('SSO indisponível, tente novamente mais tarde');
