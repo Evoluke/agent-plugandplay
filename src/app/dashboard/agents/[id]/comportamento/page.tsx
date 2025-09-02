@@ -8,22 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
 import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
-import {
-  QUALIFICATION_TRANSFER_RULES,
-  QualificationTransferRule,
-} from "@/lib/qualificationTransferRules";
 
 type Agent = {
   id: string;
@@ -39,10 +28,6 @@ export default function AgentBehaviorPage() {
   const [limitations, setLimitations] = useState("");
   const [forbiddenWords, setForbiddenWords] = useState("");
   const [fallback, setFallback] = useState("");
-  const [qualificationTransferRule, setQualificationTransferRule] =
-    useState<QualificationTransferRule>("never");
-  const [qualificationTransferConditions, setQualificationTransferConditions] =
-    useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -58,9 +43,7 @@ export default function AgentBehaviorPage() {
 
     supabasebrowser
       .from("agent_behavior")
-      .select(
-        "limitations, forbidden_words, default_fallback, qualification_transfer_rule, qualification_transfer_conditions",
-      )
+      .select("limitations, forbidden_words, default_fallback")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
@@ -68,61 +51,21 @@ export default function AgentBehaviorPage() {
           setLimitations(data.limitations);
           setForbiddenWords(data.forbidden_words);
           setFallback(data.default_fallback);
-          setQualificationTransferRule(
-            data.qualification_transfer_rule as QualificationTransferRule,
-          );
-          setQualificationTransferConditions(
-            data.qualification_transfer_conditions ?? "",
-          );
-      }
-    });
+        }
+      });
   }, [id]);
 
-  useEffect(() => {
-    if (
-      agent &&
-      agent.type !== "sdr" &&
-      agent.type !== "agendamento"
-    ) {
-      setQualificationTransferRule("never");
-      setQualificationTransferConditions("");
-    }
-  }, [agent]);
-
   if (!agent) return <div>Carregando...</div>;
-  const canEditQualificationTransferRule =
-    agent.type === "sdr" || agent.type === "agendamento";
-
   const limitationsValid = limitations.trim().length <= 500;
   const forbiddenWordsValid = forbiddenWords.trim().length <= 500;
   const fallbackValid = fallback.trim().length >= 10 && fallback.trim().length <= 200;
-  const qualificationTransferRuleValid = canEditQualificationTransferRule
-    ? QUALIFICATION_TRANSFER_RULES.some((r) => r.value === qualificationTransferRule)
-    : true;
-  const qualificationTransferConditionsValid =
-    !canEditQualificationTransferRule ||
-    qualificationTransferRule !== "personalized" ||
-    (qualificationTransferConditions.trim().length > 0 &&
-      qualificationTransferConditions.trim().length <= 500);
   const isFormValid =
-    limitationsValid &&
-    forbiddenWordsValid &&
-    fallbackValid &&
-    qualificationTransferRuleValid &&
-    qualificationTransferConditionsValid;
+    limitationsValid && forbiddenWordsValid && fallbackValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid || isSubmitting) return;
     setIsSubmitting(true);
-
-    const rule = canEditQualificationTransferRule
-      ? qualificationTransferRule
-      : "never";
-    const conditions =
-      canEditQualificationTransferRule && rule === "personalized"
-        ? qualificationTransferConditions
-        : "";
 
     const { error } = await supabasebrowser
       .from("agent_behavior")
@@ -132,8 +75,6 @@ export default function AgentBehaviorPage() {
           limitations,
           forbidden_words: forbiddenWords,
           default_fallback: fallback,
-          qualification_transfer_rule: rule,
-          qualification_transfer_conditions: conditions,
         },
         { onConflict: "agent_id" }
       );
@@ -224,71 +165,6 @@ export default function AgentBehaviorPage() {
                 </p>
               )}
             </div>
-
-            {canEditQualificationTransferRule && (
-              <>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Quando transferir para humano após a qualificação
-                  </label>
-                  <Select
-                    value={qualificationTransferRule}
-                    onValueChange={(v) => {
-                      const value = v as QualificationTransferRule;
-                      setQualificationTransferRule(value);
-                      if (value !== 'personalized') {
-                        setQualificationTransferConditions('');
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a regra" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {QUALIFICATION_TRANSFER_RULES.map((r) => (
-                        <SelectItem key={r.value} value={r.value}>
-                          {r.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-gray-500">
-                    Defina a regra para transferência após qualificar o lead.
-                  </p>
-                </div>
-
-                {qualificationTransferRule === 'personalized' && (
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="qualificationTransferConditions"
-                      className="text-sm font-medium"
-                    >
-                      Condições personalizadas
-                    </label>
-                    <Textarea
-                      id="qualificationTransferConditions"
-                      value={qualificationTransferConditions}
-                      onChange={(e) =>
-                        setQualificationTransferConditions(e.target.value)
-                      }
-                      className="resize-y max-h-50 overflow-auto"
-                      maxLength={500}
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <p>Descreva as condições para qualificar o lead.</p>
-                      <p className="text-gray-400">1 a 500 caracteres</p>
-                    </div>
-                    {qualificationTransferConditions &&
-                      !qualificationTransferConditionsValid && (
-                        <p className="text-xs text-red-500">
-                          As condições personalizadas devem ter entre 1 e 500
-                          caracteres
-                        </p>
-                      )}
-                  </div>
-                )}
-              </>
-            )}
 
             <Button type="submit" disabled={!isFormValid || isSubmitting}>
               Salvar

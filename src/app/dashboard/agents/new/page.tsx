@@ -110,8 +110,6 @@ export default function NewAgentPage() {
         limitations: "",
         forbidden_words: "",
         default_fallback: "",
-        qualification_transfer_rule: "never",
-        qualification_transfer_conditions: "",
       };
       const inserts = [];
       inserts.push(
