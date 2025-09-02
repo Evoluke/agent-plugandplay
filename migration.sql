@@ -66,6 +66,7 @@ create table public.agents (
   expiration_date timestamp with time zone null,
   created_at timestamp with time zone not null default now(),
   company_id bigint not null,
+  instructions jsonb not null default '{}'::jsonb,
   constraint agents_pkey primary key (id),
   constraint agents_company_id_fkey foreign key (company_id) references company (id)
 ) TABLESPACE pg_default;

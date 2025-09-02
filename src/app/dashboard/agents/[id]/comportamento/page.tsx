@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
+import { updateAgentInstructions } from "@/lib/updateAgentInstructions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -140,6 +141,7 @@ export default function AgentBehaviorPage() {
     if (error) {
       toast.error("Erro ao salvar comportamento.");
     } else {
+      await updateAgentInstructions(id);
       toast.success("Comportamento salvo com sucesso.");
     }
     setIsSubmitting(false);
