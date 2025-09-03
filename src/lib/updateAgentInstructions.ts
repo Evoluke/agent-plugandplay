@@ -47,12 +47,20 @@ export async function updateAgentInstructions(agentId: string) {
       )
       .join("\n\n") ?? "";
 
+  const collectionArray_var = onboardingRes.data?.collection ?? [];
+  const collectionString_var = collectionArray_var
+    .map((item: { question: string }, index: number) =>
+      `[var_${index}] - ${item.question}`
+    )
+    .join("\n");
+
   const instructions = {
     ...(agentRes.data ?? {}),
     ...(personalityRes.data ?? {}),
     ...(behaviorRes.data ?? {}),
     ...(onboardingRes.data ?? {}),
     collection: collectionString,
+    collection_var: collectionString_var,
     specific_instructions: specificInstructionsString,
   } as Record<string, unknown>;
 
