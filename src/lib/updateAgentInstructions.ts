@@ -31,8 +31,9 @@ export async function updateAgentInstructions(agentId: string) {
 
   const collectionArray = onboardingRes.data?.collection ?? [];
   const collectionString = collectionArray
-    .map((item: { question: string }, index: number) =>
-      `[var_${index}] - ${item.question}`
+    .map(
+      (item: { question: string }, index: number) =>
+        `${index + 2}. Se [var_${index}] não estiver preenchido, pergunte: "${item.question}"`
     )
     .join("\n");
 
