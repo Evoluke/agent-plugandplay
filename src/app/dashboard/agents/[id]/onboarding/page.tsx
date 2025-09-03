@@ -80,8 +80,8 @@ export default function AgentOnboardingPage() {
   const showCollection =
     agent.type === "pre-qualificacao" || agent.type === "atendimento";
 
-  const welcomeMessageValid = welcomeMessage.trim().length <= 500;
-  const painPointsValid = painPoints.trim().length <= 500;
+  const welcomeMessageValid = welcomeMessage.trim().length <= 255;
+  const painPointsValid = painPoints.trim().length <= 255;
   const filledCollectionCount = collection.filter(
     (item) => item.question.trim() && item.information.trim()
   ).length;
@@ -95,7 +95,7 @@ export default function AgentOnboardingPage() {
         if (question && !information) return false;
         if (!question && information) return false;
 
-        return question.length <= 200 && information.length <= 200;
+        return question.length <= 120 && information.length <= 120;
       })
     : true;
 
@@ -173,15 +173,15 @@ export default function AgentOnboardingPage() {
                 value={welcomeMessage}
                 onChange={(e) => setWelcomeMessage(e.target.value)}
                 className="resize-y max-h-50 overflow-auto"
-                maxLength={500}
+                maxLength={255}
               />
               <div className="flex justify-between text-xs text-gray-500">
                 <p>exemplo: Oii! Sou a IA da Evoluke.</p>
-                <p className="text-gray-400">0 a 500 caracteres</p>
+                <p className="text-gray-400">0 a 255 caracteres</p>
               </div>
               {welcomeMessage && !welcomeMessageValid && (
                 <p className="text-xs text-red-500">
-                  A mensagem deve ter no máximo 500 caracteres
+                  A mensagem deve ter no máximo 255 caracteres
                 </p>
               )}
             </div>
@@ -195,15 +195,15 @@ export default function AgentOnboardingPage() {
                 value={painPoints}
                 onChange={(e) => setPainPoints(e.target.value)}
                 className="resize-y max-h-50 overflow-auto"
-                maxLength={500}
+                maxLength={255}
               />
               <div className="flex justify-between text-xs text-gray-500">
                 <p>Use para direcionar a coleta de informações.</p>
-                <p className="text-gray-400">0 a 500 caracteres</p>
+                <p className="text-gray-400">0 a 255 caracteres</p>
               </div>
               {painPoints && !painPointsValid && (
                 <p className="text-xs text-red-500">
-                  O texto deve ter no máximo 500 caracteres
+                  O texto deve ter no máximo 255 caracteres
                 </p>
               )}
             </div>
@@ -225,15 +225,15 @@ export default function AgentOnboardingPage() {
                         onChange={(e) =>
                           handleQuestionChange(index, e.target.value)
                         }
-                        maxLength={200}
+                        maxLength={120}
                       />
                       <div className="flex justify-between text-xs text-gray-500">
                         <p>Nome, telefone, preferência de horário.</p>
-                        <p className="text-gray-400">0 a 200 caracteres</p>
+                        <p className="text-gray-400">0 a 120 caracteres</p>
                       </div>
-                      {item.question && item.question.trim().length > 200 && (
+                      {item.question && item.question.trim().length > 120 && (
                         <p className="text-xs text-red-500">
-                          A pergunta deve ter no máximo 200 caracteres
+                          A pergunta deve ter no máximo 120 caracteres
                         </p>
                       )}
                     </div>
@@ -251,15 +251,15 @@ export default function AgentOnboardingPage() {
                         onChange={(e) =>
                           handleInformationChange(index, e.target.value)
                         }
-                        maxLength={200}
+                        maxLength={120}
                       />
                       <div className="flex justify-end text-xs text-gray-500">
-                        <p className="text-gray-400">0 a 200 caracteres</p>
+                        <p className="text-gray-400">0 a 120 caracteres</p>
                       </div>
                       {item.information &&
-                        item.information.trim().length > 200 && (
+                        item.information.trim().length > 120 && (
                           <p className="text-xs text-red-500">
-                            A explicação deve ter no máximo 200 caracteres
+                            A explicação deve ter no máximo 120 caracteres
                           </p>
                         )}
                     </div>

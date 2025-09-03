@@ -83,7 +83,7 @@ export default function AgentSpecificInstructionsPage() {
         f.userSays.trim().length > 0 &&
         f.userSays.trim().length <= 255 &&
         f.action.trim().length > 0 &&
-        f.action.trim().length <= 500
+        f.action.trim().length <= 255
     );
   const isFormValid = faqValid;
 
@@ -247,18 +247,18 @@ export default function AgentSpecificInstructionsPage() {
                       )
                     }
                     className="resize-y max-h-50 overflow-auto"
-                    maxLength={500}
+                    maxLength={255}
                   />
                   <div className="flex justify-between text-xs text-gray-500">
                     <p>Resposta ou ação do agente.</p>
-                    <p className="text-gray-400">1 a 500 caracteres</p>
+                    <p className="text-gray-400">1 a 255 caracteres</p>
                   </div>
                   {showErrors && faq.action.trim() === "" && (
                     <p className="text-xs text-red-500">A ação é obrigatória</p>
                   )}
-                  {showErrors && faq.action.trim().length > 500 && (
+                  {showErrors && faq.action.trim().length > 255 && (
                     <p className="text-xs text-red-500">
-                      A ação deve ter no máximo 500 caracteres
+                      A ação deve ter no máximo 255 caracteres
                     </p>
                   )}
                 </div>

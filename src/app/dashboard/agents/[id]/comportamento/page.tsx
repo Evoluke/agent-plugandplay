@@ -54,7 +54,7 @@ export default function AgentBehaviorPage() {
   }, [id]);
 
   if (!agent) return <div>Carregando...</div>;
-  const limitationsValid = limitations.trim().length <= 500;
+  const limitationsValid = limitations.trim().length <= 255;
   const fallbackValid = fallback.trim().length >= 10 && fallback.trim().length <= 200;
   const isFormValid = limitationsValid && fallbackValid;
 
@@ -102,15 +102,15 @@ export default function AgentBehaviorPage() {
                 value={limitations}
                 onChange={(e) => setLimitations(e.target.value)}
                 className="resize-y max-h-50 overflow-auto"
-                maxLength={500}
+                maxLength={255}
               />
               <div className="flex justify-between text-xs text-gray-500">
                 <p>O que deve escalar para humano.</p>
-                <p className="text-gray-400">0 a 500 caracteres</p>
+                <p className="text-gray-400">0 a 255 caracteres</p>
               </div>
               {limitations && !limitationsValid && (
                 <p className="text-xs text-red-500">
-                  As limitações devem ter no máximo 500 caracteres
+                  As limitações devem ter no máximo 255 caracteres
                 </p>
               )}
             </div>
