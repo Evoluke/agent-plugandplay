@@ -15,7 +15,7 @@ export async function updateAgentInstructions(agentId: string) {
         .single(),
       supabasebrowser
         .from("agent_behavior")
-        .select("limitations, forbidden_words, default_fallback")
+        .select("limitations, default_fallback")
         .eq("agent_id", agentId)
         .single(),
       supabasebrowser

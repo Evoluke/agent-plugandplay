@@ -26,7 +26,6 @@ export default function AgentBehaviorPage() {
   const id = params?.id as string;
   const [agent, setAgent] = useState<Agent | null>(null);
   const [limitations, setLimitations] = useState("");
-  const [forbiddenWords, setForbiddenWords] = useState("");
   const [fallback, setFallback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,13 +42,12 @@ export default function AgentBehaviorPage() {
 
     supabasebrowser
       .from("agent_behavior")
-      .select("limitations, forbidden_words, default_fallback")
+      .select("limitations, default_fallback")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
         if (data) {
           setLimitations(data.limitations);
-          setForbiddenWords(data.forbidden_words);
           setFallback(data.default_fallback);
         }
       });
@@ -57,10 +55,8 @@ export default function AgentBehaviorPage() {
 
   if (!agent) return <div>Carregando...</div>;
   const limitationsValid = limitations.trim().length <= 500;
-  const forbiddenWordsValid = forbiddenWords.trim().length <= 500;
   const fallbackValid = fallback.trim().length >= 10 && fallback.trim().length <= 200;
-  const isFormValid =
-    limitationsValid && forbiddenWordsValid && fallbackValid;
+  const isFormValid = limitationsValid && fallbackValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +69,6 @@ export default function AgentBehaviorPage() {
         {
           agent_id: id,
           limitations,
-          forbidden_words: forbiddenWords,
           default_fallback: fallback,
         },
         { onConflict: "agent_id" }
@@ -116,28 +111,6 @@ export default function AgentBehaviorPage() {
               {limitations && !limitationsValid && (
                 <p className="text-xs text-red-500">
                   As limitações devem ter no máximo 500 caracteres
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="forbiddenWords" className="text-sm font-medium">
-                Palavras proibidas
-              </label>
-              <Textarea
-                id="forbiddenWords"
-                value={forbiddenWords}
-                onChange={(e) => setForbiddenWords(e.target.value)}
-                className="resize-y max-h-50 overflow-auto"
-                maxLength={500}
-              />
-              <div className="flex justify-between text-xs text-gray-500">
-                <p>Filtra expressões e ações.</p>
-                <p className="text-gray-400">0 a 500 caracteres</p>
-              </div>
-              {forbiddenWords && !forbiddenWordsValid && (
-                <p className="text-xs text-red-500">
-                  As palavras proibidas devem ter no máximo 500 caracteres
                 </p>
               )}
             </div>

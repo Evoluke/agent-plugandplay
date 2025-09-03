@@ -96,7 +96,6 @@ create table public.agent_behavior (
   created_at timestamp with time zone not null default now(),
   agent_id uuid not null,
   limitations text not null default ''::text,
-  forbidden_words text not null default ''::text,
   default_fallback text not null,
   qualification_transfer_rule public.qualification_transfer_rule not null default 'never'::qualification_transfer_rule,
   qualification_transfer_conditions text not null default ''::text,
