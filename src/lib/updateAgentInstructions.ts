@@ -38,8 +38,9 @@ export async function updateAgentInstructions(agentId: string) {
   const onboarding: Onboarding = onboardingRes.data ?? {};
   const collection = Array.isArray(onboarding.collection)
     ? onboarding.collection
-        .map((item, index) =>
-          `${index + 2}. Se [${item.information}] não estiver preenchido, pergunte: "${item.question}"`
+        .map(
+          (item, index) =>
+            `${index + 2}. Se [var_${index}] não estiver preenchido, pergunte: "${item.question}"`
         )
         .join("\n")
     : "";
