@@ -64,6 +64,10 @@ export async function updateAgentInstructions(agentId: string) {
     specific_instructions: specificInstructionsString,
   } as Record<string, unknown>;
 
+  if (personalityRes.data?.company_name) {
+    instructions.name = personalityRes.data.company_name;
+  }
+
   await supabasebrowser
     .from("agents")
     .update({ instructions })

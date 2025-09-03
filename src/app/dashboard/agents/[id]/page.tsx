@@ -73,9 +73,9 @@ export default function AgentDetailPage() {
   if (!agent) return <div>Carregando...</div>;
 
   const objectiveValid =
-    objective.trim().length >= 10 && objective.trim().length <= 500;
+    objective.trim().length >= 10 && objective.trim().length <= 255;
   const limitsValid =
-    limits.trim().length >= 10 && limits.trim().length <= 1000;
+    limits.trim().length >= 10 && limits.trim().length <= 500;
   const companyNameValid =
     companyName.trim().length >= 3 && companyName.trim().length <= 100;
   const companySegmentValid =
@@ -223,15 +223,16 @@ export default function AgentDetailPage() {
                 value={objective}
                 onChange={(e) => setObjective(e.target.value)}
                 className="resize-y max-h-50 overflow-auto"
+                maxLength={255}
               />
               <div className="flex justify-between text-xs text-gray-500">
 
               <p>Resume o “por quê” do agente.</p>
-              <p className="text-gray-400">10 a 500 caracteres</p>
+              <p className="text-gray-400">10 a 255 caracteres</p>
               </div>
               {objective && !objectiveValid && (
                 <p className="text-xs text-red-500">
-                  O objetivo deve ter entre 10 e 500 caracteres
+                  O objetivo deve ter entre 10 e 255 caracteres
                 </p>
               )}
             </div>
@@ -245,14 +246,15 @@ export default function AgentDetailPage() {
                 value={limits}
                 onChange={(e) => setLimits(e.target.value)}
                 className="resize-y max-h-50 overflow-auto"
+                maxLength={500}
               />
               <div className="flex justify-between text-xs text-gray-500">
               <p>O que não dizer/fazer.</p>
-              <p className="text-xs text-gray-400">10 a 1000 caracteres</p>
+              <p className="text-xs text-gray-400">10 a 500 caracteres</p>
               </div>
               {limits && !limitsValid && (
                 <p className="text-xs text-red-500">
-                  Os limites devem ter entre 10 e 1000 caracteres
+                  Os limites devem ter entre 10 e 500 caracteres
                 </p>
               )}
             </div>
