@@ -40,6 +40,7 @@ export default function AgentOnboardingPage() {
   const id = params?.id as string;
   const [agent, setAgent] = useState<Agent | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [painPoints, setPainPoints] = useState("");
   const [collection, setCollection] = useState<CollectionItem[]>(
     ensureAtLeastTwo([])
   );
@@ -58,12 +59,13 @@ export default function AgentOnboardingPage() {
 
     supabasebrowser
       .from("agent_onboarding")
-      .select("welcome_message, collection")
+      .select("welcome_message, pain_points, collection")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
         if (data) {
           setWelcomeMessage(data.welcome_message);
+          setPainPoints(data.pain_points);
           if (Array.isArray(data.collection)) {
             setCollection(ensureAtLeastTwo(data.collection));
           }
@@ -78,6 +80,7 @@ export default function AgentOnboardingPage() {
   const showCollection = agent.type === "sdr" || agent.type === "atendimento";
 
   const welcomeMessageValid = welcomeMessage.trim().length <= 500;
+  const painPointsValid = painPoints.trim().length <= 500;
   const filledCollectionCount = collection.filter(
     (item) => item.question.trim() && item.information.trim()
   ).length;
@@ -95,7 +98,7 @@ export default function AgentOnboardingPage() {
       })
     : true;
 
-  const isFormValid = welcomeMessageValid && collectionValid;
+  const isFormValid = welcomeMessageValid && painPointsValid && collectionValid;
 
   const handleQuestionChange = (index: number, value: string) => {
     const newCollection = [...collection];
@@ -135,6 +138,7 @@ export default function AgentOnboardingPage() {
         {
           agent_id: id,
           welcome_message: welcomeMessage,
+          pain_points: painPoints,
           collection: filtered,
         },
         { onConflict: "agent_id" }
@@ -177,6 +181,28 @@ export default function AgentOnboardingPage() {
               {welcomeMessage && !welcomeMessageValid && (
                 <p className="text-xs text-red-500">
                   A mensagem deve ter no máximo 500 caracteres
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="pains" className="text-sm font-medium">
+                Principais dores que a empresa resolve
+              </label>
+              <Textarea
+                id="pains"
+                value={painPoints}
+                onChange={(e) => setPainPoints(e.target.value)}
+                className="resize-y max-h-50 overflow-auto"
+                maxLength={500}
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <p>Use para direcionar a coleta de informações.</p>
+                <p className="text-gray-400">0 a 500 caracteres</p>
+              </div>
+              {painPoints && !painPointsValid && (
+                <p className="text-xs text-red-500">
+                  O texto deve ter no máximo 500 caracteres
                 </p>
               )}
             </div>

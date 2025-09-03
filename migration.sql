@@ -82,6 +82,7 @@ create table public.agent_personality (
   voice_tone public.voice_tone not null,
   objective text not null,
   limits text not null,
+  company_name text not null default ''::text,
   constraint agent_personality_pkey primary key (id),
   constraint agent_personality_agent_id_key unique (agent_id),
   constraint agent_personality_agent_id_fkey foreign key (agent_id) references agents (id)
@@ -111,6 +112,7 @@ create table public.agent_onboarding (
   created_at timestamp with time zone not null default now(),
   agent_id uuid not null,
   welcome_message text not null default ''::text,
+  pain_points character varying(500) not null default ''::character varying,
   collection jsonb not null default '[]'::jsonb,
   constraint agent_onboarding_pkey primary key (id),
   constraint agent_onboarding_agent_id_key unique (agent_id),

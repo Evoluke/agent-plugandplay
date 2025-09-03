@@ -10,7 +10,7 @@ export async function updateAgentInstructions(agentId: string) {
         .single(),
       supabasebrowser
         .from("agent_personality")
-        .select("voice_tone, objective, limits")
+        .select("voice_tone, objective, limits, company_name")
         .eq("agent_id", agentId)
         .single(),
       supabasebrowser
@@ -20,7 +20,7 @@ export async function updateAgentInstructions(agentId: string) {
         .single(),
       supabasebrowser
         .from("agent_onboarding")
-        .select("welcome_message, collection")
+        .select("welcome_message, pain_points, collection")
         .eq("agent_id", agentId)
         .single(),
       supabasebrowser
