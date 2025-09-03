@@ -22,8 +22,8 @@ type Agent = {
 };
 
 const typeLabels: Record<string, string> = {
-  agendamento: "Agendamento",
   sdr: "SDR",
+  "pre-qualificacao": "Pré-qualificação",
   suporte: "Suporte",
 };
 
