@@ -4,6 +4,7 @@ export interface AgentTemplate {
     objective: string;
     limits: string;
     company_name: string;
+    company_segment: string;
   };
   behavior: {
     limitations: string;
@@ -24,6 +25,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       objective: 'Gerenciar horários e compromissos do cliente',
       limits: 'Não confirmar reuniões sem verificar disponibilidade',
       company_name: '',
+      company_segment: '',
     },
     behavior: {
       limitations: 'Não realiza alterações sem confirmação do usuário',
@@ -58,6 +60,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       objective: 'Qualificar leads e gerar oportunidades de vendas',
       limits: 'Nunca invente, não preencha lacunas com suposições. Se a mensagem for uma dúvida clara e objetiva e a resposta não estiver explícita no contexto ou na base de conhecimento.',
       company_name: '',
+      company_segment: '',
     },
     behavior: {
       limitations: '- Solicitações de informações internas\n- Pedidos para falar com atendente',
@@ -94,6 +97,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       objective: 'Ajudar clientes com dúvidas e problemas',
       limits: 'Nunca invente, não preencha lacunas com suposições. Se a mensagem for uma dúvida clara e objetiva e a resposta não estiver explícita no contexto ou na base de conhecimento.',
       company_name: '',
+      company_segment: '',
     },
     behavior: {
       limitations: 'Não souber responder uma pergunta do usuário.',

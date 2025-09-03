@@ -38,6 +38,7 @@ export default function AgentDetailPage() {
   const [objective, setObjective] = useState("");
   const [limits, setLimits] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [companySegment, setCompanySegment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
@@ -55,7 +56,7 @@ export default function AgentDetailPage() {
 
     supabasebrowser
       .from("agent_personality")
-      .select("voice_tone,objective,limits,company_name")
+      .select("voice_tone,objective,limits,company_name,company_segment")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
@@ -64,6 +65,7 @@ export default function AgentDetailPage() {
           setObjective(data.objective);
           setLimits(data.limits);
           setCompanyName(data.company_name);
+          setCompanySegment(data.company_segment);
         }
       });
   }, [id]);
@@ -76,12 +78,16 @@ export default function AgentDetailPage() {
     limits.trim().length >= 10 && limits.trim().length <= 1000;
   const companyNameValid =
     companyName.trim().length >= 3 && companyName.trim().length <= 100;
+  const companySegmentValid =
+    companySegment.trim().length >= 3 &&
+    companySegment.trim().length <= 100;
   const isFormValid =
     isValidAgentName(name) &&
     tone !== "" &&
     objectiveValid &&
     limitsValid &&
-    companyNameValid;
+    companyNameValid &&
+    companySegmentValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +108,7 @@ export default function AgentDetailPage() {
           objective,
           limits,
           company_name: companyName,
+          company_segment: companySegment,
         },
         { onConflict: "agent_id" }
       );
@@ -126,59 +133,83 @@ export default function AgentDetailPage() {
             Defina a personalidade e os objetivos do agente.
           </p>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="flex flex-col gap-4 md:flex-row">
-              <div className="flex-1 space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Nome interno
-                </label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <div className="flex justify-between text-xs text-gray-500">
-                  <p>Identifica o agente no dashboard.</p>
-                  <p className="text-gray-400"> 3 a 50 caracteres</p>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 md:flex-row">
+                <div className="flex-1 space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium">
+                    Nome interno
+                  </label>
+                  <Input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>Identifica o agente no dashboard.</p>
+                    <p className="text-gray-400"> 3 a 50 caracteres</p>
+                  </div>
+                  {name && !isValidAgentName(name) && (
+                    <p className="text-xs text-red-500">
+                      O nome deve ter entre 3 e 50 caracteres
+                    </p>
+                  )}
                 </div>
-                {name && !isValidAgentName(name) && (
-                  <p className="text-xs text-red-500">
-                    O nome deve ter entre 3 e 50 caracteres
-                  </p>
-                )}
+
+                <div className="flex-1 space-y-2">
+                  <label htmlFor="company" className="text-sm font-medium">
+                    Empresa
+                  </label>
+                  <Input
+                    id="company"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>Nome da empresa que o agente representa.</p>
+                    <p className="text-gray-400">3 a 100 caracteres</p>
+                  </div>
+                  {companyName && !companyNameValid && (
+                    <p className="text-xs text-red-500">
+                      O nome deve ter entre 3 e 100 caracteres
+                    </p>
+                  )}
+                </div>
               </div>
 
-              <div className="flex-1 space-y-2">
-                <label htmlFor="company" className="text-sm font-medium">
-                  Empresa
-                </label>
-                <Input
-                  id="company"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                />
-                <div className="flex justify-between text-xs text-gray-500">
-                  <p>Nome da empresa que o agente representa.</p>
-                  <p className="text-gray-400">3 a 100 caracteres</p>
+              <div className="flex flex-col gap-4 md:flex-row">
+                <div className="flex-1 space-y-2">
+                  <label htmlFor="segment" className="text-sm font-medium">
+                    Segmento da empresa
+                  </label>
+                  <Input
+                    id="segment"
+                    value={companySegment}
+                    onChange={(e) => setCompanySegment(e.target.value)}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <p>Setor em que a empresa atua.</p>
+                    <p className="text-gray-400">3 a 100 caracteres</p>
+                  </div>
+                  {companySegment && !companySegmentValid && (
+                    <p className="text-xs text-red-500">
+                      O segmento deve ter entre 3 e 100 caracteres
+                    </p>
+                  )}
                 </div>
-                {companyName && !companyNameValid && (
-                  <p className="text-xs text-red-500">
-                    O nome deve ter entre 3 e 100 caracteres
-                  </p>
-                )}
-              </div>
 
-              <div className="flex-1 space-y-2">
-                <label className="text-sm font-medium">Tom de voz</label>
-                <Select value={tone} onValueChange={setTone}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tom" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="formal">Formal</SelectItem>
-                    <SelectItem value="casual">Casual</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500">Define estilo de resposta</p>
+                <div className="flex-1 space-y-2">
+                  <label className="text-sm font-medium">Tom de voz</label>
+                  <Select value={tone} onValueChange={setTone}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tom" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="formal">Formal</SelectItem>
+                      <SelectItem value="casual">Casual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-gray-500">Define estilo de resposta</p>
+                </div>
               </div>
             </div>
 
