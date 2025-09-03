@@ -55,7 +55,7 @@ create table public.payments (
 
 
 -- Enum para tipos de agente
-create type public.agent_type as enum ('agendamento', 'sdr', 'suporte');
+create type public.agent_type as enum ('agendamento', 'pre-qualificacao', 'sdr');
 
 -- Tabela de agentes de IA
 create table public.agents (

@@ -4,8 +4,8 @@ export const AGENT_PRICE = 599;
 
 export const ALLOWED_AGENT_TYPES = [
   "agendamento",
+  "pre-qualificacao",
   "sdr",
-  "suporte",
 ];
 
 export const ALLOWED_KNOWLEDGE_MIME_TYPES = [

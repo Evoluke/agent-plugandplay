@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 
 const items = [
-  {
-    title: "Dentistas",
-    description: "Agende mais consultas com um atendente 24h",
-    icon: Smile,
-  },
+    {
+      title: "Dentistas",
+      description: "Agende mais consultas com um SDR 24h",
+      icon: Smile,
+    },
   {
     title: "Médicos",
     description: "Automatize agendamentos e reduza o tempo de resposta.",

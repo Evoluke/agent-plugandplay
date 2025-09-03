@@ -10,7 +10,7 @@ const slides = [
         <p>
           Permitimos que sua empresa crie e personalize um agente virtual com inteligência artificial de forma simples e rápida.
           Integrado ao nosso CRM, ele responde dúvidas, coleta informações,
-          qualifica leads e transfere para um atendente humano sempre que necessário — garantindo agilidade,
+          qualifica leads e transfere para um SDR humano sempre que necessário — garantindo agilidade,
           eficiência e uma experiência impecável para seus clientes.
         </p>
         <h3 className="mt-4 font-semibold">Benefícios em poucas linhas</h3>
@@ -39,7 +39,7 @@ const slides = [
           <h4 className="font-semibold">Passo 1 — Criação do Agente</h4>
           <p className="mt-2 font-medium">O que você faz</p>
           <ul className="list-disc pl-5">
-            <li>Escolhe o modelo do agente (ex.: SDR/Vendas, Suporte).</li>
+              <li>Escolhe o modelo do agente (ex.: Pré-qualificação/Vendas, SDR).</li>
             <li>Define o nome interno do agente.</li>
           </ul>
           <p className="mt-2">

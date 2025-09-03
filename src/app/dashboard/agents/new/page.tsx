@@ -40,13 +40,13 @@ export default function NewAgentPage() {
       disabled: true,
     },
     {
-      value: "sdr",
-      title: "SDR",
+      value: "pre-qualificacao",
+      title: "Pré-qualificação",
       description: "Qualifica e interage com leads",
     },
     {
-      value: "suporte",
-      title: "Suporte",
+      value: "sdr",
+      title: "SDR",
       description: "Responde dúvidas e auxilia clientes",
     },
   ];

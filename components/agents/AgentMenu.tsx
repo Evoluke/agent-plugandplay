@@ -23,8 +23,8 @@ type Agent = {
 
 const typeLabels: Record<string, string> = {
   agendamento: "Agendamento",
+  "pre-qualificacao": "Pré-qualificação",
   sdr: "SDR",
-  suporte: "Suporte",
 };
 
 export default function AgentMenu({ agent }: { agent: Agent }) {
