@@ -29,11 +29,23 @@ export async function updateAgentInstructions(agentId: string) {
         .eq("agent_id", agentId),
     ]);
 
+  const onboarding = onboardingRes.data ?? {};
+  const collection = Array.isArray(onboarding.collection)
+    ? onboarding.collection
+        .map(
+          (item: { question: string; information: string }, index: number) =>
+            `${index + 2}. Se [${item.information}] não estiver preenchido, pergunte: "${item.question}"`
+        )
+        .join("\n")
+    : "";
+
   const instructions = {
     ...(agentRes.data ?? {}),
     ...(personalityRes.data ?? {}),
     ...(behaviorRes.data ?? {}),
-    ...(onboardingRes.data ?? {}),
+    welcome_message: onboarding.welcome_message,
+    pain_points: onboarding.pain_points,
+    collection,
     specific_instructions: specificRes.data ?? [],
   } as Record<string, unknown>;
 
