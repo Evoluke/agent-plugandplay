@@ -36,13 +36,23 @@ export async function updateAgentInstructions(agentId: string) {
     )
     .join("\n");
 
+  const specificInstructionsString =
+    specificRes.data
+      ?.map(
+        (item: { context?: string; user_says?: string; action?: string }) =>
+          `Context: "${item.context ?? ""}"\n` +
+          `User says: "${item.user_says ?? ""}"\n` +
+          `Act like this: "${item.action ?? ""}"`
+      )
+      .join("\n\n") ?? "";
+
   const instructions = {
     ...(agentRes.data ?? {}),
     ...(personalityRes.data ?? {}),
     ...(behaviorRes.data ?? {}),
     ...(onboardingRes.data ?? {}),
     collection: collectionString,
-    specific_instructions: specificRes.data ?? [],
+    specific_instructions: specificInstructionsString,
   } as Record<string, unknown>;
 
   await supabasebrowser
