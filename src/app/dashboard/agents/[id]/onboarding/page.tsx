@@ -77,7 +77,8 @@ export default function AgentOnboardingPage() {
 
   if (!agent) return <div>Carregando...</div>;
 
-  const showCollection = agent.type === "sdr" || agent.type === "atendimento";
+  const showCollection =
+    agent.type === "pre-qualificacao" || agent.type === "atendimento";
 
   const welcomeMessageValid = welcomeMessage.trim().length <= 500;
   const painPointsValid = painPoints.trim().length <= 500;

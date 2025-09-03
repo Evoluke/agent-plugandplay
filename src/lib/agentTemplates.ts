@@ -18,7 +18,7 @@ export interface AgentTemplate {
 }
 
 export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
-  agendamento: {
+  sdr: {
     personality: {
       voice_tone: 'formal',
       objective: 'Gerenciar horários e compromissos do cliente',
@@ -52,7 +52,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       },
     ],
   },
-  sdr: {
+  "pre-qualificacao": {
     personality: {
       voice_tone: 'casual',
       objective: 'Qualificar leads e gerar oportunidades de vendas',

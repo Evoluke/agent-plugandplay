@@ -34,14 +34,14 @@ export default function NewAgentPage() {
 
   const agentTypes = [
     {
-      value: "agendamento",
-      title: "Agendamento",
+      value: "sdr",
+      title: "SDR",
       description: "Gerencia horários e calendários",
       disabled: true,
     },
     {
-      value: "sdr",
-      title: "SDR",
+      value: "pre-qualificacao",
+      title: "Pré-qualificação",
       description: "Qualifica e interage com leads",
     },
     {
