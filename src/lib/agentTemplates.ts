@@ -6,7 +6,6 @@ export interface AgentTemplate {
   };
   behavior: {
     limitations: string;
-    forbidden_words: string;
     default_fallback: string;
   };
   onboarding: {
@@ -25,7 +24,6 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
     },
     behavior: {
       limitations: 'Não realiza alterações sem confirmação do usuário',
-      forbidden_words: 'gírias, palavras ofensivas',
       default_fallback:
         'Não consegui compreender, poderia reformular o pedido de agendamento?',
     },
@@ -58,7 +56,6 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
     },
     behavior: {
       limitations: '- Solicitações de informações internas\n- Pedidos para falar com atendente',
-      forbidden_words: 'promessas de preço, descontos garantidos, agendamento de reuniões/consultas',
       default_fallback:
         'Agora não consigo te ajudar, mas vou te direcionar para um de nossos atendentes que poderá atender você.',
     },
@@ -93,7 +90,6 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
     },
     behavior: {
       limitations: 'Não souber responder uma pergunta do usuário.',
-      forbidden_words: 'termos técnicos complexos',
       default_fallback:
         'Ainda não sei responder isso, mas vou te direcionar para um de nossos atendentes que poderá atender você.',
     },

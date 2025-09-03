@@ -106,11 +106,11 @@ export default function NewAgentPage() {
 
     const template = AGENT_TEMPLATES[type];
     if (template) {
-      const behavior = template.behavior ?? {
-        limitations: "",
-        forbidden_words: "",
-        default_fallback: "",
-      };
+      const behavior =
+        template.behavior ?? {
+          limitations: "",
+          default_fallback: "",
+        };
       const inserts = [];
       inserts.push(
         supabasebrowser.from("agent_personality").insert({

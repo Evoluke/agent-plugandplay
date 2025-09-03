@@ -51,7 +51,7 @@ const slides = [
           <p className="mt-2 font-medium">O que você define no painel</p>
           <ul className="list-disc pl-5">
             <li>Personalidade: qual tom de voz, objetivo e limite do agente. </li>
-            <li>Comportamento: quando deve escalar para atendimento humano, palavras proibidas.</li>
+            <li>Comportamento: quando deve escalar para atendimento humano.</li>
             <li>Onboarding: O que o agente precisa coletar de informações para qualificar o lead.</li>
             <li>Base de conhecimento: carregue documentos que servirão de referência para o agente.</li>
             <li>Instruções específicas: detalhe orientações e casos especiais.</li>
