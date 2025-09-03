@@ -29,12 +29,17 @@ export async function updateAgentInstructions(agentId: string) {
         .eq("agent_id", agentId),
     ]);
 
-  const onboarding = onboardingRes.data ?? {};
+  type Onboarding = {
+    welcome_message?: string;
+    pain_points?: string;
+    collection?: { question: string; information: string }[];
+  };
+
+  const onboarding: Onboarding = onboardingRes.data ?? {};
   const collection = Array.isArray(onboarding.collection)
     ? onboarding.collection
-        .map(
-          (item: { question: string; information: string }, index: number) =>
-            `${index + 2}. Se [${item.information}] não estiver preenchido, pergunte: "${item.question}"`
+        .map((item, index) =>
+          `${index + 2}. Se [${item.information}] não estiver preenchido, pergunte: "${item.question}"`
         )
         .join("\n")
     : "";
