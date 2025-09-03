@@ -3,6 +3,7 @@ export interface AgentTemplate {
     voice_tone: 'formal' | 'casual';
     objective: string;
     limits: string;
+    company_name: string;
   };
   behavior: {
     limitations: string;
@@ -10,6 +11,7 @@ export interface AgentTemplate {
   };
   onboarding: {
     welcome_message: string;
+    pain_points: string;
     collection: { question: string; information: string }[];
   };
   specificInstructions: { context: string; user_says: string; action: string }[];
@@ -21,6 +23,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       voice_tone: 'formal',
       objective: 'Gerenciar horários e compromissos do cliente',
       limits: 'Não confirmar reuniões sem verificar disponibilidade',
+      company_name: '',
     },
     behavior: {
       limitations: 'Não realiza alterações sem confirmação do usuário',
@@ -29,6 +32,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
     },
     onboarding: {
       welcome_message: 'Olá! Vou ajudar com seus agendamentos.',
+      pain_points: '',
       collection: [
         {
           question: 'Qual é o seu nome completo?',
@@ -53,6 +57,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       voice_tone: 'casual',
       objective: 'Qualificar leads e gerar oportunidades de vendas',
       limits: 'Nunca invente, não preencha lacunas com suposições. Se a mensagem for uma dúvida clara e objetiva e a resposta não estiver explícita no contexto ou na base de conhecimento.',
+      company_name: '',
     },
     behavior: {
       limitations: '- Solicitações de informações internas\n- Pedidos para falar com atendente',
@@ -62,6 +67,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
     onboarding: {
       welcome_message:
         'Olá! Sou o agente SDR e estou aqui para te ajudar!',
+      pain_points: '',
       collection: [
         {
           question: 'Qual é o segmento da sua empresa?',
@@ -87,6 +93,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
       voice_tone: 'formal',
       objective: 'Ajudar clientes com dúvidas e problemas',
       limits: 'Nunca invente, não preencha lacunas com suposições. Se a mensagem for uma dúvida clara e objetiva e a resposta não estiver explícita no contexto ou na base de conhecimento.',
+      company_name: '',
     },
     behavior: {
       limitations: 'Não souber responder uma pergunta do usuário.',
@@ -95,6 +102,7 @@ export const AGENT_TEMPLATES: Record<string, AgentTemplate> = {
     },
     onboarding: {
       welcome_message: 'Olá! Estou aqui para ajudar com o suporte.',
+      pain_points: '',
       collection: [],
     },
     specificInstructions: [

@@ -37,6 +37,7 @@ export default function AgentDetailPage() {
   const [tone, setTone] = useState("");
   const [objective, setObjective] = useState("");
   const [limits, setLimits] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
@@ -54,7 +55,7 @@ export default function AgentDetailPage() {
 
     supabasebrowser
       .from("agent_personality")
-      .select("voice_tone,objective,limits")
+      .select("voice_tone,objective,limits,company_name")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
@@ -62,6 +63,7 @@ export default function AgentDetailPage() {
           setTone(data.voice_tone);
           setObjective(data.objective);
           setLimits(data.limits);
+          setCompanyName(data.company_name);
         }
       });
   }, [id]);
@@ -72,8 +74,14 @@ export default function AgentDetailPage() {
     objective.trim().length >= 10 && objective.trim().length <= 500;
   const limitsValid =
     limits.trim().length >= 10 && limits.trim().length <= 1000;
+  const companyNameValid =
+    companyName.trim().length >= 3 && companyName.trim().length <= 100;
   const isFormValid =
-    isValidAgentName(name) && tone !== "" && objectiveValid && limitsValid;
+    isValidAgentName(name) &&
+    tone !== "" &&
+    objectiveValid &&
+    limitsValid &&
+    companyNameValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +96,13 @@ export default function AgentDetailPage() {
     const { error: personalityError } = await supabasebrowser
       .from("agent_personality")
       .upsert(
-        { agent_id: id, voice_tone: tone, objective, limits },
+        {
+          agent_id: id,
+          voice_tone: tone,
+          objective,
+          limits,
+          company_name: companyName,
+        },
         { onConflict: "agent_id" }
       );
 
@@ -117,7 +131,11 @@ export default function AgentDetailPage() {
                 <label htmlFor="name" className="text-sm font-medium">
                   Nome interno
                 </label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
                 <div className="flex justify-between text-xs text-gray-500">
                   <p>Identifica o agente no dashboard.</p>
                   <p className="text-gray-400"> 3 a 50 caracteres</p>
@@ -125,6 +143,26 @@ export default function AgentDetailPage() {
                 {name && !isValidAgentName(name) && (
                   <p className="text-xs text-red-500">
                     O nome deve ter entre 3 e 50 caracteres
+                  </p>
+                )}
+              </div>
+
+              <div className="flex-1 space-y-2">
+                <label htmlFor="company" className="text-sm font-medium">
+                  Empresa
+                </label>
+                <Input
+                  id="company"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                />
+                <div className="flex justify-between text-xs text-gray-500">
+                  <p>Nome da empresa que o agente representa.</p>
+                  <p className="text-gray-400">3 a 100 caracteres</p>
+                </div>
+                {companyName && !companyNameValid && (
+                  <p className="text-xs text-red-500">
+                    O nome deve ter entre 3 e 100 caracteres
                   </p>
                 )}
               </div>
