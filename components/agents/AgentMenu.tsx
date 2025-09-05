@@ -12,6 +12,7 @@ import {
   BookOpen,
   Database,
   ClipboardList,
+  Plug,
 } from "lucide-react";
 
 type Agent = {
@@ -49,6 +50,14 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
     { label: "Base de conhecimento", icon: Database, href: `/dashboard/agents/${agent.id}/base-conhecimento` },
     { label: "Instruções Específicas", icon: ClipboardList, href: `/dashboard/agents/${agent.id}/instrucoes-especificas` },
   ];
+
+  if (agent.type === "sdr") {
+    menuItems.push({
+      label: "Integrações",
+      icon: Plug,
+      href: `/dashboard/agents/${agent.id}/integracoes`,
+    });
+  }
 
   return (
     <div className="flex justify-center">

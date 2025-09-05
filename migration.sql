@@ -164,3 +164,16 @@ create table public.dashboard_alerts (
   end_date date not null,
   constraint dashboard_alerts_pkey primary key (id)
 ) TABLESPACE pg_default;
+
+-- Tabela de integração com Google Calendar dos agentes
+create table public.agent_google_calendar (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  agent_id uuid not null,
+  client_email text not null,
+  private_key text not null,
+  is_valid boolean not null default false,
+  constraint agent_google_calendar_pkey primary key (id),
+  constraint agent_google_calendar_agent_id_key unique (agent_id),
+  constraint agent_google_calendar_agent_id_fkey foreign key (agent_id) references agents (id)
+) TABLESPACE pg_default;
