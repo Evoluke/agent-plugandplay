@@ -1,0 +1,53 @@
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseadmin } from "@/lib/supabaseAdmin";
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
+  if (!code || !state) {
+    return NextResponse.json({ error: "missing code or state" }, { status: 400 });
+  }
+
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+  if (!clientId || !clientSecret || !redirectUri) {
+    return NextResponse.json({ error: "Google OAuth not configured" }, { status: 500 });
+  }
+
+  try {
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }),
+    });
+    const tokens = await tokenRes.json();
+    const { access_token, refresh_token, expires_in } = tokens;
+    if (!access_token || !refresh_token) {
+      return NextResponse.json({ error: "invalid tokens" }, { status: 400 });
+    }
+    const expiry_date = new Date(Date.now() + expires_in * 1000).toISOString();
+
+    await supabaseadmin
+      .from("agent_google_tokens")
+      .upsert({
+        agent_id: state,
+        access_token,
+        refresh_token,
+        expiry_date,
+      }, { onConflict: "agent_id" });
+
+    const redirect = new URL(`/dashboard/agents/${state}/integracoes`, req.url);
+    return NextResponse.redirect(redirect);
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "oauth error" }, { status: 500 });
+  }
+}
