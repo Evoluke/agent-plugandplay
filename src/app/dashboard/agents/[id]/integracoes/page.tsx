@@ -27,6 +27,7 @@ export default function AgentIntegrationsPage() {
   const [connected, setConnected] = useState(false);
   const [scheduleStart, setScheduleStart] = useState("");
   const [scheduleEnd, setScheduleEnd] = useState("");
+  const [scheduleDays, setScheduleDays] = useState<string[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -41,13 +42,14 @@ export default function AgentIntegrationsPage() {
 
     supabasebrowser
       .from("agent_google_tokens")
-      .select("schedule_start, schedule_end")
+      .select("schedule_start, schedule_end, schedule_days")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
         setConnected(!!data);
         setScheduleStart(data?.schedule_start ?? "");
         setScheduleEnd(data?.schedule_end ?? "");
+        setScheduleDays(data?.schedule_days ?? []);
       });
   }, [id]);
 
@@ -73,16 +75,29 @@ export default function AgentIntegrationsPage() {
     setConnected(false);
     setScheduleStart("");
     setScheduleEnd("");
+    setScheduleDays([]);
   };
 
   const handleSaveSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
+
+    const startParts = scheduleStart.split(":").map(Number);
+    const endParts = scheduleEnd.split(":").map(Number);
+    const startMinutes = startParts[0] * 60 + startParts[1];
+    const endMinutes = endParts[0] * 60 + endParts[1];
+
+    if (endMinutes <= startMinutes) {
+      toast.error("O horário final deve ser maior que o inicial.");
+      return;
+    }
+
     const { error } = await supabasebrowser
       .from("agent_google_tokens")
       .update({
         schedule_start: scheduleStart,
         schedule_end: scheduleEnd,
+        schedule_days: scheduleDays,
       })
       .eq("agent_id", id);
     if (error) {
@@ -91,6 +106,16 @@ export default function AgentIntegrationsPage() {
       toast.success("Horários salvos com sucesso.");
     }
   };
+
+  const weekdays = [
+    { value: "monday", label: "Segunda" },
+    { value: "tuesday", label: "Terça" },
+    { value: "wednesday", label: "Quarta" },
+    { value: "thursday", label: "Quinta" },
+    { value: "friday", label: "Sexta" },
+    { value: "saturday", label: "Sábado" },
+    { value: "sunday", label: "Domingo" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -113,6 +138,9 @@ export default function AgentIntegrationsPage() {
                   <label htmlFor="scheduleStart" className="text-sm font-medium">
                     Início da janela
                   </label>
+                  <p className="text-xs text-muted-foreground">
+                    Horário inicial em que o agente pode agendar eventos.
+                  </p>
                   <Input
                     id="scheduleStart"
                     type="time"
@@ -124,12 +152,39 @@ export default function AgentIntegrationsPage() {
                   <label htmlFor="scheduleEnd" className="text-sm font-medium">
                     Fim da janela
                   </label>
+                  <p className="text-xs text-muted-foreground">
+                    Horário final permitido para agendar eventos.
+                  </p>
                   <Input
                     id="scheduleEnd"
                     type="time"
                     value={scheduleEnd}
                     onChange={(e) => setScheduleEnd(e.target.value)}
                   />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Dias de atendimento</label>
+                <p className="text-xs text-muted-foreground">
+                  Selecione os dias em que o agente pode agendar eventos.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {weekdays.map((day) => (
+                    <label key={day.value} className="flex items-center gap-1">
+                      <input
+                        type="checkbox"
+                        checked={scheduleDays.includes(day.value)}
+                        onChange={() =>
+                          setScheduleDays((prev) =>
+                            prev.includes(day.value)
+                              ? prev.filter((d) => d !== day.value)
+                              : [...prev, day.value]
+                          )
+                        }
+                      />
+                      {day.label}
+                    </label>
+                  ))}
                 </div>
               </div>
               <div className="flex gap-2">
