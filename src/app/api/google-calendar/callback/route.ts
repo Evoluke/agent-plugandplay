@@ -10,11 +10,9 @@ export async function GET(req: NextRequest) {
   }
 
   let agentId: string | undefined;
-  let email: string | undefined;
   try {
     const parsed = JSON.parse(decodeURIComponent(stateParam));
     agentId = parsed.agentId;
-    email = parsed.email;
   } catch {
     return NextResponse.json({ error: "invalid state" }, { status: 400 });
   }
@@ -46,6 +44,16 @@ export async function GET(req: NextRequest) {
     if (!access_token || !refresh_token) {
       return NextResponse.json({ error: "invalid tokens" }, { status: 400 });
     }
+
+    const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+    const user = await userRes.json();
+    const email = user.email as string | undefined;
+    if (!email) {
+      return NextResponse.json({ error: "missing email" }, { status: 400 });
+    }
+
     const expiry_date = new Date(Date.now() + expires_in * 1000).toISOString();
 
     await supabaseadmin

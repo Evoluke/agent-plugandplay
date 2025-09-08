@@ -15,11 +15,9 @@ export async function GET(req: NextRequest) {
   }
 
   const scope = encodeURIComponent(
-    "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly"
+    "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/userinfo.email"
   );
-  const state = encodeURIComponent(
-    JSON.stringify({ agentId, email: email || undefined })
-  );
+  const state = encodeURIComponent(JSON.stringify({ agentId }));
   let authUrl =
     `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
