@@ -52,17 +52,34 @@ export default function AgentIntegrationsPage() {
     }
   };
 
+  const handleDisconnect = async () => {
+    if (!id) return;
+    await fetch(`/api/google-calendar/disconnect?agent_id=${id}`, {
+      method: "DELETE",
+    });
+    setConnected(false);
+  };
+
   return (
     <div className="space-y-6">
       <AgentMenu agent={agent} />
       <AgentGuide />
       <div className="flex justify-center">
-        <Card className="w-full md:w-[90%] p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Google Calendar</h2>
+        <Card className="w-full md:w-[90%] p-6 flex items-center justify-between">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold">Google Calendar</h2>
+            <p className="text-sm text-muted-foreground">
+              {connected
+                ? "Google Calendar conectado."
+                : "Conecte seu calendário para sincronizar eventos."}
+            </p>
+          </div>
           {connected ? (
-            <p>Google Calendar conectado.</p>
+            <Button variant="destructive" onClick={handleDisconnect}>
+              Desconectar
+            </Button>
           ) : (
-            <Button onClick={handleConnect}>Conectar Google Calendar</Button>
+            <Button onClick={handleConnect}>Conectar</Button>
           )}
         </Card>
       </div>
