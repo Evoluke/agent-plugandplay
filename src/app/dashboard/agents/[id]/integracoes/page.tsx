@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
@@ -20,6 +20,7 @@ type Agent = {
 export default function AgentIntegrationsPage() {
   const params = useParams();
   const id = params?.id as string;
+  const router = useRouter();
   const [agent, setAgent] = useState<Agent | null>(null);
   const [connected, setConnected] = useState(false);
 
@@ -44,7 +45,14 @@ export default function AgentIntegrationsPage() {
       });
   }, [id]);
 
+  useEffect(() => {
+    if (agent && agent.type !== "sdr") {
+      router.replace(`/dashboard/agents/${id}`);
+    }
+  }, [agent, id, router]);
+
   if (!agent) return <div>Carregando...</div>;
+  if (agent.type !== "sdr") return null;
 
   const handleConnect = () => {
     if (!id) return;
