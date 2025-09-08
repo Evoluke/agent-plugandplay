@@ -7,6 +7,8 @@ import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { isValidEmail } from "@/lib/validators";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
 
@@ -22,6 +24,8 @@ export default function AgentIntegrationsPage() {
   const id = params?.id as string;
   const [agent, setAgent] = useState<Agent | null>(null);
   const [connected, setConnected] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -42,14 +46,21 @@ export default function AgentIntegrationsPage() {
       .then(({ data }) => {
         setConnected(!!data);
       });
+
+    supabasebrowser.auth.getUser().then(({ data }) => {
+      setEmail(data?.user?.email || "");
+    });
   }, [id]);
 
   if (!agent) return <div>Carregando...</div>;
 
   const handleConnect = () => {
-    if (id) {
-      window.location.href = `/api/google-calendar/auth?agent_id=${id}`;
+    if (!id) return;
+    if (!isValidEmail(email)) {
+      setEmailError("E-mail inválido");
+      return;
     }
+    window.location.href = `/api/google-calendar/auth?agent_id=${id}&email=${encodeURIComponent(email)}`;
   };
 
   const handleDisconnect = async () => {
@@ -64,8 +75,8 @@ export default function AgentIntegrationsPage() {
     <div className="space-y-6">
       <AgentMenu agent={agent} />
       <AgentGuide />
-      <div className="flex justify-center">
-        <Card className="w-full md:w-[90%] p-6 flex items-center justify-between">
+      <div>
+        <Card className="w-full md:w-[90%] p-6 space-y-4">
           <div className="space-y-1">
             <h2 className="text-lg font-semibold">Google Calendar</h2>
             <p className="text-sm text-muted-foreground">
@@ -74,6 +85,31 @@ export default function AgentIntegrationsPage() {
                 : "Conecte seu calendário para sincronizar eventos."}
             </p>
           </div>
+          {!connected && (
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium">
+                E-mail
+              </label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError("");
+                }}
+                onBlur={() =>
+                  setEmailError(
+                    isValidEmail(email) ? "" : "E-mail inválido"
+                  )
+                }
+                required
+              />
+              {emailError && (
+                <p className="text-sm text-destructive mt-1">{emailError}</p>
+              )}
+            </div>
+          )}
           {connected ? (
             <Button variant="destructive" onClick={handleDisconnect}>
               Desconectar

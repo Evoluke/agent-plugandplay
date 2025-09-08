@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const agentId = searchParams.get("agent_id");
+  const email = searchParams.get("email");
   if (!agentId) {
     return NextResponse.json({ error: "missing agent_id" }, { status: 400 });
   }
@@ -14,10 +15,14 @@ export async function GET(req: NextRequest) {
   }
 
   const scope = encodeURIComponent("https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly");
-  const authUrl =
+  let authUrl =
     `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&scope=${scope}&access_type=offline&prompt=consent&state=${agentId}`;
+
+  if (email) {
+    authUrl += `&login_hint=${encodeURIComponent(email)}`;
+  }
 
   return NextResponse.redirect(authUrl);
 }
