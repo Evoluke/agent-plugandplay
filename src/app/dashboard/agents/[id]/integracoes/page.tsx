@@ -7,8 +7,10 @@ import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
+import { toast } from "sonner";
 
 type Agent = {
   id: string;
@@ -23,6 +25,8 @@ export default function AgentIntegrationsPage() {
   const router = useRouter();
   const [agent, setAgent] = useState<Agent | null>(null);
   const [connected, setConnected] = useState(false);
+  const [scheduleStart, setScheduleStart] = useState("");
+  const [scheduleEnd, setScheduleEnd] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -37,11 +41,13 @@ export default function AgentIntegrationsPage() {
 
     supabasebrowser
       .from("agent_google_tokens")
-      .select("agent_id")
+      .select("schedule_start, schedule_end")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
         setConnected(!!data);
+        setScheduleStart(data?.schedule_start ?? "");
+        setScheduleEnd(data?.schedule_end ?? "");
       });
   }, [id]);
 
@@ -65,6 +71,25 @@ export default function AgentIntegrationsPage() {
       method: "DELETE",
     });
     setConnected(false);
+    setScheduleStart("");
+    setScheduleEnd("");
+  };
+
+  const handleSaveSchedule = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id) return;
+    const { error } = await supabasebrowser
+      .from("agent_google_tokens")
+      .update({
+        schedule_start: scheduleStart,
+        schedule_end: scheduleEnd,
+      })
+      .eq("agent_id", id);
+    if (error) {
+      toast.error("Erro ao salvar horários.");
+    } else {
+      toast.success("Horários salvos com sucesso.");
+    }
   };
 
   return (
@@ -82,9 +107,42 @@ export default function AgentIntegrationsPage() {
             </p>
           </div>
           {connected ? (
-            <Button variant="destructive" onClick={handleDisconnect}>
-              Desconectar
-            </Button>
+            <form onSubmit={handleSaveSchedule} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="scheduleStart" className="text-sm font-medium">
+                    Início da janela
+                  </label>
+                  <Input
+                    id="scheduleStart"
+                    type="time"
+                    value={scheduleStart}
+                    onChange={(e) => setScheduleStart(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="scheduleEnd" className="text-sm font-medium">
+                    Fim da janela
+                  </label>
+                  <Input
+                    id="scheduleEnd"
+                    type="time"
+                    value={scheduleEnd}
+                    onChange={(e) => setScheduleEnd(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">Salvar horários</Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDisconnect}
+                >
+                  Desconectar
+                </Button>
+              </div>
+            </form>
           ) : (
             <Button onClick={handleConnect}>Conectar</Button>
           )}
