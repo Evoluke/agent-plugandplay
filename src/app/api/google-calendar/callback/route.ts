@@ -4,9 +4,22 @@ import { supabaseadmin } from "@/lib/supabaseAdmin";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-  const state = searchParams.get("state");
-  if (!code || !state) {
+  const stateParam = searchParams.get("state");
+  if (!code || !stateParam) {
     return NextResponse.json({ error: "missing code or state" }, { status: 400 });
+  }
+
+  let agentId: string | undefined;
+  let email: string | undefined;
+  try {
+    const parsed = JSON.parse(decodeURIComponent(stateParam));
+    agentId = parsed.agentId;
+    email = parsed.email;
+  } catch {
+    return NextResponse.json({ error: "invalid state" }, { status: 400 });
+  }
+  if (!agentId) {
+    return NextResponse.json({ error: "missing agent_id" }, { status: 400 });
   }
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -37,14 +50,21 @@ export async function GET(req: NextRequest) {
 
     await supabaseadmin
       .from("agent_google_tokens")
-      .upsert({
-        agent_id: state,
-        access_token,
-        refresh_token,
-        expiry_date,
-      }, { onConflict: "agent_id" });
+      .upsert(
+        {
+          agent_id: agentId,
+          email,
+          access_token,
+          refresh_token,
+          expiry_date,
+        },
+        { onConflict: "agent_id" }
+      );
 
-    const redirect = new URL(`/dashboard/agents/${state}/integracoes`, req.url);
+    const redirect = new URL(
+      `/dashboard/agents/${agentId}/integracoes`,
+      req.url
+    );
     return NextResponse.redirect(redirect);
   } catch (err) {
     console.error(err);
