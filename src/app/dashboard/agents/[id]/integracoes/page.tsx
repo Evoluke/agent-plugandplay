@@ -7,8 +7,6 @@ import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { isValidEmail } from "@/lib/validators";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
 
@@ -24,8 +22,6 @@ export default function AgentIntegrationsPage() {
   const id = params?.id as string;
   const [agent, setAgent] = useState<Agent | null>(null);
   const [connected, setConnected] = useState(false);
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -40,18 +36,11 @@ export default function AgentIntegrationsPage() {
 
     supabasebrowser
       .from("agent_google_tokens")
-      .select("agent_id,email")
+      .select("agent_id")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
         setConnected(!!data);
-        if (data?.email) {
-          setEmail(data.email);
-        } else {
-          supabasebrowser.auth.getUser().then(({ data }) => {
-            setEmail(data?.user?.email || "");
-          });
-        }
       });
   }, [id]);
 
@@ -59,11 +48,7 @@ export default function AgentIntegrationsPage() {
 
   const handleConnect = () => {
     if (!id) return;
-    if (!isValidEmail(email)) {
-      setEmailError("E-mail inválido");
-      return;
-    }
-    window.location.href = `/api/google-calendar/auth?agent_id=${id}&email=${encodeURIComponent(email)}`;
+    window.location.href = `/api/google-calendar/auth?agent_id=${id}`;
   };
 
   const handleDisconnect = async () => {
@@ -88,31 +73,6 @@ export default function AgentIntegrationsPage() {
                 : "Conecte seu calendário para sincronizar eventos."}
             </p>
           </div>
-          {!connected && (
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">
-                E-mail
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailError) setEmailError("");
-                }}
-                onBlur={() =>
-                  setEmailError(
-                    isValidEmail(email) ? "" : "E-mail inválido"
-                  )
-                }
-                required
-              />
-              {emailError && (
-                <p className="text-sm text-destructive mt-1">{emailError}</p>
-              )}
-            </div>
-          )}
           {connected ? (
             <Button variant="destructive" onClick={handleDisconnect}>
               Desconectar
