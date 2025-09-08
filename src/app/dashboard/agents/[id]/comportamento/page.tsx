@@ -88,7 +88,7 @@ export default function AgentBehaviorPage() {
       <AgentMenu agent={agent} />
       <AgentGuide />
       <div className="flex justify-center">
-        <Card className="w-full md:w-4/5 p-6">
+        <Card className="w-full md:w-[90%] p-6">
           <p className="text-xs italic text-gray-500 mb-4">
             Configure como o agente deve se comportar durante as interações.
           </p>
@@ -146,7 +146,7 @@ export default function AgentBehaviorPage() {
         </Card>
       </div>
       <div className="flex justify-center">
-        <div className="w-full md:w-4/5 flex justify-end gap-2">
+        <div className="w-full md:w-[90%] flex justify-end gap-2">
           {agent.is_active ? (
             <DeactivateAgentButton
               agentId={id}

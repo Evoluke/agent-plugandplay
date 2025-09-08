@@ -54,7 +54,7 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full md:w-4/5 flex flex-col md:flex-row gap-4">
+      <div className="w-full md:w-[90%] flex flex-col md:flex-row gap-4">
         <Card className="w-full md:w-52 p-4 flex flex-col items-center justify-center gap-3 text-sm text-center">
           <div>
             <p className="text-xs text-gray-500">Status do agente</p>
