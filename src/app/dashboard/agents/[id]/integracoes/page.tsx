@@ -7,8 +7,10 @@ import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
+import { toast } from "sonner";
 
 type Agent = {
   id: string;
@@ -23,6 +25,10 @@ export default function AgentIntegrationsPage() {
   const router = useRouter();
   const [agent, setAgent] = useState<Agent | null>(null);
   const [connected, setConnected] = useState(false);
+  const [scheduleStart, setScheduleStart] = useState("");
+  const [scheduleEnd, setScheduleEnd] = useState("");
+  const [scheduleDays, setScheduleDays] = useState<string[]>([]);
+  const [scheduleDuration, setScheduleDuration] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -37,11 +43,15 @@ export default function AgentIntegrationsPage() {
 
     supabasebrowser
       .from("agent_google_tokens")
-      .select("agent_id")
+      .select("schedule_start, schedule_end, schedule_days, schedule_duration")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
         setConnected(!!data);
+        setScheduleStart(data?.schedule_start ?? "");
+        setScheduleEnd(data?.schedule_end ?? "");
+        setScheduleDays(data?.schedule_days ?? []);
+        setScheduleDuration(data?.schedule_duration?.toString() ?? "");
       });
   }, [id]);
 
@@ -65,7 +75,61 @@ export default function AgentIntegrationsPage() {
       method: "DELETE",
     });
     setConnected(false);
+    setScheduleStart("");
+    setScheduleEnd("");
+    setScheduleDays([]);
+    setScheduleDuration("");
   };
+
+  const handleSaveSchedule = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id) return;
+
+    const startParts = scheduleStart.split(":").map(Number);
+    const endParts = scheduleEnd.split(":").map(Number);
+    const startMinutes = startParts[0] * 60 + startParts[1];
+    const endMinutes = endParts[0] * 60 + endParts[1];
+
+    if (endMinutes <= startMinutes) {
+      toast.error("O horário final deve ser maior que o inicial.");
+      return;
+    }
+
+    const durationMinutes = parseInt(scheduleDuration, 10);
+    if (
+      Number.isNaN(durationMinutes) ||
+      durationMinutes < 15 ||
+      durationMinutes > 720
+    ) {
+      toast.error("A duração deve estar entre 15 e 720 minutos.");
+      return;
+    }
+
+    const { error } = await supabasebrowser
+      .from("agent_google_tokens")
+      .update({
+        schedule_start: scheduleStart,
+        schedule_end: scheduleEnd,
+        schedule_days: scheduleDays,
+        schedule_duration: durationMinutes,
+      })
+      .eq("agent_id", id);
+    if (error) {
+      toast.error("Erro ao salvar horários.");
+    } else {
+      toast.success("Horários salvos com sucesso.");
+    }
+  };
+
+  const weekdays = [
+    { value: "monday", label: "Segunda" },
+    { value: "tuesday", label: "Terça" },
+    { value: "wednesday", label: "Quarta" },
+    { value: "thursday", label: "Quinta" },
+    { value: "friday", label: "Sexta" },
+    { value: "saturday", label: "Sábado" },
+    { value: "sunday", label: "Domingo" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -82,9 +146,92 @@ export default function AgentIntegrationsPage() {
             </p>
           </div>
           {connected ? (
-            <Button variant="destructive" onClick={handleDisconnect}>
-              Desconectar
-            </Button>
+            <form onSubmit={handleSaveSchedule} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="scheduleStart" className="text-sm font-medium">
+                    Início da janela
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Horário inicial em que o agente pode agendar eventos.
+                  </p>
+                  <Input
+                    id="scheduleStart"
+                    type="time"
+                    value={scheduleStart}
+                    onChange={(e) => setScheduleStart(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="scheduleEnd" className="text-sm font-medium">
+                    Fim da janela
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Horário final permitido para agendar eventos.
+                  </p>
+                  <Input
+                    id="scheduleEnd"
+                    type="time"
+                    value={scheduleEnd}
+                    onChange={(e) => setScheduleEnd(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="scheduleDuration"
+                    className="text-sm font-medium"
+                  >
+                    Duração dos eventos
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Tempo de cada evento em minutos (15 - 720).
+                  </p>
+                  <Input
+                    id="scheduleDuration"
+                    type="number"
+                    min={15}
+                    max={720}
+                    step={15}
+                    value={scheduleDuration}
+                    onChange={(e) => setScheduleDuration(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Dias de atendimento</label>
+                <p className="text-xs text-muted-foreground">
+                  Selecione os dias em que o agente pode agendar eventos.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {weekdays.map((day) => (
+                    <label key={day.value} className="flex items-center gap-1">
+                      <input
+                        type="checkbox"
+                        checked={scheduleDays.includes(day.value)}
+                        onChange={() =>
+                          setScheduleDays((prev) =>
+                            prev.includes(day.value)
+                              ? prev.filter((d) => d !== day.value)
+                              : [...prev, day.value]
+                          )
+                        }
+                      />
+                      {day.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">Salvar horários</Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDisconnect}
+                >
+                  Desconectar
+                </Button>
+              </div>
+            </form>
           ) : (
             <Button onClick={handleConnect}>Conectar</Button>
           )}
