@@ -40,16 +40,19 @@ export default function AgentIntegrationsPage() {
 
     supabasebrowser
       .from("agent_google_tokens")
-      .select("agent_id")
+      .select("agent_id,email")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
         setConnected(!!data);
+        if (data?.email) {
+          setEmail(data.email);
+        } else {
+          supabasebrowser.auth.getUser().then(({ data }) => {
+            setEmail(data?.user?.email || "");
+          });
+        }
       });
-
-    supabasebrowser.auth.getUser().then(({ data }) => {
-      setEmail(data?.user?.email || "");
-    });
   }, [id]);
 
   if (!agent) return <div>Carregando...</div>;
@@ -75,8 +78,8 @@ export default function AgentIntegrationsPage() {
     <div className="space-y-6">
       <AgentMenu agent={agent} />
       <AgentGuide />
-      <div>
-        <Card className="w-full md:w-[90%] p-6 space-y-4">
+      <div className="flex justify-center">
+        <Card className="w-full md:w-[90%] p-6 space-y-4 text-left">
           <div className="space-y-1">
             <h2 className="text-lg font-semibold">Google Calendar</h2>
             <p className="text-sm text-muted-foreground">

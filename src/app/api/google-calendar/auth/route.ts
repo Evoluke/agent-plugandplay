@@ -14,11 +14,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Google OAuth not configured" }, { status: 500 });
   }
 
-  const scope = encodeURIComponent("https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly");
+  const scope = encodeURIComponent(
+    "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly"
+  );
+  const state = encodeURIComponent(
+    JSON.stringify({ agentId, email: email || undefined })
+  );
   let authUrl =
     `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-    `&scope=${scope}&access_type=offline&prompt=consent&state=${agentId}`;
+    `&scope=${scope}&access_type=offline&prompt=consent&state=${state}`;
 
   if (email) {
     authUrl += `&login_hint=${encodeURIComponent(email)}`;
