@@ -28,6 +28,7 @@ export default function AgentIntegrationsPage() {
   const [scheduleStart, setScheduleStart] = useState("");
   const [scheduleEnd, setScheduleEnd] = useState("");
   const [scheduleDays, setScheduleDays] = useState<string[]>([]);
+  const [scheduleDuration, setScheduleDuration] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -42,7 +43,7 @@ export default function AgentIntegrationsPage() {
 
     supabasebrowser
       .from("agent_google_tokens")
-      .select("schedule_start, schedule_end, schedule_days")
+      .select("schedule_start, schedule_end, schedule_days, schedule_duration")
       .eq("agent_id", id)
       .single()
       .then(({ data }) => {
@@ -50,6 +51,7 @@ export default function AgentIntegrationsPage() {
         setScheduleStart(data?.schedule_start ?? "");
         setScheduleEnd(data?.schedule_end ?? "");
         setScheduleDays(data?.schedule_days ?? []);
+        setScheduleDuration(data?.schedule_duration?.toString() ?? "");
       });
   }, [id]);
 
@@ -76,6 +78,7 @@ export default function AgentIntegrationsPage() {
     setScheduleStart("");
     setScheduleEnd("");
     setScheduleDays([]);
+    setScheduleDuration("");
   };
 
   const handleSaveSchedule = async (e: React.FormEvent) => {
@@ -92,12 +95,23 @@ export default function AgentIntegrationsPage() {
       return;
     }
 
+    const durationMinutes = parseInt(scheduleDuration, 10);
+    if (
+      Number.isNaN(durationMinutes) ||
+      durationMinutes < 15 ||
+      durationMinutes > 720
+    ) {
+      toast.error("A duração deve estar entre 15 e 720 minutos.");
+      return;
+    }
+
     const { error } = await supabasebrowser
       .from("agent_google_tokens")
       .update({
         schedule_start: scheduleStart,
         schedule_end: scheduleEnd,
         schedule_days: scheduleDays,
+        schedule_duration: durationMinutes,
       })
       .eq("agent_id", id);
     if (error) {
@@ -133,7 +147,7 @@ export default function AgentIntegrationsPage() {
           </div>
           {connected ? (
             <form onSubmit={handleSaveSchedule} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="scheduleStart" className="text-sm font-medium">
                     Início da janela
@@ -160,6 +174,26 @@ export default function AgentIntegrationsPage() {
                     type="time"
                     value={scheduleEnd}
                     onChange={(e) => setScheduleEnd(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="scheduleDuration"
+                    className="text-sm font-medium"
+                  >
+                    Duração dos eventos
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Tempo de cada evento em minutos (15 - 720).
+                  </p>
+                  <Input
+                    id="scheduleDuration"
+                    type="number"
+                    min={15}
+                    max={720}
+                    step={15}
+                    value={scheduleDuration}
+                    onChange={(e) => setScheduleDuration(e.target.value)}
                   />
                 </div>
               </div>
