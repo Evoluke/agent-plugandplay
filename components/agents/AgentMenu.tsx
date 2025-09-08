@@ -49,7 +49,15 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
     { label: "Onboarding", icon: BookOpen, href: `/dashboard/agents/${agent.id}/onboarding` },
     { label: "Base de conhecimento", icon: Database, href: `/dashboard/agents/${agent.id}/base-conhecimento` },
     { label: "Instruções Específicas", icon: ClipboardList, href: `/dashboard/agents/${agent.id}/instrucoes-especificas` },
-    { label: "Integrações", icon: Calendar, href: `/dashboard/agents/${agent.id}/integracoes` },
+    ...(agent.type === "sdr"
+      ? [
+          {
+            label: "Integrações",
+            icon: Calendar,
+            href: `/dashboard/agents/${agent.id}/integracoes`,
+          },
+        ]
+      : []),
   ];
 
   return (
