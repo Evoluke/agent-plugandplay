@@ -77,10 +77,10 @@ export default function AgentGuide() {
                   </Button>
                 </li>
                 <li>
-                  <strong>Instruções específicas</strong>: detalhe orientações e casos especiais.
+                  <strong>Instruções</strong>: detalhe orientações e casos especiais.
                   <Button variant="link" asChild className="px-1">
-                    <Link href={`/dashboard/agents/${id}/instrucoes-especificas`}>
-                      Ir para instruções específicas
+                    <Link href={`/dashboard/agents/${id}/instrucoes`}>
+                      Ir para instruções
                     </Link>
                   </Button>
                 </li>
