@@ -174,8 +174,7 @@ export default function AgentIntegrationsPage() {
                     Fim da janela
                   </label>
                   <p className="text-xs text-muted-foreground">
-                    Horário final permitido para agendar eventos. A janela deve ter no
-                    mínimo 3 horas.
+                    Horário final permitido para agendar eventos.
                   </p>
                   <Input
                     id="scheduleEnd"
