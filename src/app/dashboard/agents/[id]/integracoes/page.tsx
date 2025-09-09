@@ -97,6 +97,11 @@ export default function AgentIntegrationsPage() {
       return;
     }
 
+    if (endMinutes - startMinutes < 180) {
+      toast.error("A janela de disponibilidade deve ter no mínimo 3 horas.");
+      return;
+    }
+
     const durationMinutes = parseInt(scheduleDuration, 10);
     if (
       Number.isNaN(durationMinutes) ||
@@ -169,7 +174,8 @@ export default function AgentIntegrationsPage() {
                     Fim da janela
                   </label>
                   <p className="text-xs text-muted-foreground">
-                    Horário final permitido para agendar eventos.
+                    Horário final permitido para agendar eventos. A janela deve ter no
+                    mínimo 3 horas.
                   </p>
                   <Input
                     id="scheduleEnd"
