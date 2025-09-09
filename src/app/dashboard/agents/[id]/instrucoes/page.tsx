@@ -28,7 +28,7 @@ interface FaqItem {
   action: string;
 }
 
-export default function AgentSpecificInstructionsPage() {
+export default function AgentInstructionsPage() {
   const params = useParams();
   const id = params?.id as string;
   const [agent, setAgent] = useState<Agent | null>(null);
@@ -110,7 +110,7 @@ export default function AgentSpecificInstructionsPage() {
       .eq("agent_id", id);
 
     if (deleteError) {
-      toast.error("Erro ao salvar instruções específicas.");
+      toast.error("Erro ao salvar instruções.");
       setIsSubmitting(false);
       return;
     }
@@ -127,10 +127,10 @@ export default function AgentSpecificInstructionsPage() {
       );
 
     if (error) {
-      toast.error("Erro ao salvar instruções específicas.");
+      toast.error("Erro ao salvar instruções.");
     } else {
       await updateAgentInstructions(id);
-      toast.success("Instruções específicas salvas com sucesso.");
+      toast.success("Instruções salvas com sucesso.");
     }
     setIsSubmitting(false);
   };

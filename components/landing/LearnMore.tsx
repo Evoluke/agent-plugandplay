@@ -54,7 +54,7 @@ const slides = [
             <li>Comportamento: quando deve escalar para atendimento humano.</li>
             <li>Onboarding: O que o agente precisa coletar de informações para qualificar o lead.</li>
             <li>Base de conhecimento: carregue documentos que servirão de referência para o agente.</li>
-            <li>Instruções específicas: detalhe orientações e casos especiais.</li>
+            <li>Instruções: detalhe orientações e casos especiais.</li>
           </ul>
           <p className="mt-2">Resultado: agente pronto para pagamento.</p>
         </li>
