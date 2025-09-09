@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import DeactivateAgentButton from "@/components/agents/DeactivateAgentButton";
 import ActivateAgentButton from "@/components/agents/ActivateAgentButton";
 import { toast } from "sonner";
+import * as Dialog from "@radix-ui/react-dialog";
 
 type Agent = {
   id: string;
@@ -29,6 +30,7 @@ export default function AgentIntegrationsPage() {
   const [scheduleEnd, setScheduleEnd] = useState("");
   const [scheduleDays, setScheduleDays] = useState<string[]>([]);
   const [scheduleDuration, setScheduleDuration] = useState("");
+  const [disconnectOpen, setDisconnectOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -226,7 +228,7 @@ export default function AgentIntegrationsPage() {
                 <Button
                   type="button"
                   variant="destructive"
-                  onClick={handleDisconnect}
+                  onClick={() => setDisconnectOpen(true)}
                 >
                   Desconectar
                 </Button>
@@ -256,6 +258,33 @@ export default function AgentIntegrationsPage() {
           )}
         </div>
       </div>
+      <Dialog.Root open={disconnectOpen} onOpenChange={setDisconnectOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-6 shadow space-y-4">
+            <Dialog.Title className="text-lg font-semibold">
+              Desconectar Google Calendar
+            </Dialog.Title>
+            <Dialog.Description className="text-sm text-gray-600">
+              Tem certeza que deseja desabilitar o Google Calendar? Desabilitando o agente de IA não estará agendando horários.
+            </Dialog.Description>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setDisconnectOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setDisconnectOpen(false);
+                  handleDisconnect();
+                }}
+              >
+                Desconectar
+              </Button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }
