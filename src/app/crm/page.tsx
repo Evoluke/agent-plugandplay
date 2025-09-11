@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -8,8 +8,11 @@ import { Loader2 } from "lucide-react";
 export default function CrmPage() {
   const router = useRouter();
   const [status, setStatus] = useState<"loading" | "error">("loading");
+  const hasRequested = useRef(false);
 
   useEffect(() => {
+    if (hasRequested.current) return;
+    hasRequested.current = true;
     const createCrm = async () => {
       try {
         const res = await fetch("/api/crm/create", { method: "POST" });
