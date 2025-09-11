@@ -10,7 +10,7 @@ export async function POST() {
 
   const { data: company, error } = await supabaseadmin
     .from("company")
-    .select("id")
+    .select("id, chatwoot_id")
     .eq("user_id", user.id)
     .single();
 
@@ -19,6 +19,10 @@ export async function POST() {
       { error: error?.message || "Empresa não encontrada" },
       { status: 404 }
     );
+  }
+
+  if (company.chatwoot_id) {
+    return NextResponse.json({ message: "CRM já criado" });
   }
 
   const webhookUrl = process.env.N8N_CRM_WEBHOOK_URL;
