@@ -111,7 +111,8 @@ export default function AgentKnowledgeBasePage() {
       setUploading(false);
       return;
     }
-    const tokens = Math.ceil(file.size / 4);
+    const text = await file.text();
+    const tokens = Math.ceil(text.length / 4);
     const totalTokens = files.reduce((sum, f) => sum + f.tokens, 0);
     if (totalTokens + tokens > MAX_TOKENS) {
       toast.error("Limite de tokens excedido");
