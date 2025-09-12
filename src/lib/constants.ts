@@ -14,4 +14,4 @@ export const ALLOWED_KNOWLEDGE_MIME_TYPES = [
 ];
 
 export const MAX_KNOWLEDGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-export const MAX_KNOWLEDGE_TOKENS = 1_000_000; // 1M tokens
+export const MAX_KNOWLEDGE_TOKENS = 100_000; // 100k tokens
