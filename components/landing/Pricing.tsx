@@ -16,7 +16,7 @@ const PRICE_ANNUAL = 5990; // 2 meses grátis
 const plans = [
   {
     name: "Suporte Atendimento",
-    tagline: "Resposta automática para clientes.",
+    tagline: "Responde dúvidas e auxilia clientes.",
     features: [
       "Consulta base de conhecimento",
       "Integra CRM",
@@ -34,7 +34,7 @@ const plans = [
   },
   {
     name: "Pré-Qualificação",
-    tagline: "Pré-qualifica leads e transfere para atendimento humano.",
+    tagline: "Pré-qualifica leads e transfere para atendimento humano",
     features: [
       "Pré-qualifica leads automaticamente",
       "Integra CRM",
@@ -73,7 +73,7 @@ export default function Pricing() {
               <div className="group h-full rounded-xl bg-gradient-to-br from-purple-500/40 to-blue-500/40 p-[2px] transition-all hover:-translate-y-1 hover:shadow-xl">
                 <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-white/90 p-3 backdrop-blur">
                   {popular && (
-                    <span className="absolute right-4 top-4 rounded-full bg-primary px-2 py-1 text-xs font-medium text-white">
+                    <span className="absolute right-4 top-2 rounded-full bg-primary px-2 py-1 text-xs font-medium text-white">
                       Mais popular
                     </span>
                   )}

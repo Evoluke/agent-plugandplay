@@ -36,12 +36,12 @@ export default function NewAgentPage() {
     {
       value: "sdr",
       title: "SDR",
-      description: "Gerencia horários e calendários",
+      description: "Qualifica leads e agenda no calendário",
     },
     {
       value: "pre-qualificacao",
       title: "Pré-qualificação",
-      description: "Qualifica e interage com leads",
+      description: "Pré-qualifica leads e transfere para atendimento humano.",
     },
     {
       value: "suporte",
@@ -161,7 +161,7 @@ export default function NewAgentPage() {
         agent_id: data.id,
         amount: AGENT_PRICE,
         due_date: dueDate.toISOString(),
-        reference: `Agente ${name}`,
+        reference: `Mensalidade ${name}`,
       })
       .select("id, amount, due_date")
       .single();
