@@ -37,7 +37,6 @@ export default function NewAgentPage() {
       value: "sdr",
       title: "SDR",
       description: "Gerencia horários e calendários",
-      disabled: true,
     },
     {
       value: "pre-qualificacao",
@@ -217,7 +216,6 @@ export default function NewAgentPage() {
                       value={option.value}
                       title={option.title}
                       description={option.description}
-                      disabled={option.disabled}
                       selected={type === option.value}
                       onSelect={setType}
                     />
