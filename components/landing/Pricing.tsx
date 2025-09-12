@@ -61,33 +61,33 @@ export default function Pricing() {
           Modelos prontos para uso
         </h2>
         <ul
-          className="flex snap-x snap-mandatory gap-6 overflow-x-auto sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none"
+          className="grid grid-cols-3 gap-4 sm:gap-6"
           role="list"
         >
           {plans.map(({ name, tagline, features, popular }) => (
             <li
               key={name}
               role="listitem"
-              className="w-52 flex-shrink-0 snap-center sm:w-auto sm:flex-shrink"
+              className="h-full"
             >
-              <div className="group rounded-xl bg-gradient-to-br from-purple-500/40 to-blue-500/40 p-[2px] transition-all hover:-translate-y-1 hover:shadow-xl">
-                <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-white/90 p-4 backdrop-blur">
+              <div className="group h-full rounded-xl bg-gradient-to-br from-purple-500/40 to-blue-500/40 p-[2px] transition-all hover:-translate-y-1 hover:shadow-xl">
+                <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-white/90 p-3 backdrop-blur">
                   {popular && (
                     <span className="absolute right-4 top-4 rounded-full bg-primary px-2 py-1 text-xs font-medium text-white">
                       Mais popular
                     </span>
                   )}
                   <CardHeader>
-                    <CardTitle className="text-xl">{name}</CardTitle>
+                    <CardTitle className="text-lg">{name}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex-grow">
-                    <p className="mb-6 text-2xl font-bold">
+                    <p className="mb-4 text-xl font-bold">
                       {price}
                       <span className="text-sm font-normal text-muted-foreground">
                         {suffix}
                       </span>
                     </p>
-                    <p className="mb-4 text-xs text-muted-foreground">{tagline}</p>
+                    <p className="mb-3 text-xs text-muted-foreground">{tagline}</p>
                     <ul className="space-y-1">
                       {features.map((feature) => (
                         <li key={feature} className="flex items-start text-xs">
