@@ -17,7 +17,11 @@ const plans = [
   {
     name: "Suporte Atendimento",
     tagline: "Resposta automática para clientes.",
-    features: ["Consulta base de conhecimento", "Integra CRM", "Atende 24/7"],
+    features: [
+      "Consulta base de conhecimento",
+      "Integra CRM",
+      "Atende 24/7",
+    ],
   },
   {
     name: "Representante de vendas (SDR)",
@@ -56,30 +60,30 @@ export default function Pricing() {
             <li
               key={name}
               role="listitem"
-              className="w-80 flex-shrink-0 snap-center sm:w-auto sm:flex-shrink"
+              className="w-52 flex-shrink-0 snap-center sm:mx-auto sm:w-[22rem] sm:flex-shrink-0"
             >
               <div className="group rounded-xl bg-gradient-to-br from-purple-500/40 to-blue-500/40 p-[2px] transition-all hover:-translate-y-1 hover:shadow-xl">
-                <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-white/90 p-6 backdrop-blur">
+                <Card className="relative flex h-full flex-col rounded-[calc(theme(borderRadius.lg)-2px)] bg-white/90 p-4 backdrop-blur">
                   {popular && (
                     <span className="absolute right-4 top-4 rounded-full bg-primary px-2 py-1 text-xs font-medium text-white">
                       Mais popular
                     </span>
                   )}
                   <CardHeader>
-                    <CardTitle className="text-2xl">{name}</CardTitle>
+                    <CardTitle className="text-xl">{name}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex-grow">
-                    <p className="mb-6 text-4xl font-bold">
+                    <p className="mb-4 text-2xl font-bold">
                       {price}
-                      <span className="text-base font-normal text-muted-foreground">
+                      <span className="text-sm font-normal text-muted-foreground">
                         {suffix}
                       </span>
                     </p>
-                    <p className="mb-4 text-sm text-muted-foreground">{tagline}</p>
-                    <ul className="space-y-2">
+                    <p className="mb-4 text-xs text-muted-foreground">{tagline}</p>
+                    <ul className="space-y-1">
                       {features.map((feature) => (
-                        <li key={feature} className="flex items-start text-sm">
-                          <Check className="mr-2 h-4 w-4 text-primary" />
+                        <li key={feature} className="flex items-start text-xs">
+                          <Check className="mr-2 h-3 w-3 text-primary" />
                           {feature}
                         </li>
                       ))}
