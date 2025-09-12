@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import {
   ALLOWED_KNOWLEDGE_MIME_TYPES,
   MAX_KNOWLEDGE_FILE_SIZE,
+  MAX_KNOWLEDGE_TOKENS,
 } from "@/lib/constants";
 import AgentMenu from "@/components/agents/AgentMenu";
 import AgentGuide from "@/components/agents/AgentGuide";
@@ -88,8 +89,6 @@ export default function AgentKnowledgeBasePage() {
     // { label: "Vídeos", icon: Video },
   ];
 
-  const MAX_TOKENS = 10_000_000;
-
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -114,7 +113,7 @@ export default function AgentKnowledgeBasePage() {
     const text = await file.text();
     const tokens = Math.ceil(text.length / 4);
     const totalTokens = files.reduce((sum, f) => sum + f.tokens, 0);
-    if (totalTokens + tokens > MAX_TOKENS) {
+    if (totalTokens + tokens > MAX_KNOWLEDGE_TOKENS) {
       toast.error("Limite de tokens excedido");
       e.target.value = "";
       setUploading(false);
@@ -349,7 +348,7 @@ export default function AgentKnowledgeBasePage() {
                       </div>
                     </div>
                     <p className="text-sm text-right text-gray-500">
-                      {totalTokens.toLocaleString()} / {MAX_TOKENS.toLocaleString()} tokens
+                      {totalTokens.toLocaleString()} / {MAX_KNOWLEDGE_TOKENS.toLocaleString()} tokens
                     </p>
                   </>
                 ) : (
