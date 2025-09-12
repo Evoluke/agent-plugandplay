@@ -61,7 +61,7 @@ export default function Pricing() {
           Modelos prontos para uso
         </h2>
         <ul
-          className="grid grid-cols-3 gap-4 sm:gap-6"
+          className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3"
           role="list"
         >
           {plans.map(({ name, tagline, features, popular }) => (
