@@ -216,7 +216,6 @@ export default function NewAgentPage() {
                       value={option.value}
                       title={option.title}
                       description={option.description}
-                      disabled={option.disabled}
                       selected={type === option.value}
                       onSelect={setType}
                     />
