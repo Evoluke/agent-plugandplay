@@ -37,7 +37,6 @@ export default function NewAgentPage() {
       value: "sdr",
       title: "SDR",
       description: "Gerencia horários e calendários",
-      disabled: true,
     },
     {
       value: "pre-qualificacao",
