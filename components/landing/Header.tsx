@@ -2,12 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <header className="border-b bg-background">
@@ -55,6 +62,7 @@ export default function Header() {
           className="md:hidden"
           onClick={() => setOpen(true)}
           aria-label="Abrir menu"
+          aria-expanded={open}
         >
           <Menu className="h-5 w-5" />
         </Button>
