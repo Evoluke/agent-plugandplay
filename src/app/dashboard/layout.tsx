@@ -32,10 +32,10 @@ export default function DashboardClientLayout({ children }: Props) {
     })
   }, [router])
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>
+  if (loading) return <div className="min-h-[100svh] flex items-center justify-center">Carregando...</div>
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-[100svh]">
         <Sidebar className="hidden sm:flex" />
         <main className="flex-1 bg-[#FAFAFA] p-6 h-full overflow-auto">
           <div className="flex w-full items-center mb-4">
