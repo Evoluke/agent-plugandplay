@@ -1,13 +1,12 @@
 'use client';
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { supabasebrowser } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation'
+import { supabasebrowser } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -16,7 +15,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [oauthProviderLoading, setOauthProviderLoading] = useState<
+    "google" | "linkedin" | null
+  >(null);
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(async ({ data, error }) => {
@@ -66,6 +67,28 @@ export default function LoginPage() {
     }
   };
 
+  const handleOAuthLogin = async (provider: "google" | "linkedin") => {
+    try {
+      setOauthProviderLoading(provider);
+      const { error } = await supabasebrowser.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        console.error(`Falha no login ${provider}:`, error.message);
+        toast.error("Não foi possível iniciar o login social.");
+      }
+    } catch (err) {
+      console.error(`Erro inesperado no login ${provider}:`, err);
+      toast.error("Não foi possível iniciar o login social.");
+    } finally {
+      setOauthProviderLoading(null);
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA]">
       <div className="w-full px-4 sm:max-w-md md:max-w-lg">
@@ -112,6 +135,37 @@ export default function LoginPage() {
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? "Entrando..." : "Entrar"}                                     {/* ← não deixe vazio */}
         </Button>
+
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 text-xs uppercase text-gray-500">
+            <span className="h-px flex-1 bg-gray-200" />
+            <span>ou</span>
+            <span className="h-px flex-1 bg-gray-200" />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => handleOAuthLogin("google")}
+            disabled={
+              isSubmitting || oauthProviderLoading !== null
+            }
+          >
+            {oauthProviderLoading === "google" ? "Redirecionando..." : "Entrar com Google"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => handleOAuthLogin("linkedin")}
+            disabled={
+              isSubmitting || oauthProviderLoading !== null
+            }
+          >
+            {oauthProviderLoading === "linkedin" ? "Redirecionando..." : "Entrar com LinkedIn"}
+          </Button>
+        </div>
 
 
         <p className="text-center text-sm">
