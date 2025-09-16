@@ -81,7 +81,8 @@ export default function AgentOnboardingPage() {
     agent.type === "pre-qualificacao" || agent.type === "sdr";
 
   const welcomeMessageValid = welcomeMessage.trim().length <= 255;
-  const painPointsValid = painPoints.trim().length <= 255;
+  const painPointsLength = painPoints.trim().length;
+  const painPointsValid = painPointsLength >= 10 && painPointsLength <= 255;
   const filledCollectionCount = collection.filter(
     (item) => item.question.trim() && item.information.trim()
   ).length;
@@ -199,11 +200,11 @@ export default function AgentOnboardingPage() {
               />
               <div className="flex justify-between text-xs text-gray-500">
                 <p>Use para direcionar a coleta de informações.</p>
-                <p className="text-gray-400">0 a 255 caracteres</p>
+                <p className="text-gray-400">10 a 255 caracteres</p>
               </div>
               {painPoints && !painPointsValid && (
                 <p className="text-xs text-red-500">
-                  O texto deve ter no máximo 255 caracteres
+                  O texto deve ter entre 10 e 255 caracteres
                 </p>
               )}
             </div>
