@@ -202,20 +202,7 @@ export default function ConfigPage() {
       ensure(isValidResponsible(responsible), "Responsável deve ter entre 4 e 80 caracteres");
       ensure(isValidPhone(phone), "Telefone inválido");
 
-      const updateResponse = await fetch("/api/profile/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          companyName: normalizedCompanyName,
-          email: normalizedEmail,
-          password: password || undefined,
-        }),
-      });
-
-      const updateData = await ensureApiSuccess<{ emailChanged?: boolean }>(
-        updateResponse,
-        "Erro ao atualizar configurações",
-      );
+      const passwordChanged = password.length > 0;
 
       const completeResponse = await fetch("/api/profile/complete", {
         method: "POST",
@@ -234,6 +221,21 @@ export default function ConfigPage() {
 
       await ensureApiSuccess(completeResponse, "Erro ao salvar perfil");
 
+      const updateResponse = await fetch("/api/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          companyName: normalizedCompanyName,
+          email: normalizedEmail,
+          password: password || undefined,
+        }),
+      });
+
+      const updateData = await ensureApiSuccess<{ emailChanged?: boolean }>(
+        updateResponse,
+        "Erro ao atualizar configurações",
+      );
+
       const normalizedUpdateData =
         updateData && typeof updateData === "object"
           ? (updateData as { emailChanged?: boolean })
@@ -248,12 +250,28 @@ export default function ConfigPage() {
         toast.info("Verifique seu novo e-mail para confirmar a alteração");
       }
 
-      toast.success("Configurações salvas");
       setInitialEmail(normalizedEmail);
       setEmail(normalizedEmail);
       setCompanyName(normalizedCompanyName);
       setPassword("");
       setConfirm("");
+
+      const shouldReauthenticate = passwordChanged || shouldNotifyEmailChange;
+
+      if (shouldReauthenticate) {
+        toast.success("Configurações salvas. Faça login novamente.");
+        const { error: signOutError } = await supabasebrowser.auth.signOut();
+        if (signOutError) {
+          console.error(
+            "Erro ao encerrar sessão após atualização de configurações",
+            signOutError,
+          );
+        }
+        router.replace("/login");
+        return;
+      }
+
+      toast.success("Configurações salvas");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Erro ao salvar configurações",
