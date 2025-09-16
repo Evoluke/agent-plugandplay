@@ -14,8 +14,11 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const redirectTo = new URL('/update-password', baseUrl).toString();
+
     const { error } = await supabasebrowser.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/update-password`,
+      redirectTo,
     });
     if (error) {
       console.error('Erro ao enviar email:', error.message);
