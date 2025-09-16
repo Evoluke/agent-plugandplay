@@ -12,6 +12,7 @@ import {
   isValidEmail,
   isValidPassword,
 } from "@/lib/validators";
+import { supabasebrowser } from "@/lib/supabaseClient";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -21,6 +22,28 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const redirectTo = new URL("/login", baseUrl).toString();
+      const { error } = await supabasebrowser.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo },
+      });
+      if (error) {
+        console.error("Erro ao entrar com Google:", error.message);
+        toast.error("Não foi possível conectar com o Google. Tente novamente.");
+      }
+    } catch (err) {
+      console.error("Erro inesperado ao entrar com Google:", err);
+      toast.error("Não foi possível conectar com o Google. Tente novamente.");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +98,23 @@ export default function SignupPage() {
           className="w-full bg-white rounded-lg shadow p-6 space-y-4"
         >
         <h1 className="text-2xl font-semibold text-center">Cadastro</h1>
+
+        <div className="space-y-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={googleLoading}
+          >
+            {googleLoading ? "Redirecionando..." : "Continuar com Google"}
+          </Button>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <span className="h-px flex-1 bg-gray-200" />
+            <span>ou crie sua conta com e-mail</span>
+            <span className="h-px flex-1 bg-gray-200" />
+          </div>
+        </div>
 
         {error && (
           <div className="text-red-600 text-sm text-center">{error}</div>

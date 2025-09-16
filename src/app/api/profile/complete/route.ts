@@ -72,23 +72,67 @@ export async function POST(req: Request) {
     .from("company")
     .select("id, company_profile_id, user_id")
     .eq("user_id", user_id)
-    .single();
+    .maybeSingle();
 
-  if (companyError || !company) {
+  if (companyError) {
     return NextResponse.json(
-      { error: companyError?.message || "Empresa não encontrada" },
+      { error: companyError.message },
+      { status: 500 }
+    );
+  }
+
+  let companyRecord = company;
+
+  if (!companyRecord) {
+    const { data: newCompany, error: createCompanyError } = await supabaseadmin
+      .from("company")
+      .insert({ user_id, profile_complete: false })
+      .select("id, company_profile_id, user_id")
+      .single();
+
+    if (createCompanyError) {
+      if (createCompanyError.code === "23505") {
+        const { data: existingCompany, error: fetchExistingError } =
+          await supabaseadmin
+            .from("company")
+            .select("id, company_profile_id, user_id")
+            .eq("user_id", user_id)
+            .single();
+
+        if (fetchExistingError || !existingCompany) {
+          return NextResponse.json(
+            { error: fetchExistingError?.message || "Empresa não encontrada" },
+            { status: 404 }
+          );
+        }
+
+        companyRecord = existingCompany;
+      } else {
+        return NextResponse.json(
+          { error: createCompanyError.message },
+          { status: 500 }
+        );
+      }
+    } else {
+      companyRecord = newCompany;
+    }
+  }
+
+  if (!companyRecord) {
+    return NextResponse.json(
+      { error: "Empresa não encontrada" },
       { status: 404 }
     );
   }
 
-  if (company.user_id !== user_id) {
+  if (companyRecord.user_id !== user_id) {
     return NextResponse.json(
       { error: "Empresa não pertence ao usuário" },
       { status: 403 }
     );
   }
 
-  let profileId = company.company_profile_id as number | null;
+  let profileId = companyRecord.company_profile_id as number | null;
 
   if (profileId) {
     const { error: profileUpdateError } = await supabaseadmin
