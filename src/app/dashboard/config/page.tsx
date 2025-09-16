@@ -37,6 +37,60 @@ export default function ConfigPage() {
   const [responsible, setResponsible] = useState("");
   const [phone, setPhone] = useState("");
 
+  const getApiErrorMessage = (payload: unknown, fallback: string) => {
+    if (!payload || typeof payload !== "object") {
+      return fallback;
+    }
+    const record = payload as Record<string, unknown>;
+    if (typeof record.error === "string" && record.error) {
+      return record.error;
+    }
+    if (
+      record.error &&
+      typeof record.error === "object" &&
+      record.error !== null &&
+      typeof (record.error as Record<string, unknown>).message === "string" &&
+      (record.error as Record<string, unknown>).message
+    ) {
+      return ((record.error as Record<string, unknown>).message as string) || fallback;
+    }
+    if (typeof record.message === "string" && record.message) {
+      return record.message;
+    }
+    return fallback;
+  };
+
+  const ensureApiSuccess = async <T = unknown>(
+    response: Response,
+    fallback: string,
+  ): Promise<T> => {
+    let data: unknown = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    if (!response.ok) {
+      throw new Error(getApiErrorMessage(data, fallback));
+    }
+
+    if (data && typeof data === "object") {
+      const record = data as Record<string, unknown>;
+      if (typeof record.success === "boolean" && !record.success) {
+        throw new Error(getApiErrorMessage(data, fallback));
+      }
+      if (typeof record.ok === "boolean" && !record.ok) {
+        throw new Error(getApiErrorMessage(data, fallback));
+      }
+      if (record.error !== undefined && record.error !== null) {
+        throw new Error(getApiErrorMessage(data, fallback));
+      }
+    }
+
+    return data as T;
+  };
+
   const handleCpfCnpjChange = (value: string) => {
     let digits = value.replace(/\D/g, "");
     if (digits.length > 14) digits = digits.slice(0, 14);
@@ -118,107 +172,95 @@ export default function ConfigPage() {
     if (!userId) return;
     setSaving(true);
 
-    if (!isValidCompanyName(companyName)) {
-      toast.error("Nome da empresa deve ter entre 4 e 80 caracteres");
-      setSaving(false);
-      return;
-    }
-    if (!isValidEmail(email)) {
-      toast.error("Email inválido");
-      setSaving(false);
-      return;
-    }
-    if (password) {
-      if (!isValidPassword(password)) {
-        toast.error(
+    try {
+      const ensure = (condition: boolean, message: string) => {
+        if (!condition) {
+          throw new Error(message);
+        }
+      };
+
+      const normalizedCompanyName = companyName.trim();
+      const normalizedEmail = email.trim();
+
+      ensure(
+        isValidCompanyName(normalizedCompanyName),
+        "Nome da empresa deve ter entre 4 e 80 caracteres",
+      );
+      ensure(isValidEmail(normalizedEmail), "Email inválido");
+
+      if (password) {
+        ensure(
+          isValidPassword(password),
           "Senha deve ter ao menos 8 caracteres com maiúsculas, minúsculas, número e símbolo",
         );
-        setSaving(false);
-        return;
+        ensure(password === confirm, "As senhas não coincidem");
       }
-      if (password !== confirm) {
-        toast.error("As senhas não coincidem");
-        setSaving(false);
-        return;
+
+      ensure(isValidCpfCnpj(cpfCnpj), "CPF/CNPJ inválido");
+      ensure(isValidAddress(address), "Endereço deve ter entre 3 e 200 caracteres");
+      ensure(isValidCep(zipCode), "CEP inválido");
+      ensure(isValidResponsible(responsible), "Responsável deve ter entre 4 e 80 caracteres");
+      ensure(isValidPhone(phone), "Telefone inválido");
+
+      const updateResponse = await fetch("/api/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          companyName: normalizedCompanyName,
+          email: normalizedEmail,
+          password: password || undefined,
+        }),
+      });
+
+      const updateData = await ensureApiSuccess<{ emailChanged?: boolean }>(
+        updateResponse,
+        "Erro ao atualizar configurações",
+      );
+
+      const completeResponse = await fetch("/api/profile/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cpf_cnpj: cpfCnpj,
+          address,
+          zip_code: zipCode,
+          city,
+          state,
+          country,
+          responsible_name: responsible,
+          phone,
+        }),
+      });
+
+      await ensureApiSuccess(completeResponse, "Erro ao salvar perfil");
+
+      const normalizedUpdateData =
+        updateData && typeof updateData === "object"
+          ? (updateData as { emailChanged?: boolean })
+          : null;
+
+      const shouldNotifyEmailChange =
+        typeof normalizedUpdateData?.emailChanged === "boolean"
+          ? normalizedUpdateData.emailChanged
+          : normalizedEmail !== initialEmail;
+
+      if (shouldNotifyEmailChange) {
+        toast.info("Verifique seu novo e-mail para confirmar a alteração");
       }
-    }
-    if (!isValidCpfCnpj(cpfCnpj)) {
-      toast.error("CPF/CNPJ inválido");
-      setSaving(false);
-      return;
-    }
-    if (!isValidAddress(address)) {
-      toast.error("Endereço deve ter entre 3 e 200 caracteres");
-      setSaving(false);
-      return;
-    }
-    if (!isValidCep(zipCode)) {
-      toast.error("CEP inválido");
-      setSaving(false);
-      return;
-    }
-    if (!isValidResponsible(responsible)) {
-      toast.error("Responsável deve ter entre 4 e 80 caracteres");
-      setSaving(false);
-      return;
-    }
-    if (!isValidPhone(phone)) {
-      toast.error("Telefone inválido");
-      setSaving(false);
-      return;
-    }
 
-    const emailChanged = email !== initialEmail;
-    const { error: authError } = await supabasebrowser.auth.updateUser({
-      email,
-      password: password || undefined,
-      data: { name: companyName },
-    });
-    if (authError) {
-      toast.error(authError.message);
+      toast.success("Configurações salvas");
+      setInitialEmail(normalizedEmail);
+      setEmail(normalizedEmail);
+      setCompanyName(normalizedCompanyName);
+      setPassword("");
+      setConfirm("");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Erro ao salvar configurações",
+      );
+    } finally {
       setSaving(false);
-      return;
     }
-
-    const { error: companyError } = await supabasebrowser
-      .from("company")
-      .update({ company_name: companyName })
-      .eq("user_id", userId);
-    if (companyError) {
-      toast.error(companyError.message);
-      setSaving(false);
-      return;
-    }
-
-    const res = await fetch("/api/profile/complete", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        cpf_cnpj: cpfCnpj,
-        address,
-        zip_code: zipCode,
-        city,
-        state,
-        country,
-        responsible_name: responsible,
-        phone,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      toast.error(data.error || "Erro ao salvar perfil");
-      setSaving(false);
-      return;
-    }
-
-    if (emailChanged) {
-      toast.info("Verifique seu novo e-mail para confirmar a alteração");
-    }
-    toast.success("Configurações salvas");
-    setInitialEmail(email);
-    setPassword("");
-    setConfirm("");
-    setSaving(false);
   };
 
   if (loading)
