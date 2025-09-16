@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabasebrowser } from "@/lib/supabaseClient";
-import { updateAgentInstructions } from "@/lib/updateAgentInstructions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,22 +13,40 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import AgentTypeCard from "@/components/agents/AgentTypeCard";
-import { isValidAgentName } from "@/lib/validators";
 import { toast } from "sonner";
-import {
-  MAX_AGENTS_PER_COMPANY,
-  ALLOWED_AGENT_TYPES,
-  AGENT_PRICE,
-} from "@/lib/constants";
-import { AGENT_TEMPLATES } from "@/lib/agentTemplates";
 
 export default function NewAgentPage() {
   const router = useRouter();
+  type AgentCreateResponse = {
+    id?: string;
+    message?: string;
+    error?: string;
+    agentCount?: number;
+    maxAgents?: number;
+    limitReached?: boolean;
+  };
   const [name, setName] = useState("");
   const [type, setType] = useState("");
-  const [companyId, setCompanyId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [agentCount, setAgentCount] = useState(0);
+  const [maxAgents, setMaxAgents] = useState<number | null>(null);
+  const [limitReached, setLimitReached] = useState(false);
+  const [isLoadingInfo, setIsLoadingInfo] = useState(true);
+
+  const updateLimitState = useCallback(
+    (payload: AgentCreateResponse | null) => {
+      if (!payload) return;
+      setMaxAgents(
+        typeof payload.maxAgents === "number" ? payload.maxAgents : null
+      );
+      const limit =
+        typeof payload.maxAgents === "number" &&
+        typeof payload.agentCount === "number"
+          ? payload.agentCount >= payload.maxAgents
+          : Boolean(payload.limitReached);
+      setLimitReached(limit);
+    },
+    [setLimitReached, setMaxAgents]
+  );
 
   const agentTypes = [
     {
@@ -51,148 +67,98 @@ export default function NewAgentPage() {
   ];
 
   useEffect(() => {
-    supabasebrowser.auth.getUser().then(async ({ data }) => {
-      const user = data?.user;
-      if (!user) return;
-      const { data: company } = await supabasebrowser
-        .from("company")
-        .select("id")
-        .eq("user_id", user.id)
-        .single();
-      const id = company?.id;
-      setCompanyId(id || null);
-      if (!id) return;
-      const { count } = await supabasebrowser
-        .from("agents")
-        .select("id", { count: "exact", head: true })
-        .eq("company_id", id);
-      setAgentCount(count || 0);
-    });
-  }, []);
+    let isActive = true;
+
+    const loadAgentInfo = async () => {
+      try {
+        const response = await fetch("/api/agents/create");
+        let data: AgentCreateResponse | null = null;
+
+        try {
+          data = (await response.json()) as AgentCreateResponse;
+        } catch {
+          data = null;
+        }
+
+        if (!isActive) return;
+
+        if (response.ok && data) {
+          updateLimitState(data);
+        } else if (data?.error) {
+          toast.error(data.error);
+        }
+      } catch {
+        if (isActive) {
+          toast.error("Não foi possível carregar informações do agente.");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingInfo(false);
+        }
+      }
+    };
+
+    loadAgentInfo();
+
+    return () => {
+      isActive = false;
+    };
+  }, [updateLimitState]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid || !companyId || isSubmitting) return;
-
-    if (!ALLOWED_AGENT_TYPES.includes(type)) {
-      toast.error("Tipo de agente inválido.");
-      return;
-    }
+    if (!isFormValid || isSubmitting || limitReached) return;
 
     setIsSubmitting(true);
 
-    const { count } = await supabasebrowser
-      .from("agents")
-      .select("id", { count: "exact", head: true })
-      .eq("company_id", companyId);
-    if ((count || 0) >= MAX_AGENTS_PER_COMPANY) {
-      toast.error(`Limite de ${MAX_AGENTS_PER_COMPANY} agentes atingido.`);
-      setIsSubmitting(false);
-      return;
-    }
+    try {
+      const response = await fetch("/api/agents/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, type }),
+      });
 
-    const { data, error } = await supabasebrowser
-      .from("agents")
-      .insert({ name, type, company_id: companyId })
-      .select("id")
-      .single();
+      let data: AgentCreateResponse | null = null;
 
-    if (error || !data) {
-      toast.error("Erro ao criar agente.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    const template = AGENT_TEMPLATES[type];
-    if (template) {
-      const behavior =
-        template.behavior ?? {
-          limitations: "",
-          default_fallback: "",
-        };
-      const inserts = [];
-      inserts.push(
-        supabasebrowser.from("agent_personality").insert({
-          agent_id: data.id,
-          ...template.personality,
-        })
-      );
-      inserts.push(
-        supabasebrowser.from("agent_behavior").insert({
-          agent_id: data.id,
-          ...behavior,
-        })
-      );
-      inserts.push(
-        supabasebrowser.from("agent_onboarding").insert({
-          agent_id: data.id,
-          ...template.onboarding,
-        })
-      );
-      if (template.specificInstructions.length > 0) {
-        inserts.push(
-          supabasebrowser
-            .from("agent_specific_instructions")
-            .insert(
-              template.specificInstructions.map((i) => ({
-                agent_id: data.id,
-                ...i,
-              }))
-            )
-        );
+      try {
+        data = (await response.json()) as AgentCreateResponse;
+      } catch {
+        data = null;
       }
-      const results = await Promise.all(inserts);
-      if (results.some((r) => r.error)) {
-        toast.error("Erro ao aplicar template do agente.");
-        setIsSubmitting(false);
+
+      if (!response.ok) {
+        if (data?.error) {
+          toast.error(data.error);
+        } else {
+          toast.error("Erro ao criar agente.");
+        }
+
+        updateLimitState(data);
         return;
       }
-    }
 
-    await updateAgentInstructions(data.id);
+      toast.success(data?.message ?? "Agente criado com sucesso.");
 
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 30);
+      updateLimitState(data);
 
-    const { data: payment, error: paymentError } = await supabasebrowser
-      .from("payments")
-      .insert({
-        company_id: companyId,
-        agent_id: data.id,
-        amount: AGENT_PRICE,
-        due_date: dueDate.toISOString(),
-        reference: `Mensalidade ${name}`,
-      })
-      .select("id, amount, due_date")
-      .single();
+      const agentId = data?.id;
 
-    if (!paymentError && payment) {
-      const { data: sessionData } = await supabasebrowser.auth.getSession();
-      const token = sessionData.session?.access_token;
-      if (token) {
-        await fetch("/api/payments/pay", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            id: payment.id,
-            date: payment.due_date.slice(0, 10),
-            total: payment.amount,
-          }),
-        });
+      if (typeof agentId === "string") {
+        setTimeout(
+          () => window.location.assign(`/dashboard/agents/${agentId}`),
+          2000
+        );
       }
+    } catch {
+      toast.error("Erro ao criar agente.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    toast.success("Agente criado com sucesso...");
-    setTimeout(
-      () => window.location.assign(`/dashboard/agents/${data.id}`),
-      2000
-    );
   };
 
-  const isFormValid = isValidAgentName(name) && type !== "";
+  const isFormValid = name.trim().length > 0 && type !== "";
 
   return (
     <div className="bg-[#FAFAFA] flex items-center justify-center py-6">
@@ -236,11 +202,6 @@ export default function NewAgentPage() {
                 <p className="text-xs text-gray-500">
                   Escolha um nome interno para seu Agente de IA
                 </p>
-                {name && !isValidAgentName(name) && (
-                  <p className="text-xs text-red-500">
-                    O nome deve ter entre 3 e 50 caracteres
-                  </p>
-                )}
               </div>
             </CardContent>
 
@@ -248,7 +209,9 @@ export default function NewAgentPage() {
               <Button
                 type="submit"
                 className="w-full sm:w-auto"
-                disabled={!isFormValid || agentCount >= MAX_AGENTS_PER_COMPANY || isSubmitting}
+                disabled={
+                  !isFormValid || limitReached || isSubmitting || isLoadingInfo
+                }
               >
                 Criar Agente de IA
               </Button>
@@ -261,9 +224,11 @@ export default function NewAgentPage() {
                 Cancelar
               </Button>
             </CardFooter>
-            {agentCount >= MAX_AGENTS_PER_COMPANY && (
+            {limitReached && (
               <p className="text-sm text-center text-red-500 mb-4">
-                Limite de {MAX_AGENTS_PER_COMPANY} agentes atingido.
+                {typeof maxAgents === "number"
+                  ? `Limite de ${maxAgents} agentes atingido.`
+                  : "Limite de agentes atingido."}
               </p>
             )}
           </form>
