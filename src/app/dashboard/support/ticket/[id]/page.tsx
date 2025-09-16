@@ -26,18 +26,55 @@ export default function TicketPage() {
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
     const [user, setUser] = useState<User | null>(null);
+    const [isAuthReady, setIsAuthReady] = useState(false);
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        supabasebrowser.auth.getUser().then(({ data, error }) => {
-            if (!error && data.user) setUser(data.user);
-        });
+        let isMounted = true;
+
+        const syncSession = async () => {
+            try {
+                const [{ data: userData, error: userError }, { data: sessionData, error: sessionError }] = await Promise.all([
+                    supabasebrowser.auth.getUser(),
+                    supabasebrowser.auth.getSession(),
+                ]);
+
+                if (sessionError) throw sessionError;
+                if (!sessionData.session) throw new Error("Sessão não encontrada");
+
+                await supabase.auth.setSession({
+                    access_token: sessionData.session.access_token,
+                    refresh_token: sessionData.session.refresh_token,
+                });
+
+                if (userError) throw userError;
+                if (!userData?.user) throw new Error("Usuário não encontrado");
+
+                if (isMounted) {
+                    setUser(userData.user);
+                    setIsAuthReady(true);
+                }
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Erro ao sincronizar sessão");
+                }
+                setLoading(false);
+            }
+        };
+
+        void syncSession();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     useEffect(() => {
-        if (!user?.id) return;
+        if (!isAuthReady || !user?.id) return;
         (async () => {
             try {
                 if (!id) throw new Error("ID inválido");
@@ -59,7 +96,7 @@ export default function TicketPage() {
                 setLoading(false);
             }
         })();
-    }, [user, id]);
+    }, [user, id, isAuthReady]);
 
     if (loading) return <p className="text-center py-10">Carregando...</p>;
     if (error) return <p className="text-red-600 py-10">Erro: {error}</p>;
