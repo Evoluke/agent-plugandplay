@@ -11,16 +11,44 @@ import { Suspense } from 'react';
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
+  const cooldownDuration = 60;
+  const cooldownKey = email ? `verify-email-cooldown:${email}` : null;
   const [cooldown, setCooldown] = useState(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!cooldownKey || typeof window === 'undefined') return;
+
+    const storedExpiresAt = window.localStorage.getItem(cooldownKey);
+    if (!storedExpiresAt) return;
+
+    const expiresAt = Number(storedExpiresAt);
+    if (Number.isNaN(expiresAt)) {
+      window.localStorage.removeItem(cooldownKey);
+      return;
+    }
+
+    const remaining = Math.ceil((expiresAt - Date.now()) / 1000);
+    if (remaining > 0) {
+      setCooldown(remaining);
+    } else {
+      window.localStorage.removeItem(cooldownKey);
+    }
+  }, [cooldownKey]);
+
+  useEffect(() => {
     if (cooldown <= 0) return;
     const interval = setInterval(() => {
-      setCooldown((prev) => Math.max(prev - 1, 0));
+      setCooldown((prev) => {
+        const nextCooldown = Math.max(prev - 1, 0);
+        if (nextCooldown === 0 && cooldownKey && typeof window !== 'undefined') {
+          window.localStorage.removeItem(cooldownKey);
+        }
+        return nextCooldown;
+      });
     }, 1000);
     return () => clearInterval(interval);
-  }, [cooldown]);
+  }, [cooldown, cooldownKey]);
 
   const handleResend = async () => {
     if (!email) {
@@ -35,7 +63,11 @@ function VerifyEmailContent() {
         toast.error('Erro ao reenviar email. Tente novamente mais tarde.');
       } else {
         toast.success('Email de verificação reenviado');
-        setCooldown(60);
+        if (cooldownKey && typeof window !== 'undefined') {
+          const expiresAt = Date.now() + cooldownDuration * 1000;
+          window.localStorage.setItem(cooldownKey, expiresAt.toString());
+        }
+        setCooldown(cooldownDuration);
       }
     } finally {
       setLoading(false);
