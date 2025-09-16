@@ -19,14 +19,14 @@ export async function getUserFromCookie() {
   const cookieName = `sb-${projectRef}-auth-token`;
   const tokenCookie = cookieStore.get(cookieName);
   if (!tokenCookie) {
-    return { user: null, error: new Error("No auth cookie") };
+    return { user: null, accessToken: null, error: new Error("No auth cookie") };
   }
   const decoded = decodeCookieValue(tokenCookie.value);
   let session: unknown;
   try {
     session = JSON.parse(decoded);
   } catch {
-    return { user: null, error: new Error("Invalid auth cookie") };
+    return { user: null, accessToken: null, error: new Error("Invalid auth cookie") };
   }
   const accessToken = Array.isArray(session)
     ? session[0]
@@ -34,8 +34,8 @@ export async function getUserFromCookie() {
     ? (session as { access_token: string }).access_token
     : undefined;
   if (!accessToken || typeof accessToken !== "string") {
-    return { user: null, error: new Error("No access token") };
+    return { user: null, accessToken: null, error: new Error("No access token") };
   }
   const { data, error } = await supabaseadmin.auth.getUser(accessToken);
-  return { user: data.user, error };
+  return { user: data.user, accessToken, error };
 }
