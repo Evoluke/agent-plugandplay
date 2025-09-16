@@ -8,19 +8,48 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Suspense } from 'react';
 
+const COOLDOWN_SECONDS = 60;
+
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
   const [cooldown, setCooldown] = useState(0);
   const [loading, setLoading] = useState(false);
+  const storageKey = email ? `verify-email-resend-${encodeURIComponent(email)}` : null;
 
   useEffect(() => {
-    if (cooldown <= 0) return;
+    if (!storageKey) return;
+    const storedTimestamp = localStorage.getItem(storageKey);
+    if (!storedTimestamp) return;
+
+    const parsedTimestamp = Number(storedTimestamp);
+    if (!Number.isFinite(parsedTimestamp)) {
+      localStorage.removeItem(storageKey);
+      return;
+    }
+
+    const elapsedSeconds = Math.floor((Date.now() - parsedTimestamp) / 1000);
+    const remainingSeconds = COOLDOWN_SECONDS - elapsedSeconds;
+
+    if (remainingSeconds > 0) {
+      setCooldown(remainingSeconds);
+    } else {
+      localStorage.removeItem(storageKey);
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (cooldown <= 0) {
+      if (storageKey) {
+        localStorage.removeItem(storageKey);
+      }
+      return;
+    }
     const interval = setInterval(() => {
       setCooldown((prev) => Math.max(prev - 1, 0));
     }, 1000);
     return () => clearInterval(interval);
-  }, [cooldown]);
+  }, [cooldown, storageKey]);
 
   const handleResend = async () => {
     if (!email) {
@@ -35,7 +64,10 @@ function VerifyEmailContent() {
         toast.error('Erro ao reenviar email. Tente novamente mais tarde.');
       } else {
         toast.success('Email de verificação reenviado');
-        setCooldown(60);
+        setCooldown(COOLDOWN_SECONDS);
+        if (storageKey) {
+          localStorage.setItem(storageKey, Date.now().toString());
+        }
       }
     } finally {
       setLoading(false);
