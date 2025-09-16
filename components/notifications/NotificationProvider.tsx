@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
-import type { RealtimeChannel } from '@supabase/supabase-js';
+import type { RealtimeChannel, Session } from '@supabase/supabase-js';
 
 export interface Notification {
   id: string;
@@ -39,21 +39,35 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       .slice(0, 4);
 
   useEffect(() => {
+    let isMounted = true;
     let channel: RealtimeChannel | null = null;
-    const setup = async () => {
-      const { data: { user } } = await supabasebrowser.auth.getUser();
-      if (!user) return;
+    let lastUserId: string | null = null;
+    let authSubscription:
+      | ReturnType<typeof supabasebrowser.auth.onAuthStateChange>['data']['subscription']
+      | null = null;
+
+    const cleanupChannel = () => {
+      if (channel) {
+        supabasebrowser.removeChannel(channel);
+        channel = null;
+      }
+    };
+
+    const setupForUser = async (userId: string) => {
+      cleanupChannel();
       const { data: company } = await supabasebrowser
         .from('company')
         .select('id')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .single();
-      if (!company) return;
+      if (!company || !isMounted) return;
+
       const res = await fetch('/api/notifications');
-      if (res.ok) {
+      if (res.ok && isMounted) {
         const data = await res.json();
         setNotifications(sortAndLimit(data));
       }
+
       channel = supabasebrowser
         .channel(`notifications:company:${company.id}`)
         .on(
@@ -65,6 +79,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             filter: `company_id=eq.${company.id}`,
           },
           (payload) => {
+            if (!isMounted) return;
             const newNotif = payload.new as Notification;
             setNotifications((prev) => sortAndLimit([newNotif, ...prev]));
             toast(newNotif.message);
@@ -72,9 +87,34 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         )
         .subscribe();
     };
-    setup();
+
+    const handleSession = async (session: Session | null) => {
+      const userId = session?.user?.id ?? null;
+      if (!userId) {
+        lastUserId = null;
+        cleanupChannel();
+        if (isMounted) setNotifications([]);
+        return;
+      }
+      if (userId === lastUserId && channel) return;
+      lastUserId = userId;
+      await setupForUser(userId);
+    };
+
+    supabasebrowser.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      void handleSession(session);
+    });
+
+    const { data } = supabasebrowser.auth.onAuthStateChange((_, session) => {
+      void handleSession(session);
+    });
+    authSubscription = data.subscription;
+
     return () => {
-      if (channel) supabasebrowser.removeChannel(channel);
+      isMounted = false;
+      cleanupChannel();
+      if (authSubscription) authSubscription.unsubscribe();
     };
   }, []);
 
