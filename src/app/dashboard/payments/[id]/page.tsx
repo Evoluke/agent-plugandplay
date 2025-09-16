@@ -32,6 +32,7 @@ export default function PaymentPage() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [paymentLink, setPaymentLink] = useState<string | null>(null);
     const [user, setUser] = useState<{ id: string } | null>(null);
+    const [isAuthReady, setIsAuthReady] = useState(false);
     const [autoAttempted, setAutoAttempted] = useState(false);
 
     const handleGenerateLink = async () => {
@@ -78,18 +79,47 @@ export default function PaymentPage() {
     };
 
     useEffect(() => {
-        supabasebrowser.auth.getUser().then(({ data, error }) => {
-            if (error || !data?.user) {
-                toast.error("Erro ao buscar usuário.");
-            } else {
+        let isMounted = true;
 
-                setUser({ id: data.user.id });
+        const syncSession = async () => {
+            try {
+                const [{ data: userData, error: userError }, { data: sessionData, error: sessionError }] = await Promise.all([
+                    supabasebrowser.auth.getUser(),
+                    supabasebrowser.auth.getSession(),
+                ]);
+
+                if (sessionError) throw sessionError;
+                if (!sessionData.session) throw new Error("Sessão não encontrada");
+
+                await supabase.auth.setSession({
+                    access_token: sessionData.session.access_token,
+                    refresh_token: sessionData.session.refresh_token,
+                });
+
+                if (userError) throw userError;
+                if (!userData?.user) throw new Error("Usuário não encontrado");
+
+                if (isMounted) {
+                    setUser({ id: userData.user.id });
+                    setIsAuthReady(true);
+                }
+            } catch (authError: unknown) {
+                const message = authError instanceof Error ? authError.message : "Erro ao sincronizar sessão.";
+                toast.error(message);
+                setError(message);
+                setLoading(false);
             }
-        });
+        };
+
+        void syncSession();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     useEffect(() => {
-        if (!user?.id) return;
+        if (!isAuthReady || !user?.id) return;
         const userId = user.id;
         async function load() {
             try {
@@ -110,7 +140,7 @@ export default function PaymentPage() {
             }
         }
         load();
-      }, [user, id]);
+      }, [user, id, isAuthReady]);
 
       useEffect(() => {
           if (payment && !paymentLink && !isGenerating && !autoAttempted) {
