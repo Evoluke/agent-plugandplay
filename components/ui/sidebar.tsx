@@ -25,6 +25,7 @@ import {
 import { toast } from 'sonner';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 import { cn } from './utils';
+import type { Session } from '@supabase/supabase-js';
 
 interface NavItem {
   label: string;
@@ -53,26 +54,63 @@ function useAgents() {
   const [agents, setAgents] = useState<Agent[]>([]);
 
   useEffect(() => {
-    const fetchAgents = async () => {
-      const { data } = await supabasebrowser.auth.getUser();
-      const user = data?.user;
-      if (!user) return;
+    let isMounted = true;
+    let currentUserId: string | null = null;
+    let authSubscription:
+      | ReturnType<typeof supabasebrowser.auth.onAuthStateChange>['data']['subscription']
+      | null = null;
+
+    const fetchAgentsForUser = async (userId: string) => {
       const { data: company } = await supabasebrowser
         .from('company')
         .select('id')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .single();
-      if (!company?.id) return;
+      if (!company?.id || !isMounted) return;
+
       const { data: agentData } = await supabasebrowser
         .from('agents')
         .select('id,name')
         .eq('company_id', company.id);
+      if (!isMounted) return;
       setAgents(agentData || []);
     };
 
-    fetchAgents();
-    window.addEventListener('agentsUpdated', fetchAgents);
-    return () => window.removeEventListener('agentsUpdated', fetchAgents);
+    const handleSession = async (session: Session | null) => {
+      const userId = session?.user?.id ?? null;
+      if (!userId) {
+        currentUserId = null;
+        if (isMounted) setAgents([]);
+        return;
+      }
+
+      currentUserId = userId;
+      await fetchAgentsForUser(userId);
+    };
+
+    const handleAgentsUpdated = () => {
+      if (currentUserId) {
+        void fetchAgentsForUser(currentUserId);
+      }
+    };
+
+    window.addEventListener('agentsUpdated', handleAgentsUpdated);
+
+    supabasebrowser.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      void handleSession(session);
+    });
+
+    const { data } = supabasebrowser.auth.onAuthStateChange((_, session) => {
+      void handleSession(session);
+    });
+    authSubscription = data.subscription;
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('agentsUpdated', handleAgentsUpdated);
+      if (authSubscription) authSubscription.unsubscribe();
+    };
   }, []);
 
   return agents;
@@ -82,20 +120,46 @@ function useChatwootId() {
   const [chatwootId, setChatwootId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchChatwootId = async () => {
-      const { data } = await supabasebrowser.auth.getUser();
-      const user = data?.user;
-      if (!user) return;
+    let isMounted = true;
+    let authSubscription:
+      | ReturnType<typeof supabasebrowser.auth.onAuthStateChange>['data']['subscription']
+      | null = null;
+
+    const fetchChatwootId = async (userId: string) => {
       const { data: company } = await supabasebrowser
         .from('company')
         .select('chatwoot_id')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .single();
 
-      if (company?.chatwoot_id) setChatwootId(company.chatwoot_id);
+      if (!isMounted) return;
+      setChatwootId(company?.chatwoot_id ?? null);
     };
 
-    fetchChatwootId();
+    const handleSession = async (session: Session | null) => {
+      const userId = session?.user?.id ?? null;
+      if (!userId) {
+        if (isMounted) setChatwootId(null);
+        return;
+      }
+
+      await fetchChatwootId(userId);
+    };
+
+    supabasebrowser.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      void handleSession(session);
+    });
+
+    const { data } = supabasebrowser.auth.onAuthStateChange((_, session) => {
+      void handleSession(session);
+    });
+    authSubscription = data.subscription;
+
+    return () => {
+      isMounted = false;
+      if (authSubscription) authSubscription.unsubscribe();
+    };
   }, []);
 
   return chatwootId;
