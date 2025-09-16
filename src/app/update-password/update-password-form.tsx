@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Button } from '@/components/ui/button';
@@ -10,9 +10,58 @@ import { toast } from 'sonner';
 export default function UpdatePasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const errorDescription = searchParams.get('error_description');
-  const expiresAt = searchParams.get('expires_at');
-  const isExpired = expiresAt ? Date.now() > Number(expiresAt) * 1000 : false;
+  const searchParamsString = searchParams.toString();
+  const combinedParams = useMemo(() => {
+    const params = new URLSearchParams(searchParamsString);
+
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hashString = window.location.hash.startsWith('#')
+        ? window.location.hash.slice(1)
+        : window.location.hash;
+
+      if (hashString) {
+        const hashParams = new URLSearchParams(hashString);
+        hashParams.forEach((value, key) => {
+          params.set(key, value);
+        });
+      }
+    }
+
+    return params;
+  }, [searchParamsString]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.location.hash) {
+      return;
+    }
+
+    const urlWithoutHash = `${window.location.pathname}${window.location.search}`;
+    window.history.replaceState(window.history.state, '', urlWithoutHash);
+  }, []);
+
+  const errorDescription =
+    combinedParams.get('error_description') || combinedParams.get('error');
+
+  const parseNumericParam = (value: string | null) => {
+    if (value === null) return undefined;
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue : undefined;
+  };
+
+  const expiresAtSeconds = parseNumericParam(combinedParams.get('expires_at'));
+  const expiresInSeconds = parseNumericParam(combinedParams.get('expires_in'));
+
+  const expirationTimestamp =
+    expiresAtSeconds !== undefined
+      ? expiresAtSeconds * 1000
+      : expiresInSeconds !== undefined
+      ? Date.now() + expiresInSeconds * 1000
+      : undefined;
+
+  const isExpired =
+    typeof expirationTimestamp === 'number'
+      ? Date.now() > expirationTimestamp
+      : false;
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -67,36 +116,40 @@ export default function UpdatePasswordForm() {
           onSubmit={handleSubmit}
           className="w-full bg-white rounded-lg shadow p-6 space-y-4"
         >
-        <h1 className="text-2xl font-semibold text-center">Nova senha</h1>
+          <h1 className="text-2xl font-semibold text-center">Nova senha</h1>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium">Senha</label>
-          <PasswordInput
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
-        </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium">
+              Senha
+            </label>
+            <PasswordInput
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="confirm" className="block text-sm font-medium">Confirmar senha</label>
-          <PasswordInput
-            id="confirm"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            required
-            minLength={8}
-          />
-        </div>
+          <div>
+            <label htmlFor="confirm" className="block text-sm font-medium">
+              Confirmar senha
+            </label>
+            <PasswordInput
+              id="confirm"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Salvando...' : 'Salvar'}
-        </Button>
-      </form>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Salvando...' : 'Salvar'}
+          </Button>
+        </form>
+      </div>
     </div>
-  </div>
   );
 }
 
