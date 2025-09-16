@@ -84,16 +84,29 @@ export default function CompleteProfilePage() {
       }
       const uid = data.user.id;
       setUserId(uid);
-      const { data: company } = await supabasebrowser
+
+      const { data: company, error: companyError } = await supabasebrowser
         .from("company")
         .select("profile_complete, company_profile_id")
         .eq("user_id", uid)
-        .single();
-      if (company?.profile_complete) {
+        .maybeSingle();
+
+      if (companyError) {
+        console.error("Erro ao buscar empresa do usuário", companyError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!company) {
+        setLoading(false);
+        return;
+      }
+
+      if (company.profile_complete) {
         router.replace("/dashboard");
         return;
       }
-      if (company?.company_profile_id) {
+      if (company.company_profile_id) {
         const { data: profile } = await supabasebrowser
           .from("company_profile")
           .select("*")

@@ -6,8 +6,8 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { supabasebrowser } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation'
+import { supabasebrowser } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
 
   useEffect(() => {
@@ -24,15 +25,27 @@ export default function LoginPage() {
         setLoading(false);
         return;
       }
-      if (data?.user) {
-        const { data: company } = await supabasebrowser
-          .from('company')
-          .select('profile_complete')
-          .eq('user_id', data.user.id)
-          .single();
-        if (company?.profile_complete) router.replace('/dashboard');
-        else router.replace('/complete-profile');
-      } else setLoading(false);
+
+      const user = data?.user;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: company, error: companyError } = await supabasebrowser
+        .from('company')
+        .select('profile_complete')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (companyError) {
+        console.error('Erro ao buscar empresa do usuário', companyError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (company?.profile_complete) router.replace('/dashboard');
+      else router.replace('/complete-profile');
     });
   }, [router]);
 
@@ -66,6 +79,27 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const redirectTo = new URL('/login', baseUrl).toString();
+      const { error } = await supabasebrowser.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo },
+      });
+      if (error) {
+        console.error('Erro ao entrar com Google:', error.message);
+        toast.error('Não foi possível conectar com o Google. Tente novamente.');
+      }
+    } catch (err) {
+      console.error('Erro inesperado ao entrar com Google:', err);
+      toast.error('Não foi possível conectar com o Google. Tente novamente.');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA]">
       <div className="w-full px-4 sm:max-w-md md:max-w-lg">
@@ -81,6 +115,23 @@ export default function LoginPage() {
           className="w-full bg-white rounded-lg shadow p-6 space-y-6"
         >
         <h1 className="text-2xl font-semibold text-center">Login</h1>
+
+        <div className="space-y-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={isGoogleLoading}
+          >
+            {isGoogleLoading ? 'Redirecionando...' : 'Entrar com Google'}
+          </Button>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <span className="h-px flex-1 bg-gray-200" />
+            <span>ou continue com e-mail</span>
+            <span className="h-px flex-1 bg-gray-200" />
+          </div>
+        </div>
 
         <div>
           <label htmlFor="email" className="block text-sm font-medium">Email</label>
