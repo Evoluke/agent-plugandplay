@@ -85,10 +85,10 @@ const slides = [
         </ul>
         <h3 className="mt-6 font-semibold">Como funciona (explicação rápida)</h3>
         <ol className="list-decimal space-y-2 pl-5">
-          <li>Você cria o agente, escolhe um modelo sugerido ou parte de um template.</li>
-          <li>Personaliza personalidade, objetivos e conecta a base de conhecimento (FAQs, PDFs, CRM).</li>
+          <li>Você cria o agente, escolhe um modelo sugerido.</li>
+          <li>Personaliza personalidade, objetivos e conecta a base de conhecimento.</li>
           <li>Finaliza o pagamento para liberar o ambiente de produção e os canais desejados.</li>
-          <li>Integra o agente ao CRM Evoluke e aos canais como WhatsApp, site e Instagram.</li>
+          <li>Integra o agente ao CRM Evoluke e ao canal de WhatsApp</li>
           <li>Acompanha resultados, recebe sugestões de melhoria e faz ajustes pelo painel.</li>
         </ol>
       </>
@@ -102,8 +102,8 @@ const slides = [
           <h4 className="font-semibold">Passo 1 — Criação do Agente</h4>
           <p className="mt-2 font-medium">O que você faz</p>
           <ul className="list-disc pl-5">
-            <li>Escolhe o modelo do agente (ex.: SDR/Vendas, Suporte, Cobrança, Pós-venda).</li>
-            <li>Define o nome interno e os responsáveis pela operação.</li>
+            <li>Escolhe o modelo do agente.</li>
+            <li>Define o nome interno.</li>
           </ul>
           <p className="mt-2">Resultado: agente criado em rascunho (inativo) no painel.</p>
         </li>
@@ -143,7 +143,7 @@ const slides = [
           <p className="mt-2">Resultado: acesso ao CRM finalizado e operação unificada.</p>
         </li>
         <li>
-          <h4 className="font-semibold">Passo 5 — Ativação do Agente de IA nos Canais</h4>
+          <h4 className="font-semibold">Passo 5 — Ativação do Agente de IA</h4>
           <p className="mt-2 font-medium">Canais suportados</p>
           <p>WhatsApp, site (widget de chat), Instagram, e-mail, Facebook e integrações via API.</p>
           <p className="mt-2 font-medium">Publicação</p>
@@ -320,35 +320,7 @@ export default function LearnMore() {
             </button>
           </div>
         </div>
-      </section>
-
-      <section className="border-t py-10 md:py-16">
-        <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
-          <h2 className="text-2xl font-semibold md:text-3xl">Detalhes que fazem a diferença no dia a dia</h2>
-          <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">
-            Complemente as informações do slider com alguns dos recursos avançados que tornam a Evoluke uma plataforma completa
-            para atendimento inteligente e geração de negócios.
-          </p>
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {deepDiveSections.map((section) => (
-              <div key={section.title} className="flex h-full flex-col gap-4 rounded-xl border bg-background p-6 shadow-sm">
-                <div>
-                  <h3 className="text-lg font-semibold">{section.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{section.description}</p>
-                </div>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {section.items.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </section>    
 
       <section className="border-t bg-muted/30 py-12 md:py-16">
         <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">

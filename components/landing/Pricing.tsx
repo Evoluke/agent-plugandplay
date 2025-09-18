@@ -110,7 +110,7 @@ export default function Pricing() {
                         Assinar
                       </Button>
                     </Link>
-                    <p className="text-[11px] text-muted-foreground text-center">
+                    <p className="text-[8px] text-muted-foreground text-center">
                       Mensagens adicionais têm custo extra de R$ 0,0599 por
                       mensagem.
                     </p>
