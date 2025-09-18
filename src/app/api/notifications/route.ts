@@ -20,7 +20,7 @@ export async function GET() {
   if (dbError) {
     return NextResponse.json({ error: dbError.message }, { status: 500 });
   }
-  return NextResponse.json(data);
+  return NextResponse.json({ notifications: data ?? [], companyId: company.id });
 }
 
 export async function POST(req: NextRequest) {

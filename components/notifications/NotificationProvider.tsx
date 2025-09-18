@@ -41,7 +41,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     let isMounted = true;
     let channel: RealtimeChannel | null = null;
-    let lastUserId: string | null = null;
+    let lastCompanyId: number | null = null;
     let authSubscription:
       | ReturnType<typeof supabasebrowser.auth.onAuthStateChange>['data']['subscription']
       | null = null;
@@ -53,30 +53,54 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       }
     };
 
-    const setupForUser = async (userId: string) => {
-      cleanupChannel();
-      const { data: company } = await supabasebrowser
-        .from('company')
-        .select('id')
-        .eq('user_id', userId)
-        .single();
-      if (!company || !isMounted) return;
+    const syncNotifications = async () => {
+      try {
+        const res = await fetch('/api/notifications');
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 404) {
+            if (isMounted) setNotifications([]);
+          }
+          return null;
+        }
+        const { notifications: list, companyId } = (await res.json()) as {
+          notifications: Notification[];
+          companyId: number | null;
+        };
+        if (!isMounted) return null;
+        setNotifications(sortAndLimit(list ?? []));
+        return typeof companyId === 'number' ? companyId : null;
+      } catch (error) {
+        console.error('Failed to load notifications', error);
+        return null;
+      }
+    };
 
-      const res = await fetch('/api/notifications');
-      if (res.ok && isMounted) {
-        const data = await res.json();
-        setNotifications(sortAndLimit(data));
+    const handleSession = async (session: Session | null) => {
+      if (!session?.user) {
+        lastCompanyId = null;
+        cleanupChannel();
+        if (isMounted) setNotifications([]);
+        return;
       }
 
+      const companyId = await syncNotifications();
+      if (companyId == null) {
+        lastCompanyId = null;
+        cleanupChannel();
+        return;
+      }
+      if (companyId === lastCompanyId && channel) return;
+      lastCompanyId = companyId;
+      cleanupChannel();
       channel = supabasebrowser
-        .channel(`notifications:company:${company.id}`)
+        .channel(`notifications:company:${companyId}`)
         .on(
           'postgres_changes',
           {
             event: 'INSERT',
             schema: 'public',
             table: 'notifications',
-            filter: `company_id=eq.${company.id}`,
+            filter: `company_id=eq.${companyId}`,
           },
           (payload) => {
             if (!isMounted) return;
@@ -86,19 +110,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           }
         )
         .subscribe();
-    };
-
-    const handleSession = async (session: Session | null) => {
-      const userId = session?.user?.id ?? null;
-      if (!userId) {
-        lastUserId = null;
-        cleanupChannel();
-        if (isMounted) setNotifications([]);
-        return;
-      }
-      if (userId === lastUserId && channel) return;
-      lastUserId = userId;
-      await setupForUser(userId);
     };
 
     supabasebrowser.auth.getSession().then(({ data: { session } }) => {
