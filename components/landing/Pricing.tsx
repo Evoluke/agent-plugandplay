@@ -57,9 +57,12 @@ export default function Pricing() {
   return (
     <section id="modelos" className="bg-[#FAFAFA] py-24">
       <div className="container mx-auto max-w-6xl px-4">
-        <h2 className="mb-8 text-center text-3xl font-bold">
+        <h2 className="mb-2 text-center text-3xl font-bold">
           Modelos prontos para uso
         </h2>
+        <p className="mb-8 text-center text-sm text-muted-foreground">
+          Inclui até 5.000 mensagens de IA
+        </p>
         <ul
           className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3"
           role="list"
@@ -97,7 +100,7 @@ export default function Pricing() {
                       ))}
                     </ul>
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="flex flex-col items-center space-y-2">
                     <Link
                       href="/signup"
                       className="w-full"
@@ -107,6 +110,10 @@ export default function Pricing() {
                         Assinar
                       </Button>
                     </Link>
+                    <p className="text-[11px] text-muted-foreground text-center">
+                      Mensagens adicionais têm custo extra de R$ 0,0599 por
+                      mensagem.
+                    </p>
                   </CardFooter>
                 </Card>
               </div>
