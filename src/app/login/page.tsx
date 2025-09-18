@@ -120,11 +120,35 @@ export default function LoginPage() {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full justify-center gap-3 border-[#DADCE0] bg-white text-[#3C4043] shadow-sm hover:bg-[#F8F9FA] hover:text-[#202124] focus-visible:ring-[#4285F4]/50 focus-visible:ring-offset-2"
             onClick={handleGoogleSignIn}
             disabled={isGoogleLoading}
           >
-            {isGoogleLoading ? 'Redirecionando...' : 'Entrar com Google'}
+            <svg
+              aria-hidden="true"
+              className="h-5 w-5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.1 5.1 0 0 1-2.19 3.34v2.77h3.54c2.07-1.91 3.29-4.72 3.29-8.12Z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.54-2.77c-.98.66-2.23 1.06-3.74 1.06-2.88 0-5.32-1.94-6.2-4.56H2.11v2.87C3.93 20.53 7.68 23 12 23Z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.8 14.06c-.22-.66-.35-1.36-.35-2.06s.13-1.4.35-2.06V7.07H2.11C1.4 8.58 1 10.24 1 12s.4 3.42 1.11 4.93l3.69-2.87Z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.07.56 4.21 1.66l3.16-3.16C17.46 1.73 14.97.5 12 .5 7.68.5 3.93 3.47 2.11 7.07l3.69 2.87c.88-2.62 3.32-4.56 6.2-4.56Z"
+              />
+            </svg>
+            <span className="font-medium">
+              {isGoogleLoading ? 'Redirecionando...' : 'Entrar com Google'}
+            </span>
           </Button>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span className="h-px flex-1 bg-gray-200" />
