@@ -20,6 +20,29 @@ type User = {
   id: string;
 };
 
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
+
+const trackInitiateCheckout = (payment: Payment) => {
+  try {
+    if (typeof window === "undefined" || typeof window.fbq !== "function") {
+      return;
+    }
+
+    window.fbq("track", "InitiateCheckout", {
+      value: payment.amount,
+      currency: "BRL",
+      content_ids: [payment.id],
+      content_type: "payment",
+    });
+  } catch (error) {
+    console.error("Erro ao enviar evento do Pixel:", error);
+  }
+};
+
 
 export default function PaymentsPage() {
   const router = useRouter();
@@ -74,11 +97,13 @@ export default function PaymentsPage() {
 
   if (!user || !payments) return null;
 
-  const handlePay = (id: string) => {
+  const handlePay = (payment: Payment) => {
+    trackInitiateCheckout(payment);
     setIsNavigating(true);
     try {
-      router.push(`/dashboard/payments/${id}/`);
+      router.push(`/dashboard/payments/${payment.id}/`);
     } catch (error) {
+      console.error("Falha ao navegar para a página de pagamento:", error);
       setIsNavigating(false);
       toast.error("Falha ao navegar.");
     }
@@ -120,7 +145,7 @@ export default function PaymentsPage() {
                         </span>
                       ) : (
                         <button
-                          onClick={() => handlePay(p.id)}
+                          onClick={() => handlePay(p)}
                           className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                           disabled={isNavigating}
                         >
@@ -165,7 +190,7 @@ export default function PaymentsPage() {
                       </span>
                     ) : (
                       <button
-                        onClick={() => handlePay(p.id)}
+                        onClick={() => handlePay(p)}
                         className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                         disabled={isNavigating}
                       >
