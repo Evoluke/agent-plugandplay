@@ -1,5 +1,5 @@
 // src/lib/notifications.ts
-import { supabaseadmin } from '@/lib/supabaseAdmin';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type NotificationType = 'info' | 'warning' | 'success' | 'error';
 
@@ -12,16 +12,21 @@ export interface Notification {
   created_at: string;
 }
 
-export async function createNotification(companyId: number, message: string, type: NotificationType = 'info') {
-  return supabaseadmin
+export async function createNotification(
+  supabase: SupabaseClient,
+  companyId: number,
+  message: string,
+  type: NotificationType = 'info'
+) {
+  return supabase
     .from('notifications')
     .insert({ company_id: companyId, message, type })
     .select()
     .single();
 }
 
-export async function getNotifications(companyId: number) {
-  return supabaseadmin
+export async function getNotifications(supabase: SupabaseClient, companyId: number) {
+  return supabase
     .from('notifications')
     .select('*')
     .eq('company_id', companyId)
@@ -30,8 +35,8 @@ export async function getNotifications(companyId: number) {
     .limit(4);
 }
 
-export async function markAsRead(id: string, companyId: number) {
-  return supabaseadmin
+export async function markAsRead(supabase: SupabaseClient, id: string, companyId: number) {
+  return supabase
     .from('notifications')
     .update({ read_at: new Date().toISOString() })
     .eq('id', id)

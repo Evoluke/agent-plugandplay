@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { getUserFromCookie } from "@/lib/auth";
-import { supabaseadmin } from "@/lib/supabaseAdmin";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,9 @@ export async function GET() {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
-  const { data: company, error } = await supabaseadmin
+  const cookieStore = await cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const { data: company, error } = await supabase
     .from("company")
     .select("chatwoot_user_id")
     .eq("user_id", user.id)

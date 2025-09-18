@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { getUserFromCookie } from '@/lib/auth';
 import { createNotification, getNotifications, markAsRead } from '@/lib/notifications';
-import { supabaseadmin } from '@/lib/supabaseAdmin';
 
 export async function GET() {
   const { user, error } = await getUserFromCookie();
   if (error || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const { data: company, error: companyError } = await supabaseadmin
+  const cookieStore = await cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const { data: company, error: companyError } = await supabase
     .from('company')
     .select('id')
     .eq('user_id', user.id)
@@ -16,7 +19,7 @@ export async function GET() {
   if (companyError || !company) {
     return NextResponse.json({ error: 'Company not found' }, { status: 404 });
   }
-  const { data, error: dbError } = await getNotifications(company.id);
+  const { data, error: dbError } = await getNotifications(supabase, company.id);
   if (dbError) {
     return NextResponse.json({ error: dbError.message }, { status: 500 });
   }
@@ -28,7 +31,9 @@ export async function POST(req: NextRequest) {
   if (error || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const { data: company, error: companyError } = await supabaseadmin
+  const cookieStore = await cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const { data: company, error: companyError } = await supabase
     .from('company')
     .select('id')
     .eq('user_id', user.id)
@@ -37,7 +42,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Company not found' }, { status: 404 });
   }
   const { message, type } = await req.json();
-  const { data, error: dbError } = await createNotification(company.id, message, type);
+  const { data, error: dbError } = await createNotification(supabase, company.id, message, type);
   if (dbError) {
     return NextResponse.json({ error: dbError.message }, { status: 500 });
   }
@@ -49,7 +54,9 @@ export async function PATCH(req: NextRequest) {
   if (error || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const { data: company, error: companyError } = await supabaseadmin
+  const cookieStore = await cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const { data: company, error: companyError } = await supabase
     .from('company')
     .select('id')
     .eq('user_id', user.id)
@@ -58,7 +65,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Company not found' }, { status: 404 });
   }
   const { id } = await req.json();
-  const { error: dbError } = await markAsRead(id, company.id);
+  const { error: dbError } = await markAsRead(supabase, id, company.id);
   if (dbError) {
     return NextResponse.json({ error: dbError.message }, { status: 500 });
   }
