@@ -68,7 +68,6 @@ function extractAccessToken(value: unknown): string | null {
 }
 
 export async function getUserFromCookie(): Promise<UserResponse> {
-  const cookieStore = cookies();
   let lastError: AuthError | Error | null = null;
   let accessToken: string | null = null;
 
@@ -123,6 +122,21 @@ export async function getUserFromCookie(): Promise<UserResponse> {
     };
   }
 
+  let cookieStore: Awaited<ReturnType<typeof cookies>>;
+  try {
+    cookieStore = await cookies();
+  } catch (err) {
+    return {
+      user: null,
+      accessToken: accessToken ?? null,
+      error:
+        lastError ??
+        (err instanceof Error
+          ? err
+          : new Error("Unable to access request cookies")),
+    };
+  }
+
   const cookieName = `sb-${projectRef}-auth-token`;
   const tokenCookie = cookieStore.get(cookieName);
 
@@ -135,16 +149,12 @@ export async function getUserFromCookie(): Promise<UserResponse> {
   }
 
   const decoded = decodeCookieValue(tokenCookie.value);
-  let parsedValue: unknown;
+  let parsedValue: unknown = decoded;
 
   try {
     parsedValue = JSON.parse(decoded);
-  } catch {
-    return {
-      user: null,
-      accessToken: accessToken ?? null,
-      error: lastError ?? new Error("Invalid auth cookie"),
-    };
+  } catch (err) {
+    console.warn("[auth] Unable to parse auth cookie as JSON", err);
   }
 
   accessToken = extractAccessToken(parsedValue);
