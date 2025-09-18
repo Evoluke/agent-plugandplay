@@ -1,41 +1,36 @@
 import { cookies } from "next/headers";
-import { supabaseadmin } from "@/lib/supabaseAdmin";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import type { AuthError, User } from "@supabase/supabase-js";
 
-function decodeCookieValue(value: string): string {
-  if (value.startsWith("base64-")) {
-    try {
-      return Buffer.from(value.slice(7), "base64").toString("utf-8");
-    } catch {
-      return "";
-    }
-  }
-  return value;
+interface UserResponse {
+  user: User | null;
+  accessToken: string | null;
+  error: AuthError | Error | null;
 }
 
-export async function getUserFromCookie() {
-  const cookieStore = await cookies();
-  const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const projectRef = new URL(projectUrl).hostname.split(".")[0];
-  const cookieName = `sb-${projectRef}-auth-token`;
-  const tokenCookie = cookieStore.get(cookieName);
-  if (!tokenCookie) {
-    return { user: null, accessToken: null, error: new Error("No auth cookie") };
-  }
-  const decoded = decodeCookieValue(tokenCookie.value);
-  let session: unknown;
+export async function getUserFromCookie(): Promise<UserResponse> {
   try {
-    session = JSON.parse(decoded);
-  } catch {
-    return { user: null, accessToken: null, error: new Error("Invalid auth cookie") };
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    const user = session?.user ?? null;
+    const accessToken = session?.access_token ?? null;
+
+    if (!user) {
+      return {
+        user: null,
+        accessToken,
+        error: error ?? new Error("No active session"),
+      };
+    }
+
+    return { user, accessToken, error };
+  } catch (err) {
+    const normalizedError =
+      err instanceof Error ? err : new Error("Failed to retrieve user session");
+    return { user: null, accessToken: null, error: normalizedError };
   }
-  const accessToken = Array.isArray(session)
-    ? session[0]
-    : typeof session === "object" && session !== null && "access_token" in session
-    ? (session as { access_token: string }).access_token
-    : undefined;
-  if (!accessToken || typeof accessToken !== "string") {
-    return { user: null, accessToken: null, error: new Error("No access token") };
-  }
-  const { data, error } = await supabaseadmin.auth.getUser(accessToken);
-  return { user: data.user, accessToken, error };
 }
