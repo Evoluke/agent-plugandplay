@@ -9,8 +9,7 @@ export async function GET() {
   if (error || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const cookieStore = await cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = createRouteHandlerClient({ cookies });
   const { data: company, error: companyError } = await supabase
     .from('company')
     .select('id')
@@ -31,8 +30,7 @@ export async function POST(req: NextRequest) {
   if (error || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const cookieStore = await cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = createRouteHandlerClient({ cookies });
   const { data: company, error: companyError } = await supabase
     .from('company')
     .select('id')
@@ -54,8 +52,7 @@ export async function PATCH(req: NextRequest) {
   if (error || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const cookieStore = await cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = createRouteHandlerClient({ cookies });
   const { data: company, error: companyError } = await supabase
     .from('company')
     .select('id')
