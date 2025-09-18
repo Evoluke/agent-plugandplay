@@ -87,6 +87,10 @@ export default function Pricing() {
                         {suffix}
                       </span>
                     </p>
+                    <p className="mb-2 text-xs text-muted-foreground">
+                      Inclui até 5.000 mensagens de IA. Mensagens adicionais
+                      têm custo extra de R$ 0,0599 por mensagem.
+                    </p>
                     <p className="mb-3 text-xs text-muted-foreground">{tagline}</p>
                     <ul className="space-y-1">
                       {features.map((feature) => (
