@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import AgentTypeCard from "@/components/agents/AgentTypeCard";
 import { toast } from "sonner";
+import { supabasebrowser } from "@/lib/supabaseClient";
 
 export default function NewAgentPage() {
   const router = useRouter();
@@ -31,6 +32,31 @@ export default function NewAgentPage() {
   const [maxAgents, setMaxAgents] = useState<number | null>(null);
   const [limitReached, setLimitReached] = useState(false);
   const [isLoadingInfo, setIsLoadingInfo] = useState(true);
+
+  const fetchAuthToken = useCallback(async () => {
+    try {
+      const { data, error } = await supabasebrowser.auth.getSession();
+
+      if (error) {
+        console.error("[agents:new] Erro ao obter sessão", error);
+        toast.error("Não foi possível validar sua sessão. Faça login novamente.");
+        return null;
+      }
+
+      const token = data.session?.access_token ?? null;
+
+      if (!token) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        return null;
+      }
+
+      return token;
+    } catch (error) {
+      console.error("[agents:new] Erro inesperado ao obter sessão", error);
+      toast.error("Não foi possível validar sua sessão. Faça login novamente.");
+      return null;
+    }
+  }, []);
 
   const updateLimitState = useCallback(
     (payload: AgentCreateResponse | null) => {
@@ -70,9 +96,23 @@ export default function NewAgentPage() {
     let isActive = true;
 
     const loadAgentInfo = async () => {
+      setIsLoadingInfo(true);
+
+      const token = await fetchAuthToken();
+
+      if (!isActive) return;
+
+      if (!token) {
+        setIsLoadingInfo(false);
+        return;
+      }
+
       try {
         const response = await fetch("/api/agents/create", {
           credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         let data: AgentCreateResponse | null = null;
 
@@ -100,16 +140,20 @@ export default function NewAgentPage() {
       }
     };
 
-    loadAgentInfo();
+    void loadAgentInfo();
 
     return () => {
       isActive = false;
     };
-  }, [updateLimitState]);
+  }, [fetchAuthToken, updateLimitState]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid || isSubmitting || limitReached) return;
+
+    const token = await fetchAuthToken();
+
+    if (!token) return;
 
     setIsSubmitting(true);
 
@@ -118,6 +162,7 @@ export default function NewAgentPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ name, type }),
         credentials: "include",

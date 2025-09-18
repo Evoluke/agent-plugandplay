@@ -20,6 +20,29 @@ function errorResponse(
   return NextResponse.json({ error: message, ...(extra ?? {}) }, { status });
 }
 
+async function getUserFromRequest(request?: Request) {
+  const authHeader = request?.headers.get("Authorization") ?? "";
+  const bearerPrefix = "Bearer ";
+
+  if (authHeader.startsWith(bearerPrefix)) {
+    const token = authHeader.slice(bearerPrefix.length).trim();
+
+    if (token) {
+      const { data, error } = await supabaseadmin.auth.getUser(token);
+
+      if (!error && data.user) {
+        return { user: data.user, accessToken: token, error };
+      }
+
+      if (error) {
+        console.error("[agents:create] Erro ao validar token de autorização", error);
+      }
+    }
+  }
+
+  return getUserFromCookie();
+}
+
 async function rebuildAgentInstructions(agentId: string) {
   const [agentRes, personalityRes, behaviorRes, onboardingRes, specificRes] =
     await Promise.all([
@@ -218,8 +241,8 @@ async function triggerPayment(
   }
 }
 
-export async function GET() {
-  const { user } = await getUserFromCookie();
+export async function GET(request: Request) {
+  const { user } = await getUserFromRequest(request);
 
   if (!user) {
     return errorResponse("Não autenticado", 401);
@@ -258,7 +281,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { user, accessToken } = await getUserFromCookie();
+  const { user, accessToken } = await getUserFromRequest(request);
 
   if (!user) {
     return errorResponse("Não autenticado", 401);
