@@ -71,7 +71,9 @@ export default function NewAgentPage() {
 
     const loadAgentInfo = async () => {
       try {
-        const response = await fetch("/api/agents/create");
+        const response = await fetch("/api/agents/create", {
+          credentials: "include",
+        });
         let data: AgentCreateResponse | null = null;
 
         try {
@@ -118,6 +120,7 @@ export default function NewAgentPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, type }),
+        credentials: "include",
       });
 
       let data: AgentCreateResponse | null = null;
