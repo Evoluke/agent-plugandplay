@@ -61,7 +61,7 @@ export default function Pricing() {
           Modelos prontos para uso
         </h2>
         <p className="mb-8 text-center text-sm text-muted-foreground">
-          Inclui até 5.000 mensagens de IA.
+          Inclui até 5.000 mensagens de IA
         </p>
         <ul
           className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3"
