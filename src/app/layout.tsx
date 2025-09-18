@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -12,6 +13,22 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 const description =
   "A Evoluke oferece soluções de CRM integradas com inteligência artificial, personalizando atendimentos e automatizando processos para empresas.";
+
+const facebookPixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+const facebookPixelScript = facebookPixelId
+  ? [
+      "!function(f,b,e,v,n,t,s)",
+      "{if(f.fbq)return;n=f.fbq=function(){n.callMethod?",
+      "n.callMethod.apply(n,arguments):n.queue.push(arguments)};",
+      "if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';",
+      "n.queue=[];t=b.createElement(e);t.async=!0;",
+      "t.src=v;s=b.getElementsByTagName(e)[0];",
+      "s.parentNode.insertBefore(t,s)}(window, document,'script',",
+      "'https://connect.facebook.net/en_US/fbevents.js');",
+      `fbq('init', '${facebookPixelId}');`,
+      "fbq('track', 'PageView');",
+    ].join("\n")
+  : null;
 
 export const metadata: Metadata = {
   title: "Evoluke",
@@ -45,8 +62,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        {facebookPixelScript ? (
+          <Script id="facebook-pixel" strategy="afterInteractive">
+            {facebookPixelScript}
+          </Script>
+        ) : null}
       </head>
       <body className="font-sans antialiased h-full">
+        {facebookPixelId ? (
+          <noscript>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${facebookPixelId}&ev=PageView&noscript=1`}
+              alt=""
+            />
+          </noscript>
+        ) : null}
         <NotificationProvider>
           <Toaster position="top-right" />
           {children}
