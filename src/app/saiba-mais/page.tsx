@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Saiba Mais - Evoluke",
-  description: "Descubra como a Evoluke transforma o atendimento com IA.",
+  description:
+    "Conheça em detalhes o passo a passo de implantação, integrações e suporte do agente Evoluke para elevar o atendimento com IA.",
 };
 
 export default function SaibaMaisPage() {
