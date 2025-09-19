@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/components/ui/utils";
-import { FileText, PlayCircle } from "lucide-react";
+import { ChevronRight, FileText, PlayCircle } from "lucide-react";
 
 type DocumentationResource = {
   label: string;
@@ -145,14 +145,22 @@ function DocumentationMenuButton({
 }: DocumentationMenuButtonProps) {
   const Icon = item.videoUrl ? PlayCircle : FileText;
   const baseClasses =
-    variant === "desktop" ? "rounded-lg border px-3 py-2" : "px-4 py-3";
+    variant === "desktop"
+      ? "rounded-lg border px-3 py-2"
+      : "px-4 py-3 hover:bg-gray-50";
   const stateClasses = isActive
     ? variant === "desktop"
       ? "border-[#2F6F68] bg-[#F0F5F4] text-gray-900 shadow-sm"
       : "bg-[#F0F5F4] text-gray-900"
     : variant === "desktop"
       ? "border-transparent text-gray-600 hover:bg-gray-50"
-      : "bg-white text-gray-600 hover:bg-gray-50";
+      : "bg-white text-gray-600";
+  const layoutClasses =
+    variant === "desktop"
+      ? "items-start gap-3"
+      : "items-center justify-between gap-3";
+  const iconWrapperClasses =
+    variant === "desktop" ? "mt-0.5 text-[#2F6F68]" : "text-[#2F6F68]";
 
   return (
     <button
@@ -160,23 +168,39 @@ function DocumentationMenuButton({
       onClick={() => onSelect(item.id)}
       aria-pressed={isActive}
       className={cn(
-        "flex w-full items-start gap-3 text-left transition",
+        "flex w-full text-left transition",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6F68]",
+        layoutClasses,
         baseClasses,
         stateClasses
       )}
     >
-      <span className="mt-0.5 text-[#2F6F68]">
+      <span className={iconWrapperClasses}>
         <Icon className="h-4 w-4" />
       </span>
-      <span className="space-y-1">
-        <span className="block text-sm font-medium leading-snug">
+      {variant === "desktop" ? (
+        <span className="space-y-1">
+          <span className="block text-sm font-medium leading-snug">
+            {item.title}
+          </span>
+          {item.description ? (
+            <span className="block text-xs text-gray-500">{item.description}</span>
+          ) : null}
+        </span>
+      ) : (
+        <span className="flex-1 truncate whitespace-nowrap text-sm font-medium leading-tight">
           {item.title}
         </span>
-        {item.description ? (
-          <span className="block text-xs text-gray-500">{item.description}</span>
-        ) : null}
-      </span>
+      )}
+      {variant === "mobile" ? (
+        <ChevronRight
+          className={cn(
+            "h-4 w-4 flex-shrink-0 transition",
+            isActive ? "text-[#2F6F68]" : "text-gray-300"
+          )}
+          aria-hidden="true"
+        />
+      ) : null}
     </button>
   );
 }
