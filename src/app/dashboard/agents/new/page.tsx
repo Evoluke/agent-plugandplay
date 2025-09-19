@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -208,8 +209,9 @@ export default function NewAgentPage() {
   return (
     <div className="bg-[#FAFAFA] flex items-center justify-center py-6">
       <div className="w-full px-4 sm:max-w-md md:max-w-lg">
-        <Card className="border shadow-lg rounded-lg overflow-hidden">
-          <form onSubmit={handleSubmit}>
+        <div className="relative">
+          <Card className="border shadow-lg rounded-lg overflow-hidden">
+            <form onSubmit={handleSubmit}>
             <CardHeader className="bg-white px-6 py-4 border-b mb-2">
               <CardTitle className="text-xl font-semibold text-gray-800 text-center">Criar novo agente de IA</CardTitle>
               <CardDescription className="text-center">
@@ -278,6 +280,12 @@ export default function NewAgentPage() {
             )}
           </form>
         </Card>
+          {(isSubmitting || isLoadingInfo) && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70 backdrop-blur-sm">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
