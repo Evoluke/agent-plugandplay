@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/components/ui/utils";
-import { FileText, PlayCircle } from "lucide-react";
+import { FileText, Menu, PlayCircle } from "lucide-react";
 
 type DocumentationResource = {
   label: string;
@@ -218,8 +218,14 @@ export default function DocumentationPage() {
             value={selectedItemId}
             onValueChange={(value) => setSelectedItemId(value)}
           >
-            <SelectTrigger className="w-full" aria-label="Selecionar tópico da documentação">
-              <SelectValue placeholder="Selecione um tópico" />
+            <SelectTrigger
+              className="w-full"
+              aria-label="Selecionar tópico da documentação"
+            >
+              <span className="flex flex-1 items-center gap-2">
+                <Menu className="h-4 w-4 text-gray-500" aria-hidden="true" />
+                <SelectValue placeholder="Selecione um tópico" />
+              </span>
             </SelectTrigger>
             <SelectContent className="max-h-64 overflow-y-auto">
               {documentationSections.map((section) => (
