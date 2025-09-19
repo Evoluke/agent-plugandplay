@@ -20,16 +20,31 @@ type Agent = {
   is_active: boolean;
 };
 
+const DEFAULT_SCHEDULE_START = "08:00";
+const DEFAULT_SCHEDULE_END = "17:00";
+const DEFAULT_SCHEDULE_DAYS = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+];
+const DEFAULT_SCHEDULE_DURATION = 60;
+
 export default function AgentIntegrationsPage() {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
   const [agent, setAgent] = useState<Agent | null>(null);
   const [connected, setConnected] = useState(false);
-  const [scheduleStart, setScheduleStart] = useState("");
-  const [scheduleEnd, setScheduleEnd] = useState("");
-  const [scheduleDays, setScheduleDays] = useState<string[]>([]);
-  const [scheduleDuration, setScheduleDuration] = useState("");
+  const [scheduleStart, setScheduleStart] = useState(DEFAULT_SCHEDULE_START);
+  const [scheduleEnd, setScheduleEnd] = useState(DEFAULT_SCHEDULE_END);
+  const [scheduleDays, setScheduleDays] = useState<string[]>([
+    ...DEFAULT_SCHEDULE_DAYS,
+  ]);
+  const [scheduleDuration, setScheduleDuration] = useState(
+    DEFAULT_SCHEDULE_DURATION.toString(),
+  );
   const [disconnectOpen, setDisconnectOpen] = useState(false);
 
   useEffect(() => {
@@ -50,10 +65,15 @@ export default function AgentIntegrationsPage() {
       .single()
       .then(({ data }) => {
         setConnected(!!data);
-        setScheduleStart(data?.schedule_start ?? "");
-        setScheduleEnd(data?.schedule_end ?? "");
-        setScheduleDays(data?.schedule_days ?? []);
-        setScheduleDuration(data?.schedule_duration?.toString() ?? "");
+        setScheduleStart(data?.schedule_start ?? DEFAULT_SCHEDULE_START);
+        setScheduleEnd(data?.schedule_end ?? DEFAULT_SCHEDULE_END);
+        setScheduleDays(
+          data?.schedule_days ?? [...DEFAULT_SCHEDULE_DAYS],
+        );
+        setScheduleDuration(
+          data?.schedule_duration?.toString() ??
+            DEFAULT_SCHEDULE_DURATION.toString(),
+        );
       });
   }, [id]);
 
@@ -77,10 +97,10 @@ export default function AgentIntegrationsPage() {
       method: "DELETE",
     });
     setConnected(false);
-    setScheduleStart("");
-    setScheduleEnd("");
-    setScheduleDays([]);
-    setScheduleDuration("");
+    setScheduleStart(DEFAULT_SCHEDULE_START);
+    setScheduleEnd(DEFAULT_SCHEDULE_END);
+    setScheduleDays([...DEFAULT_SCHEDULE_DAYS]);
+    setScheduleDuration(DEFAULT_SCHEDULE_DURATION.toString());
   };
 
   const handleSaveSchedule = async (e: React.FormEvent) => {
