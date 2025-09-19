@@ -10,8 +10,8 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Folder, Users, FileText } from "lucide-react";
-import { supabasebrowser } from '@/lib/supabaseClient';
-import { useEffect, useState } from 'react';
+import { supabasebrowser } from "@/lib/supabaseClient";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from 'next/link';
 import { toast } from "sonner";
 import {
@@ -23,6 +23,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { DashboardOnboarding } from "@/components/dashboard/DashboardOnboarding";
 
 type User = {
   id: string;
@@ -45,6 +46,40 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
   const [dailyMessages, setDailyMessages] = useState<{ date: string; count: number }[]>([]);
+
+  const overviewRef = useRef<HTMLDivElement>(null);
+  const quickActionsRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
+
+  const onboardingSteps = useMemo(
+    () => [
+      {
+        id: "overview",
+        ref: overviewRef,
+        title: "Bem-vindo ao seu painel",
+        description:
+          "Aqui você acompanha o status da sua conta e encontra os atalhos principais para começar.",
+        placement: "bottom" as const,
+      },
+      {
+        id: "quick-actions",
+        ref: quickActionsRef,
+        title: "Crie seu primeiro agente",
+        description:
+          "Use estes atalhos para configurar novos agentes e explorar as próximas funcionalidades.",
+        placement: "right" as const,
+      },
+      {
+        id: "messages",
+        ref: messagesRef,
+        title: "Monitore as interações",
+        description:
+          "Acompanhe a evolução das mensagens trocadas pelos seus agentes nos últimos dias.",
+        placement: "top" as const,
+      },
+    ],
+    [overviewRef, quickActionsRef, messagesRef],
+  );
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -100,8 +135,6 @@ export default function DashboardPage() {
 
   if (!user || !company) return null;
 
-
-
   const actionItems = [
     { icon: <Folder className="w-5 h-5 text-[#2F6F68]" />, title: "Criar Agentes", desc: "Criar novo agente de IA", href: "/dashboard/agents/new", disabled: false },
     { icon: <Users className="w-5 h-5 text-[#97B7B4]" />, title: "Monitoramento", desc: "Monitore seus agentes de IA", href: "/dashboard/", disabled: true },
@@ -110,7 +143,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div ref={overviewRef} className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Painel de Controle</h1>
       </div>
 
@@ -124,7 +157,10 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            ref={quickActionsRef}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
             {actionItems.map((item) => (
               <Link key={item.title} href={item.href}>
                 <Card
@@ -160,7 +196,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div ref={messagesRef} className="space-y-2">
         <h3 className="text-lg font-semibold">Mensagens por dia</h3>
         <div className="h-64 sm:h-80 w-full overflow-x-auto">
           {dailyMessages.length ? (
@@ -247,6 +283,7 @@ export default function DashboardPage() {
         </div>
       </div>
       */}
+      <DashboardOnboarding steps={onboardingSteps} />
     </div>
   );
 }
