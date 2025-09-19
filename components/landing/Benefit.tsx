@@ -69,19 +69,21 @@ export default function Benefit({
                   alt={imageAlt}
                   width={imageWidth}
                   height={imageHeight}
-                  className="rounded-md cursor-zoom-in"
+                  className="w-full h-auto max-w-xs sm:max-w-sm rounded-md cursor-zoom-in"
+                  sizes="(max-width: 640px) 80vw, 300px"
                 />
               </button>
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 bg-black/50" />
-              <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 p-0">
+              <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-full sm:max-w-3xl -translate-x-1/2 -translate-y-1/2 px-4">
                 <Image
                   src={image}
                   alt={imageAlt}
                   width={imageWidth * 2}
                   height={imageHeight * 2}
-                  className="rounded-md"
+                  className="w-full h-auto max-w-full rounded-md"
+                  sizes="(max-width: 640px) 100vw, 600px"
                 />
               </Dialog.Content>
             </Dialog.Portal>
