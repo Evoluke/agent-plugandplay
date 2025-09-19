@@ -164,7 +164,7 @@ export default function DashboardPage() {
         <h3 className="text-lg font-semibold">Mensagens por dia</h3>
         <div className="h-64 sm:h-80 w-full overflow-x-auto">
           {dailyMessages.length ? (
-            <div className="min-w-[600px] h-full">
+            <div className="w-full h-full md:min-w-[600px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={dailyMessages}
