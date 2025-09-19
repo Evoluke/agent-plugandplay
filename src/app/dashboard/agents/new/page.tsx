@@ -194,10 +194,7 @@ export default function NewAgentPage() {
       const agentId = data?.id;
 
       if (typeof agentId === "string") {
-        setTimeout(
-          () => window.location.assign(`/dashboard/agents/${agentId}`),
-          2000
-        );
+        router.push(`/dashboard/agents/${agentId}`);
       }
     } catch {
       toast.error("Erro ao criar agente.");
