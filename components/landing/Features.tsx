@@ -73,7 +73,7 @@ export default function Features() {
       <div className="mx-auto max-w-[1140px] px-3 md:px-4 lg:px-6">
         <h2 className="mb-2 text-center text-3xl font-bold">Para quem é a nossa solução?</h2>
         <p className="mb-8 text-center text-1xl text-lg font-medium text-primary">Todos que precisam atender clientes pelo WhatsApp para ter uma venda ou agendamento</p>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {items.map(({ title, description, icon: Icon }, index) => (
             <div
               key={title}
