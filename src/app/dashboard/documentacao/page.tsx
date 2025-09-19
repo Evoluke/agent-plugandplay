@@ -2,8 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/components/ui/utils";
-import { ChevronRight, FileText, PlayCircle } from "lucide-react";
+import { FileText, PlayCircle } from "lucide-react";
 
 type DocumentationResource = {
   label: string;
@@ -134,33 +141,20 @@ type DocumentationMenuButtonProps = {
   item: DocumentationItem;
   isActive: boolean;
   onSelect: (itemId: string) => void;
-  variant: "mobile" | "desktop";
 };
 
 function DocumentationMenuButton({
   item,
   isActive,
   onSelect,
-  variant,
 }: DocumentationMenuButtonProps) {
   const Icon = item.videoUrl ? PlayCircle : FileText;
-  const baseClasses =
-    variant === "desktop"
-      ? "rounded-lg border px-3 py-2"
-      : "px-4 py-3 hover:bg-gray-50";
+  const baseClasses = "rounded-lg border px-3 py-2";
   const stateClasses = isActive
-    ? variant === "desktop"
-      ? "border-[#2F6F68] bg-[#F0F5F4] text-gray-900 shadow-sm"
-      : "bg-[#F0F5F4] text-gray-900"
-    : variant === "desktop"
-      ? "border-transparent text-gray-600 hover:bg-gray-50"
-      : "bg-white text-gray-600";
-  const layoutClasses =
-    variant === "desktop"
-      ? "items-start gap-3"
-      : "items-center justify-between gap-3";
-  const iconWrapperClasses =
-    variant === "desktop" ? "mt-0.5 text-[#2F6F68]" : "text-[#2F6F68]";
+    ? "border-[#2F6F68] bg-[#F0F5F4] text-gray-900 shadow-sm"
+    : "border-transparent text-gray-600 hover:bg-gray-50";
+  const layoutClasses = "items-start gap-3";
+  const iconWrapperClasses = "mt-0.5 text-[#2F6F68]";
 
   return (
     <button
@@ -178,29 +172,14 @@ function DocumentationMenuButton({
       <span className={iconWrapperClasses}>
         <Icon className="h-4 w-4" />
       </span>
-      {variant === "desktop" ? (
-        <span className="space-y-1">
-          <span className="block text-sm font-medium leading-snug">
-            {item.title}
-          </span>
-          {item.description ? (
-            <span className="block text-xs text-gray-500">{item.description}</span>
-          ) : null}
-        </span>
-      ) : (
-        <span className="flex-1 truncate whitespace-nowrap text-sm font-medium leading-tight">
+      <span className="space-y-1">
+        <span className="block text-sm font-medium leading-snug">
           {item.title}
         </span>
-      )}
-      {variant === "mobile" ? (
-        <ChevronRight
-          className={cn(
-            "h-4 w-4 flex-shrink-0 transition",
-            isActive ? "text-[#2F6F68]" : "text-gray-300"
-          )}
-          aria-hidden="true"
-        />
-      ) : null}
+        {item.description ? (
+          <span className="block text-xs text-gray-500">{item.description}</span>
+        ) : null}
+      </span>
     </button>
   );
 }
@@ -211,8 +190,8 @@ export default function DocumentationPage() {
     []
   );
 
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(
-    allItems[0]?.id ?? null
+  const [selectedItemId, setSelectedItemId] = useState<string | undefined>(
+    allItems[0]?.id
   );
 
   const selectedItem = useMemo(() => {
@@ -235,40 +214,28 @@ export default function DocumentationPage() {
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
         <nav className="lg:hidden" aria-label="Navegação da documentação">
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-            {documentationSections.map((section, sectionIndex) => (
-              <div
-                key={section.id}
-                className={cn(
-                  "divide-y divide-gray-100",
-                  sectionIndex < documentationSections.length - 1 &&
-                    "border-b border-gray-200"
-                )}
-              >
-                <div className="bg-gray-50 px-4 py-3">
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-gray-500">
+          <Select
+            value={selectedItemId}
+            onValueChange={(value) => setSelectedItemId(value)}
+          >
+            <SelectTrigger className="w-full" aria-label="Selecionar tópico da documentação">
+              <SelectValue placeholder="Selecione um tópico" />
+            </SelectTrigger>
+            <SelectContent className="max-h-64 overflow-y-auto">
+              {documentationSections.map((section) => (
+                <div key={section.id}>
+                  <p className="px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-wide text-gray-500">
                     {section.title}
                   </p>
-                  {section.description ? (
-                    <p className="mt-1 text-xs text-gray-500">
-                      {section.description}
-                    </p>
-                  ) : null}
-                </div>
-                <div className="flex flex-col divide-y divide-gray-100">
                   {section.items.map((item) => (
-                    <DocumentationMenuButton
-                      key={item.id}
-                      item={item}
-                      isActive={selectedItemId === item.id}
-                      onSelect={(id) => setSelectedItemId(id)}
-                      variant="mobile"
-                    />
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.title}
+                    </SelectItem>
                   ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </SelectContent>
+          </Select>
         </nav>
 
         <aside className="hidden lg:block" aria-label="Navegação da documentação">
@@ -301,7 +268,6 @@ export default function DocumentationPage() {
                         item={item}
                         isActive={selectedItemId === item.id}
                         onSelect={(id) => setSelectedItemId(id)}
-                        variant="desktop"
                       />
                     ))}
                   </div>
