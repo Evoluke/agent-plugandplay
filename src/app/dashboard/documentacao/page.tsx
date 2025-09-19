@@ -2,13 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/components/ui/utils";
 import { FileText, PlayCircle } from "lucide-react";
 
@@ -137,6 +130,57 @@ const documentationSections: DocumentationSection[] = [
   },
 ];
 
+type DocumentationMenuButtonProps = {
+  item: DocumentationItem;
+  isActive: boolean;
+  onSelect: (itemId: string) => void;
+  variant: "mobile" | "desktop";
+};
+
+function DocumentationMenuButton({
+  item,
+  isActive,
+  onSelect,
+  variant,
+}: DocumentationMenuButtonProps) {
+  const Icon = item.videoUrl ? PlayCircle : FileText;
+  const baseClasses =
+    variant === "desktop" ? "rounded-lg border px-3 py-2" : "px-4 py-3";
+  const stateClasses = isActive
+    ? variant === "desktop"
+      ? "border-[#2F6F68] bg-[#F0F5F4] text-gray-900 shadow-sm"
+      : "bg-[#F0F5F4] text-gray-900"
+    : variant === "desktop"
+      ? "border-transparent text-gray-600 hover:bg-gray-50"
+      : "bg-white text-gray-600 hover:bg-gray-50";
+
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(item.id)}
+      aria-pressed={isActive}
+      className={cn(
+        "flex w-full items-start gap-3 text-left transition",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6F68]",
+        baseClasses,
+        stateClasses
+      )}
+    >
+      <span className="mt-0.5 text-[#2F6F68]">
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="space-y-1">
+        <span className="block text-sm font-medium leading-snug">
+          {item.title}
+        </span>
+        {item.description ? (
+          <span className="block text-xs text-gray-500">{item.description}</span>
+        ) : null}
+      </span>
+    </button>
+  );
+}
+
 export default function DocumentationPage() {
   const allItems = useMemo(
     () => documentationSections.flatMap((section) => section.items),
@@ -165,85 +209,82 @@ export default function DocumentationPage() {
         </p>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-        <div className="lg:hidden">
-          <Select
-            value={selectedItemId ?? undefined}
-            onValueChange={(value) => setSelectedItemId(value)}
-          >
-            <SelectTrigger aria-label="Selecionar tópico">
-              <SelectValue placeholder="Navegue pelos tópicos" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[60vh] min-w-[280px]">
-              {documentationSections.map((section) => (
-                <div key={section.id} className="py-1">
-                  <p className="px-2 pb-1 text-[0.65rem] font-semibold uppercase tracking-wide text-gray-400">
+      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+        <nav className="lg:hidden" aria-label="Navegação da documentação">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+            {documentationSections.map((section, sectionIndex) => (
+              <div
+                key={section.id}
+                className={cn(
+                  "divide-y divide-gray-100",
+                  sectionIndex < documentationSections.length - 1 &&
+                    "border-b border-gray-200"
+                )}
+              >
+                <div className="bg-gray-50 px-4 py-3">
+                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-gray-500">
                     {section.title}
                   </p>
-                  <div className="space-y-1">
+                  {section.description ? (
+                    <p className="mt-1 text-xs text-gray-500">
+                      {section.description}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex flex-col divide-y divide-gray-100">
+                  {section.items.map((item) => (
+                    <DocumentationMenuButton
+                      key={item.id}
+                      item={item}
+                      isActive={selectedItemId === item.id}
+                      onSelect={(id) => setSelectedItemId(id)}
+                      variant="mobile"
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </nav>
+
+        <aside className="hidden lg:block" aria-label="Navegação da documentação">
+          <div className="sticky top-24">
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+              {documentationSections.map((section, sectionIndex) => (
+                <div
+                  key={section.id}
+                  className={cn(
+                    "border-gray-100",
+                    sectionIndex < documentationSections.length - 1
+                      ? "border-b"
+                      : "border-b-0"
+                  )}
+                >
+                  <div className="bg-gray-50 px-4 py-3">
+                    <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      {section.title}
+                    </h2>
+                    {section.description ? (
+                      <p className="mt-1 text-xs text-gray-500">
+                        {section.description}
+                      </p>
+                    ) : null}
+                  </div>
+                  <div className="space-y-1 px-3 py-3">
                     {section.items.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.title}
-                      </SelectItem>
+                      <DocumentationMenuButton
+                        key={item.id}
+                        item={item}
+                        isActive={selectedItemId === item.id}
+                        onSelect={(id) => setSelectedItemId(id)}
+                        variant="desktop"
+                      />
                     ))}
                   </div>
                 </div>
               ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <aside className="hidden space-y-6 self-start lg:sticky lg:top-24 lg:block">
-          {documentationSections.map((section) => (
-            <section key={section.id} className="space-y-3">
-              <div>
-                <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  {section.title}
-                </h2>
-                {section.description ? (
-                  <p className="mt-1 text-xs text-gray-500">
-                    {section.description}
-                  </p>
-                ) : null}
-              </div>
-              <div className="space-y-2">
-                {section.items.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setSelectedItemId(item.id)}
-                    className={cn(
-                      "w-full rounded-md border px-3 py-2 text-left transition",
-                      "hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6F68]",
-                      selectedItemId === item.id
-                        ? "border-[#2F6F68] bg-[#F0F5F4] text-gray-900"
-                        : "border-transparent bg-white text-gray-600",
-                    )}
-                    type="button"
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="mt-0.5 text-[#2F6F68]">
-                        {item.videoUrl ? (
-                          <PlayCircle className="h-4 w-4" />
-                        ) : (
-                          <FileText className="h-4 w-4" />
-                        )}
-                      </span>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium leading-snug">
-                          {item.title}
-                        </p>
-                        {item.description ? (
-                          <p className="text-xs text-gray-500">
-                            {item.description}
-                          </p>
-                        ) : null}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </section>
-          ))}
+            </div>
+          </div>
         </aside>
 
         <section>
