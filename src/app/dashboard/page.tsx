@@ -58,22 +58,22 @@ type StepPosition = {
 
 const DASHBOARD_ONBOARDING_STEPS: OnboardingStep[] = [
   {
-    selector: '[data-onboarding-target="welcome-section"]',
-    title: 'Bem-vindo ao painel',
-    description:
-      'Aqui você encontra uma visão geral da sua empresa e o que pode ser feito a seguir.',
-  },
-  {
     selector: '[data-onboarding-target="create-agent"]',
-    title: 'Crie seu primeiro agente',
+    title: 'Comece pelos agentes',
     description:
-      'Use este atalho para configurar um novo agente de IA e começar a operar rapidamente.',
+      'Crie seu primeiro agente de IA para começar a operar na plataforma.',
   },
   {
-    selector: '[data-onboarding-target="messages-chart"]',
-    title: 'Acompanhe as interações',
+    selector: '[data-onboarding-target="sidebar-crm"]',
+    title: 'Acesse o CRM',
     description:
-      'Monitore diariamente o volume de mensagens e identifique tendências importantes.',
+      'Use este atalho na barra lateral para abrir o CRM omnicanal.',
+  },
+  {
+    selector: '[data-onboarding-target="sidebar-payments"]',
+    title: 'Gerencie pagamentos',
+    description:
+      'Aqui você acompanha cobranças, notas fiscais e detalhes do seu plano.',
   },
 ];
 
@@ -112,10 +112,6 @@ export default function DashboardPage() {
     }
     completeOnboarding();
   }, [completeOnboarding, currentStep]);
-
-  const handleSkip = useCallback(() => {
-    completeOnboarding();
-  }, [completeOnboarding]);
 
   const recalcPositions = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -286,7 +282,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2" data-onboarding-target="welcome-section">
+        <div className="space-y-2">
           <h2 className="text-xl font-semibold">Olá, {company.company_name} 👋</h2>
           <p className="text-base text-gray-700">Quais são seus objetivos para hoje?</p>
           <p className="text-sm text-gray-500">
@@ -398,7 +394,6 @@ export default function DashboardPage() {
         <div className="fixed inset-0 z-50">
           <div
             className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
-            onClick={handleSkip}
             aria-hidden="true"
           />
 
@@ -434,13 +429,6 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleSkip}
-                    className="rounded-full px-3 py-1 text-xs font-medium text-slate-500 transition hover:bg-slate-100"
-                  >
-                    Pular
-                  </button>
                   <button
                     type="button"
                     onClick={handleNextStep}

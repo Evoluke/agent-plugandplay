@@ -293,11 +293,15 @@ export function Sidebar({ className }: { className?: string }) {
                 onClick={handleChatwoot}
                 className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
                 type="button"
+                data-onboarding-target="sidebar-crm"
               >
                 <MessageSquare size={20} />
               </button>
             ) : (
-              <span className="p-2 rounded text-gray-400 flex items-center justify-center cursor-not-allowed">
+              <span
+                className="p-2 rounded text-gray-400 flex items-center justify-center cursor-not-allowed"
+                data-onboarding-target="sidebar-crm"
+              >
                 <MessageSquare size={20} />
               </span>
             )}
@@ -322,6 +326,7 @@ export function Sidebar({ className }: { className?: string }) {
               <Link
                 href={item.href}
                 className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
+                data-onboarding-target={item.label === 'Pagamentos' ? 'sidebar-payments' : undefined}
               >
                 {item.icon}
               </Link>
