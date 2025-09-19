@@ -9,6 +9,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+import FirstAccessGuide from "@/components/dashboard/FirstAccessGuide";
 import { Folder, Users, FileText } from "lucide-react";
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
@@ -109,10 +110,16 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Painel de Controle</h1>
-      </div>
+    <>
+      <FirstAccessGuide
+        userId={user.id}
+        companyName={company.company_name}
+        profileComplete={company.profile_complete}
+      />
+      <div className="p-4 space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Painel de Controle</h1>
+        </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
@@ -247,6 +254,7 @@ export default function DashboardPage() {
         </div>
       </div>
       */}
-    </div>
+      </div>
+    </>
   );
 }
