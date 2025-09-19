@@ -9,7 +9,10 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Folder, Users, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Folder, Users, FileText, Bot, Database, MessageCircle, CreditCard, Rocket } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -41,10 +44,69 @@ type Message = {
   message_count: number;
 };
 
+type OnboardingStep = {
+  title: string;
+  description: string;
+  highlights: string[];
+  icon: LucideIcon;
+};
+
+const ONBOARDING_STORAGE_PREFIX = "dashboard-onboarding-";
+
+const onboardingSteps: OnboardingStep[] = [
+  {
+    title: "Crie e edite seu agente de IA",
+    description: "Monte a personalidade, o comportamento e os fluxos do seu agente em poucos minutos.",
+    highlights: [
+      "Comece com um template ou personalize o tom de voz do zero.",
+      "Teste respostas em tempo real antes de publicar seu agente.",
+    ],
+    icon: Bot,
+  },
+  {
+    title: "Conecte-se ao seu CRM",
+    description: "Traga leads e oportunidades para dentro da plataforma com sincronização automática.",
+    highlights: [
+      "Mantenha contatos e históricos sempre atualizados em um só lugar.",
+      "Acompanhe conversas e estágios de cada oportunidade com clareza.",
+    ],
+    icon: Database,
+  },
+  {
+    title: "Integre com o WhatsApp",
+    description: "Ative a comunicação nos canais em que seus clientes já estão presentes.",
+    highlights: [
+      "Centralize as mensagens recebidas e distribua para seus agentes.",
+      "Monitore métricas de engajamento para otimizar o atendimento.",
+    ],
+    icon: MessageCircle,
+  },
+  {
+    title: "Finalize o pagamento",
+    description: "Escolha o plano ideal e acompanhe cobranças, notas fiscais e histórico financeiro.",
+    highlights: [
+      "Visualize valores, datas de vencimento e status em tempo real.",
+      "Centralize formas de pagamento e documentos em um painel só.",
+    ],
+    icon: CreditCard,
+  },
+  {
+    title: "Ative seu agente",
+    description: "Com tudo configurado, coloque o agente para trabalhar com segurança.",
+    highlights: [
+      "Defina horários de atendimento e regras de encaminhamento.",
+      "Acompanhe desempenho e ajuste estratégias continuamente.",
+    ],
+    icon: Rocket,
+  },
+];
+
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
   const [dailyMessages, setDailyMessages] = useState<{ date: string; count: number }[]>([]);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -98,7 +160,46 @@ export default function DashboardPage() {
       });
   }, [company]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const key = `${ONBOARDING_STORAGE_PREFIX}${user.id}`;
+    if (typeof window === "undefined") return;
+
+    const hasSeen = window.localStorage.getItem(key);
+    if (!hasSeen) {
+      setOnboardingStep(0);
+      setShowOnboarding(true);
+    }
+  }, [user]);
+
   if (!user || !company) return null;
+
+  const totalSteps = onboardingSteps.length;
+  const currentStep = onboardingSteps[Math.min(onboardingStep, totalSteps - 1)];
+  const StepIcon = currentStep.icon;
+  const progressValue = ((onboardingStep + 1) / totalSteps) * 100;
+
+  const handleDismissOnboarding = () => {
+    if (!user?.id || typeof window === "undefined") return;
+    window.localStorage.setItem(`${ONBOARDING_STORAGE_PREFIX}${user.id}`, "true");
+    setShowOnboarding(false);
+  };
+
+  const handleNextStep = () => {
+    if (onboardingStep < totalSteps - 1) {
+      setOnboardingStep((prev) => prev + 1);
+      return;
+    }
+    handleDismissOnboarding();
+  };
+
+  const handleSkip = () => {
+    handleDismissOnboarding();
+    setOnboardingStep(0);
+  };
+
+  const isLastStep = onboardingStep === totalSteps - 1;
 
 
 
@@ -110,6 +211,55 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 space-y-6">
+      {showOnboarding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+          <div className="relative w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl">
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="absolute right-4 top-4 text-xs font-medium uppercase tracking-wide text-gray-400 hover:text-gray-600"
+            >
+              Pular
+            </button>
+
+            <div className="mb-4 flex items-center gap-3">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2F6F68]/10 text-[#2F6F68]">
+                <StepIcon className="h-6 w-6" />
+              </span>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#2F6F68]">
+                  Passo {onboardingStep + 1} de {totalSteps}
+                </p>
+                <h2 className="text-lg font-semibold text-gray-900">{currentStep.title}</h2>
+              </div>
+            </div>
+
+            <p className="mb-4 text-sm text-gray-600">{currentStep.description}</p>
+
+            {currentStep.highlights.length > 0 && (
+              <ul className="mb-6 space-y-2">
+                {currentStep.highlights.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-gray-600">
+                    <span className="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-[#2F6F68]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <Progress value={progressValue} />
+
+            <div className="mt-6 flex items-center justify-between">
+              <Button variant="ghost" onClick={handleSkip} className="text-sm text-gray-500 hover:text-gray-700">
+                Pular introdução
+              </Button>
+              <Button onClick={handleNextStep} className="bg-[#2F6F68] hover:bg-[#24524d]">
+                {isLastStep ? "Começar agora" : "Próximo"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Painel de Controle</h1>
       </div>
