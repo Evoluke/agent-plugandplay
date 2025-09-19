@@ -134,7 +134,7 @@ export function OnboardingOverlay() {
               <p className="text-sm font-semibold uppercase tracking-wide text-[#2F6F68]">
                 Passo {currentStep + 1} de {totalSteps}
               </p>
-              <h2 className="text-2xl font-bold text-gray-900">{step.title}</h2>
+              <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">{step.title}</h2>
             </div>
           </div>
 
@@ -161,11 +161,6 @@ export function OnboardingOverlay() {
               Voltar
             </Button>
             <div className="flex items-center gap-3">
-              {currentStep < totalSteps - 1 && (
-                <Button variant="outline" type="button" onClick={handleSkip}>
-                  Entendi depois
-                </Button>
-              )}
               <Button type="button" onClick={handleNext}>
                 {currentStep === totalSteps - 1 ? "Começar agora" : "Próximo"}
               </Button>
