@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Folder, Users, FileText } from "lucide-react";
 import { supabasebrowser } from '@/lib/supabaseClient';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { toast } from "sonner";
 import {
@@ -41,10 +41,181 @@ type Message = {
   message_count: number;
 };
 
+type OnboardingStep = {
+  selector: string;
+  title: string;
+  description: string;
+};
+
+type StepPosition = {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+  width: number;
+  height: number;
+};
+
+const DASHBOARD_ONBOARDING_STEPS: OnboardingStep[] = [
+  {
+    selector: '[data-onboarding-target="welcome-section"]',
+    title: 'Bem-vindo ao painel',
+    description:
+      'Aqui você encontra uma visão geral da sua empresa e o que pode ser feito a seguir.',
+  },
+  {
+    selector: '[data-onboarding-target="create-agent"]',
+    title: 'Crie seu primeiro agente',
+    description:
+      'Use este atalho para configurar um novo agente de IA e começar a operar rapidamente.',
+  },
+  {
+    selector: '[data-onboarding-target="messages-chart"]',
+    title: 'Acompanhe as interações',
+    description:
+      'Monitore diariamente o volume de mensagens e identifique tendências importantes.',
+  },
+];
+
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
   const [dailyMessages, setDailyMessages] = useState<{ date: string; count: number }[]>([]);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [positions, setPositions] = useState<(StepPosition | null)[]>(() =>
+    DASHBOARD_ONBOARDING_STEPS.map(() => null),
+  );
+  const currentStepData = DASHBOARD_ONBOARDING_STEPS[currentStep] ?? null;
+  const currentPosition = positions[currentStep] ?? null;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hasSeenOnboarding = localStorage.getItem('dashboard_onboarding_seen');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const completeOnboarding = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dashboard_onboarding_seen', 'true');
+    }
+    setShowOnboarding(false);
+    setCurrentStep(0);
+  }, []);
+
+  const handleNextStep = useCallback(() => {
+    if (currentStep < DASHBOARD_ONBOARDING_STEPS.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+      return;
+    }
+    completeOnboarding();
+  }, [completeOnboarding, currentStep]);
+
+  const handleSkip = useCallback(() => {
+    completeOnboarding();
+  }, [completeOnboarding]);
+
+  const recalcPositions = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    const updatedPositions = DASHBOARD_ONBOARDING_STEPS.map((step) => {
+      const element = document.querySelector(step.selector) as HTMLElement | null;
+      if (!element) return null;
+
+      const rect = element.getBoundingClientRect();
+      return {
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+      } satisfies StepPosition;
+    });
+
+    setPositions(updatedPositions);
+  }, []);
+
+  const popoverStyle = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return { top: 0, left: 0, width: 320 };
+    }
+
+    const padding = 16;
+    const defaultWidth = 320;
+    const width = Math.min(defaultWidth, window.innerWidth - padding * 2);
+
+    if (!currentPosition) {
+      return {
+        top: Math.max(padding, window.innerHeight / 2 - 100),
+        left: Math.max(padding, window.innerWidth / 2 - width / 2),
+        width,
+      };
+    }
+
+    let left = currentPosition.left;
+    if (left + width > window.innerWidth - padding) {
+      left = window.innerWidth - width - padding;
+    }
+    if (left < padding) {
+      left = padding;
+    }
+
+    const estimatedHeight = 200;
+    const maxTop = Math.max(padding, window.innerHeight - estimatedHeight - padding);
+    let top = currentPosition.bottom + 16;
+    if (top > maxTop) {
+      top = currentPosition.top - estimatedHeight - 16;
+    }
+    if (top < padding) {
+      top = padding;
+    }
+    if (top > maxTop) {
+      top = maxTop;
+    }
+
+    return { top, left, width };
+  }, [currentPosition]);
+
+  const highlightStyle = useMemo(() => {
+    if (!currentPosition) {
+      return { opacity: 0 };
+    }
+
+    const padding = 12;
+    return {
+      top: Math.max(currentPosition.top - padding, 8),
+      left: Math.max(currentPosition.left - padding, 8),
+      width: currentPosition.width + padding * 2,
+      height: currentPosition.height + padding * 2,
+      opacity: 1,
+    };
+  }, [currentPosition]);
+
+  useEffect(() => {
+    if (!showOnboarding || typeof window === 'undefined') return;
+
+    const frame = requestAnimationFrame(() => recalcPositions());
+    return () => cancelAnimationFrame(frame);
+  }, [showOnboarding, currentStep, user?.id, company?.id, recalcPositions]);
+
+  useEffect(() => {
+    if (!showOnboarding || typeof window === 'undefined') return;
+
+    const handleRecalc = () => {
+      requestAnimationFrame(() => recalcPositions());
+    };
+
+    window.addEventListener('resize', handleRecalc);
+    window.addEventListener('scroll', handleRecalc, true);
+
+    return () => {
+      window.removeEventListener('resize', handleRecalc);
+      window.removeEventListener('scroll', handleRecalc, true);
+    };
+  }, [showOnboarding, recalcPositions]);
 
   useEffect(() => {
     supabasebrowser.auth.getUser().then(({ data, error }) => {
@@ -115,7 +286,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
+        <div className="space-y-2" data-onboarding-target="welcome-section">
           <h2 className="text-xl font-semibold">Olá, {company.company_name} 👋</h2>
           <p className="text-base text-gray-700">Quais são seus objetivos para hoje?</p>
           <p className="text-sm text-gray-500">
@@ -126,7 +297,13 @@ export default function DashboardPage() {
         <div className="space-y-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {actionItems.map((item) => (
-              <Link key={item.title} href={item.href}>
+              <Link
+                key={item.title}
+                href={item.href}
+                data-onboarding-target={
+                  item.title === "Criar Agentes" ? "create-agent" : undefined
+                }
+              >
                 <Card
                   key={item.title}
                   className={`relative h-36 transition ${item.disabled ? 'cursor-not-allowed' : 'hover:shadow-lg'}`}
@@ -160,7 +337,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2" data-onboarding-target="messages-chart">
         <h3 className="text-lg font-semibold">Mensagens por dia</h3>
         <div className="h-64 sm:h-80 w-full overflow-x-auto">
           {dailyMessages.length ? (
@@ -216,6 +393,67 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {showOnboarding && currentStepData && (
+        <div className="fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
+            onClick={handleSkip}
+            aria-hidden="true"
+          />
+
+          {currentPosition && (
+            <div
+              className="pointer-events-none fixed z-10 rounded-2xl border-2 border-emerald-400 bg-emerald-100/20 shadow-[0_20px_60px_rgba(15,23,42,0.35)] transition-all duration-200"
+              style={highlightStyle}
+            />
+          )}
+
+          <div className="fixed z-20" style={popoverStyle}>
+            <div className="w-80 max-w-[calc(100vw-32px)] rounded-2xl border border-emerald-100 bg-white p-5 shadow-xl">
+              <div>
+                <p className="text-sm font-semibold text-emerald-700">{currentStepData.title}</p>
+                <p className="mt-2 text-sm text-slate-600">{currentStepData.description}</p>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-medium text-slate-500">
+                    Passo {currentStep + 1} de {DASHBOARD_ONBOARDING_STEPS.length}
+                  </p>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    {DASHBOARD_ONBOARDING_STEPS.map((step, index) => (
+                      <span
+                        key={step.selector}
+                        className={`h-1.5 w-6 rounded-full transition-colors duration-200 ${
+                          index <= currentStep ? 'bg-emerald-500' : 'bg-emerald-100'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSkip}
+                    className="rounded-full px-3 py-1 text-xs font-medium text-slate-500 transition hover:bg-slate-100"
+                  >
+                    Pular
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextStep}
+                    className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                  >
+                    {currentStep === DASHBOARD_ONBOARDING_STEPS.length - 1 ? 'Concluir' : 'Próximo'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/*
       <div className="space-y-2">
