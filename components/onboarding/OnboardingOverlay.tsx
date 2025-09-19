@@ -29,6 +29,20 @@ export function OnboardingOverlay() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
   const steps: Step[] = useMemo(() => [
     {
       title: "Criação e edição do Agente de IA",
