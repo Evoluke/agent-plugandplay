@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Sidebar, MobileSidebar } from '@/components/ui/sidebar'
 import DashboardAlerts from '@/components/ui/dashboard-alerts'
 import NotificationBell from '@/components/notifications/NotificationBell'
+import OnboardingGuide from '@/components/onboarding/OnboardingGuide'
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
@@ -45,6 +46,7 @@ export default function DashboardClientLayout({ children }: Props) {
             </div>
           </div>
           <DashboardAlerts />
+          <OnboardingGuide />
           {children}
         </main>
       </div>
