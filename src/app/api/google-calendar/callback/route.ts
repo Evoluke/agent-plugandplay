@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
 
+const DEFAULT_SCHEDULE_START = "08:00";
+const DEFAULT_SCHEDULE_END = "17:00";
+const DEFAULT_SCHEDULE_DAYS = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+];
+const DEFAULT_SCHEDULE_DURATION = 60;
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
@@ -56,6 +67,14 @@ export async function GET(req: NextRequest) {
 
     const expiry_date = new Date(Date.now() + expires_in * 1000).toISOString();
 
+    const { data: existingToken } = await supabaseadmin
+      .from("agent_google_tokens")
+      .select(
+        "schedule_start, schedule_end, schedule_days, schedule_duration",
+      )
+      .eq("agent_id", agentId)
+      .maybeSingle();
+
     await supabaseadmin
       .from("agent_google_tokens")
       .upsert(
@@ -65,8 +84,14 @@ export async function GET(req: NextRequest) {
           access_token,
           refresh_token,
           expiry_date,
+          schedule_start:
+            existingToken?.schedule_start ?? DEFAULT_SCHEDULE_START,
+          schedule_end: existingToken?.schedule_end ?? DEFAULT_SCHEDULE_END,
+          schedule_days: existingToken?.schedule_days ?? DEFAULT_SCHEDULE_DAYS,
+          schedule_duration:
+            existingToken?.schedule_duration ?? DEFAULT_SCHEDULE_DURATION,
         },
-        { onConflict: "agent_id" }
+        { onConflict: "agent_id" },
       );
 
     const redirect = new URL(
