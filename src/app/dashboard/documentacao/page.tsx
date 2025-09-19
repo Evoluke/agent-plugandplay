@@ -2,6 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/components/ui/utils";
 import { FileText, PlayCircle } from "lucide-react";
 
@@ -159,7 +166,34 @@ export default function DocumentationPage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-        <aside className="space-y-6 lg:sticky lg:top-24 self-start">
+        <div className="lg:hidden">
+          <Select
+            value={selectedItemId ?? undefined}
+            onValueChange={(value) => setSelectedItemId(value)}
+          >
+            <SelectTrigger aria-label="Selecionar tópico">
+              <SelectValue placeholder="Navegue pelos tópicos" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[60vh] min-w-[280px]">
+              {documentationSections.map((section) => (
+                <div key={section.id} className="py-1">
+                  <p className="px-2 pb-1 text-[0.65rem] font-semibold uppercase tracking-wide text-gray-400">
+                    {section.title}
+                  </p>
+                  <div className="space-y-1">
+                    {section.items.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.title}
+                      </SelectItem>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <aside className="hidden space-y-6 self-start lg:sticky lg:top-24 lg:block">
           {documentationSections.map((section) => (
             <section key={section.id} className="space-y-3">
               <div>
