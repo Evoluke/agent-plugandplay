@@ -161,5 +161,9 @@ body,
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
+
+  .onboarding-highlight {
+    @apply rounded-xl ring-4 ring-emerald-300/60 transition-shadow duration-300;
+  }
 }
 
