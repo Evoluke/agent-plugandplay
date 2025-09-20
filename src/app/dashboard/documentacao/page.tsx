@@ -255,11 +255,6 @@ export default function DocumentationPage() {
                     <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                       {section.title}
                     </h2>
-                    {section.description ? (
-                      <p className="mt-1 text-xs text-gray-500">
-                        {section.description}
-                      </p>
-                    ) : null}
                   </div>
                   <div className="space-y-1 px-3 py-3">
                     {section.items.map((item) => (
