@@ -40,23 +40,17 @@ const documentationSections: DocumentationSection[] = [
     description: "Conheça as áreas essenciais da plataforma e configure sua conta.",
     items: [
       {
-        id: "overview",
-        title: "Visão geral do dashboard",
-        description: "Tour rápido pelas principais métricas e atalhos.",
-        videoUrl: "https://www.youtube.com/embed/Wch3gJG2GJ4",
-        body: [
-          "Aprenda a navegar pelo dashboard para acompanhar o desempenho dos seus agentes de IA.",
-          "A visão geral apresenta os indicadores mais importantes, atalhos para seções críticas e notificações do sistema.",
-          "Utilize o menu lateral para alternar entre agentes, acessar a área de pagamentos e abrir o suporte sempre que precisar.",
-        ],
-      },
-      {
         id: "first-agent",
         title: "Criando seu primeiro agente",
         description: "Passo a passo para criar um agente do zero.",
         body: [
           "Clique em \"Agentes IA\" na barra lateral e selecione \"Criar novo agente\" para iniciar a configuração.",
-          "Defina a personalidade, comportamento, onboarding e base de conhecimento para alinhar o agente com a sua operação.",
+          "Na etapa de detalhes informe nome interno, nome público, tipo do agente e canais em que ele ficará disponível; essas informações aparecem em toda a plataforma e ajudam a equipe a identificar o agente.",
+          "Personalize a personalidade e o roteiro inicial definindo tom de voz, mensagem de boas-vindas, instruções de encerramento e regras de transferência para humanos, garantindo um atendimento consistente.",
+          "Em comportamentos configure horários de atuação, limites de conversas simultâneas e prioridades de filas para que o agente saiba quando responder, pausar ou escalar um contato.",
+          "Na Base de conhecimento conecte artigos, documentos e FAQs: o agente de IA utiliza esse conteúdo como fonte de verdade para gerar respostas contextuais, buscando trechos relevantes a cada pergunta do usuário.",
+          "Defina as Variáveis de coleta — disponíveis para os agentes SDR e Pré-qualificação — indicando quais dados obrigatórios (como nome, e-mail, empresa ou orçamento) devem ser solicitados; a IA valida cada campo com o lead antes de prosseguir para a próxima etapa.",
+          "Configure a Integração com calendário, habilitada para o agente SDR, apontando a agenda e os horários permitidos; quando o lead está qualificado, o agente oferece os slots livres e agenda automaticamente o compromisso.",
           "Finalize revisando o resumo e ativando o agente para disponibilizá-lo nos canais desejados.",
         ],
         resources: [
