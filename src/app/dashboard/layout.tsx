@@ -39,7 +39,7 @@ export default function DashboardClientLayout({ children }: Props) {
     <div className="flex min-h-[100svh]">
         <OnboardingOverlay />
         <Sidebar className="hidden sm:flex" />
-        <main className="flex-1 bg-[#FAFAFA] p-6 h-full overflow-auto">
+        <main className="flex-1 bg-[#FAFAFA] p-6 min-h-[100svh] overflow-auto sm:ml-16">
           <div className="flex w-full items-center mb-4">
             <MobileSidebar />
             <div className="ml-auto">
