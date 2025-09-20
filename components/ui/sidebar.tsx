@@ -213,7 +213,8 @@ export function Sidebar({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        'w-16 bg-white border-r min-h-[100svh] flex flex-col items-center py-4 space-y-4',
+        'w-16 bg-white border-r min-h-[100svh] flex flex-col items-center py-4 space-y-4 flex-shrink-0',
+        'sm:fixed sm:inset-y-0 sm:left-0 sm:top-0 sm:h-[100svh] sm:z-20',
         className,
       )}
     >
