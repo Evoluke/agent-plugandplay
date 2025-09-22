@@ -7,16 +7,11 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import {
-  isValidCompanyName,
-  isValidEmail,
-  isValidPassword,
-} from "@/lib/validators";
+import { isValidEmail, isValidPassword } from "@/lib/validators";
 import { supabasebrowser } from "@/lib/supabaseClient";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -48,10 +43,6 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!isValidCompanyName(name)) {
-      setError("Nome da empresa deve ter entre 4 e 80 caracteres");
-      return;
-    }
     if (!isValidEmail(email)) {
       setError("Email inválido");
       return;
@@ -72,7 +63,7 @@ export default function SignupPage() {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
 
@@ -139,19 +130,6 @@ export default function SignupPage() {
         {error && (
           <div className="text-red-600 text-sm text-center">{error}</div>
         )}
-
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium">
-            Nome da empresa
-          </label>
-          <Input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
 
         <div>
           <label htmlFor="email" className="block text-sm font-medium">

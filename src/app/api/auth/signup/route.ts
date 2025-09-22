@@ -2,24 +2,14 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
-import {
-  isValidCompanyName,
-  isValidEmail,
-  isValidPassword,
-} from "@/lib/validators";
+import { isValidEmail, isValidPassword } from "@/lib/validators";
 
 export async function POST(req: Request) {
-  const { name, email, password } = await req.json();
-  if (!name || !email || !password) {
+  const { email, password } = await req.json();
+  if (!email || !password) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
   }
 
-  if (!isValidCompanyName(name)) {
-    return NextResponse.json(
-      { error: "Nome da empresa deve ter entre 4 e 80 caracteres" },
-      { status: 400 },
-    );
-  }
   if (!isValidEmail(email)) {
     return NextResponse.json(
       { error: "Email inválido" },
@@ -38,9 +28,6 @@ export async function POST(req: Request) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: { name },
-    },
   });
   if (error) {
     console.error("Erro ao criar usuário:", error.message);
@@ -72,7 +59,7 @@ export async function POST(req: Request) {
     // 2) insere na tabela company (service role key ignora RLS)
     const { error: companyError } = await supabaseadmin
       .from("company")
-      .insert({ user_id: userId, company_name: name, profile_complete: false });
+      .insert({ user_id: userId, profile_complete: false });
 
     if (companyError) {
       console.error("Erro ao criar company:", companyError.message);
