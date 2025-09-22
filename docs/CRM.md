@@ -41,6 +41,10 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 | Integração WhatsApp | Envio/recebimento de mensagens e eventos | Evolution API |
 | Processamento assíncrono | Filas de tarefas, cache de sessões e throttling | Redis |
 
+### Helpers de integração
+- `src/lib/evolution.ts`: fábrica que lê `EVOLUTION_API_BASE_URL` e `EVOLUTION_API_TOKEN`, expondo métodos autenticados (`request`, `post`, `json`) para conversar com a Evolution API.
+- `src/lib/redis.ts`: inicializa um cliente singleton do Redis a partir de `REDIS_URL` ou `REDIS_HOST`, disponibilizando operações básicas (`enqueue`, `dequeue`, `cacheSetJson`, `cacheDelete`) usadas por notificações, filas e futuras rotinas de mensagens.
+
 ## Fluxos críticos
 1. **Recebimento de mensagem**
    - Evolution API aciona webhook.

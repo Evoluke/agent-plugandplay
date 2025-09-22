@@ -24,6 +24,11 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
    Acesse [http://localhost:3000](http://localhost:3000) para ver o resultado.
 
+### Variáveis de ambiente para integrações
+
+- `EVOLUTION_API_BASE_URL` e `EVOLUTION_API_TOKEN`: necessários para autenticar chamadas ao hub de mensagens via Evolution. O helper `getEvolutionClient` em `src/lib/evolution.ts` centraliza a configuração e lança erros explícitos quando algo está ausente.
+- `REDIS_URL` (ou `REDIS_HOST`/`REDIS_PORT`/`REDIS_PASSWORD`): habilitam o cliente singleton de Redis exposto em `src/lib/redis.ts`, utilizado para filas e cache (como a camada de notificações).
+
 ## 📦 Deploy
 
 1. Gere o build de produção:
