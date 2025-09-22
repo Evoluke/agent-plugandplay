@@ -50,7 +50,7 @@ export function OnboardingOverlay() {
       details: [
         "Escolha um objetivo e dê um nome ao agente.",
         "Defina como ele deve se comunicar com os seus clientes.",
-        "Faça testes rápidos e edite sempre que precisar.",
+        "Inclua informações da empresa na Base de conhecimento.",
       ],
       icon: Bot,
     },
@@ -78,8 +78,8 @@ export function OnboardingOverlay() {
       title: "Pagamento",
       description: "Ative recursos avançados com a forma de pagamento preferida.",
       details: [
-        "Escolha o plano que combina com o seu volume de atendimento.",
-        "Cadastre cartão ou emita boleto com segurança.",
+        "Escolha a sua melhor foma de pagamento.",
+        "Faça o pagamento em segurança com nosso fornecedor Asaas.",
         "Receba notas e comprovantes automaticamente.",
       ],
       icon: CreditCard,

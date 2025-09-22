@@ -23,7 +23,7 @@ type DocumentationItem = {
   description?: string;
   body?: string[];
   videoUrl?: string;
-  resources?: DocumentationResource[];
+
 };
 
 type DocumentationSection = {
@@ -45,19 +45,29 @@ const documentationSections: DocumentationSection[] = [
         description: "Passo a passo para criar um agente do zero.",
         body: [
           "Clique em \"Agentes IA\" na barra lateral e selecione \"Criar novo agente\" para iniciar a configuração.",
-          "Na etapa de detalhes informe nome interno, nome público, tipo do agente e canais em que ele ficará disponível; essas informações aparecem em toda a plataforma e ajudam a equipe a identificar o agente.",
-          "Personalize a personalidade e o roteiro inicial definindo tom de voz, mensagem de boas-vindas, instruções de encerramento e regras de transferência para humanos, garantindo um atendimento consistente.",
-          "Em comportamentos configure horários de atuação, limites de conversas simultâneas e prioridades de filas para que o agente saiba quando responder, pausar ou escalar um contato.",
+          "Na etapa de criação informe nome interno e o tipo do agente; essas informações aparecem em toda a plataforma e ajudam a equipe a identificar o agente.",
+          "Personalize a personalidade e o roteiro inicial definindo tom de voz, objetivo, limites.",
+          "Em comportamentos configure limitações e saída de segurança.",
+          "Em onboarding configure mensagens de boas-vindas, principais dores que a empresa resolve e perguntas de coleta.",
           "Na Base de conhecimento conecte artigos, documentos e FAQs: o agente de IA utiliza esse conteúdo como fonte de verdade para gerar respostas contextuais, buscando trechos relevantes a cada pergunta do usuário.",
           "Defina as Variáveis de coleta — disponíveis para os agentes SDR e Pré-qualificação — indicando quais dados obrigatórios (como nome, e-mail, empresa ou orçamento) devem ser solicitados; a IA valida cada campo com o lead antes de prosseguir para a próxima etapa.",
           "Configure a Integração com calendário, habilitada para o agente SDR, apontando a agenda e os horários permitidos; quando o lead está qualificado, o agente oferece os slots livres e agenda automaticamente o compromisso.",
-          "Finalize revisando o resumo e ativando o agente para disponibilizá-lo nos canais desejados.",
         ],
-        resources: [
-          {
-            label: "Checklist de configuração do agente",
-            href: "https://docs.google.com/document/d/1bChecklistAgent",
-          },
+      },
+      {
+        id: "integration-whatsapp",
+        title: "Conectando ao WhatsApp",
+        description: "Passo a passo para conectar ao WhatsApp.",
+        body: [
+          "Clique em \"CRM\" na barra lateral, assim você será redirecionado para nosso CRM.",
+          "Acesse o menu de Conversas e clique na conversa \"Integração Whatsapp\".",
+          "Terá uma mensagem assim \"QRCode gerado com sucesso!\" e uma imagem com o QRCode.",
+          "Com o celular em mãos, abra o aplicativo do WhatsApp e toque em \"Aparelhos conectados\" no menu de configurações.",
+          "Clique em \"Conectar um aparelho\" e aponte a câmera do celular para o código QRCode que aparece na tela.",
+          "Aguarde alguns segundos até que a conexão seja confirmada.",
+          "Depois de conectado, só aguardar que as mensagens dos últimos 30 dias serão importadas.",
+          "Pronto! As mensagens que chegarem no WhatsApp já vão aparecer diretamente dentro da plataforma para atendimento.",
+          "Eventualmente pode ocorrer uma falha na comunicação entre o WhatsApp e a plataforma, basta digitar \"init\" na conversa para gerar um novo QRCode."
         ],
       },
     ],
@@ -87,12 +97,6 @@ const documentationSections: DocumentationSection[] = [
           "Reforce palavras-chave e links úteis em cada resposta para orientar os usuários durante a conversa.",
           "Revise o conteúdo periodicamente para garantir que esteja alinhado com processos e políticas atualizadas.",
         ],
-        resources: [
-          {
-            label: "Modelo de planilha para respostas rápidas",
-            href: "https://docs.google.com/spreadsheets/d/1bFaqTemplate",
-          },
-        ],
       },
     ],
   },
@@ -119,12 +123,6 @@ const documentationSections: DocumentationSection[] = [
           "Utilize os webhooks para enviar eventos do agente para o seu sistema de automações favorito.",
           "Você pode disparar ações ao receber novos leads, quando uma conversa é encerrada ou ao detectar palavras-chave específicas.",
           "Sempre teste os webhooks em um ambiente de homologação antes de ativá-los em produção.",
-        ],
-        resources: [
-          {
-            label: "Guia de eventos disponíveis",
-            href: "https://docs.google.com/document/d/1bWebhookEvents",
-          },
         ],
       },
     ],
@@ -303,28 +301,6 @@ export default function DocumentationPage() {
                     {selectedItem.body.map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
-                  </div>
-                ) : null}
-
-                {selectedItem.resources?.length ? (
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold text-gray-800">
-                      Recursos adicionais
-                    </h3>
-                    <ul className="space-y-2 text-sm">
-                      {selectedItem.resources.map((resource) => (
-                        <li key={resource.href}>
-                          <a
-                            href={resource.href}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[#0E4DE0] transition hover:underline"
-                          >
-                            {resource.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
                   </div>
                 ) : null}
               </CardContent>
