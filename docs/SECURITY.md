@@ -7,6 +7,7 @@ Rotas atuais que dependem do `supabaseadmin`:
 
 - `/api/profile/complete`
 - `/api/auth/signup`
+  - Após chamar o Supabase, verifica se `identities` veio vazio para sinalizar e bloquear emails já cadastrados.
 - `/api/support/new`
 - `/api/payments/pay`
 - `/api/payments/client`
