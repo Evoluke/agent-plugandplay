@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import {
+  isValidCompanyName,
   isValidCpfCnpj,
   isValidAddress,
   isValidCep,
@@ -19,6 +20,7 @@ export default function CompleteProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [companyName, setCompanyName] = useState("");
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [address, setAddress] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -87,7 +89,7 @@ export default function CompleteProfilePage() {
 
       const { data: company, error: companyError } = await supabasebrowser
         .from("company")
-        .select("profile_complete, company_profile_id")
+        .select("profile_complete, company_profile_id, company_name")
         .eq("user_id", uid)
         .maybeSingle();
 
@@ -106,6 +108,8 @@ export default function CompleteProfilePage() {
         router.replace("/dashboard");
         return;
       }
+      setCompanyName(company.company_name || "");
+
       if (company.company_profile_id) {
         const { data: profile } = await supabasebrowser
           .from("company_profile")
@@ -132,6 +136,12 @@ export default function CompleteProfilePage() {
     e.preventDefault();
     if (!userId) return;
     setLoading(true);
+    const normalizedCompanyName = companyName.trim();
+    if (!isValidCompanyName(normalizedCompanyName)) {
+      toast.error("Nome da empresa deve ter entre 4 e 80 caracteres");
+      setLoading(false);
+      return;
+    }
     if (!isValidCpfCnpj(cpfCnpj)) {
       toast.error("CPF/CNPJ inválido");
       setLoading(false);
@@ -167,6 +177,7 @@ export default function CompleteProfilePage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        company_name: normalizedCompanyName,
         cpf_cnpj: cpfCnpj,
         address,
         zip_code: zipCode,
@@ -216,6 +227,19 @@ export default function CompleteProfilePage() {
           <h1 className="text-2xl font-semibold text-center">
             Completar Perfil
           </h1>
+          <div>
+            <label htmlFor="company" className="block text-sm font-medium">
+              Nome da empresa
+            </label>
+            <Input
+              id="company"
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              maxLength={80}
+              required
+            />
+          </div>
           <div>
             <label htmlFor="cpfCnpj" className="block text-sm font-medium">
               CPF/CNPJ

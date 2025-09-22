@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
 import { getUserFromCookie } from "@/lib/auth";
 import {
+  isValidCompanyName,
   isValidCpfCnpj,
   isValidAddress,
   isValidCep,
@@ -16,6 +17,7 @@ export async function POST(req: Request) {
   }
 
   const {
+    company_name,
     cpf_cnpj,
     address,
     zip_code,
@@ -28,6 +30,7 @@ export async function POST(req: Request) {
   } = await req.json();
 
   if (
+    !company_name ||
     !cpf_cnpj ||
     !address ||
     !zip_code ||
@@ -41,10 +44,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
   }
 
+  const normalizedCompanyName = company_name.trim();
   const cleanCpfCnpj = cpf_cnpj.replace(/\D/g, "");
   const cleanZip = zip_code.replace(/\D/g, "");
   const cleanPhone = phone.replace(/\D/g, "").replace(/^55/, "");
 
+  if (!isValidCompanyName(normalizedCompanyName)) {
+    return NextResponse.json(
+      { error: "Nome da empresa deve ter entre 4 e 80 caracteres" },
+      { status: 400 },
+    );
+  }
   if (!isValidCpfCnpj(cleanCpfCnpj)) {
     return NextResponse.json({ error: "CPF/CNPJ inválido" }, { status: 400 });
   }
@@ -86,7 +96,7 @@ export async function POST(req: Request) {
   if (!companyRecord) {
     const { data: newCompany, error: createCompanyError } = await supabaseadmin
       .from("company")
-      .insert({ user_id, profile_complete: false })
+      .insert({ user_id, profile_complete: false, company_name: normalizedCompanyName })
       .select("id, company_profile_id, user_id")
       .single();
 
@@ -185,7 +195,11 @@ export async function POST(req: Request) {
 
   const { error: updateCompanyError } = await supabaseadmin
     .from("company")
-    .update({ company_profile_id: profileId, profile_complete: true })
+    .update({
+      company_profile_id: profileId,
+      profile_complete: true,
+      company_name: normalizedCompanyName,
+    })
     .eq("user_id", user_id);
 
   if (updateCompanyError) {
