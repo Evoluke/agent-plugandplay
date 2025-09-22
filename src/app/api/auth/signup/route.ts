@@ -29,6 +29,15 @@ export async function POST(req: Request) {
     email,
     password,
   });
+  const identitiesLength = data?.user?.identities?.length;
+
+  // O Supabase sinaliza emails duplicados retornando o array identities vazio
+  if (identitiesLength === 0) {
+    return NextResponse.json(
+      { error: "Email já cadastrado" },
+      { status: 409 },
+    );
+  }
   if (error) {
     console.error("Erro ao criar usuário:", error.message);
     if (
@@ -46,7 +55,7 @@ export async function POST(req: Request) {
     );
   }
 
-  if (!data.user) {
+  if (!data?.user) {
     return NextResponse.json(
       { error: "Erro ao criar usuário" },
       { status: 409 }
