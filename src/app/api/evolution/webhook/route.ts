@@ -115,6 +115,22 @@ function parseCompanyHeader(value: string | null): number | undefined {
   return coerceNumber(value) ?? undefined;
 }
 
+function extractApiKey(payload: unknown): string | undefined {
+  if (!payload || typeof payload !== "object") {
+    return undefined;
+  }
+
+  const record = payload as Record<string, unknown>;
+
+  return (
+    safeString(record.apikey) ??
+    safeString(record.apiKey) ??
+    safeString(getNested(record, ["data", "apikey"])) ??
+    safeString(getNested(record, ["data", "apiKey"])) ??
+    undefined
+  );
+}
+
 function normalizePayload(
   payload: unknown,
   fallbackCompanyId?: number
@@ -148,6 +164,9 @@ function collectRawMessages(context: Record<string, unknown>): unknown[] {
   const data = context.data;
   if (data && typeof data === "object") {
     const dataRecord = data as Record<string, unknown>;
+    if (isLikelyMessage(dataRecord)) {
+      buckets.push(dataRecord);
+    }
     const dataMessages = dataRecord.messages;
     if (Array.isArray(dataMessages)) {
       buckets.push(...dataMessages);
@@ -257,6 +276,66 @@ function normalizeSingleMessage(
     safeString(raw.messageText) ||
     safeString(getNested(raw, ["message", "conversation"])) ||
     safeString(getNested(raw, ["message", "extendedTextMessage", "text"])) ||
+    safeString(
+      getNested(raw, ["message", "buttonsResponseMessage", "selectedDisplayText"])
+    ) ||
+    safeString(
+      getNested(raw, ["message", "buttonsResponseMessage", "selectedButtonId"])
+    ) ||
+    safeString(getNested(raw, ["message", "listResponseMessage", "title"])) ||
+    safeString(
+      getNested(raw, [
+        "message",
+        "listResponseMessage",
+        "singleSelectReply",
+        "selectedRowId",
+      ])
+    ) ||
+    safeString(
+      getNested(raw, [
+        "message",
+        "templateButtonReplyMessage",
+        "selectedDisplayText",
+      ])
+    ) ||
+    safeString(
+      getNested(raw, [
+        "message",
+        "templateButtonReplyMessage",
+        "selectedId",
+      ])
+    ) ||
+    safeString(
+      getNested(raw, [
+        "message",
+        "interactiveResponseMessage",
+        "body",
+        "text",
+      ])
+    ) ||
+    safeString(
+      getNested(raw, [
+        "message",
+        "interactiveResponseMessage",
+        "nativeFlowResponseMessage",
+        "paramsJson",
+      ])
+    ) ||
+    safeString(getNested(raw, ["message", "reactionMessage", "text"])) ||
+    safeString(getNested(raw, ["message", "contactMessage", "displayName"])) ||
+    safeString(
+      getNested(raw, [
+        "message",
+        "contactsArrayMessage",
+        "contacts",
+        0,
+        "displayName",
+      ])
+    ) ||
+    safeString(getNested(raw, ["message", "locationMessage", "name"])) ||
+    safeString(getNested(raw, ["message", "locationMessage", "address"])) ||
+    safeString(getNested(raw, ["message", "liveLocationMessage", "caption"])) ||
+    safeString(getNested(raw, ["message", "liveLocationMessage", "description"])) ||
     undefined;
 
   const caption =
@@ -264,6 +343,7 @@ function normalizeSingleMessage(
     safeString(getNested(raw, ["message", "caption"])) ||
     safeString(getNested(raw, ["message", "imageMessage", "caption"])) ||
     safeString(getNested(raw, ["message", "videoMessage", "caption"])) ||
+    safeString(getNested(raw, ["message", "documentMessage", "caption"])) ||
     undefined;
 
   const typeValue =
@@ -274,12 +354,12 @@ function normalizeSingleMessage(
 
   const hasMedia = media.length > 0;
   const hasBody = typeof body === "string" && body.length > 0;
-  const messageType = mapMessageType(typeValue, hasMedia, hasBody);
+  const initialMessageType = mapMessageType(typeValue, hasMedia, hasBody);
 
   const normalizedMedia: NormalizedMedia[] = media.map((item) => {
     if (item.type === "unknown") {
-      if (messageType !== "text" && messageType !== "unknown") {
-        return { ...item, type: messageType };
+      if (initialMessageType !== "text" && initialMessageType !== "unknown") {
+        return { ...item, type: initialMessageType };
       }
       if (hasMedia) {
         return { ...item, type: "document" };
@@ -287,6 +367,32 @@ function normalizeSingleMessage(
     }
     return item;
   });
+
+  let messageType = initialMessageType;
+  if (normalizedMedia.length > 0) {
+    const mediaTypes = new Set(normalizedMedia.map((item) => item.type));
+    if (
+      messageType === "text" ||
+      messageType === "unknown" ||
+      messageType === "document"
+    ) {
+      const priority: WhatsappMessageType[] = [
+        "location",
+        "contact",
+        "image",
+        "video",
+        "audio",
+        "document",
+        "sticker",
+      ];
+      for (const candidate of priority) {
+        if (mediaTypes.has(candidate)) {
+          messageType = candidate;
+          break;
+        }
+      }
+    }
+  }
 
   const status = mapStatus(
     raw.status ??
@@ -367,7 +473,24 @@ function normalizeContact(
       getNested(contactData, ["verifiedBusiness"])
   );
 
-  const extras = extractContactExtras(contactData);
+  const baseExtras = extractContactExtras(contactData);
+  const extras: Record<string, unknown> = baseExtras ? { ...baseExtras } : {};
+
+  const senderLid = safeString(getNested(raw, ["key", "senderLid"])) ||
+    safeString(getNested(context, ["key", "senderLid"]));
+  if (senderLid) {
+    extras.senderLid = senderLid;
+  }
+
+  const participant = safeString(getNested(raw, ["key", "participant"]));
+  if (participant) {
+    extras.participant = participant;
+  }
+
+  const contextSender = safeString(context.sender) || safeString(context.from);
+  if (contextSender) {
+    extras.accountSender = contextSender;
+  }
 
   return {
     whatsappId: remoteJid,
@@ -375,7 +498,7 @@ function normalizeContact(
     displayName,
     profileName,
     isBusiness: isBusiness ?? undefined,
-    extras,
+    extras: Object.keys(extras).length > 0 ? extras : undefined,
   };
 }
 
@@ -429,11 +552,41 @@ function extractContactExtras(
 }
 
 function normalizeMediaEntries(raw: Record<string, unknown>): NormalizedMedia[] {
-  const mediaCandidates: unknown[] = [];
+  const normalized: NormalizedMedia[] = [];
+  const seenKeys = new Set<string>();
+
+  const addMedia = (media: NormalizedMedia | null | undefined) => {
+    if (!media) {
+      return;
+    }
+
+    const key =
+      media.providerMediaId ||
+      media.sha256 ||
+      media.url ||
+      (media.fileName && `${media.fileName}:${media.fileSizeBytes ?? ""}`) ||
+      (media.metadata ? JSON.stringify(media.metadata) : undefined);
+
+    if (key && seenKeys.has(key)) {
+      return;
+    }
+
+    if (key) {
+      seenKeys.add(key);
+    }
+
+    normalized.push(media);
+  };
 
   const directCandidate = collectDirectMedia(raw);
   if (directCandidate) {
-    mediaCandidates.push(directCandidate);
+    addMedia(
+      normalizeMediaCandidate({
+        ...directCandidate,
+        type:
+          directCandidate.type ?? raw.type ?? raw.messageType ?? raw.mediaType,
+      })
+    );
   }
 
   const attachments = [
@@ -446,9 +599,11 @@ function normalizeMediaEntries(raw: Record<string, unknown>): NormalizedMedia[] 
   for (const attachment of attachments) {
     if (!attachment) continue;
     if (Array.isArray(attachment)) {
-      mediaCandidates.push(...attachment);
-    } else if (typeof attachment === "object") {
-      mediaCandidates.push(attachment);
+      for (const item of attachment) {
+        addMedia(normalizeMediaCandidate(item));
+      }
+    } else {
+      addMedia(normalizeMediaCandidate(attachment));
     }
   }
 
@@ -461,36 +616,217 @@ function normalizeMediaEntries(raw: Record<string, unknown>): NormalizedMedia[] 
 
   for (const collection of mediaArrays) {
     if (Array.isArray(collection)) {
-      mediaCandidates.push(...collection);
+      for (const item of collection) {
+        addMedia(normalizeMediaCandidate(item));
+      }
     }
   }
 
-  const normalized: NormalizedMedia[] = [];
-  const seenKeys = new Set<string>();
+  const messageNode = getRecord(raw.message);
+  if (messageNode) {
+    const messageRecord = unwrapMessageContainer(messageNode);
 
-  for (const candidate of mediaCandidates) {
-    const media = normalizeMediaCandidate(candidate);
-    if (!media) {
-      continue;
+    const binaryCandidates: Array<
+      [Record<string, unknown> | null, WhatsappMessageType]
+    > = [
+      [getRecord(messageRecord.imageMessage), "image"],
+      [getRecord(messageRecord.videoMessage), "video"],
+      [getRecord(messageRecord.documentMessage), "document"],
+      [getRecord(messageRecord.audioMessage), "audio"],
+      [getRecord(messageRecord.ptt), "audio"],
+      [getRecord(messageRecord.stickerMessage), "sticker"],
+    ];
+
+    for (const [candidate, fallbackType] of binaryCandidates) {
+      if (!candidate) continue;
+      const record = { ...candidate };
+      if (!record.type) {
+        record.type = fallbackType;
+      }
+      addMedia(normalizeMediaCandidate(record));
     }
 
-    const key =
-      media.providerMediaId ||
-      media.url ||
-      (media.fileName && `${media.fileName}:${media.fileSizeBytes ?? ""}`);
+    const locationCandidates = [
+      getRecord(messageRecord.locationMessage),
+      getRecord(messageRecord.liveLocationMessage),
+    ];
 
-    if (key && seenKeys.has(key)) {
-      continue;
+    for (const candidate of locationCandidates) {
+      addMedia(normalizeLocationMedia(candidate));
     }
 
-    if (key) {
-      seenKeys.add(key);
+    const contactMessage = getRecord(messageRecord.contactMessage);
+    if (contactMessage) {
+      addMedia(normalizeContactMedia(contactMessage));
     }
 
-    normalized.push(media);
+    const contactsArray = getRecord(messageRecord.contactsArrayMessage);
+    if (contactsArray) {
+      const contacts = contactsArray.contacts;
+      if (Array.isArray(contacts)) {
+        for (const entry of contacts) {
+          addMedia(normalizeContactMedia(getRecord(entry)));
+        }
+      }
+    }
   }
 
   return normalized;
+}
+
+function getRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  return value as Record<string, unknown>;
+}
+
+function unwrapMessageContainer(
+  message: Record<string, unknown>
+): Record<string, unknown> {
+  let current: Record<string, unknown> = message;
+  const visited = new Set<Record<string, unknown>>();
+
+  while (!visited.has(current)) {
+    visited.add(current);
+
+    const nested =
+      getRecord(getNested(current, ["ephemeralMessage", "message"])) ??
+      getRecord(getNested(current, ["viewOnceMessage", "message"])) ??
+      getRecord(getNested(current, ["viewOnceMessageV2", "message"])) ??
+      getRecord(
+        getNested(current, ["viewOnceMessageV2Extension", "message"])
+      ) ??
+      getRecord(
+        getNested(current, ["documentWithCaptionMessage", "message"])
+      ) ??
+      getRecord(getNested(current, ["deviceSentMessage", "message"]));
+
+    if (!nested) {
+      break;
+    }
+
+    current = nested;
+  }
+
+  return current;
+}
+
+function normalizeLocationMedia(
+  record: Record<string, unknown> | null
+): NormalizedMedia | null {
+  if (!record) {
+    return null;
+  }
+
+  const latitude =
+    coerceNumber(record.degreesLatitude ?? record.latitude ?? record.lat) ??
+    undefined;
+  const longitude =
+    coerceNumber(record.degreesLongitude ?? record.longitude ?? record.lng) ??
+    undefined;
+
+  const metadata: Record<string, unknown> = {};
+  if (latitude !== undefined) {
+    metadata.latitude = latitude;
+  }
+  if (longitude !== undefined) {
+    metadata.longitude = longitude;
+  }
+
+  const name = safeString(record.name) ?? safeString(record.title);
+  const address = safeString(record.address);
+  if (address) {
+    metadata.address = address;
+  }
+
+  const description = safeString(record.description);
+  if (description) {
+    metadata.description = description;
+  }
+
+  const accuracy =
+    coerceNumber(
+      record.accuracy ??
+        record.degreesAccuracy ??
+        record.accuracyInMeters ??
+        record.accuracyInMetersAsDouble
+    ) ?? undefined;
+  if (accuracy !== undefined) {
+    metadata.accuracy = accuracy;
+  }
+
+  const speed = coerceNumber(record.speed ?? record.velocity) ?? undefined;
+  if (speed !== undefined) {
+    metadata.speed = speed;
+  }
+
+  const url = safeString(record.url) ?? safeString(record.website);
+  if (url) {
+    metadata.url = url;
+  }
+
+  const thumbnail = safeString(record.jpegThumbnail);
+  if (thumbnail) {
+    metadata.thumbnail = thumbnail;
+    metadata.thumbnailEncoding = "base64";
+  }
+
+  if (
+    metadata.latitude === undefined &&
+    metadata.longitude === undefined &&
+    !name &&
+    !url
+  ) {
+    return null;
+  }
+
+  return pruneUndefined({
+    type: "location",
+    providerMediaId: safeString(record.id) ?? undefined,
+    url: url ?? undefined,
+    fileName: name ?? undefined,
+    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+  });
+}
+
+function normalizeContactMedia(
+  record: Record<string, unknown> | null
+): NormalizedMedia | null {
+  if (!record) {
+    return null;
+  }
+
+  const displayName =
+    safeString(record.displayName) ||
+    safeString(record.name) ||
+    safeString(record.vcardName);
+
+  const metadata: Record<string, unknown> = {};
+
+  const vcard = safeString(record.vcard);
+  if (vcard) {
+    metadata.vcard = vcard;
+  }
+
+  if (Array.isArray(record.phones)) {
+    metadata.phones = record.phones;
+  }
+
+  if (Array.isArray(record.emails)) {
+    metadata.emails = record.emails;
+  }
+
+  if (!displayName && Object.keys(metadata).length === 0) {
+    return null;
+  }
+
+  return pruneUndefined({
+    type: "contact",
+    fileName: displayName ?? undefined,
+    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+  });
 }
 
 function collectDirectMedia(
@@ -584,6 +920,38 @@ function normalizeMediaCandidate(candidate: unknown): NormalizedMedia | null {
   const thumbnail = safeString(record.thumbnail) || safeString(record.thumbUrl);
   if (thumbnail) {
     metadata.thumbnail = thumbnail;
+  }
+  if (!metadata.thumbnail && record.jpegThumbnail) {
+    const jpegThumbnail = record.jpegThumbnail as unknown;
+    if (typeof jpegThumbnail === "string") {
+      metadata.thumbnail = jpegThumbnail;
+      metadata.thumbnailEncoding = "base64";
+    } else if (
+      typeof Buffer !== "undefined" &&
+      jpegThumbnail instanceof Uint8Array
+    ) {
+      metadata.thumbnail = Buffer.from(jpegThumbnail).toString("base64");
+      metadata.thumbnailEncoding = "base64";
+    }
+  }
+  const duration =
+    coerceNumber(
+      record.seconds ?? record.duration ?? record.playbackDuration ?? record.length
+    ) ?? undefined;
+  if (duration !== undefined) {
+    metadata.durationSeconds = duration;
+  }
+  const pageCount = coerceNumber(record.pageCount ?? record.pages);
+  if (pageCount !== null && pageCount !== undefined) {
+    metadata.pageCount = pageCount;
+  }
+  const mediaKey = safeString(record.mediaKey);
+  if (mediaKey) {
+    metadata.mediaKey = mediaKey;
+  }
+  const streamableUrl = safeString(record.streamableUrl);
+  if (streamableUrl) {
+    metadata.streamableUrl = streamableUrl;
   }
   if (record.viewOnce === true) {
     metadata.viewOnce = true;
@@ -710,6 +1078,15 @@ function buildRawPayload(
     "company_id",
     "webhookType",
     "webhookEvent",
+    "destination",
+    "date_time",
+    "sender",
+    "server_url",
+    "apikey",
+    "apiKey",
+    "webhookUrl",
+    "executionMode",
+    "source",
   ];
 
   const safeContext: Record<string, unknown> = {};
@@ -1061,15 +1438,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const signature = req.headers.get(SIGNATURE_HEADER);
-
-  if (!signature || signature !== secret) {
-    return NextResponse.json(
-      { error: "Assinatura inválida" },
-      { status: 401 }
-    );
-  }
-
   let payload: unknown;
   try {
     payload = await req.json();
@@ -1078,6 +1446,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "Payload inválido" },
       { status: 400 }
+    );
+  }
+
+  const signature = req.headers.get(SIGNATURE_HEADER);
+  const apiKey = extractApiKey(payload);
+  const hasValidSignature = Boolean(signature && signature === secret);
+  const hasValidToken = Boolean(apiKey && apiKey === secret);
+
+  if (!hasValidSignature && !hasValidToken) {
+    return NextResponse.json(
+      { error: "Assinatura inválida" },
+      { status: 401 }
     );
   }
 

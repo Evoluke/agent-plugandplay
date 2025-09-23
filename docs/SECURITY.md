@@ -18,7 +18,7 @@ Rotas atuais que dependem do `supabaseadmin`:
 - O cliente Redis (`src/lib/redis.ts`) exige `REDIS_URL` ou `REDIS_HOST/PORT`. Garanta que o endpoint esteja protegido por ACLs ou redes privadas, especialmente em ambientes compartilhados.
 - Ao introduzir filas (por exemplo, `support:tickets`), restrinja o acesso ao Redis para escrituras originadas apenas do backend e considere autenticação mútua (TLS + senha).
 - As notificações continuam sendo servidas diretamente do Supabase; garanta que as políticas de RLS cubram leitura, criação e atualização para evitar vazamento entre empresas.
-- O webhook `/api/evolution/webhook` depende do header `x-evolution-signature` com o valor de `EVOLUTION_WEBHOOK_SECRET`; monitore tentativas de acesso sem o segredo e mantenha o Redis protegido para o consumo da fila `evolution:media:download` responsável pelo download de mídias.
+- O webhook `/api/evolution/webhook` aceita tanto o header `x-evolution-signature` quanto o campo `apikey` presente no payload como prova compartilhada de posse do valor `EVOLUTION_WEBHOOK_SECRET`. Monitore tentativas de acesso sem o segredo, mantenha o Redis protegido para o consumo da fila `evolution:media:download` responsável pelo download de mídias e valide que integrações externas enviem o header `x-company-id` sempre que o payload não trouxer `companyId` para evitar gravações fora do tenant correto.
 
 ## Tabelas críticas e políticas de RLS
 As seguintes tabelas requerem políticas de Row Level Security para garantir o isolamento por empresa/usuário:

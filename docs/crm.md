@@ -11,8 +11,9 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 ## Principais funcionalidades
 ### Hub de mensagens WhatsApp
 - Conexão com a Evolution API para enviar e receber mensagens em tempo real.
-- Webhooks dedicados no backend Next.js para receber eventos de mensagens, status de entrega e atualizações de sessão.
-- Normalização do payload recebido antes de persistir no Supabase.
+- Webhooks dedicados no backend Next.js para receber eventos de mensagens, status de entrega e atualizações de sessão. O endpoint `/api/evolution/webhook` segue o padrão `data.key`, `data.message` e `messageType` descrito pela Evolution API, aceitando tanto o header `x-evolution-signature` quanto o campo `apikey` do payload para autenticação.
+- Normalização do payload recebido antes de persistir no Supabase, contemplando mensagens de texto, interações (botões/listas), mídias (`imageMessage`, `videoMessage`, `audioMessage`, `documentMessage`, `stickerMessage`) e estruturas especiais (`locationMessage`, `liveLocationMessage`, `contactMessage`, `contactsArrayMessage`).
+- Header `x-company-id` usado como fallback para identificar a empresa quando o webhook não envia `companyId` explicitamente, garantindo isolamento por conta.
 - Estrutura de dados composta por `whatsapp_contacts`, `whatsapp_conversations`, `whatsapp_messages` e `whatsapp_message_media`, garantindo vínculo entre contatos, conversas, conteúdos e anexos com políticas de RLS.
 - Fila Redis `evolution:media:download` alimentada pelos webhooks para processar download/armazenamento de mídias pesadas de forma assíncrona.
 - Retentativa automática de envio utilizando filas Redis em caso de falhas temporárias.
