@@ -36,6 +36,10 @@ Estabelecer uma base única para atendimento omnichannel que consolide contatos,
 - Webhooks autenticados para receber eventos de mensagens, status de entrega e atualizações de contatos.
 - Pipeline de normalização garantindo que payloads externos sejam convertidos para o modelo interno antes do armazenamento.
 
+### Configuração de Variáveis de Ambiente
+- `REDIS_USERNAME`, `REDIS_PASSWORD`, `REDIS_HOST` e `REDIS_PORT`: habilitam o acesso ao cluster Redis responsável pelas filas `incoming_message` e `send_message`.
+- `EVOLUTION_API_URL` e `EVOLUTION_API_TOKEN`: identificam e autenticam o tenant na Evolution API para envio e recebimento de mensagens. A instância ativa é determinada pelos webhooks recebidos e registrada na tabela `instance` do Supabase.
+
 ## Fluxo Resumido de Mensagens
 1. Evolution API envia webhook para `/api/webhook` (ou rota equivalente por canal) que responde rapidamente e confirma recebimento.
 2. BFF valida o evento, persiste os dados no Supabase e publica tarefas BullMQ quando necessário, garantindo idempotência.
