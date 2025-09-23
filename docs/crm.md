@@ -12,6 +12,7 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 ### Hub de mensagens WhatsApp
 - Conexão com a Evolution API para enviar e receber mensagens em tempo real.
 - Webhooks dedicados no backend Next.js para receber eventos de mensagens, status de entrega e atualizações de sessão.
+- O endpoint `/api/webhooks/evolution` valida o token enviado pela Evolution, normaliza o payload e persiste conversas em `whatsapp_conversations` e mensagens em `whatsapp_messages` antes de notificar workers.
 - Normalização do payload recebido antes de persistir no Supabase.
 - Retentativa automática de envio utilizando filas Redis em caso de falhas temporárias.
 
@@ -23,7 +24,8 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 
 ### Automação e tarefas assíncronas
 - Filas Redis para orquestrar tarefas de alto volume, como disparos em massa, atualizações de status e sincronização de mídias.
-- Cache Redis para armazenar sessões de conexão com a Evolution API, tokens temporários e dados de configuração frequentemente acessados.
+- As filas `evolution:messages:incoming` (processamento de novos eventos) e `evolution:messages:status` (atualizações de entrega) sustentam o pipeline do webhook.
+- Cache Redis para armazenar sessões de conexão com a Evolution API, tokens temporários e dados de configuração frequentemente acessados, além dos snapshots `evolution:conversation:last:<conversationId>` e `evolution:message:<messageId>` para leitura rápida.
 - Supervisão de workers com métricas de throughput e mecanismos de retry exponencial.
 
 ### Painel operacional
@@ -43,9 +45,9 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 
 ## Fluxos críticos
 1. **Recebimento de mensagem**
-   - Evolution API aciona webhook.
-   - Backend valida assinatura, normaliza payload e envia tarefa à fila Redis.
-   - Worker processa, atualiza o histórico no Supabase e emite notificação ao cliente Next.js via canal em tempo real.
+   - Evolution API aciona o webhook `/api/webhooks/evolution`.
+   - Backend valida assinatura, normaliza payload, grava os registros no Supabase e enfileira o identificador da mensagem no Redis.
+   - Worker processa o item da fila, atualiza caches auxiliares e emite notificação ao cliente Next.js via canal em tempo real.
 
 2. **Envio de mensagem**
    - Operador envia mensagem pelo painel.
