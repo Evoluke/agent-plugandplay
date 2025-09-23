@@ -38,6 +38,25 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 > O fluxo do N8N deve validar o token enviado no header `Authorization` antes de aceitar o upload.
 
+## 🧠 Chat Omnichannel/CRM
+
+O módulo de CRM omnichannel opera sobre uma arquitetura dedicada que combina Next.js com serviços gerenciados para entregar atendimento em múltiplos canais. Os principais componentes são:
+
+- **Frontend e BFF**: implementados em Next.js (App Router), reutilizando rotas `/api` tanto para webhooks quanto para endpoints internos que atendem o painel administrativo.
+- **Banco de dados principal**: Supabase (Postgres) com autenticação, RLS, Storage e Realtime habilitados para armazenar conversas, mensagens e anexos de forma segura.
+- **Tempo real**: Supabase Realtime via WebSocket, assinando as tabelas `messages` e `conversations` para atualizar o painel instantaneamente.
+- **Fila e processamento assíncrono**: Redis + BullMQ, orquestrando workers independentes responsáveis por sincronizar mensagens, enviar notificações e lidar com tarefas demoradas.
+- **Integração externa**: Evolution API como provedor oficial de WhatsApp, responsável por entrega e recebimento de mensagens desse canal.
+
+### Componentes e responsabilidades
+
+- **Next.js (Web/App)**: renderiza a UI do painel (lista de conversas, mensagens), publica webhooks rápidos em `/api/webhook` e encaminha chamadas internas para `/api/messages`.
+- **Supabase**: centraliza contatos, conversas, mensagens, anexos, histórico de status e eventos de webhook no Postgres, garantindo isolamento por tenant com RLS e suporte a Storage/Realtime.
+- **Redis + BullMQ**: mantém as filas `incoming_message` (processamento de webhooks) e `send_message` (envio para Evolution), controlando _retries_, _backoff_, DLQ e concorrência.
+- **Workers Node.js**: executam fora do Next.js, tratam normalização e idempotência, fazem _upsert_ no Supabase e gerenciam _download_ de mídia quando necessário.
+
+Consulte a [documentação completa do CRM](docs/crm.md) para detalhes de fluxo, requisitos de segurança e integrações planejadas.
+
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)

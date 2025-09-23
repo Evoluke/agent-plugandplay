@@ -26,3 +26,9 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
+## Experiência do Chat Omnichannel/CRM
+- Utilize a paleta oficial para os componentes do chat (balões, botões de ação, badges de status), mantendo contraste adequado para acessibilidade.
+- Ícones de canal (WhatsApp, email, etc.) devem seguir o estilo linear utilizado no restante da aplicação, aplicando a cor `--primary` para destacar o canal ativo.
+- Mensagens automáticas enviadas pelo CRM devem adotar o tom de voz da marca, evitando linguagem excessivamente técnica ou informal.
+- Quando necessário aplicar estados diferenciados (por exemplo, mensagens não lidas ou fila prioritária), prefira variações de saturação da cor `--accent` em vez de introduzir novas cores.
+
