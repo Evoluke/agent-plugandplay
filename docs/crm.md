@@ -52,6 +52,13 @@ ar políticas de RLS que restringem o acesso a operadores da empresa proprietár
 - Webhooks autenticados para receber eventos de mensagens, status de entrega e atualizações de contatos.
 - Pipeline de normalização garantindo que payloads externos sejam convertidos para o modelo interno antes do armazenamento.
 
+### Webhook Evolution API
+- Rota `POST /api/crm/webhook` recebe os eventos e os enfileira primeiro no Redis (`incoming_message`), guardando envelopes em `incoming_message:jobs` e encaminhando falhas para `incoming_message:deadletter`.
+- Autenticação por `apikey`/`x-api-key` (ou header `Authorization: Bearer`) validada contra `public.instance.webhook_secret`; instâncias desativadas são recusadas.
+- Eventos aceitos: `QRCODE_UPDATED`, `MESSAGES_UPSERT`, `MESSAGES_UPDATE`, `MESSAGES_DELETE`, `SEND_MESSAGE`, `CONNECTION_UPDATE`.
+- `MESSAGES_UPSERT` e `SEND_MESSAGE` alimentam `public.messages_chat` (histórico transacional) e atualizam `public.conversations`; a tabela agregada `public.messages` segue isolada para relatórios legados.
+- `MESSAGES_UPDATE` e `MESSAGES_DELETE` ajustam status de entrega/erro no `messages_chat`, enquanto `QRCODE_UPDATED` e `CONNECTION_UPDATE` sincronizam `public.instance.settings` e `last_sync_at` para refletir o estado da instância Evolution.
+
 ### Configuração de Variáveis de Ambiente
 - `REDIS_USERNAME`, `REDIS_PASSWORD`, `REDIS_HOST` e `REDIS_PORT`: habilitam o acesso ao cluster Redis responsável pelas filas `incoming_message` e `send_message`.
 - `EVOLUTION_API_URL` e `EVOLUTION_API_TOKEN`: identificam e autenticam o tenant na Evolution API para envio e recebimento de mensagens. A instância ativa é determinada pelos webhooks recebidos e registrada na tabela `instance` do Supabase.

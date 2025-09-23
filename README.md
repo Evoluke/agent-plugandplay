@@ -60,6 +60,12 @@ O módulo de CRM omnichannel opera sobre uma arquitetura dedicada que combina Ne
 - **Redis + BullMQ**: mantém as filas `incoming_message` (processamento de webhooks) e `send_message` (envio para Evolution), controlando _retries_, _backoff_, DLQ e concorrência.
 - **Workers Node.js**: executam fora do Next.js, tratam normalização e idempotência, fazem _upsert_ no Supabase e gerenciam _download_ de mídia quando necessário.
 
+### Webhook da Evolution API
+
+- O endpoint `POST /api/crm/webhook` valida `apikey`/`x-api-key` (ou token `Bearer`) comparando com `public.instance.webhook_secret` antes de aceitar cada evento.
+- As chamadas são registradas primeiro no Redis (`incoming_message`, com hashes auxiliares `incoming_message:jobs` e `incoming_message:deadletter`) e, em seguida, processadas para alimentar `public.messages_chat` (histórico transacional) e `public.conversations`. A tabela agregada `public.messages` permanece dedicada a relatórios legados.
+- Eventos suportados: `QRCODE_UPDATED`, `MESSAGES_UPSERT`, `MESSAGES_UPDATE`, `MESSAGES_DELETE`, `SEND_MESSAGE`, `CONNECTION_UPDATE`.
+
 Consulte a [documentação completa do CRM](docs/crm.md) para detalhes de fluxo, requisitos de segurança e integrações planejadas.
 
 ## 🔗 Links Úteis
