@@ -276,7 +276,7 @@ function normalizeSingleMessage(
   const hasBody = typeof body === "string" && body.length > 0;
   const messageType = mapMessageType(typeValue, hasMedia, hasBody);
 
-  const normalizedMedia = media.map((item) => {
+  const normalizedMedia: NormalizedMedia[] = media.map((item) => {
     if (item.type === "unknown") {
       if (messageType !== "text" && messageType !== "unknown") {
         return { ...item, type: messageType };
@@ -910,11 +910,13 @@ async function persistNormalizedMessage(
     updated_at: nowIso,
   });
 
-  const { data: contact, error: contactError } = await supabaseadmin
-    .from<WhatsappContactRow>("whatsapp_contacts")
+  const { data: contactData, error: contactError } = await supabaseadmin
+    .from("whatsapp_contacts")
     .upsert(contactPayload, { onConflict: "company_id,whatsapp_id" })
     .select()
     .maybeSingle();
+
+  const contact = (contactData ?? null) as WhatsappContactRow | null;
 
   if (contactError) {
     throw new Error(
@@ -936,11 +938,15 @@ async function persistNormalizedMessage(
     updated_at: nowIso,
   });
 
-  const { data: conversation, error: conversationError } = await supabaseadmin
-    .from<WhatsappConversationRow>("whatsapp_conversations")
+  const { data: conversationData, error: conversationError } = await supabaseadmin
+    .from("whatsapp_conversations")
     .upsert(conversationPayload, { onConflict: "company_id,contact_id" })
     .select()
     .maybeSingle();
+
+  const conversation = (conversationData ?? null) as
+    | WhatsappConversationRow
+    | null;
 
   if (conversationError) {
     throw new Error(
@@ -969,11 +975,13 @@ async function persistNormalizedMessage(
     updated_at: nowIso,
   });
 
-  const { data: message, error: messageError } = await supabaseadmin
-    .from<WhatsappMessageRow>("whatsapp_messages")
+  const { data: messageData, error: messageError } = await supabaseadmin
+    .from("whatsapp_messages")
     .upsert(messagePayload, { onConflict: "evolution_message_id" })
     .select()
     .maybeSingle();
+
+  const message = (messageData ?? null) as WhatsappMessageRow | null;
 
   if (messageError) {
     throw new Error(
