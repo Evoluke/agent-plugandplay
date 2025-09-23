@@ -12,12 +12,15 @@ Rotas atuais que dependem do `supabaseadmin`:
 - `/api/notifications`
 - `/api/payments/pay`
 - `/api/payments/client`
+- `/api/evolution/webhook`
+  - Valida o hash SHA-256 do `apikey` registrado em `evolution_instances` antes de persistir eventos. Atualiza múltiplas tabelas sem intervenção do usuário, portanto deve ser protegida contra chamadas não autenticadas (por IP allowlist ou gateway dedicado).
 
 ## Filas e cache
 
 - O cliente Redis (`src/lib/redis.ts`) exige `REDIS_URL` ou `REDIS_HOST/PORT`. Garanta que o endpoint esteja protegido por ACLs ou redes privadas, especialmente em ambientes compartilhados.
-- Ao introduzir filas (por exemplo, `support:tickets`), restrinja o acesso ao Redis para escrituras originadas apenas do backend e considere autenticação mútua (TLS + senha).
+- Ao introduzir filas (por exemplo, `support:tickets` ou `evolution:incoming-messages`), restrinja o acesso ao Redis para escrituras originadas apenas do backend e considere autenticação mútua (TLS + senha).
 - As notificações continuam sendo servidas diretamente do Supabase; garanta que as políticas de RLS cubram leitura, criação e atualização para evitar vazamento entre empresas.
+- As chaves de cache (`evolution:message:*`, `evolution:conversation:*`) carregam dados sensíveis de atendimento. Caso use Redis compartilhado, isole o namespace via ACL ou prefixos exclusivos por ambiente.
 
 ## Tabelas críticas e políticas de RLS
 As seguintes tabelas requerem políticas de Row Level Security para garantir o isolamento por empresa/usuário:
@@ -29,5 +32,8 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `agent_personality`, `agent_behavior`, `agent_onboarding`, `agent_specific_instructions`, `agent_knowledge_files` | Acesso restrito via relação com `agents.company_id` do usuário |
 | `payments` | Acesso apenas para registros com `company_id` pertencente ao usuário |
 | `tickets` | Acesso apenas para registros com `company_id` pertencente ao usuário |
+| `evolution_instances` | Somente administradores podem ler/escrever; operadores devem enxergar apenas instâncias vinculadas à própria empresa |
+| `evolution_conversations` | Leituras e atualizações restritas a `company_id` da sessão | 
+| `evolution_messages` | Leituras restritas a `company_id`; escrituras apenas via webhook/worker de confiança |
 
-Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.
+Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima. Rotacione o `apikey` da Evolution quando necessário e atualize o hash correspondente em `evolution_instances` de forma transacional para evitar janelas sem autenticação.

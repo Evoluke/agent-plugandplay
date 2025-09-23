@@ -61,4 +61,25 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - `src/lib/redis.ts` concentra o cliente Redis com cache em memória única (singleton) e oferece helpers para enfileirar tarefas (`enqueue`, `dequeue`, `peekQueue`) e manipular chaves de cache (`setCache`, `getCache`, `deleteCache`).
 - Utilize o helper de Redis para implementar filas e caches conforme necessário; por padrão, a rota `/api/support/new` continua persistindo os tickets apenas no Supabase.
 - A rota `/api/notifications` continua consultando o Supabase diretamente para listar, criar e marcar notificações como lidas, sem camada de cache.
+- `src/app/api/evolution/webhook/route.ts` recebe os eventos da Evolution API, valida a instância cadastrada, persiste conversas/mensagens no Supabase e atualiza fila e caches no Redis.
+
+## 📥 Webhook da Evolution API
+
+### Cadastro de instâncias
+
+- Cadastre cada conexão da Evolution na tabela `evolution_instances`. O campo `external_id` deve receber o `instanceId` informado nos payloads do webhook e é único por instância.
+- Armazene o segredo enviado pela Evolution em formato **hash SHA-256** no campo `api_key_hash`. É possível gerar o hash localmente executando `echo -n "SEU_API_KEY" | sha256sum` e copiando apenas a sequência hexadecimal gerada.
+- Associe a instância a uma empresa (`company_id`) sempre que possível para que as políticas de RLS protejam o histórico de conversas. Os campos `webhook_url` e `server_url` são atualizados automaticamente a cada evento recebido, mas podem ser preenchidos manualmente durante a configuração inicial.
+
+### Estrutura de dados
+
+- `evolution_conversations` mantém um registro consolidado por `remote_jid` e instância, armazenando identificadores do Chatwoot, pré-visualização da última mensagem e o contexto criptográfico enviado pela Evolution.
+- `evolution_messages` guarda cada evento recebido (texto, ack, mídias e outros tipos). O payload completo é preservado em `raw_payload` para auditoria e o campo `message_payload` concentra apenas o trecho de mensagem normalizado.
+- Os campos `message_timestamp` e `event_datetime` são normalizados para `timestamptz`, aceitando valores em epoch (`messageTimestamp`) ou ISO string (`date_time`).
+
+### Filas e cache
+
+- Toda mensagem persistida é enfileirada em `evolution:incoming-messages` (Redis) com o objetivo de permitir processamento assíncrono por workers dedicados.
+- As mensagens mais recentes ficam disponíveis no cache via chaves `evolution:message:<uuid>` e `evolution:message:<message_id>` por 1 hora. Conversas são cacheadas em `evolution:conversation:<conversation_uuid>` e `evolution:conversation:<instance_id>:<remote_jid>` por 2 horas.
+- Em ambientes sem Redis configurado, as operações de fila/cache são ignoradas (o erro é logado), mas o webhook continua retornando `200` após salvar os dados no Supabase.
 

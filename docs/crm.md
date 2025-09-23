@@ -14,6 +14,9 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 - Webhooks dedicados no backend Next.js para receber eventos de mensagens, status de entrega e atualizações de sessão.
 - Normalização do payload recebido antes de persistir no Supabase.
 - Retentativa automática de envio utilizando filas Redis em caso de falhas temporárias.
+- Persistência estruturada nas tabelas `evolution_conversations` e `evolution_messages`, vinculadas à instância (`evolution_instances`) e à empresa responsável.
+- Validação de instância por hash SHA-256 do `apikey` antes de aceitar cada webhook, evitando processamento de eventos não autorizados.
+- Cache de conversas e mensagens recente em Redis para reduzir leituras repetidas do Supabase.
 
 ### Gestão de contatos
 - Cadastro manual e importação em massa (CSV ou integrações externas) com deduplicação por número de telefone.
@@ -23,7 +26,7 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 
 ### Automação e tarefas assíncronas
 - Filas Redis para orquestrar tarefas de alto volume, como disparos em massa, atualizações de status e sincronização de mídias.
-- Cache Redis para armazenar sessões de conexão com a Evolution API, tokens temporários e dados de configuração frequentemente acessados.
+- Cache Redis para armazenar sessões de conexão com a Evolution API, tokens temporários, dados de configuração frequentemente acessados e instantâneos das conversas (chaves `evolution:conversation:*`) e mensagens (`evolution:message:*`).
 - Supervisão de workers com métricas de throughput e mecanismos de retry exponencial.
 
 ### Painel operacional
@@ -44,8 +47,8 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 ## Fluxos críticos
 1. **Recebimento de mensagem**
    - Evolution API aciona webhook.
-   - Backend valida assinatura, normaliza payload e envia tarefa à fila Redis.
-   - Worker processa, atualiza o histórico no Supabase e emite notificação ao cliente Next.js via canal em tempo real.
+   - Backend valida assinatura, normaliza payload, persiste dados no Supabase e envia tarefa à fila `evolution:incoming-messages`.
+   - Worker processa o item enfileirado, atualiza caches (`evolution:message:*`, `evolution:conversation:*`) e emite notificação ao cliente Next.js via canal em tempo real.
 
 2. **Envio de mensagem**
    - Operador envia mensagem pelo painel.
@@ -62,4 +65,15 @@ Este documento apresenta os pilares funcionais e técnicos do CRM responsável p
 - Configurar monitoramento de filas Redis (latência, tamanho) e alertas para falhas de workers.
 - Documentar webhooks esperados da Evolution API (endereços, payloads, autenticação) e rotinas de fallback.
 - Planejar testes end-to-end simulando conversas completas para garantir consistência entre mensagens, contatos e histórico.
+- Automatizar a atualização do hash do `apikey` na tabela `evolution_instances` quando a Evolution rotacionar as credenciais da instância.
+
+## Modelo de dados de mensagens
+
+| Tabela | Responsabilidade | Observações principais |
+| --- | --- | --- |
+| `evolution_instances` | Registrar conexões Evolution autorizadas | Armazena `external_id`, `api_key_hash` (SHA-256) e metadados como `webhook_url`, `server_url` e `last_event_at`. Deve ser vinculada ao `company_id` para habilitar RLS. |
+| `evolution_conversations` | Consolidar o histórico por `remote_jid` | Guarda prévia da última mensagem, status de entrega, IDs do Chatwoot e o contexto criptográfico enviado no payload. Atualizada automaticamente pelo webhook. |
+| `evolution_messages` | Persistir cada evento recebido | Mantém `raw_payload` para auditoria, `message_payload` normalizado, timestamps normalizados (`message_timestamp`, `event_datetime`) e referência à instância e conversa. |
+
+Os caches Redis espelham essas estruturas para leitura rápida, enquanto a fila `evolution:incoming-messages` desacopla o processamento intensivo (notificações, análise, sincronização externa) do ciclo de vida do webhook.
 
