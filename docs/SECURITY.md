@@ -24,3 +24,11 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `tickets` | Acesso apenas para registros com `company_id` pertencente ao usuário |
 
 Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.
+
+## Considerações para o Chat Omnichannel/CRM
+
+- **Tabelas do CRM**: garanta políticas de RLS para `crm_conversations`, `crm_messages` e quaisquer tabelas de anexos, sempre vinculando registros ao `company_id` e aos operadores autorizados.
+- **Webhooks externos**: valide a assinatura ou token enviado pela Evolution API antes de aceitar o evento. Rejeite chamadas sem autenticação ou provenientes de IPs desconhecidos.
+- **Supabase Realtime**: limite os canais de Realtime às empresas autorizadas, evitando que assinantes recebam eventos de outras contas.
+- **Workers BullMQ**: armazene credenciais de provedores externos em variáveis de ambiente seguras e carregue-as apenas quando necessário. Registre falhas de entrega de mensagens com contexto suficiente para auditoria.
+- **Armazenamento de mídia**: configure buckets do Supabase Storage com políticas restritivas, garantindo que downloads ocorram apenas com sessão válida e pertencente à empresa do arquivo.
