@@ -26,3 +26,7 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
+## Ícones e badges
+- Alertas exibidos pelo módulo de notificações devem utilizar o tom `#F59E0B` para o estado _warning_ e `#10B981` para _success_, respeitando contraste AA.
+- Quando houver necessidade de indicar processamento assíncrono (por exemplo, itens enfileirados via Redis), utilize badges com bordas arredondadas (raio mínimo de 12 px) e texto em Geist Sans semibold 12 px.
+

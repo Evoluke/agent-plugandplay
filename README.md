@@ -16,6 +16,11 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
    cp .env.example .env
    ```
 
+   As integrações recém-adicionadas utilizam variáveis específicas:
+
+   - `EVOLUTION_API_BASE_URL` e `EVOLUTION_API_TOKEN`: endpoints e credenciais do provedor Evolution.
+   - `REDIS_URL` (ou `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`, `REDIS_DB`): configura o cache e as filas.
+
 3. Inicie o servidor de desenvolvimento:
 
    ```bash
@@ -47,4 +52,11 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - [Dify](https://dify.ai/)
 - [Chatwoot](https://www.chatwoot.com/)
 - [Vercel](https://vercel.com/)
+
+## 🧰 Utilitários de infraestrutura
+
+- `src/lib/evolution.ts` expõe a factory `createEvolutionClient`, que instancia um wrapper autenticado para a API da Evolution e gera erros explícitos quando as variáveis `EVOLUTION_API_BASE_URL` ou `EVOLUTION_API_TOKEN` estão ausentes.
+- `src/lib/redis.ts` concentra o cliente Redis com cache em memória única (singleton) e oferece helpers para enfileirar tarefas (`enqueue`, `dequeue`, `peekQueue`) e manipular chaves de cache (`setCache`, `getCache`, `deleteCache`).
+- Utilize o helper de Redis para implementar filas e caches conforme necessário; por padrão, a rota `/api/support/new` continua persistindo os tickets apenas no Supabase.
+- A rota `/api/notifications` continua consultando o Supabase diretamente para listar, criar e marcar notificações como lidas, sem camada de cache.
 
