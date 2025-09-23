@@ -145,7 +145,109 @@ create table public.agent_specific_instructions (
   constraint agent_specific_instructions_agent_id_fkey foreign key (agent_id) references agents (id)
 ) TABLESPACE pg_default;
 
--- Tabela de mensagens
+-- ===============================
+-- Tabelas do Chat Omnichannel/CRM
+-- ===============================
+
+-- Enums para suportar canais, conversas e mensagens integradas à Evolution API
+create type public.chat_channel as enum ('whatsapp', 'instagram', 'facebook_messenger', 'telegram', 'email', 'webchat');
+create type public.conversation_status as enum ('open', 'pending', 'closed', 'archived');
+create type public.message_direction as enum ('inbound', 'outbound');
+create type public.message_sender_type as enum ('contact', 'agent', 'automation', 'system');
+create type public.message_content_type as enum ('text', 'image', 'audio', 'video', 'document', 'sticker', 'location', 'template', 'unknown');
+create type public.message_delivery_status as enum ('pending', 'sent', 'delivered', 'read', 'failed');
+
+-- Tabela de instâncias de integração (Evolution API, etc.)
+create table public.instance (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  company_id bigint not null,
+  name text not null,
+  provider text not null default 'evolution',
+  external_id text null,
+  webhook_url text null,
+  webhook_secret text null,
+  is_active boolean not null default true,
+  last_sync_at timestamp with time zone null,
+  settings jsonb not null default '{}'::jsonb,
+  constraint instance_pkey primary key (id),
+  constraint instance_company_id_fkey foreign key (company_id) references company (id) on delete cascade,
+  constraint instance_company_external_id_key unique (company_id, external_id)
+) TABLESPACE pg_default;
+
+create index instance_company_id_idx on public.instance (company_id);
+
+-- Contatos sincronizados de canais omnichannel
+create table public.contacts (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  company_id bigint not null,
+  instance_id uuid null,
+  external_id text null,
+  full_name text null,
+  first_name text null,
+  last_name text null,
+  display_name text null,
+  phone text null,
+  email text null,
+  profile_image_url text null,
+  language text null,
+  timezone text null,
+  last_seen_at timestamp with time zone null,
+  is_blocked boolean not null default false,
+  is_favorite boolean not null default false,
+  tags text[] null default '{}'::text[],
+  metadata jsonb not null default '{}'::jsonb,
+  constraint contacts_pkey primary key (id),
+  constraint contacts_company_id_fkey foreign key (company_id) references company (id) on delete cascade,
+  constraint contacts_instance_id_fkey foreign key (instance_id) references instance (id) on delete set null,
+  constraint contacts_company_external_id_key unique (company_id, external_id)
+) TABLESPACE pg_default;
+
+create index contacts_company_id_idx on public.contacts (company_id);
+create index contacts_instance_id_idx on public.contacts (instance_id);
+
+-- Conversas vinculadas a contatos e canais específicos
+create table public.conversations (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  company_id bigint not null,
+  instance_id uuid null,
+  contact_id uuid not null,
+  external_id text null,
+  channel public.chat_channel not null,
+  subject text null,
+  status public.conversation_status not null default 'open'::public.conversation_status,
+  priority text null,
+  assigned_user_id uuid null,
+  assigned_agent_id uuid null,
+  opened_by uuid null,
+  closed_by uuid null,
+  first_response_at timestamp with time zone null,
+  last_message_at timestamp with time zone null,
+  closed_at timestamp with time zone null,
+  sla_due_at timestamp with time zone null,
+  metadata jsonb not null default '{}'::jsonb,
+  constraint conversations_pkey primary key (id),
+  constraint conversations_company_id_fkey foreign key (company_id) references company (id) on delete cascade,
+  constraint conversations_instance_id_fkey foreign key (instance_id) references instance (id) on delete set null,
+  constraint conversations_contact_id_fkey foreign key (contact_id) references contacts (id) on delete cascade,
+  constraint conversations_assigned_user_id_fkey foreign key (assigned_user_id) references auth.users (id) on delete set null,
+  constraint conversations_assigned_agent_id_fkey foreign key (assigned_agent_id) references agents (id) on delete set null,
+  constraint conversations_opened_by_fkey foreign key (opened_by) references auth.users (id) on delete set null,
+  constraint conversations_closed_by_fkey foreign key (closed_by) references auth.users (id) on delete set null,
+  constraint conversations_company_external_id_key unique (company_id, external_id)
+) TABLESPACE pg_default;
+
+create index conversations_company_id_idx on public.conversations (company_id);
+create index conversations_contact_id_idx on public.conversations (contact_id);
+create index conversations_instance_id_idx on public.conversations (instance_id);
+create index conversations_status_idx on public.conversations (status);
+
+-- Indicadores agregados de mensagens por dia (legado do dashboard)
 create table public.messages (
   id uuid not null default gen_random_uuid(),
   company_id bigint not null,
@@ -154,6 +256,78 @@ create table public.messages (
   constraint messages_pkey primary key (id),
   constraint messages_company_id_fkey foreign key (company_id) references company (id)
 ) TABLESPACE pg_default;
+
+-- Mensagens vinculadas às conversas e instâncias Evolution
+create table public.messages_chat (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  sent_at timestamp with time zone not null default now(),
+  company_id bigint not null,
+  instance_id uuid null,
+  conversation_id uuid not null,
+  contact_id uuid null,
+  author_user_id uuid null,
+  agent_id uuid null,
+  direction public.message_direction not null,
+  sender_type public.message_sender_type not null,
+  status public.message_delivery_status not null default 'pending'::public.message_delivery_status,
+  content_type public.message_content_type not null default 'text'::public.message_content_type,
+  text text null,
+  media_url text null,
+  media_caption text null,
+  payload jsonb not null default '{}'::jsonb,
+  reply_to_message_id uuid null,
+  external_id text null,
+  external_status text null,
+  error_reason text null,
+  delivered_at timestamp with time zone null,
+  read_at timestamp with time zone null,
+  constraint messages_chat_pkey primary key (id),
+  constraint messages_chat_company_id_fkey foreign key (company_id) references company (id) on delete cascade,
+  constraint messages_chat_instance_id_fkey foreign key (instance_id) references instance (id) on delete set null,
+  constraint messages_chat_conversation_id_fkey foreign key (conversation_id) references conversations (id) on delete cascade,
+  constraint messages_chat_contact_id_fkey foreign key (contact_id) references contacts (id) on delete set null,
+  constraint messages_chat_author_user_id_fkey foreign key (author_user_id) references auth.users (id) on delete set null,
+  constraint messages_chat_agent_id_fkey foreign key (agent_id) references agents (id) on delete set null,
+  constraint messages_chat_reply_to_message_id_fkey foreign key (reply_to_message_id) references messages_chat (id) on delete set null,
+  constraint messages_chat_company_external_id_key unique (company_id, external_id)
+) TABLESPACE pg_default;
+
+create index messages_chat_company_id_idx on public.messages_chat (company_id);
+create index messages_chat_conversation_id_idx on public.messages_chat (conversation_id);
+create index messages_chat_instance_id_idx on public.messages_chat (instance_id);
+create index messages_chat_sent_at_idx on public.messages_chat (sent_at desc);
+
+-- View para gráficos de mensagens diárias com base no chat
+create view public.crm_message_daily_metrics as
+select
+  company_id,
+  date_trunc('day', sent_at)::date as message_date,
+  count(*)::bigint as message_count
+from public.messages_chat
+group by company_id, date_trunc('day', sent_at)::date;
+
+-- Função utilitária para atualizar o campo updated_at
+create or replace function public.handle_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger handle_updated_at before update on public.instance
+for each row execute function public.handle_updated_at();
+
+create trigger handle_updated_at before update on public.contacts
+for each row execute function public.handle_updated_at();
+
+create trigger handle_updated_at before update on public.conversations
+for each row execute function public.handle_updated_at();
+
+create trigger handle_updated_at before update on public.messages_chat
+for each row execute function public.handle_updated_at();
 
 -- Tabela de alertas do dashboard
 create table public.dashboard_alerts (

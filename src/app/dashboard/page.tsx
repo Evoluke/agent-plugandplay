@@ -36,7 +36,7 @@ type Company = {
   company_profile_id?: number;
 };
 
-type Message = {
+type DailyMetric = {
   message_date: string;
   message_count: number;
 };
@@ -91,7 +91,7 @@ export default function DashboardPage() {
           return;
         }
         if (!data) return;
-        const formatted = (data as Message[])
+        const formatted = (data as DailyMetric[])
           .map((msg) => ({ date: msg.message_date, count: msg.message_count }))
           .sort((a, b) => a.date.localeCompare(b.date));
         setDailyMessages(formatted);

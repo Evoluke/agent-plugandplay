@@ -31,4 +31,5 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Ícones de canal (WhatsApp, email, etc.) devem seguir o estilo linear utilizado no restante da aplicação, aplicando a cor `--primary` para destacar o canal ativo.
 - Mensagens automáticas enviadas pelo CRM devem adotar o tom de voz da marca, evitando linguagem excessivamente técnica ou informal.
 - Quando necessário aplicar estados diferenciados (por exemplo, mensagens não lidas ou fila prioritária), prefira variações de saturação da cor `--accent` em vez de introduzir novas cores.
+- Ao produzir materiais internos, diferencie claramente os dados de "Mensagens do Chat" (`messages_chat`) dos painéis agregados legados (`messages`) para evitar confusões entre times de produto e marketing.
 
