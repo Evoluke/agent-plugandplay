@@ -1,8 +1,8 @@
 // src/app/api/support/new/route.ts
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseadmin } from "@/lib/supabaseAdmin";
 import { getUserFromCookie } from "@/lib/auth";
+import { supabaseadmin } from "@/lib/supabaseAdmin";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = new Set([
