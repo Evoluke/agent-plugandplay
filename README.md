@@ -16,6 +16,11 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
    cp .env.example .env
    ```
 
+   Configure as seguintes variáveis essenciais do CRM:
+
+   - `REDIS_USERNAME`, `REDIS_PASSWORD`, `REDIS_HOST` e `REDIS_PORT`: credenciais do cluster Redis utilizado pelas filas BullMQ e pelos workers de mensagens.
+   - `EVOLUTION_API_URL` e `EVOLUTION_API_TOKEN`: parâmetros de autenticação para a Evolution API, responsável pela integração oficial de WhatsApp. A instância utilizada por cada tenant é resolvida dinamicamente pela tabela `instance` no Supabase.
+
 3. Inicie o servidor de desenvolvimento:
 
    ```bash
