@@ -20,6 +20,7 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
    Principais variáveis relacionadas às integrações externas:
    - `EVOLUTION_API_BASE_URL`: URL base da API Evolution responsável por orquestrar os agentes. Utilize o endpoint informado na sua conta Evolution ou no ambiente configurado pela equipe de infraestrutura.
    - `EVOLUTION_API_TOKEN`: token de acesso gerado no painel da Evolution (ou fornecido pelo time responsável) que autoriza as requisições autenticadas.
+   - `EVOLUTION_WEBHOOK_SECRET`: segredo compartilhado utilizado para validar as notificações recebidas em `/api/evolution/webhook`. O header `x-evolution-signature` deve trazer exatamente este valor.
   - `REDIS_URL`: string de conexão completa para o Redis usado pelos serviços de fila/cache. Inclua nela usuário e senha quando o serviço exigir autenticação (por exemplo, `redis://default:<senha>@<host>:14216`, utilizando a porta 14216 do cluster padrão). Pode ser obtida no provedor de hospedagem (como Upstash, Redis Cloud) ou montada a partir do host, porta e credenciais do servidor interno.
   - `REDIS_USERNAME` e `REDIS_PASSWORD`: caso opte por configurar as credenciais separadamente, informe o usuário e a senha fornecidos pelo provedor (ou definidos na instância autogerenciada) para permitir que os clientes Redis executem a autenticação.
 
@@ -61,4 +62,5 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - `src/lib/redis.ts` concentra o cliente Redis com cache em memória única (singleton) e oferece helpers para enfileirar tarefas (`enqueue`, `dequeue`, `peekQueue`) e manipular chaves de cache (`setCache`, `getCache`, `deleteCache`).
 - Utilize o helper de Redis para implementar filas e caches conforme necessário; por padrão, a rota `/api/support/new` continua persistindo os tickets apenas no Supabase.
 - A rota `/api/notifications` continua consultando o Supabase diretamente para listar, criar e marcar notificações como lidas, sem camada de cache.
+- A rota `/api/evolution/webhook` normaliza os eventos da Evolution, salva contatos, conversas, mensagens e anexos nas tabelas `whatsapp_contacts`, `whatsapp_conversations`, `whatsapp_messages` e `whatsapp_message_media` e, quando houver mídias com URL, publica as referências na fila Redis `evolution:media:download` para workers tratarem o download.
 

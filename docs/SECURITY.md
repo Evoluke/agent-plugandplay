@@ -18,6 +18,7 @@ Rotas atuais que dependem do `supabaseadmin`:
 - O cliente Redis (`src/lib/redis.ts`) exige `REDIS_URL` ou `REDIS_HOST/PORT`. Garanta que o endpoint esteja protegido por ACLs ou redes privadas, especialmente em ambientes compartilhados.
 - Ao introduzir filas (por exemplo, `support:tickets`), restrinja o acesso ao Redis para escrituras originadas apenas do backend e considere autenticação mútua (TLS + senha).
 - As notificações continuam sendo servidas diretamente do Supabase; garanta que as políticas de RLS cubram leitura, criação e atualização para evitar vazamento entre empresas.
+- O webhook `/api/evolution/webhook` depende do header `x-evolution-signature` com o valor de `EVOLUTION_WEBHOOK_SECRET`; monitore tentativas de acesso sem o segredo e mantenha o Redis protegido para o consumo da fila `evolution:media:download` responsável pelo download de mídias.
 
 ## Tabelas críticas e políticas de RLS
 As seguintes tabelas requerem políticas de Row Level Security para garantir o isolamento por empresa/usuário:
@@ -29,5 +30,7 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `agent_personality`, `agent_behavior`, `agent_onboarding`, `agent_specific_instructions`, `agent_knowledge_files` | Acesso restrito via relação com `agents.company_id` do usuário |
 | `payments` | Acesso apenas para registros com `company_id` pertencente ao usuário |
 | `tickets` | Acesso apenas para registros com `company_id` pertencente ao usuário |
+| `whatsapp_contacts`, `whatsapp_conversations` | Leitura/escrita permitida somente quando `company_id` pertence ao usuário autenticado |
+| `whatsapp_messages`, `whatsapp_message_media` | Acesso restrito ao escopo da empresa (`company_id`) e mensagens associadas |
 
 Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.
