@@ -11,6 +11,7 @@ Estas orientações se aplicam a todo o repositório `agent-plugandplay`.
 ## Documentação
 - Atualize documentação relevante (por exemplo, arquivos em `docs/` ou `README.md`) sempre que fizer mudanças que afetem o comportamento observado pelo usuário.
 - Ao modificar arquivos Markdown, utilize títulos em português e mantenha uma estrutura coerente com o restante do projeto.
+- Diferencie nas descrições de banco de dados a tabela transacional `messages_chat` da tabela agregada legada `messages` para evitar regressões em integrações existentes.
 
 ## Mensagens de PR
 - Estruture a mensagem de PR com um resumo em tópicos e uma seção de testes, mencionando cada comando executado.

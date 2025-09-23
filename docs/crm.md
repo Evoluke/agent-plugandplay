@@ -21,8 +21,24 @@ Estabelecer uma base única para atendimento omnichannel que consolide contatos,
 - Uso de Storage para anexos de mídia compartilhados nas conversas.
 - Versionamento de esquemas realizado por migrações SQL armazenadas no repositório.
 
+#### Esquema de Dados do CRM
+- `public.instance`: representa as instâncias configuradas para cada empresa junto à Evolution API ou demais provedores. Armazena
+  identificadores externos, segredos de webhook, status de sincronização e parâmetros específicos em `settings`.
+- `public.contacts`: mantém contatos unificados por empresa, incluindo dados de perfil, idioma, _tags_, bloqueios e o relacionam
+  ento opcional com a instância responsável por sincronizar o registro.
+- `public.conversations`: agrega as interações por canal, vinculando contato, instância, responsáveis humanos (`assigned_user_id`)
+  ou agentes virtuais (`assigned_agent_id`), além de metadados sobre SLA, prioridade e carimbos de data.
+- `public.messages_chat`: guarda o histórico completo de mensagens com direção (`inbound`/`outbound`), tipo de conteúdo, status de entrega,
+  _payload_ bruto e vínculos opcionais ao usuário/autômato que originou o evento.
+- `public.messages`: tabela agregada legada com contagem diária por empresa, preservada para relatórios e integrações existentes.
+- `public.crm_message_daily_metrics`: _view_ derivada para alimentar o dashboard, calculando volume diário de mensagens por empresa com base
+  em `messages_chat.sent_at`.
+
+Os campos `updated_at` são atualizados automaticamente via _trigger_. Todos os registros carregam `company_id`, permitindo aplic
+ar políticas de RLS que restringem o acesso a operadores da empresa proprietária.
+
 ### Comunicação em Tempo Real
-- Supabase Realtime com WebSockets assinando as tabelas `messages` e `conversations`.
+- Supabase Realtime com WebSockets assinando as tabelas `messages_chat` e `conversations`.
 - Atualizações de status de atendimento e indicadores de digitação propagados instantaneamente para operadores conectados.
 - Estratégia de reconexão automática no frontend para manter o canal ativo.
 
@@ -48,6 +64,6 @@ Estabelecer uma base única para atendimento omnichannel que consolide contatos,
 - Alertas para quedas de conexão com Evolution API, Redis ou Supabase.
 
 ## Próximos Passos
-- Definir esquema completo de tabelas (`conversations`, `messages`, `participants`, `channels`).
+- Mapear entidades auxiliares (participantes adicionais, anexos e etiquetas avançadas) complementando o esquema principal.
 - Documentar processos de suporte para reprocessar mensagens em _dead-letter queue_.
 - Adicionar guias de onboarding para operadores e administradores do CRM.
