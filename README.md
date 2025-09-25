@@ -48,3 +48,13 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - [Chatwoot](https://www.chatwoot.com/)
 - [Vercel](https://vercel.com/)
 
+## 🧭 CRM e Funil de vendas
+
+A área autenticada da plataforma passou a oferecer um **Funil de vendas** integrado ao CRM. O novo quadro Kanban permite:
+
+- Criar, renomear e remover funis associados à empresa logada.
+- Adicionar, editar, reorganizar e excluir estágios dentro de cada funil.
+- Registrar cartões em cada estágio, com descrição e valor estimado, realizando _drag and drop_ entre colunas para movimentar os leads.
+
+Consulte [`docs/CRM.md`](docs/CRM.md) para instruções detalhadas de uso e referências das tabelas criadas no banco de dados.
+
