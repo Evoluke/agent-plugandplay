@@ -38,6 +38,16 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 > O fluxo do N8N deve validar o token enviado no header `Authorization` antes de aceitar o upload.
 
+## 📈 Funil de vendas no dashboard
+
+O painel autenticado agora conta com a página **Funil de vendas**, acessível pelo menu lateral. Nela é possível:
+
+- Criar até cinco funis personalizados, partindo do _Funil de Aquisição IA_ (Novo lead → Transferência humano → Ganho → Perdido).
+- Adicionar e renomear estágios, respeitando o limite mínimo de dois e máximo de dez colunas por funil.
+- Inserir leads manualmente em cada etapa, acompanhar anotações e movimentá-los entre estágios pelo menu de ações.
+
+Essa visão em formato kanban facilita o acompanhamento do progresso comercial e a priorização de oportunidades junto à equipe.
+
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)
