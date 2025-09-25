@@ -59,7 +59,7 @@ const documentationSections: DocumentationSection[] = [
         title: "Conectando ao WhatsApp",
         description: "Passo a passo para conectar ao WhatsApp.",
         body: [
-          "Clique em \"CRM\" na barra lateral, assim você será redirecionado para nosso CRM.",
+          "Clique em \"CRM\" na barra lateral para abrir o CRM diretamente dentro da plataforma.",
           "Acesse o menu de Conversas e clique na conversa \"Integração Whatsapp\".",
           "Terá uma mensagem assim \"QRCode gerado com sucesso!\" e uma imagem com o QRCode.",
           "Com o celular em mãos, abra o aplicativo do WhatsApp e toque em \"Aparelhos conectados\" no menu de configurações.",
@@ -111,7 +111,7 @@ const documentationSections: DocumentationSection[] = [
         description: "Como habilitar o acesso ao Chatwoot.",
         body: [
           "Na seção de Configuração informe o identificador do seu workspace no Chatwoot para habilitar o atalho direto no menu.",
-          "Ao clicar em CRM na barra lateral abriremos o Chatwoot em uma nova aba utilizando SSO. Garanta que o usuário tenha permissões válidas.",
+          "Ao clicar em CRM na barra lateral abriremos o Chatwoot embutido na plataforma utilizando SSO. Garanta que o usuário tenha permissões válidas.",
           "Caso o acesso falhe, verifique as credenciais configuradas e tente novamente após alguns minutos.",
         ],
       },
