@@ -77,63 +77,6 @@ export default function FunilDeVendasPage() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  useEffect(() => {
-    const fetchCompanyAndPipelines = async () => {
-      setInitialLoading(true);
-      try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabasebrowser.auth.getUser();
-        if (userError) throw userError;
-        if (!user) {
-          toast.error("Não foi possível identificar o usuário autenticado.");
-          setInitialLoading(false);
-          return;
-        }
-
-        const { data: company, error: companyError } = await supabasebrowser
-          .from("company")
-          .select("id")
-          .eq("user_id", user.id)
-          .single();
-
-        if (companyError || !company) {
-          throw companyError ?? new Error("Empresa não encontrada");
-        }
-
-        setCompanyId(company.id);
-        await fetchPipelines(company.id);
-      } catch (error) {
-        console.error("Erro ao carregar funis:", error);
-        toast.error("Não foi possível carregar os funis de vendas.");
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-
-    void fetchCompanyAndPipelines();
-  }, [fetchPipelines]);
-
-  useEffect(() => {
-    const pipeline = pipelines.find((item) => item.id === selectedPipelineId);
-    if (pipeline) {
-      setEditingPipelineName(pipeline.name);
-    } else {
-      setEditingPipelineName("");
-    }
-  }, [pipelines, selectedPipelineId]);
-
-  useEffect(() => {
-    if (!selectedPipelineId) {
-      setStages([]);
-      return;
-    }
-
-    setBoardLoading(true);
-    void fetchStages(selectedPipelineId).finally(() => setBoardLoading(false));
-  }, [fetchStages, selectedPipelineId]);
-
   const fetchPipelines = useCallback(
     async (company: number) => {
       const { data, error } = await supabasebrowser
@@ -190,6 +133,63 @@ export default function FunilDeVendasPage() {
 
     setStages(formattedStages);
   }, []);
+
+  useEffect(() => {
+    const fetchCompanyAndPipelines = async () => {
+      setInitialLoading(true);
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabasebrowser.auth.getUser();
+        if (userError) throw userError;
+        if (!user) {
+          toast.error("Não foi possível identificar o usuário autenticado.");
+          setInitialLoading(false);
+          return;
+        }
+
+        const { data: company, error: companyError } = await supabasebrowser
+          .from("company")
+          .select("id")
+          .eq("user_id", user.id)
+          .single();
+
+        if (companyError || !company) {
+          throw companyError ?? new Error("Empresa não encontrada");
+        }
+
+        setCompanyId(company.id);
+        await fetchPipelines(company.id);
+      } catch (error) {
+        console.error("Erro ao carregar funis:", error);
+        toast.error("Não foi possível carregar os funis de vendas.");
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    void fetchCompanyAndPipelines();
+  }, [fetchPipelines]);
+
+  useEffect(() => {
+    const pipeline = pipelines.find((item) => item.id === selectedPipelineId);
+    if (pipeline) {
+      setEditingPipelineName(pipeline.name);
+    } else {
+      setEditingPipelineName("");
+    }
+  }, [pipelines, selectedPipelineId]);
+
+  useEffect(() => {
+    if (!selectedPipelineId) {
+      setStages([]);
+      return;
+    }
+
+    setBoardLoading(true);
+    void fetchStages(selectedPipelineId).finally(() => setBoardLoading(false));
+  }, [fetchStages, selectedPipelineId]);
 
   const handleCreatePipeline = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

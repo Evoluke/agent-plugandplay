@@ -37,3 +37,5 @@ As tabelas abaixo fazem parte do módulo de funil de vendas. Todas estão proteg
 - Mantenha os nomes dos estágios curtos e objetivos para facilitar a leitura no quadro Kanban.
 - Utilize o campo de valor para registrar montantes estimados e acompanhar previsões de receita.
 - Arraste os cartões apenas após as alterações serem salvas para evitar conflitos de sincronização.
+- Aguarde o carregamento inicial do funil antes de interagir com o quadro: os dados do usuário autenticado são buscados uma vez
+  e mantidos em memória para evitar recarregamentos desnecessários.
