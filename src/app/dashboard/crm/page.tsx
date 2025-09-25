@@ -77,14 +77,14 @@ export default function DashboardCrmPage() {
     );
   } else if (state.status === "loading") {
     content = (
-      <div className="flex h-full min-h-[60vh] flex-col items-center justify-center gap-3 p-6 text-center text-sm text-gray-600">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center text-sm text-gray-600">
         <Loader2 className="h-6 w-6 animate-spin text-[#2F6F68]" />
         <p>Conectando com o CRM...</p>
       </div>
     );
   } else {
     content = (
-      <div className="flex h-full min-h-[60vh] flex-col items-center justify-center gap-4 p-6 text-center text-sm text-gray-600">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-6 text-center text-sm text-gray-600">
         <p>{state.message}</p>
         <Button onClick={handleReload}>Tentar novamente</Button>
       </div>
@@ -92,14 +92,8 @@ export default function DashboardCrmPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-gray-900">CRM Evoluke</h1>
-        <p className="text-sm text-gray-600">
-          Centralize os atendimentos do Chatwoot sem sair da plataforma.
-        </p>
-      </header>
-      <div className="flex-1 overflow-hidden rounded-lg border bg-white">{content}</div>
-    </div>
+    <section className="relative flex w-full flex-1 overflow-hidden rounded-lg border bg-white min-h-[calc(100svh-10rem)]">
+      {content}
+    </section>
   );
 }

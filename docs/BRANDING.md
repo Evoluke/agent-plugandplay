@@ -26,3 +26,6 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
+## Interfaces imersivas
+- O módulo de CRM utiliza um iframe em tela cheia sem cabeçalho adicional. Evite adicionar elementos que criem bordas visuais extras para manter a sensação de aplicação nativa.
+

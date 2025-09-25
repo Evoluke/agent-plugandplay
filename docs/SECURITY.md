@@ -11,6 +11,7 @@ Rotas atuais que dependem do `supabaseadmin`:
 - `/api/support/new`
 - `/api/payments/pay`
 - `/api/payments/client`
+- `/api/chatwoot/sso`
 
 ## Tabelas críticas e políticas de RLS
 As seguintes tabelas requerem políticas de Row Level Security para garantir o isolamento por empresa/usuário:
@@ -24,3 +25,5 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `tickets` | Acesso apenas para registros com `company_id` pertencente ao usuário |
 
 Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.
+
+Para o CRM, valide se o `chatwoot_user_id` está armazenado na tabela `company` com o vínculo correto do usuário antes de expor a URL de SSO.
