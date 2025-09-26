@@ -21,6 +21,29 @@ interface Payment {
     payment_link: string | null;
 }
 
+declare global {
+    interface Window {
+        fbq?: (...args: unknown[]) => void;
+    }
+}
+
+const trackInitiateCheckout = (payment: Payment) => {
+    try {
+        if (typeof window === "undefined" || typeof window.fbq !== "function") {
+            return;
+        }
+
+        window.fbq("track", "InitiateCheckout", {
+            value: payment.amount,
+            currency: "BRL",
+            content_ids: [payment.id],
+            content_type: "payment",
+        });
+    } catch (error) {
+        console.error("Erro ao enviar evento do Pixel:", error);
+    }
+};
+
 export default function PaymentPage() {
     const params = useParams();
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -214,6 +237,11 @@ export default function PaymentPage() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="block w-full text-center text-blue-600 underline"
+                                onClick={() => {
+                                    if (payment) {
+                                        trackInitiateCheckout(payment);
+                                    }
+                                }}
                             >
                                 Abrir link de pagamento
                             </a>
