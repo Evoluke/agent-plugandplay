@@ -38,6 +38,16 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 > O fluxo do N8N deve validar o token enviado no header `Authorization` antes de aceitar o upload.
 
+## 🧭 Funil de vendas
+
+O painel lateral agora inclui a página **Funil de vendas**, construída sobre um board Kanban para organizar oportunidades comerciais.
+
+- **Funis**: é possível criar, renomear e excluir funis vinculados à empresa logada.
+- **Estágios**: cada funil pode receber estágios personalizados, com suporte a edição e remoção.
+- **Oportunidades**: arraste cartões entre colunas para acompanhar o progresso, registre valores estimados e mantenha notas rápidas.
+
+As alterações são persistidas no Supabase por meio das tabelas `pipeline`, `stage` e `card`, permitindo múltiplos funis por conta e controle de acesso via RLS.
+
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)

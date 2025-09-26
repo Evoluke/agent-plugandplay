@@ -11,6 +11,8 @@ Rotas atuais que dependem do `supabaseadmin`:
 - `/api/support/new`
 - `/api/payments/pay`
 - `/api/payments/client`
+- `/api/pipelines`
+  - Endpoints REST que criam, editam e removem funis, estágios e cartões. Cada chamada precisa validar a empresa ativa antes de acessar as tabelas `pipeline`, `stage` e `card`.
 
 ## Tabelas críticas e políticas de RLS
 As seguintes tabelas requerem políticas de Row Level Security para garantir o isolamento por empresa/usuário:
@@ -22,5 +24,6 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `agent_personality`, `agent_behavior`, `agent_onboarding`, `agent_specific_instructions`, `agent_knowledge_files` | Acesso restrito via relação com `agents.company_id` do usuário |
 | `payments` | Acesso apenas para registros com `company_id` pertencente ao usuário |
 | `tickets` | Acesso apenas para registros com `company_id` pertencente ao usuário |
+| `pipeline`, `stage`, `card` | Leituras e escritas condicionadas à relação com `company.id` do usuário autenticado |
 
 Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.

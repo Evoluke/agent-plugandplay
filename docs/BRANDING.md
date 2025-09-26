@@ -26,3 +26,8 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
+## Componentes CRM
+- Colunas do funil utilizam cartões brancos com bordas suaves (`border-gray-100`) e raios de 16 px para reforçar a sensação de módulo.
+- Badges de status seguem as cores `emerald`, `amber` e `rose` em tons claros; mantenha texto em alta legibilidade com contraste mínimo de 4.5:1.
+- Botões de ação secundaria no board utilizam o estilo `ghost` com ícones de 16 px para sinalizar edição ou exclusão sem poluir o layout.
+
