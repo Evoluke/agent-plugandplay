@@ -1,6 +1,6 @@
 'use client'
 
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { Droppable } from '@hello-pangea/dnd'
 import { Button } from '@/components/ui/button'
 import { Loader2, Plus } from 'lucide-react'
 import { DealCard, Stage } from '../types'
@@ -33,24 +33,32 @@ export function StageColumn({
         </div>
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-        <SortableContext items={cards.map((card) => card.id)} strategy={verticalListSortingStrategy}>
-          {isLoading ? (
-            <div className="flex h-32 items-center justify-center text-gray-400">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando
-            </div>
-          ) : (
-            cards.map((card) => (
-              <DealCardItem
-                key={card.id}
-                card={card}
-                onEdit={onEditCard}
-                onDelete={onDeleteCard}
-              />
-            ))
-          )}
-        </SortableContext>
-      </div>
+      <Droppable droppableId={stage.id} isDropDisabled={isLoading}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="flex-1 space-y-3 overflow-y-auto pr-1"
+          >
+            {isLoading ? (
+              <div className="flex h-32 items-center justify-center text-gray-400">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando
+              </div>
+            ) : (
+              cards.map((card, index) => (
+                <DealCardItem
+                  key={card.id}
+                  card={card}
+                  index={index}
+                  onEdit={onEditCard}
+                  onDelete={onDeleteCard}
+                />
+              ))
+            )}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
       <Button
         type="button"

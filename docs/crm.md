@@ -1,14 +1,14 @@
 # CRM e Funil de vendas
 
 ## Visão geral
-A página **Funil de vendas** centraliza os funis comerciais da empresa logada. O layout apresenta colunas em estilo kanban, com arrastar e soltar entre estágios utilizando `@dnd-kit`. Cada card exibe informações resumidas sobre a oportunidade (status, MRR, responsável, interações e próximas ações).
+A página **Funil de vendas** centraliza os funis comerciais da empresa logada. O layout apresenta colunas em estilo kanban, com arrastar e soltar entre estágios utilizando `@hello-pangea/dnd` — biblioteca escolhida para garantir um comportamento estável de ponteiro após fechar modais. Cada card exibe informações resumidas sobre a oportunidade (status, MRR, responsável, interações e próximas ações).
 
 ## Funcionalidades
 - Seleção de funil a partir da lista vinculada à empresa autenticada.
 - Criação, edição e exclusão de funis com descrição opcional.
 - Gestão de estágios diretamente no modal de criação/edição do funil, com campos para adicionar, renomear e remover etapas antes de salvar.
 - Cadastro e atualização de cards com campos de contato, tag, status, responsável, métricas de mensagens e datas importantes.
-- Reordenação de cards por _drag and drop_, com atualização imediata da coluna e posição no Supabase.
+- Reordenação de cards por _drag and drop_ com `@hello-pangea/dnd`, garantindo atualização imediata da coluna/posição no Supabase e evitando o bloqueio de cliques observado com a implementação anterior.
 
 ## Estrutura de dados
 As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
@@ -25,5 +25,5 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 - Estágios são manipulados dentro do modal principal, evitando diálogos adicionais; a confirmação de exclusão permanece apenas para funis e cards.
 - A contagem de oportunidades por estágio é recalculada automaticamente após cada operação.
 - O botão **Cancelar** fecha o modal sem persistir mudanças e libera imediatamente a interação com o restante da interface.
-- Campos de estágios e cards preservam o foco durante a digitação e, ao fechar os modais por **Cancelar** ou **Salvar**, o board volta a aceitar interações imediatamente; o front-end agora desmonta completamente cada diálogo assim que ele é fechado, reinicia o formulário e remove a camada escura na mesma renderização para evitar qualquer bloqueio residual de cliques depois de salvar ou cancelar um funil.
+- Campos de estágios e cards preservam o foco durante a digitação e, ao fechar os modais por **Cancelar** ou **Salvar**, o board volta a aceitar interações imediatamente; o front-end desmonta completamente cada diálogo assim que ele é fechado, reinicia o formulário e remove a camada escura na mesma renderização. A substituição do mecanismo de _drag and drop_ por `@hello-pangea/dnd` elimina os bloqueios residuais que ocorriam após cancelar ou salvar um funil.
 - A implementação foi modularizada em componentes (`StageColumn`, `PipelineDialog` e `CardDialog`), reduzindo duplicação de lógica e garantindo que estados e sobreposições sejam resetados em cada ciclo de abertura.

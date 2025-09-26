@@ -43,10 +43,10 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 O painel do CRM agora conta com a página **Funil de vendas**, acessível pela sidebar do dashboard. Nela é possível:
 
 - Criar, editar e excluir funis para diferentes jornadas comerciais (menu de três pontinhos no topo da página).
-- Organizar etapas personalizadas para cada funil, definindo todos os estágios diretamente no modal de criação/edição e reordenando oportunidades por drag-and-drop.
+- Organizar etapas personalizadas para cada funil, definindo todos os estágios diretamente no modal de criação/edição e reordenando oportunidades por _drag and drop_ com `@hello-pangea/dnd`.
 - Registrar informações relevantes em cards (MRR, responsável, status, última interação e próximas ações).
 - Digitar continuamente nos campos dos estágios e dos cards sem perda de foco, com os modais liberando o board assim que são fechados.
-- Fechar o modal com **Cancelar** ou **Salvar** para descartar ou confirmar alterações com segurança; os diálogos agora só permanecem montados enquanto estão visíveis, desmontam ao encerrar, limpam o formulário e removem a sobreposição na mesma renderização, eliminando o bloqueio que impedia cliques no restante do board após fechar o funil.
+- Fechar o modal com **Cancelar** ou **Salvar** para descartar ou confirmar alterações com segurança; os diálogos permanecem montados apenas enquanto estão visíveis, desmontam ao encerrar, limpam o formulário e removem a sobreposição na mesma renderização. Aliado à troca do mecanismo de drag and drop para `@hello-pangea/dnd`, o board permanece interativo após qualquer salvamento ou cancelamento, sem travamentos residuais.
 - A página é segmentada em componentes reutilizáveis (`StageColumn`, `PipelineDialog` e `CardDialog`), o que mantém o código enxuto e garante que cada modal seja desmontado rapidamente após salvar ou cancelar.
 
 Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` e `card`) e vinculados à empresa autenticada via Supabase.

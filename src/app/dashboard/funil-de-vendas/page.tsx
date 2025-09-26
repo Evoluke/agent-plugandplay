@@ -1,16 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  DndContext,
-  type DragEndEvent,
-  PointerSensor,
-  KeyboardSensor,
-  closestCorners,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { DragDropContext, type DropResult } from '@hello-pangea/dnd'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -181,15 +172,6 @@ export default function SalesPipelinePage() {
       setCardForm((prev) => ({ ...prev, [field]: value }))
     },
     []
-  )
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 6 },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
   )
 
   const fetchCompany = useCallback(async () => {
@@ -555,28 +537,15 @@ export default function SalesPipelinePage() {
   )
 
   const handleDragEnd = useCallback(
-    async (event: DragEndEvent) => {
-      const { active, over } = event
-      if (!over) return
+    async ({ destination, source, draggableId }: DropResult) => {
+      if (!destination) return
 
-      const activeId = String(active.id)
-      const overId = String(over.id)
+      const sameStage = destination.droppableId === source.droppableId
+      const samePosition = destination.index === source.index
+      if (sameStage && samePosition) return
 
-      if (activeId === overId) return
-
-      const activeCard = cards.find((card) => card.id === activeId)
+      const activeCard = cards.find((card) => card.id === draggableId)
       if (!activeCard) return
-
-      let targetStageId = overId
-      let overCardId: string | null = null
-
-      const overStage = stages.find((stage) => stage.id === overId)
-      if (!overStage) {
-        const overCard = cards.find((card) => card.id === overId)
-        if (!overCard) return
-        targetStageId = overCard.stage_id
-        overCardId = overCard.id
-      }
 
       const stageLists = new Map<string, DealCard[]>()
       stages.forEach((stage) => {
@@ -584,47 +553,47 @@ export default function SalesPipelinePage() {
       })
 
       cards.forEach((card) => {
-        if (card.id === activeId) return
         const list = stageLists.get(card.stage_id)
         if (list) {
           list.push(card)
           list.sort((a, b) => a.position - b.position)
-          stageLists.set(card.stage_id, list)
         }
       })
 
-      const destinationList = stageLists.get(targetStageId)
-      if (!destinationList) return
+      const sourceList = stageLists.get(source.droppableId)
+      const destinationList = stageLists.get(destination.droppableId)
+      if (!sourceList || !destinationList) return
 
-      const insertIndexBase = overCardId
-        ? destinationList.findIndex((card) => card.id === overCardId)
-        : destinationList.length
-      const insertIndex = insertIndexBase === -1 ? destinationList.length : insertIndexBase
+      const [removed] = sourceList.splice(source.index, 1)
+      if (!removed) return
 
-      destinationList.splice(insertIndex, 0, {
-        ...activeCard,
-        stage_id: targetStageId,
-      })
-      stageLists.set(targetStageId, destinationList)
+      const updatedCard: DealCard = {
+        ...removed,
+        stage_id: destination.droppableId,
+      }
 
-      const updatedCards: DealCard[] = []
-      stageLists.forEach((list) => {
+      destinationList.splice(destination.index, 0, updatedCard)
+
+      stageLists.set(source.droppableId, sourceList)
+      stageLists.set(destination.droppableId, destinationList)
+
+      const nextCards: DealCard[] = []
+      stageLists.forEach((list, stageId) => {
         list.forEach((card, index) => {
-          const updatedCard: DealCard = {
+          nextCards.push({
             ...card,
-            stage_id: card.id === activeId ? targetStageId : card.stage_id,
+            stage_id: stageId,
             position: index,
-          }
-          updatedCards.push(updatedCard)
+          })
         })
       })
 
-      setCards(updatedCards)
+      setCards(nextCards)
 
       try {
-        const impactedStages = new Set([activeCard.stage_id, targetStageId])
+        const impactedStages = new Set([source.droppableId, destination.droppableId])
         await Promise.all(
-          updatedCards
+          nextCards
             .filter((card) => impactedStages.has(card.stage_id))
             .map((card) =>
               supabasebrowser
@@ -755,7 +724,7 @@ export default function SalesPipelinePage() {
           </div>
 
           <div className="-mx-2 overflow-x-auto pb-6">
-            <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
+            <DragDropContext onDragEnd={handleDragEnd}>
               <div className="flex gap-4 px-2">
                 {stages.map((stage) => (
                   <StageColumn
@@ -771,7 +740,7 @@ export default function SalesPipelinePage() {
                   />
                 ))}
               </div>
-            </DndContext>
+            </DragDropContext>
           </div>
         </div>
       ) : (

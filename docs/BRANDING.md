@@ -32,4 +32,5 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - O cabeçalho de cada estágio apresenta contagem de oportunidades em tipografia pequena e discreta.
 - Ações de gerenciamento do funil ficam agrupadas no menu de três pontinhos do cabeçalho; os estágios exibem apenas título e contagem para manter o foco nas oportunidades.
 - Formulários modais devem preservar o foco dos campos durante a digitação e, ao cancelar ou salvar, desmontar o diálogo, limpar os campos e remover a sobreposição esmaecida com leve _blur_. Os componentes (`PipelineDialog` e `CardDialog`) agora só ficam montados enquanto estiverem visíveis, reforçando a percepção de fluidez e evitando o bloqueio residual observado anteriormente; mantenha a identidade visual alinhada entre eles ao aplicar ajustes.
+- O movimento dos cards usa `@hello-pangea/dnd`, que mantém a experiência de arrastar consistente após fechar qualquer modal. Garanta que estados visuais (sombra, destaque e placeholders) acompanhem essa fluidez sem introduzir artefatos que sugiram travamento da interface.
 
