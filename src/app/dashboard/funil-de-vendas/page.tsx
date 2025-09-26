@@ -34,6 +34,10 @@ import {
   Stage,
 } from './types'
 
+const DEFAULT_PIPELINE_IDENTIFIER = 'agent_default_pipeline'
+const DEFAULT_PIPELINE_NAME = 'Funil da do Agente'
+const DEFAULT_STAGE_NAMES = ['Entrada', 'Atendimento Humano', 'Qualificado']
+
 function getStageCards(cards: DealCard[], stageId: string) {
   return cards
     .filter((card) => card.stage_id === stageId)
@@ -81,6 +85,11 @@ export default function SalesPipelinePage() {
   }, [])
 
   const openEditPipelineDialog = useCallback(async (pipeline: Pipeline) => {
+    if (pipeline.identifier === DEFAULT_PIPELINE_IDENTIFIER) {
+      toast.error('O funil padrão não pode ser editado.')
+      return
+    }
+
     setEditingPipeline(pipeline)
     setPipelineForm({
       name: pipeline.name,
@@ -198,29 +207,178 @@ export default function SalesPipelinePage() {
     setCompany(companyData)
   }, [])
 
-  const loadPipelines = useCallback(async (companyId: number) => {
-    const { data, error } = await supabasebrowser
-      .from('pipeline')
-      .select('id, name, description, company_id')
-      .eq('company_id', companyId)
-      .order('created_at', { ascending: true })
+  const syncDefaultPipelineStages = useCallback(async (pipelineId: string) => {
+    const { data: existingStages, error } = await supabasebrowser
+      .from('stage')
+      .select('id, name, position')
+      .eq('pipeline_id', pipelineId)
+      .order('position', { ascending: true })
 
-    if (error) {
-      console.error(error)
-      toast.error('Erro ao carregar os funis.')
-      return
+    if (error) throw error
+
+    const remainingStages = [...(existingStages ?? [])]
+    const updates: { id: string; name: string; position: number }[] = []
+    const inserts: { name: string; position: number; pipeline_id: string }[] = []
+
+    DEFAULT_STAGE_NAMES.forEach((stageName, index) => {
+      const matchIndex = remainingStages.findIndex((stage) => stage.name === stageName)
+      if (matchIndex >= 0) {
+        const matchedStage = remainingStages.splice(matchIndex, 1)[0]
+        if (matchedStage.name !== stageName || matchedStage.position !== index) {
+          updates.push({ id: matchedStage.id, name: stageName, position: index })
+        }
+      } else {
+        inserts.push({ name: stageName, position: index, pipeline_id: pipelineId })
+      }
+    })
+
+    for (const stage of updates) {
+      const { error: updateError } = await supabasebrowser
+        .from('stage')
+        .update({ name: stage.name, position: stage.position })
+        .eq('id', stage.id)
+      if (updateError) throw updateError
     }
 
-    setPipelines(data ?? [])
+    if (inserts.length) {
+      const { error: insertError } = await supabasebrowser.from('stage').insert(inserts)
+      if (insertError) throw insertError
+    }
 
-    if (data?.length) {
-      setSelectedPipelineId((current) => current ?? data[0].id)
-    } else {
-      setSelectedPipelineId(null)
-      setStages([])
-      setCards([])
+    if (remainingStages.length) {
+      const { error: deleteError } = await supabasebrowser
+        .from('stage')
+        .delete()
+        .in(
+          'id',
+          remainingStages.map((stage) => stage.id)
+        )
+      if (deleteError) throw deleteError
     }
   }, [])
+
+  const ensureDefaultPipeline = useCallback(
+    async (companyId: number) => {
+      try {
+        const { data: existingDefault, error: existingDefaultError } = await supabasebrowser
+          .from('pipeline')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .eq('identifier', DEFAULT_PIPELINE_IDENTIFIER)
+          .maybeSingle()
+
+        if (existingDefaultError) throw existingDefaultError
+
+        if (existingDefault?.id) {
+          if (existingDefault.name !== DEFAULT_PIPELINE_NAME) {
+            const { error: updateNameError } = await supabasebrowser
+              .from('pipeline')
+              .update({ name: DEFAULT_PIPELINE_NAME })
+              .eq('id', existingDefault.id)
+            if (updateNameError) throw updateNameError
+          }
+
+          await syncDefaultPipelineStages(existingDefault.id)
+          return existingDefault.id
+        }
+
+        const { data: legacyDefault, error: legacyDefaultError } = await supabasebrowser
+          .from('pipeline')
+          .select('id')
+          .eq('company_id', companyId)
+          .eq('name', DEFAULT_PIPELINE_NAME)
+          .maybeSingle()
+
+        if (legacyDefaultError) throw legacyDefaultError
+
+        let pipelineId = legacyDefault?.id ?? null
+
+        if (pipelineId) {
+          const { error: attachIdentifierError } = await supabasebrowser
+            .from('pipeline')
+            .update({ identifier: DEFAULT_PIPELINE_IDENTIFIER, name: DEFAULT_PIPELINE_NAME })
+            .eq('id', pipelineId)
+          if (attachIdentifierError) throw attachIdentifierError
+        } else {
+          const { data: createdPipeline, error: createError } = await supabasebrowser
+            .from('pipeline')
+            .insert({
+              company_id: companyId,
+              name: DEFAULT_PIPELINE_NAME,
+              description: null,
+              identifier: DEFAULT_PIPELINE_IDENTIFIER,
+            })
+            .select('id')
+            .single()
+
+          if (createError) throw createError
+          pipelineId = createdPipeline?.id ?? null
+        }
+
+        if (!pipelineId) {
+          throw new Error('Funil padrão inválido.')
+        }
+
+        await syncDefaultPipelineStages(pipelineId)
+        return pipelineId
+      } catch (error) {
+        console.error(error)
+        toast.error('Não foi possível garantir o funil padrão da empresa.')
+        return null
+      }
+    },
+    [syncDefaultPipelineStages]
+  )
+
+  const loadPipelines = useCallback(
+    async (companyId: number) => {
+      const defaultPipelineId = await ensureDefaultPipeline(companyId)
+
+      const { data, error } = await supabasebrowser
+        .from('pipeline')
+        .select('id, name, description, company_id, identifier')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: true })
+
+      if (error) {
+        console.error(error)
+        toast.error('Erro ao carregar os funis.')
+        return
+      }
+
+      const sortedPipelines = [...(data ?? [])].sort((a, b) => {
+        if (a.identifier === DEFAULT_PIPELINE_IDENTIFIER && b.identifier !== DEFAULT_PIPELINE_IDENTIFIER) return -1
+        if (b.identifier === DEFAULT_PIPELINE_IDENTIFIER && a.identifier !== DEFAULT_PIPELINE_IDENTIFIER) return 1
+        return a.name.localeCompare(b.name)
+      })
+
+      setPipelines(sortedPipelines)
+
+      setSelectedPipelineId((current) => {
+        if (current && sortedPipelines.some((pipeline) => pipeline.id === current)) {
+          return current
+        }
+
+        if (
+          defaultPipelineId &&
+          sortedPipelines.some((pipeline) => pipeline.id === defaultPipelineId)
+        ) {
+          return defaultPipelineId
+        }
+
+        const defaultPipeline = sortedPipelines.find(
+          (pipeline) => pipeline.identifier === DEFAULT_PIPELINE_IDENTIFIER
+        )
+        return defaultPipeline?.id ?? sortedPipelines[0]?.id ?? null
+      })
+
+      if (!sortedPipelines.length) {
+        setStages([])
+        setCards([])
+      }
+    },
+    [ensureDefaultPipeline]
+  )
 
   const loadBoard = useCallback(async (pipelineId: string) => {
     setBoardLoading(true)
@@ -273,6 +431,11 @@ export default function SalesPipelinePage() {
     }
   }, [selectedPipelineId, loadBoard])
 
+  const selectedPipeline = useMemo(
+    () => pipelines.find((pipeline) => pipeline.id === selectedPipelineId) ?? null,
+    [pipelines, selectedPipelineId]
+  )
+
   const cardsByStage = useMemo(() => {
     const map = new Map<string, DealCard[]>()
     stages.forEach((stage) => {
@@ -286,6 +449,11 @@ export default function SalesPipelinePage() {
       event.preventDefault()
       if (!company?.id) {
         toast.error('Nenhuma empresa selecionada.')
+        return
+      }
+
+      if (editingPipeline?.identifier === DEFAULT_PIPELINE_IDENTIFIER) {
+        toast.error('O funil padrão não pode ser editado.')
         return
       }
 
@@ -414,6 +582,11 @@ export default function SalesPipelinePage() {
       if (!company?.id) return
       const pipeline = pipelines.find((item) => item.id === pipelineId)
       if (!pipeline) return
+
+      if (pipeline.identifier === DEFAULT_PIPELINE_IDENTIFIER) {
+        toast.error('O funil padrão não pode ser excluído.')
+        return
+      }
 
       if (!window.confirm(`Tem certeza que deseja excluir o funil "${pipeline.name}"?`)) {
         return
@@ -682,30 +855,40 @@ export default function SalesPipelinePage() {
                 >
                   <Plus className="h-4 w-4" /> Novo funil
                 </DropdownMenu.Item>
-                {selectedPipelineId ? (
+                {selectedPipeline ? (
                   <>
                     <DropdownMenu.Separator className="my-1 h-px bg-slate-200" />
-                    <DropdownMenu.Item
-                      className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 outline-none transition hover:bg-slate-100 focus:bg-slate-100"
-                      onSelect={() => {
-                        const current = pipelines.find((item) => item.id === selectedPipelineId)
-                        if (current) {
-                          void openEditPipelineDialog(current)
-                        }
-                      }}
-                    >
-                      Editar funil
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-destructive outline-none transition hover:bg-destructive/10 focus:bg-destructive/10"
-                      onSelect={() => {
-                        if (selectedPipelineId) {
-                          void handleDeletePipeline(selectedPipelineId)
-                        }
-                      }}
-                    >
-                      Excluir funil
-                    </DropdownMenu.Item>
+                    {selectedPipeline.identifier === DEFAULT_PIPELINE_IDENTIFIER ? (
+                      <DropdownMenu.Item
+                        disabled
+                        className="flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-400"
+                      >
+                        Funil padrão fixo
+                      </DropdownMenu.Item>
+                    ) : (
+                      <>
+                        <DropdownMenu.Item
+                          className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 outline-none transition hover:bg-slate-100 focus:bg-slate-100"
+                          onSelect={() => {
+                            if (selectedPipeline) {
+                              void openEditPipelineDialog(selectedPipeline)
+                            }
+                          }}
+                        >
+                          Editar funil
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-destructive outline-none transition hover:bg-destructive/10 focus:bg-destructive/10"
+                          onSelect={() => {
+                            if (selectedPipeline) {
+                              void handleDeletePipeline(selectedPipeline.id)
+                            }
+                          }}
+                        >
+                          Excluir funil
+                        </DropdownMenu.Item>
+                      </>
+                    )}
                   </>
                 ) : null}
               </DropdownMenu.Content>
