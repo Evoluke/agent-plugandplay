@@ -32,7 +32,8 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 
 ## Diretrizes para o funil de vendas
 - Os cards do funil utilizam cantos arredondados de 16 px, sombra suave e espaçamento interno de 16 px.
-- Indicadores de status (tags, risco, responsável) devem seguir a paleta principal com variações em azul, roxo e verde claro.
+- Indicadores de status (status textual, risco e métricas) devem seguir a paleta principal com variações em azul, roxo e verde claro.
+- O cabeçalho do card prioriza título e empresa, agora com truncamento de linhas para preservar a leitura sem exibir a antiga tag.
 - O cabeçalho de cada estágio apresenta contagem de oportunidades em tipografia pequena e discreta.
 - Ações de gerenciamento do funil ficam agrupadas no menu de três pontinhos do cabeçalho; os estágios exibem apenas título e contagem para manter o foco nas oportunidades.
 - Formulários modais devem preservar o foco dos campos durante a digitação e, ao cancelar ou salvar, desmontar o diálogo, limpar os campos e remover a sobreposição esmaecida com leve _blur_. Os componentes (`PipelineDialog`, `CardDialog` e `Modal`) agora só ficam montados enquanto estiverem visíveis, aplicando o portal personalizado para bloquear o _scroll_ temporariamente e restabelecer o `body` ao fechar; isso reforça a percepção de fluidez e evita o bloqueio residual observado anteriormente. Mantenha a identidade visual alinhada entre eles ao aplicar ajustes.
