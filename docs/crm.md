@@ -12,10 +12,12 @@ O módulo de CRM agora carrega o Chatwoot diretamente dentro do dashboard em um 
 1. Manter as variáveis de ambiente `CHATWOOT_BASE_URL` e `CHATWOOT_PLATFORM_TOKEN` configuradas.
 2. Garantir que o campo `chatwoot_user_id` esteja preenchido na tabela `company` para o usuário autenticado.
 3. Confirmar que a rota `/api/chatwoot/sso` responda com um objeto `{ url: string }`. Respostas inválidas exibem o estado de erro padrão.
+4. A rota interna aciona o endpoint `POST /platform/api/v1/users/:id/login` do Chatwoot utilizando o `api_access_token`. Retornos sem `url` ou com falha de autenticação exibem o fallback de erro.
 
 ## Boas práticas de UI
 - Evite adicionar cabeçalhos ou descrições extras no módulo para preservar a experiência imersiva.
 - Caso seja necessário exibir avisos, utilize os componentes de alerta globais do dashboard, evitando sobrepor elementos dentro do iframe.
+- Mantenha o contêiner do CRM com altura mínima equivalente à área útil (`100svh - 10rem`) para que o iframe ocupe toda a tela disponível sem barras vazias.
 
 # CRM e Funil de vendas
 

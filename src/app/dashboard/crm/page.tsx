@@ -71,20 +71,20 @@ export default function DashboardCrmPage() {
         key={state.url}
         src={state.url}
         title="CRM Evoluke"
-        className="h-full w-full"
+        className="flex-1 min-h-[calc(100svh-10rem)] w-full"
         allow="camera; microphone; clipboard-read; clipboard-write"
       />
     );
   } else if (state.status === "loading") {
     content = (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center text-sm text-gray-600">
+      <div className="flex min-h-[calc(100svh-10rem)] w-full flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-sm text-gray-600">
         <Loader2 className="h-6 w-6 animate-spin text-[#2F6F68]" />
         <p>Conectando com o CRM...</p>
       </div>
     );
   } else {
     content = (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-6 text-center text-sm text-gray-600">
+      <div className="flex min-h-[calc(100svh-10rem)] w-full flex-1 flex-col items-center justify-center gap-4 p-6 text-center text-sm text-gray-600">
         <p>{state.message}</p>
         <Button onClick={handleReload}>Tentar novamente</Button>
       </div>
@@ -92,7 +92,7 @@ export default function DashboardCrmPage() {
   }
 
   return (
-    <section className="relative flex w-full flex-1 overflow-hidden rounded-lg border bg-white min-h-[calc(100svh-10rem)]">
+    <section className="relative flex w-full overflow-hidden rounded-lg border bg-white">
       {content}
     </section>
   );
