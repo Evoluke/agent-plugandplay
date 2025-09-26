@@ -22,6 +22,8 @@ import {
   Menu,
   MessageSquare,
   BookOpen,
+  Kanban,
+  MoreHorizontal,
 } from 'lucide-react';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 import { cn } from './utils';
@@ -40,10 +42,14 @@ const mainItem: NavItem = {
 };
 
 const navItems: NavItem[] = [
+  { label: 'Funil de vendas', href: '/dashboard/funil-de-vendas', icon: <Kanban size={20} /> },
   { label: 'Pagamentos', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
-  { label: 'Configuração', href: '/dashboard/config', icon: <Settings size={20} /> },
   { label: 'Documentação', href: '/dashboard/documentacao', icon: <BookOpen size={20} /> },
-  { label: 'Suporte', href: '/dashboard/support', icon: <HelpCircle size={20} /> },
+];
+
+const utilityNavItems: NavItem[] = [
+  { label: 'Configuração', href: '/dashboard/config', icon: <Settings size={18} /> },
+  { label: 'Suporte', href: '/dashboard/support', icon: <HelpCircle size={18} /> },
 ];
 
 type Agent = {
@@ -170,10 +176,14 @@ export function Sidebar({ className }: { className?: string }) {
   const router = useRouter();
   const agents = useAgents();
   const chatwootId = useChatwootId();
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [agentsMenuOpen, setAgentsMenuOpen] = useState(false);
+  const [utilitiesMenuOpen, setUtilitiesMenuOpen] = useState(false);
+  const agentMenuRef = useRef<HTMLDivElement>(null);
+  const utilitiesMenuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = async () => {
+    setUtilitiesMenuOpen(false);
+    setAgentsMenuOpen(false);
     const { error } = await supabasebrowser.auth.signOut();
 
     if (error) {
@@ -189,8 +199,14 @@ export function Sidebar({ className }: { className?: string }) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpen(false);
+      if (agentMenuRef.current && !agentMenuRef.current.contains(event.target as Node)) {
+        setAgentsMenuOpen(false);
+      }
+      if (
+        utilitiesMenuRef.current &&
+        !utilitiesMenuRef.current.contains(event.target as Node)
+      ) {
+        setUtilitiesMenuOpen(false);
       }
     };
 
@@ -230,11 +246,14 @@ export function Sidebar({ className }: { className?: string }) {
           </TooltipContent>
         </Tooltip>
 
-        <div ref={menuRef} className="relative">
+        <div ref={agentMenuRef} className="relative">
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <button
-                onClick={() => setOpen((o) => !o)}
+                onClick={() => {
+                  setUtilitiesMenuOpen(false);
+                  setAgentsMenuOpen((o) => !o);
+                }}
                 className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
               >
                 <Brain size={20} />
@@ -244,14 +263,14 @@ export function Sidebar({ className }: { className?: string }) {
               <span>Agentes IA</span>
             </TooltipContent>
           </Tooltip>
-          {open && (
+          {agentsMenuOpen && (
             <div className="absolute left-12 top-0 z-10 w-64 bg-white border rounded shadow-md">
               {agents.map((agent) => (
                 <Link
                   key={agent.id}
                   href={`/dashboard/agents/${agent.id}`}
                   className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setAgentsMenuOpen(false)}
                 >
                   🤖 {agent.name}
                 </Link>
@@ -264,7 +283,7 @@ export function Sidebar({ className }: { className?: string }) {
                 <Link
                   href="/dashboard/agents/new"
                   className="block py-2 text-sm font-semibold text-center justify-center text-[#0E4DE0] hover:bg-gray-100"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setAgentsMenuOpen(false)}
                 >
                   Criar novo Agente IA
                 </Link>
@@ -324,20 +343,46 @@ export function Sidebar({ className }: { className?: string }) {
         ))}
       </nav>
 
-      <div className="mt-auto">
+      <div ref={utilitiesMenuRef} className="mt-auto relative">
         <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                setAgentsMenuOpen(false);
+                setUtilitiesMenuOpen((o) => !o);
+              }}
               className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
             >
-              <LogOut size={20} />
+              <MoreHorizontal size={20} />
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
-            <span>Logout</span>
+            <span>Mais opções</span>
           </TooltipContent>
         </Tooltip>
+        {utilitiesMenuOpen && (
+          <div className="absolute left-12 bottom-0 z-10 w-56 rounded border bg-white shadow-md">
+            {utilityNavItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                onClick={() => setUtilitiesMenuOpen(false)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            ))}
+            <div className="border-t my-1" />
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-gray-100"
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );
@@ -348,6 +393,7 @@ export function MobileSidebar() {
   const agents = useAgents();
   const chatwootId = useChatwootId();
   const [open, setOpen] = useState(false);
+  const [utilitiesOpen, setUtilitiesOpen] = useState(false);
 
   const handleLogout = async () => {
     const { error } = await supabasebrowser.auth.signOut();
@@ -356,6 +402,7 @@ export function MobileSidebar() {
       console.error('Erro ao fazer logout:', error.message);
       return;
     }
+    setUtilitiesOpen(false);
     setOpen(false);
     router.replace('/login');
   };
@@ -366,7 +413,15 @@ export function MobileSidebar() {
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(value) => {
+        setOpen(value);
+        if (!value) {
+          setUtilitiesOpen(false);
+        }
+      }}
+    >
       <Dialog.Trigger asChild>
         <button className="mb-4 inline-flex items-center justify-center rounded-md border p-2 sm:hidden">
           <Menu size={24} />
@@ -374,85 +429,117 @@ export function MobileSidebar() {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50 sm:hidden" />
-        <Dialog.Content className="fixed inset-y-0 left-0 z-50 w-64 bg-white p-4 shadow sm:hidden flex flex-col">
-          <nav className="flex-1 space-y-2">
-            <Link
-              href={mainItem.href}
-              className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
-              onClick={() => setOpen(false)}
-            >
-              {mainItem.icon}
-              <span>{mainItem.label}</span>
-            </Link>
-
-            <div>
-              <span className="block px-2 pt-2 text-xs font-semibold text-gray-500">
-                Agentes IA
-              </span>
-              {agents.map((agent) => (
-                <Link
-                  key={agent.id}
-                  href={`/dashboard/agents/${agent.id}`}
-                  className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  onClick={() => setOpen(false)}
-                >
-                  🤖 {agent.name}
-                </Link>
-              ))}
-              {agents.length < MAX_AGENTS_PER_COMPANY ? (
-                <Link
-                  href="/dashboard/agents/new"
-                  className="block px-4 py-2 text-sm font-semibold text-[#0E4DE0] hover:bg-gray-100"
-                  onClick={() => setOpen(false)}
-                >
-                  Criar novo Agente IA
-                </Link>
-              ) : (
-                <span className="block px-4 py-2 text-sm text-gray-500">
-                  Limite de agentes atingido
-                </span>
-              )}
-            </div>
-
-            {chatwootId ? (
-              <button
-                onClick={handleChatwoot}
-                className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
-                type="button"
-              >
-                <MessageSquare size={20} />
-                <span>CRM</span>
-              </button>
-            ) : (
-              <div
-                className="flex items-center gap-2 rounded px-2 py-2 text-gray-400"
-                title="Ocorreu algum erro, logo mais será normalizado."
-              >
-                <MessageSquare size={20} />
-                <span>CRM</span>
-              </div>
-            )}
-
-            {navItems.map((item) => (
+        <Dialog.Content className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white p-4 shadow sm:hidden">
+          <nav className="flex flex-1 flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <Link
-                key={item.href}
-                href={item.href}
+                href={mainItem.href}
                 className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
                 onClick={() => setOpen(false)}
               >
-                {item.icon}
-                <span>{item.label}</span>
+                {mainItem.icon}
+                <span>{mainItem.label}</span>
               </Link>
-            ))}
-          </nav>
 
-          <button
-            onClick={handleLogout}
-            className="mt-4 flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
-          >
-            <LogOut size={20} />
-            <span>Logout</span>
-          </button>
+              <div>
+                <span className="block px-2 pt-2 text-xs font-semibold text-gray-500">
+                  Agentes IA
+                </span>
+                {agents.map((agent) => (
+                  <Link
+                    key={agent.id}
+                    href={`/dashboard/agents/${agent.id}`}
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    onClick={() => setOpen(false)}
+                  >
+                    🤖 {agent.name}
+                  </Link>
+                ))}
+                {agents.length < MAX_AGENTS_PER_COMPANY ? (
+                  <Link
+                    href="/dashboard/agents/new"
+                    className="block px-4 py-2 text-sm font-semibold text-[#0E4DE0] hover:bg-gray-100"
+                    onClick={() => setOpen(false)}
+                  >
+                    Criar novo Agente IA
+                  </Link>
+                ) : (
+                  <span className="block px-4 py-2 text-sm text-gray-500">
+                    Limite de agentes atingido
+                  </span>
+                )}
+              </div>
+
+              {chatwootId ? (
+                <button
+                  onClick={handleChatwoot}
+                  className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
+                  type="button"
+                >
+                  <MessageSquare size={20} />
+                  <span>CRM</span>
+                </button>
+              ) : (
+                <div
+                  className="flex items-center gap-2 rounded px-2 py-2 text-gray-400"
+                  title="Ocorreu algum erro, logo mais será normalizado."
+                >
+                  <MessageSquare size={20} />
+                  <span>CRM</span>
+                </div>
+              )}
+
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center gap-2 rounded px-2 py-2 hover:bg-gray-100"
+                  onClick={() => setOpen(false)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-auto border-t pt-2">
+              <button
+                onClick={() => setUtilitiesOpen((value) => !value)}
+                className="flex w-full items-center justify-between gap-2 rounded px-2 py-2 hover:bg-gray-100"
+              >
+                <span className="flex items-center gap-2">
+                  <Settings size={20} />
+                  <span>Mais opções</span>
+                </span>
+                <span className="text-sm text-gray-500">{utilitiesOpen ? '−' : '+'}</span>
+              </button>
+              {utilitiesOpen && (
+                <div className="mt-2 space-y-1">
+                  {utilityNavItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center gap-2 rounded px-2 py-2 text-sm hover:bg-gray-100"
+                      onClick={() => {
+                        setUtilitiesOpen(false);
+                        setOpen(false);
+                      }}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </Link>
+                  ))}
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm hover:bg-gray-100"
+                  >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </nav>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
