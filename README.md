@@ -48,3 +48,17 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - [Chatwoot](https://www.chatwoot.com/)
 - [Vercel](https://vercel.com/)
 
+## 📊 Funil de vendas
+
+A navegação da área logada agora inclui a página **Funil de vendas**, disponível na barra lateral. Ela oferece:
+
+- Quadro estilo Kanban com suporte a arrastar e soltar oportunidades entre estágios.
+- Criação, edição e exclusão de funis, estágios e cartões diretamente na interface.
+- Persistência automática das posições dos cartões após reorganização.
+
+Para armazenar essas informações foram adicionadas as seguintes tabelas no Supabase:
+
+- `pipeline`: identifica cada funil de vendas associado à empresa.
+- `stage`: representa as etapas do funil, com ordenação configurável.
+- `card`: guarda as oportunidades exibidas em cada estágio, incluindo dados como empresa, status, prioridade e valor estimado.
+
