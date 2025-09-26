@@ -26,3 +26,9 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
+## Aplicação no funil de vendas
+- Utilize `--primary` para títulos de colunas e indicadores de estágio no board Kanban.
+- Reserve `--secondary` para cartões em estado neutro e componentes de apoio (contagens, etiquetas auxiliares).
+- Mantenha o contraste mínimo de 4.5:1 entre texto e fundo ao personalizar a experiência para novas empresas.
+- Prefira ícones outline e tipografia Geist em caixa título para os nomes de estágio, garantindo leitura rápida.
+

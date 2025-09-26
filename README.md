@@ -24,6 +24,14 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
    Acesse [http://localhost:3000](http://localhost:3000) para ver o resultado.
 
+4. Sincronize o banco de dados do Supabase com as migrações do projeto:
+
+   ```bash
+   supabase migration up
+   ```
+
+   A migração `20250222000000_create_sales_pipeline_tables.sql` recria as políticas de RLS dos funis com comandos compatíveis com o PostgreSQL 15, garantindo que o ambiente local fique alinhado ao painel do Supabase.
+
 ## 📦 Deploy
 
 1. Gere o build de produção:

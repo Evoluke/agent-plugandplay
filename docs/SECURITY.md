@@ -27,3 +27,5 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `card` | Oportunidades somente visíveis e gerenciáveis pela empresa proprietária do funil |
 
 Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.
+
+> Ao aplicar as migrações do diretório `supabase/migrations`, as políticas dos objetos `pipeline`, `stage` e `card` são recriadas com o padrão `drop policy if exists` seguido de `create policy`. Esse fluxo evita erros no PostgreSQL 15 (utilizado pelo Supabase) e mantém os ambientes consistentes durante resets ou reprovisionamentos.

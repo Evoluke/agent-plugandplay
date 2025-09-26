@@ -68,7 +68,9 @@ alter table public.pipeline enable row level security;
 alter table public.stage enable row level security;
 alter table public.card enable row level security;
 
-create policy if not exists "Pipeline acesso por empresa" on public.pipeline
+drop policy if exists "Pipeline acesso por empresa" on public.pipeline;
+
+create policy "Pipeline acesso por empresa" on public.pipeline
   for select using (
     exists (
       select 1
@@ -78,7 +80,9 @@ create policy if not exists "Pipeline acesso por empresa" on public.pipeline
     )
   );
 
-create policy if not exists "Pipeline inserção por empresa" on public.pipeline
+drop policy if exists "Pipeline inserção por empresa" on public.pipeline;
+
+create policy "Pipeline inserção por empresa" on public.pipeline
   for insert with check (
     exists (
       select 1
@@ -88,7 +92,9 @@ create policy if not exists "Pipeline inserção por empresa" on public.pipeline
     )
   );
 
-create policy if not exists "Pipeline atualização por empresa" on public.pipeline
+drop policy if exists "Pipeline atualização por empresa" on public.pipeline;
+
+create policy "Pipeline atualização por empresa" on public.pipeline
   for update using (
     exists (
       select 1
@@ -106,7 +112,9 @@ create policy if not exists "Pipeline atualização por empresa" on public.pipel
     )
   );
 
-create policy if not exists "Pipeline exclusão por empresa" on public.pipeline
+drop policy if exists "Pipeline exclusão por empresa" on public.pipeline;
+
+create policy "Pipeline exclusão por empresa" on public.pipeline
   for delete using (
     exists (
       select 1
@@ -116,7 +124,9 @@ create policy if not exists "Pipeline exclusão por empresa" on public.pipeline
     )
   );
 
-create policy if not exists "Stage acesso por empresa" on public.stage
+drop policy if exists "Stage acesso por empresa" on public.stage;
+
+create policy "Stage acesso por empresa" on public.stage
   for select using (
     exists (
       select 1
@@ -127,7 +137,9 @@ create policy if not exists "Stage acesso por empresa" on public.stage
     )
   );
 
-create policy if not exists "Stage inserção por empresa" on public.stage
+drop policy if exists "Stage inserção por empresa" on public.stage;
+
+create policy "Stage inserção por empresa" on public.stage
   for insert with check (
     exists (
       select 1
@@ -138,7 +150,9 @@ create policy if not exists "Stage inserção por empresa" on public.stage
     )
   );
 
-create policy if not exists "Stage atualização por empresa" on public.stage
+drop policy if exists "Stage atualização por empresa" on public.stage;
+
+create policy "Stage atualização por empresa" on public.stage
   for update using (
     exists (
       select 1
@@ -158,7 +172,9 @@ create policy if not exists "Stage atualização por empresa" on public.stage
     )
   );
 
-create policy if not exists "Stage exclusão por empresa" on public.stage
+drop policy if exists "Stage exclusão por empresa" on public.stage;
+
+create policy "Stage exclusão por empresa" on public.stage
   for delete using (
     exists (
       select 1
@@ -169,7 +185,9 @@ create policy if not exists "Stage exclusão por empresa" on public.stage
     )
   );
 
-create policy if not exists "Card acesso por empresa" on public.card
+drop policy if exists "Card acesso por empresa" on public.card;
+
+create policy "Card acesso por empresa" on public.card
   for select using (
     exists (
       select 1
@@ -180,7 +198,9 @@ create policy if not exists "Card acesso por empresa" on public.card
     )
   );
 
-create policy if not exists "Card inserção por empresa" on public.card
+drop policy if exists "Card inserção por empresa" on public.card;
+
+create policy "Card inserção por empresa" on public.card
   for insert with check (
     exists (
       select 1
@@ -191,7 +211,9 @@ create policy if not exists "Card inserção por empresa" on public.card
     )
   );
 
-create policy if not exists "Card atualização por empresa" on public.card
+drop policy if exists "Card atualização por empresa" on public.card;
+
+create policy "Card atualização por empresa" on public.card
   for update using (
     exists (
       select 1
@@ -211,7 +233,9 @@ create policy if not exists "Card atualização por empresa" on public.card
     )
   );
 
-create policy if not exists "Card exclusão por empresa" on public.card
+drop policy if exists "Card exclusão por empresa" on public.card;
+
+create policy "Card exclusão por empresa" on public.card
   for delete using (
     exists (
       select 1
