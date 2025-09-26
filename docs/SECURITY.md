@@ -22,7 +22,7 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `company` | Usuário só acessa a linha onde `user_id = auth.uid()` |
 | `agents` | Acesso apenas para agentes cuja `company_id` pertence ao usuário |
 | `agent_personality`, `agent_behavior`, `agent_onboarding`, `agent_specific_instructions`, `agent_knowledge_files` | Acesso restrito via relação com `agents.company_id` do usuário |
-| `payments` | Acesso apenas para registros com `company_id` pertencente ao usuário |
+| `payments` | Acesso apenas para registros com `company_id` pertencente ao usuário; o front-end consulta a última cobrança corporativa para liberar a ativação dos agentes e nenhum `agent_id` é armazenado nessa tabela, portanto garanta que filtros por empresa estejam sempre ativos |
 | `tickets` | Acesso apenas para registros com `company_id` pertencente ao usuário |
 | `pipeline` | Leitura e escrita somente para linhas onde `company_id` referencia a empresa do usuário |
 | `stage` | Filtrar por `pipeline.company_id` garantindo vínculo com a empresa autenticada e restringir atualizações do campo `color` a valores hexadecimais válidos enviados pelo próprio funil |

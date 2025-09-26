@@ -455,42 +455,58 @@ export async function POST(request: Request) {
     );
   }
 
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 30);
-  const dueDateIso = dueDate.toISOString();
-
-  const {
-    data: paymentData,
-    error: paymentError,
-  } = await supabaseadmin
-    .from("payments")
-    .insert({
-      company_id: company.id,
-      agent_id: agentId,
-      amount: AGENT_PRICE,
-      due_date: dueDateIso,
-      reference: `Mensalidade ${trimmedName}`,
-    })
-    .select("id, amount, due_date")
-    .single();
-
-  if (paymentError) {
-    console.error("[agents:create] Erro ao criar pagamento", paymentError);
-  }
-
   let paymentInfo: Record<string, unknown> | null = null;
 
-  if (paymentData) {
-    const asaasResponse = await triggerPayment(accessToken ?? null, {
-      id: paymentData.id as string,
-      amount: paymentData.amount as number | string,
-      due_date: paymentData.due_date as string,
-    });
+  const { data: existingPayment, error: existingPaymentError } =
+    await supabaseadmin
+      .from("payments")
+      .select("id")
+      .eq("company_id", company.id)
+      .limit(1)
+      .maybeSingle();
 
-    paymentInfo = {
-      ...paymentData,
-      ...(asaasResponse ? { asaas: asaasResponse } : {}),
-    };
+  if (existingPaymentError) {
+    console.error(
+      "[agents:create] Erro ao verificar pagamentos existentes",
+      existingPaymentError
+    );
+  }
+
+  if (!existingPayment) {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+    const dueDateIso = dueDate.toISOString();
+
+    const {
+      data: paymentData,
+      error: paymentError,
+    } = await supabaseadmin
+      .from("payments")
+      .insert({
+        company_id: company.id,
+        amount: AGENT_PRICE,
+        due_date: dueDateIso,
+        reference: "Mensalidade Agent Plug and Play",
+      })
+      .select("id, amount, due_date")
+      .single();
+
+    if (paymentError) {
+      console.error("[agents:create] Erro ao criar pagamento", paymentError);
+    }
+
+    if (paymentData) {
+      const asaasResponse = await triggerPayment(accessToken ?? null, {
+        id: paymentData.id as string,
+        amount: paymentData.amount as number | string,
+        due_date: paymentData.due_date as string,
+      });
+
+      paymentInfo = {
+        ...paymentData,
+        ...(asaasResponse ? { asaas: asaasResponse } : {}),
+      };
+    }
   }
 
   const updatedCount = existingAgents + 1;
