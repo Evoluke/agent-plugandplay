@@ -31,5 +31,5 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Indicadores de status (tags, risco, responsável) devem seguir a paleta principal com variações em azul, roxo e verde claro.
 - O cabeçalho de cada estágio apresenta contagem de oportunidades em tipografia pequena e discreta.
 - Ações de gerenciamento do funil ficam agrupadas no menu de três pontinhos do cabeçalho; os estágios exibem apenas título e contagem para manter o foco nas oportunidades.
-- Formulários modais devem preservar o foco dos campos durante a digitação e, ao cancelar ou salvar, desmontar o diálogo, limpar os campos e remover a sobreposição esmaecida com leve _blur_, reforçando a percepção de fluidez e evitando bloqueio residual mesmo após múltiplas edições consecutivas.
+- Formulários modais devem preservar o foco dos campos durante a digitação e, ao cancelar ou salvar, desmontar o diálogo, limpar os campos e remover a sobreposição esmaecida com leve _blur_, reforçando a percepção de fluidez e evitando bloqueio residual mesmo após múltiplas edições consecutivas. Componentes específicos (`PipelineDialog` e `CardDialog`) cuidam desse comportamento, portanto mantenha a identidade visual alinhada entre eles ao aplicar ajustes.
 

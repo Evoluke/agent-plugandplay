@@ -47,6 +47,7 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 - Registrar informações relevantes em cards (MRR, responsável, status, última interação e próximas ações).
 - Digitar continuamente nos campos dos estágios e dos cards sem perda de foco, com os modais liberando o board assim que são fechados.
 - Fechar o modal com **Cancelar** ou **Salvar** para descartar ou confirmar alterações com segurança; os diálogos desmontam ao encerrar, limpam o formulário e removem a sobreposição no mesmo instante, impedindo bloqueios residuais mesmo em sequências longas de edições.
+- A página é segmentada em componentes reutilizáveis (`StageColumn`, `PipelineDialog` e `CardDialog`), o que mantém o código enxuto e garante que cada modal seja desmontado rapidamente após salvar ou cancelar.
 
 Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` e `card`) e vinculados à empresa autenticada via Supabase.
 

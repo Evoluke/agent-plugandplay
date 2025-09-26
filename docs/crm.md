@@ -26,3 +26,4 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 - A contagem de oportunidades por estágio é recalculada automaticamente após cada operação.
 - O botão **Cancelar** fecha o modal sem persistir mudanças e libera imediatamente a interação com o restante da interface.
 - Campos de estágios e cards preservam o foco durante a digitação e, ao fechar os modais por **Cancelar** ou **Salvar**, o board volta a aceitar interações imediatamente; o front-end desmonta o diálogo, reinicia o formulário e remove a camada escura na mesma renderização para evitar bloqueios residuais mesmo após sequências de edições.
+- A implementação foi modularizada em componentes (`StageColumn`, `PipelineDialog` e `CardDialog`), reduzindo duplicação de lógica e garantindo que estados e sobreposições sejam resetados em cada ciclo de abertura.
