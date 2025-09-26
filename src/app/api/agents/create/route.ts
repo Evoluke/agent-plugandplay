@@ -203,9 +203,7 @@ async function triggerCreateBox(
     throw new Error("N8N create-box webhook não configurado");
   }
 
-  const targetUrl = `${baseUrl.replace(/\/$/, "")}/create-box`;
-
-  const response = await fetch(targetUrl, {
+  const response = await fetch(baseUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
