@@ -28,7 +28,7 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 
 
 ## Interfaces imersivas
-- O módulo de CRM utiliza um iframe em tela cheia sem cabeçalho adicional. Evite adicionar elementos que criem bordas visuais extras para manter a sensação de aplicação nativa.
+- O módulo de CRM utiliza um iframe em tela cheia sem cabeçalho adicional. Evite adicionar elementos que criem bordas visuais extras para manter a sensação de aplicação nativa. A URL de SSO já sinaliza o `sso_account_id`, garantindo que o workspace carregado corresponda à identidade visual contratada.
 
 ## Diretrizes para o funil de vendas
 - Os cards do funil utilizam cantos arredondados de 16 px, sombra suave e espaçamento interno de 16 px.

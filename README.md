@@ -77,5 +77,5 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` e `card`) e vincu
 
 ## 🧩 Funcionalidades Principais
 
-- **CRM em tela cheia**: o Chatwoot é carregado diretamente dentro do dashboard com SSO, preenchendo toda a área útil para que o atendimento seja feito sem distrações.
+- **CRM em tela cheia**: o Chatwoot é carregado diretamente dentro do dashboard com SSO, preenchendo toda a área útil para que o atendimento seja feito sem distrações. Quando a empresa possui `chatwoot_id` configurado, a URL de SSO já aponta para o workspace certo por meio do parâmetro `sso_account_id`.
 

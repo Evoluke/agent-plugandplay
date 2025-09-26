@@ -15,7 +15,7 @@ export async function GET() {
 
   const { data: company, error } = await supabaseadmin
     .from("company")
-    .select("chatwoot_user_id")
+    .select("chatwoot_user_id, chatwoot_id")
     .eq("user_id", user.id)
     .single();
 
@@ -73,7 +73,20 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ url: data.url });
+    let ssoUrl = data.url;
+    const accountId = company?.chatwoot_id;
+
+    if (accountId) {
+      try {
+        const parsedUrl = new URL(ssoUrl);
+        parsedUrl.searchParams.set("sso_account_id", accountId);
+        ssoUrl = parsedUrl.toString();
+      } catch (err) {
+        console.error("[Chatwoot SSO] Error appending account id", err);
+      }
+    }
+
+    return NextResponse.json({ url: ssoUrl });
   } catch (err) {
     console.error("[Chatwoot SSO] Error calling Chatwoot API", err);
     return NextResponse.json(

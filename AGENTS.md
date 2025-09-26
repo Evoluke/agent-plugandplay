@@ -11,7 +11,7 @@ Estas orientações se aplicam a todo o repositório `agent-plugandplay`.
 ## Documentação
 - Atualize documentação relevante (por exemplo, arquivos em `docs/` ou `README.md`) sempre que fizer mudanças que afetem o comportamento observado pelo usuário.
 - Ao modificar arquivos Markdown, utilize títulos em português e mantenha uma estrutura coerente com o restante do projeto.
-- Centralize instruções específicas do CRM no arquivo `docs/crm.md` para manter o histórico de decisões sobre o embed do Chatwoot.
+- Centralize instruções específicas do CRM no arquivo `docs/crm.md` para manter o histórico de decisões sobre o embed do Chatwoot, incluindo os parâmetros de SSO como `sso_account_id`.
 - Ao ajustar o funil de vendas, mantenha alinhadas as descrições sobre áreas de drop vazias para garantir consistência entre código e documentação visual.
 
 ## Mensagens de PR
