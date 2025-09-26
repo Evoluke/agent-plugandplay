@@ -22,6 +22,7 @@ import {
   createInitialCardForm,
   createInitialPipelineForm,
   fromInputDate,
+  normalizeStageColor,
   reindexStages,
   toInputDate,
 } from './helpers'
@@ -48,7 +49,11 @@ import {
 
 const DEFAULT_PIPELINE_IDENTIFIER = 'agent_default_pipeline'
 const DEFAULT_PIPELINE_NAME = 'Funil da do Agente'
-const DEFAULT_STAGE_NAMES = ['Entrada', 'Atendimento Humano', 'Qualificado']
+const DEFAULT_STAGE_PRESETS = [
+  { name: 'Entrada', color: '#E0F2FE' },
+  { name: 'Atendimento Humano', color: '#FCE7F3' },
+  { name: 'Qualificado', color: '#FEF3C7' },
+]
 
 function getStageCards(cards: DealCard[], stageId: string) {
   return cards
@@ -97,7 +102,7 @@ export default function SalesPipelinePage() {
     const [{ data: stageData, error: stageError }, { data: cardData, error: cardError }] = await Promise.all([
       supabasebrowser
         .from('stage')
-        .select('id, name, position, pipeline_id')
+        .select('id, name, position, pipeline_id, color')
         .eq('pipeline_id', pipelineId)
         .order('position', { ascending: true }),
       supabasebrowser
@@ -116,7 +121,12 @@ export default function SalesPipelinePage() {
       return
     }
 
-    setStages(stageData ?? [])
+    const normalizedStages = (stageData ?? []).map((stage) => ({
+      ...stage,
+      color: normalizeStageColor(stage.color),
+    }))
+
+    setStages(normalizedStages)
     setCards(
       (cardData ?? []).map((card) => ({
         ...card,
@@ -181,7 +191,7 @@ export default function SalesPipelinePage() {
 
     const { data, error } = await supabasebrowser
       .from('stage')
-      .select('id, name, position')
+      .select('id, name, position, color')
       .eq('pipeline_id', pipeline.id)
       .order('position', { ascending: true })
 
@@ -202,6 +212,7 @@ export default function SalesPipelinePage() {
       id: stage.id,
       name: stage.name,
       position: index,
+      color: normalizeStageColor(stage.color),
     }))
 
     setPipelineForm({
@@ -231,6 +242,15 @@ export default function SalesPipelinePage() {
     setPipelineForm((prev) => {
       const nextStages = prev.stages.map((stage, stageIndex) =>
         stageIndex === index ? { ...stage, name } : stage
+      )
+      return { ...prev, stages: nextStages }
+    })
+  }, [])
+
+  const updatePipelineStageColor = useCallback((index: number, color: string) => {
+    setPipelineForm((prev) => {
+      const nextStages = prev.stages.map((stage, stageIndex) =>
+        stageIndex === index ? { ...stage, color: normalizeStageColor(color) } : stage
       )
       return { ...prev, stages: nextStages }
     })
@@ -296,32 +316,53 @@ export default function SalesPipelinePage() {
   const syncDefaultPipelineStages = useCallback(async (pipelineId: string) => {
     const { data: existingStages, error } = await supabasebrowser
       .from('stage')
-      .select('id, name, position')
+      .select('id, name, position, color')
       .eq('pipeline_id', pipelineId)
       .order('position', { ascending: true })
 
     if (error) throw error
 
     const remainingStages = [...(existingStages ?? [])]
-    const updates: { id: string; name: string; position: number }[] = []
-    const inserts: { name: string; position: number; pipeline_id: string }[] = []
+    const updates: { id: string; name: string; position: number; color: string }[] = []
+    const inserts: {
+      name: string
+      position: number
+      pipeline_id: string
+      color: string
+    }[] = []
 
-    DEFAULT_STAGE_NAMES.forEach((stageName, index) => {
+    DEFAULT_STAGE_PRESETS.forEach(({ name: stageName, color }, index) => {
+      const normalizedColor = normalizeStageColor(color)
       const matchIndex = remainingStages.findIndex((stage) => stage.name === stageName)
       if (matchIndex >= 0) {
         const matchedStage = remainingStages.splice(matchIndex, 1)[0]
-        if (matchedStage.name !== stageName || matchedStage.position !== index) {
-          updates.push({ id: matchedStage.id, name: stageName, position: index })
+        const matchedColor = normalizeStageColor(matchedStage.color)
+        if (
+          matchedStage.name !== stageName ||
+          matchedStage.position !== index ||
+          matchedColor !== normalizedColor
+        ) {
+          updates.push({
+            id: matchedStage.id,
+            name: stageName,
+            position: index,
+            color: normalizedColor,
+          })
         }
       } else {
-        inserts.push({ name: stageName, position: index, pipeline_id: pipelineId })
+        inserts.push({
+          name: stageName,
+          position: index,
+          pipeline_id: pipelineId,
+          color: normalizedColor,
+        })
       }
     })
 
     for (const stage of updates) {
       const { error: updateError } = await supabasebrowser
         .from('stage')
-        .update({ name: stage.name, position: stage.position })
+        .update({ name: stage.name, position: stage.position, color: stage.color })
         .eq('id', stage.id)
       if (updateError) throw updateError
     }
@@ -552,6 +593,7 @@ export default function SalesPipelinePage() {
       const trimmedStages = pipelineForm.stages.map((stage) => ({
         ...stage,
         name: stage.name.trim(),
+        color: normalizeStageColor(stage.color),
       }))
 
       if (!trimmedStages.length) {
@@ -632,6 +674,7 @@ export default function SalesPipelinePage() {
             .update({
               name: stage.name,
               position: stage.position,
+              color: stage.color,
             })
             .eq('id', stage.id)
           if (error) throw error
@@ -643,6 +686,7 @@ export default function SalesPipelinePage() {
               name: stage.name,
               position: stage.position,
               pipeline_id: pipelineId!,
+              color: stage.color,
             }))
           )
           if (error) throw error
@@ -1109,6 +1153,7 @@ export default function SalesPipelinePage() {
         onClose={closePipelineDialog}
         onSubmit={handlePipelineSubmit}
         onUpdateStageName={updatePipelineStageName}
+        onUpdateStageColor={updatePipelineStageColor}
         onAddStage={addPipelineStage}
         onRemoveStage={removePipelineStage}
         onChangeField={handlePipelineFieldChange}

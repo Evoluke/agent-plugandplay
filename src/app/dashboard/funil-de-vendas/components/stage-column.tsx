@@ -4,7 +4,7 @@ import { Droppable } from '@hello-pangea/dnd'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Loader2, Plus } from 'lucide-react'
-import { DealCard, Stage } from '../types'
+import { DealCard, DEFAULT_STAGE_COLOR, Stage } from '../types'
 import { DealCardItem } from './deal-card-item'
 
 type StageColumnProps = {
@@ -26,8 +26,9 @@ export function StageColumn({
 }: StageColumnProps) {
   return (
     <div
+      style={{ backgroundColor: stage.color || DEFAULT_STAGE_COLOR }}
       className={cn(
-        'flex h-full min-w-[260px] flex-shrink-0 flex-col rounded-2xl bg-slate-50/80 p-4 shadow-sm',
+        'flex h-full min-w-[260px] flex-shrink-0 flex-col rounded-2xl p-4 shadow-sm ring-1 ring-slate-100/70',
         'w-full snap-start sm:w-[280px] lg:w-[320px]'
       )}
     >

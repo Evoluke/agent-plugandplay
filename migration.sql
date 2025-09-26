@@ -187,6 +187,7 @@ create table public.stage (
   created_at timestamp with time zone not null default now(),
   pipeline_id uuid not null,
   name text not null,
+  color text not null default '#F8FAFC',
   position integer not null default 0,
   constraint stage_pkey primary key (id),
   constraint stage_pipeline_id_fkey foreign key (pipeline_id) references pipeline (id) on delete cascade
