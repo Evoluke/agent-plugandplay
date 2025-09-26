@@ -42,11 +42,11 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 O painel do CRM agora conta com a página **Funil de vendas**, acessível pela sidebar do dashboard. Nela é possível:
 
-- Trabalhar sempre com o funil padrão **"Funil da do Agente"** (identificador `agent_default_pipeline`), criado automaticamente para cada empresa com os estágios fixos **Entrada**, **Atendimento Humano** e **Qualificado**; ele permanece disponível como referência e não pode ser editado ou excluído.
+- Trabalhar sempre com o funil padrão **"Funil da do Agente"** (identificador `agent_default_pipeline`), criado automaticamente para cada empresa com os estágios fixos **Entrada**, **Atendimento Humano** e **Qualificado**; ele permanece disponível como referência, não pode ser editado ou excluído e já chega com a paleta **#E0F2FE**, **#FCE7F3** e **#FEF3C7** aplicada a cada coluna.
 - Criar, editar e excluir funis para diferentes jornadas comerciais (menu de três pontinhos no topo da página).
 - Cada empresa pode manter até cinco funis ativos simultaneamente; cada funil aceita no máximo dez estágios.
 - Organizar etapas personalizadas para cada funil, definindo todos os estágios diretamente no modal de criação/edição e reordenando oportunidades por _drag and drop_ com `@hello-pangea/dnd`.
-- Definir a cor de fundo de cada estágio, armazenada no campo `stage.color`, para destacar visualmente as colunas do board.
+- Definir a cor de fundo de cada estágio diretamente no modal de criação/edição, armazenada no campo `stage.color`, para destacar visualmente as colunas do board.
 - Os campos de funis, estágios e cards contam com limites de caracteres para evitar nomes excessivamente longos e manter a consistência visual do board.
 - Visualizar o quadro do funil sem faixas de filtros rápidos, mantendo o foco na movimentação das oportunidades.
 - Arrastar cards para estágios vazios utilizando a área destacada de destino, mantendo o comportamento consistente entre drag and drop e o seletor do modal.

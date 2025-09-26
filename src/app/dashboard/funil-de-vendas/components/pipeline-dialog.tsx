@@ -21,6 +21,7 @@ type PipelineDialogProps = {
   onClose: () => void
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
   onUpdateStageName: (index: number, value: string) => void
+  onUpdateStageColor: (index: number, value: string) => void
   onAddStage: () => void
   onRemoveStage: (index: number) => void
   onChangeField: (field: 'name' | 'description', value: string) => void
@@ -34,6 +35,7 @@ export function PipelineDialog({
   onClose,
   onSubmit,
   onUpdateStageName,
+  onUpdateStageColor,
   onAddStage,
   onRemoveStage,
   onChangeField,
@@ -94,7 +96,7 @@ export function PipelineDialog({
           ) : (
             <div className="space-y-3">
               {form.stages.map((stage, index) => (
-                <div key={stage.id ?? `novo-estagio-${index}`} className="flex items-center gap-2">
+                <div key={stage.id ?? `novo-estagio-${index}`} className="flex flex-wrap items-center gap-2">
                   <span className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-xs font-medium text-gray-500">
                     {index + 1}
                   </span>
@@ -105,6 +107,23 @@ export function PipelineDialog({
                     disabled={loading}
                     maxLength={STAGE_NAME_MAX_LENGTH}
                   />
+                  <div className="flex items-center gap-2">
+                    <label className="sr-only" htmlFor={`stage-color-${index}`}>
+                      Cor do estágio {index + 1}
+                    </label>
+                    <Input
+                      id={`stage-color-${index}`}
+                      type="color"
+                      value={stage.color.toLowerCase()}
+                      onChange={(event) => onUpdateStageColor(index, event.target.value)}
+                      disabled={loading}
+                      className="h-9 w-12 min-w-12 cursor-pointer p-1"
+                      title={`Cor do estágio ${index + 1}`}
+                    />
+                    <span className="text-xs font-medium uppercase text-gray-500">
+                      {stage.color.toUpperCase()}
+                    </span>
+                  </div>
                   <Button
                     type="button"
                     size="icon"
