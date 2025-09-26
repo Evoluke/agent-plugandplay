@@ -193,6 +193,7 @@ async function cleanupAgent(agentId: string) {
 
 async function triggerCreateBox(
   agentId: string,
+  agentName: string,
   chatwootId: string | number,
   chatwootUserId: string | number
 ) {
@@ -211,6 +212,7 @@ async function triggerCreateBox(
     },
     body: JSON.stringify({
       agent_id: agentId,
+      agent_internal_name: agentName,
       chatwoot_id: chatwootId,
       chatwoot_user_id: chatwootUserId,
     }),
@@ -440,6 +442,7 @@ export async function POST(request: Request) {
   try {
     await triggerCreateBox(
       agentId,
+      trimmedName,
       company.chatwoot_id,
       company.chatwoot_user_id
     );
