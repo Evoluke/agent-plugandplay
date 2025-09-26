@@ -26,10 +26,6 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
-
-## Interfaces imersivas
-- O módulo de CRM utiliza um iframe em tela cheia sem cabeçalho adicional. Evite adicionar elementos que criem bordas visuais extras para manter a sensação de aplicação nativa.
-
 ## Diretrizes para o funil de vendas
 - Os cards do funil utilizam cantos arredondados de 16 px, sombra suave e espaçamento interno de 16 px.
 - Indicadores de status (status textual, risco e métricas) devem seguir a paleta principal com variações em azul, roxo e verde claro.

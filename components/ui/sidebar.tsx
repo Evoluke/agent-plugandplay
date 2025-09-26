@@ -25,6 +25,7 @@ import {
   Kanban,
   MoreHorizontal,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
 import { cn } from './utils';
 import type { Session } from '@supabase/supabase-js';
@@ -193,8 +194,19 @@ export function Sidebar({ className }: { className?: string }) {
     router.replace('/login');
   };
 
-  const handleChatwoot = () => {
-    router.push('/dashboard/crm');
+  const handleChatwoot = async () => {
+    try {
+      const res = await fetch('/api/chatwoot/sso');
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.url) {
+        console.error('[Chatwoot SSO] Endpoint error', res.status, data);
+        throw new Error();
+      }
+      window.open(data.url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      console.error('[Chatwoot SSO] Failed to open CRM', err);
+      toast('SSO indisponível, tente novamente mais tarde');
+    }
   };
 
   useEffect(() => {
@@ -407,9 +419,20 @@ export function MobileSidebar() {
     router.replace('/login');
   };
 
-  const handleChatwoot = () => {
-    setOpen(false);
-    router.push('/dashboard/crm');
+  const handleChatwoot = async () => {
+    try {
+      const res = await fetch('/api/chatwoot/sso');
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.url) {
+        console.error('[Chatwoot SSO] Endpoint error', res.status, data);
+        throw new Error();
+      }
+      setOpen(false);
+      window.open(data.url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      console.error('[Chatwoot SSO] Failed to open CRM', err);
+      toast('SSO indisponível, tente novamente mais tarde');
+    }
   };
 
   return (
