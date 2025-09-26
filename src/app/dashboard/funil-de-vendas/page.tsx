@@ -92,6 +92,41 @@ export default function SalesPipelinePage() {
     setPipelineFormLoading(false)
   }, [])
 
+  const loadBoard = useCallback(async (pipelineId: string) => {
+    setBoardLoading(true)
+    const [{ data: stageData, error: stageError }, { data: cardData, error: cardError }] = await Promise.all([
+      supabasebrowser
+        .from('stage')
+        .select('id, name, position, pipeline_id')
+        .eq('pipeline_id', pipelineId)
+        .order('position', { ascending: true }),
+      supabasebrowser
+        .from('card')
+        .select(
+          'id, title, company_name, owner, tag, status, mrr, messages_count, last_message_at, next_action_at, position, stage_id, pipeline_id'
+        )
+        .eq('pipeline_id', pipelineId)
+        .order('position', { ascending: true }),
+    ])
+
+    if (stageError || cardError) {
+      console.error(stageError || cardError)
+      toast.error('Erro ao carregar as oportunidades do funil.')
+      setBoardLoading(false)
+      return
+    }
+
+    setStages(stageData ?? [])
+    setCards(
+      (cardData ?? []).map((card) => ({
+        ...card,
+        mrr: Number(card.mrr ?? 0),
+        messages_count: Number(card.messages_count ?? 0),
+      }))
+    )
+    setBoardLoading(false)
+  }, [])
+
   const handleManualRefresh = useCallback(() => {
     if (!selectedPipelineId) {
       toast.error('Selecione um funil para atualizar.')
@@ -430,41 +465,6 @@ export default function SalesPipelinePage() {
     },
     [ensureDefaultPipeline]
   )
-
-  const loadBoard = useCallback(async (pipelineId: string) => {
-    setBoardLoading(true)
-    const [{ data: stageData, error: stageError }, { data: cardData, error: cardError }] = await Promise.all([
-      supabasebrowser
-        .from('stage')
-        .select('id, name, position, pipeline_id')
-        .eq('pipeline_id', pipelineId)
-        .order('position', { ascending: true }),
-      supabasebrowser
-        .from('card')
-        .select(
-          'id, title, company_name, owner, tag, status, mrr, messages_count, last_message_at, next_action_at, position, stage_id, pipeline_id'
-        )
-        .eq('pipeline_id', pipelineId)
-        .order('position', { ascending: true }),
-    ])
-
-    if (stageError || cardError) {
-      console.error(stageError || cardError)
-      toast.error('Erro ao carregar as oportunidades do funil.')
-      setBoardLoading(false)
-      return
-    }
-
-    setStages(stageData ?? [])
-    setCards(
-      (cardData ?? []).map((card) => ({
-        ...card,
-        mrr: Number(card.mrr ?? 0),
-        messages_count: Number(card.messages_count ?? 0),
-      }))
-    )
-    setBoardLoading(false)
-  }, [])
 
   useEffect(() => {
     fetchCompany().finally(() => setLoading(false))

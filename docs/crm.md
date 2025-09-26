@@ -33,7 +33,7 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Títulos, empresas e responsáveis dos cards recebem truncamento automático para evitar estouro visual dentro das colunas.
 - Reordenação de cards por _drag and drop_ com `@hello-pangea/dnd`, garantindo atualização imediata da coluna/posição no Supabase e evitando o bloqueio de cliques observado com a implementação anterior.
 - Área de drop dedicada nas colunas vazias, permitindo transferir cards por arraste mesmo quando o estágio não possui oportunidades.
-- Botão de atualização dedicado ao funil, com bloqueio de 10 segundos entre cliques e rotina automática que força a recarga do board a cada 5 minutos.
+- Botão de atualização dedicado ao funil, com bloqueio de 10 segundos entre cliques, cooldown reiniciado automaticamente ao alternar de funil e rotina automática que força a recarga do board a cada 5 minutos.
 
 ## Estrutura de dados
 As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
