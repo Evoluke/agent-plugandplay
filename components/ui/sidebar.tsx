@@ -22,6 +22,7 @@ import {
   Menu,
   MessageSquare,
   BookOpen,
+  KanbanSquare,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
@@ -43,6 +44,7 @@ const mainItem: NavItem = {
 const navItems: NavItem[] = [
   { label: 'Pagamentos', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
   { label: 'Configuração', href: '/dashboard/config', icon: <Settings size={20} /> },
+  { label: 'Funil de vendas', href: '/dashboard/funil-de-vendas', icon: <KanbanSquare size={20} /> },
   { label: 'Documentação', href: '/dashboard/documentacao', icon: <BookOpen size={20} /> },
   { label: 'Suporte', href: '/dashboard/support', icon: <HelpCircle size={20} /> },
 ];
