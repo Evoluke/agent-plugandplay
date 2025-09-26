@@ -455,6 +455,10 @@ export default function SalesPipelinePage() {
     setCardDialogOpen(true)
   }, [])
 
+  const handleSelectCardStage = useCallback((stageId: string) => {
+    setCardStageId(stageId)
+  }, [])
+
   const handleCardSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
@@ -772,9 +776,12 @@ export default function SalesPipelinePage() {
         open={cardDialogOpen}
         editingCard={editingCard}
         form={cardForm}
+        stages={stages}
+        selectedStageId={cardStageId}
         onClose={closeCardDialog}
         onSubmit={handleCardSubmit}
         onChangeField={handleCardFieldChange}
+        onSelectStage={handleSelectCardStage}
       />
     </div>
   )
