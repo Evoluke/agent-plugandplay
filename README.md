@@ -45,6 +45,7 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 - Criar, editar e excluir funis para diferentes jornadas comerciais (menu de três pontinhos no topo da página).
 - Organizar etapas personalizadas para cada funil, definindo todos os estágios diretamente no modal de criação/edição e reordenando oportunidades por drag-and-drop.
 - Registrar informações relevantes em cards (MRR, responsável, status, última interação e próximas ações).
+- Digitar continuamente nos campos dos estágios e dos cards sem perda de foco, com os modais liberando o board assim que são fechados.
 - Fechar o modal com **Cancelar** para descartar alterações com segurança, liberando imediatamente as ações no board.
 
 Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` e `card`) e vinculados à empresa autenticada via Supabase.

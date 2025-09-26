@@ -31,4 +31,5 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Indicadores de status (tags, risco, responsável) devem seguir a paleta principal com variações em azul, roxo e verde claro.
 - O cabeçalho de cada estágio apresenta contagem de oportunidades em tipografia pequena e discreta.
 - Ações de gerenciamento do funil ficam agrupadas no menu de três pontinhos do cabeçalho; os estágios exibem apenas título e contagem para manter o foco nas oportunidades.
+- Formulários modais devem preservar o foco dos campos durante a digitação e remover sobreposições rapidamente ao cancelar ou salvar, reforçando a percepção de fluidez.
 

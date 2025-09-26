@@ -120,7 +120,7 @@ const createInitialPipelineForm = (): PipelineFormState => ({
   removedStageIds: [],
 })
 
-const initialCardForm: CardFormState = {
+const createInitialCardForm = (): CardFormState => ({
   title: '',
   companyName: '',
   owner: '',
@@ -130,7 +130,7 @@ const initialCardForm: CardFormState = {
   messagesCount: '',
   lastMessageAt: '',
   nextActionAt: '',
-}
+})
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('pt-BR', {
@@ -388,9 +388,16 @@ export default function SalesPipelinePage() {
   )
 
   const [cardDialogOpen, setCardDialogOpen] = useState(false)
-  const [cardForm, setCardForm] = useState<CardFormState>(initialCardForm)
+  const [cardForm, setCardForm] = useState<CardFormState>(createInitialCardForm())
   const [editingCard, setEditingCard] = useState<DealCard | null>(null)
   const [cardStageId, setCardStageId] = useState<string | null>(null)
+
+  const closeCardDialog = useCallback(() => {
+    setCardDialogOpen(false)
+    setEditingCard(null)
+    setCardStageId(null)
+    setCardForm(createInitialCardForm())
+  }, [])
 
   const openCreatePipelineDialog = useCallback(() => {
     setEditingPipeline(null)
@@ -773,10 +780,22 @@ export default function SalesPipelinePage() {
       })
     } else {
       setEditingCard(null)
-      setCardForm(initialCardForm)
+      setCardForm(createInitialCardForm())
     }
     setCardDialogOpen(true)
   }, [])
+
+  const handleCardDialogOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setCardDialogOpen(true)
+        return
+      }
+
+      closeCardDialog()
+    },
+    [closeCardDialog]
+  )
 
   const handleCardSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -826,9 +845,7 @@ export default function SalesPipelinePage() {
           toast.success('Oportunidade criada.')
         }
 
-        setCardDialogOpen(false)
-        setEditingCard(null)
-        setCardForm(initialCardForm)
+        closeCardDialog()
         if (selectedPipelineId) {
           void loadBoard(selectedPipelineId)
         }
@@ -837,7 +854,7 @@ export default function SalesPipelinePage() {
         toast.error('Não foi possível salvar a oportunidade.')
       }
     },
-    [cardForm, cardStageId, cards, editingCard, loadBoard, selectedPipelineId]
+    [cardForm, cardStageId, cards, closeCardDialog, editingCard, loadBoard, selectedPipelineId]
   )
 
   const handleDeleteCard = useCallback(
@@ -1142,7 +1159,7 @@ export default function SalesPipelinePage() {
                   <div className="space-y-3">
                     {pipelineForm.stages.map((stage, index) => (
                       <div
-                        key={stage.id ?? `${index}-${stage.name}`}
+                        key={stage.id ?? `novo-estagio-${index}`}
                         className="flex items-center gap-2"
                       >
                         <span className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-xs font-medium text-gray-500">
@@ -1198,7 +1215,7 @@ export default function SalesPipelinePage() {
         </Dialog.Portal>
       </Dialog.Root>
 
-      <Dialog.Root open={cardDialogOpen} onOpenChange={setCardDialogOpen}>
+      <Dialog.Root open={cardDialogOpen} onOpenChange={handleCardDialogOpenChange}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/30" />
           <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl">
@@ -1307,7 +1324,7 @@ export default function SalesPipelinePage() {
                 />
               </div>
               <div className="md:col-span-2 flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={() => setCardDialogOpen(false)}>
+                <Button type="button" variant="ghost" onClick={closeCardDialog}>
                   Cancelar
                 </Button>
                 <Button type="submit">Salvar</Button>
