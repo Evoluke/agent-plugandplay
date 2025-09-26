@@ -33,6 +33,18 @@ import {
   PipelineFormState,
   Stage,
 } from './types'
+import {
+  CARD_COMPANY_MAX_LENGTH,
+  CARD_OWNER_MAX_LENGTH,
+  CARD_STATUS_MAX_LENGTH,
+  CARD_TAG_MAX_LENGTH,
+  CARD_TITLE_MAX_LENGTH,
+  MAX_PIPELINES_PER_COMPANY,
+  MAX_STAGES_PER_PIPELINE,
+  PIPELINE_DESCRIPTION_MAX_LENGTH,
+  PIPELINE_NAME_MAX_LENGTH,
+  STAGE_NAME_MAX_LENGTH,
+} from './constants'
 
 const DEFAULT_PIPELINE_IDENTIFIER = 'agent_default_pipeline'
 const DEFAULT_PIPELINE_NAME = 'Funil da do Agente'
@@ -78,11 +90,15 @@ export default function SalesPipelinePage() {
   }, [])
 
   const openCreatePipelineDialog = useCallback(() => {
+    if (pipelines.length >= MAX_PIPELINES_PER_COMPANY) {
+      toast.error('Você atingiu o limite de funis para esta empresa.')
+      return
+    }
     setEditingPipeline(null)
     setPipelineForm(createInitialPipelineForm())
     setPipelineFormLoading(false)
     setPipelineDialogOpen(true)
-  }, [])
+  }, [pipelines])
 
   const openEditPipelineDialog = useCallback(async (pipeline: Pipeline) => {
     if (pipeline.identifier === DEFAULT_PIPELINE_IDENTIFIER) {
@@ -135,10 +151,17 @@ export default function SalesPipelinePage() {
   }, [])
 
   const addPipelineStage = useCallback(() => {
-    setPipelineForm((prev) => ({
-      ...prev,
-      stages: reindexStages([...prev.stages, createEmptyStage(prev.stages.length)]),
-    }))
+    setPipelineForm((prev) => {
+      if (prev.stages.length >= MAX_STAGES_PER_PIPELINE) {
+        toast.error('Cada funil pode ter no máximo 10 estágios.')
+        return prev
+      }
+
+      return {
+        ...prev,
+        stages: reindexStages([...prev.stages, createEmptyStage(prev.stages.length)]),
+      }
+    })
   }, [])
 
   const updatePipelineStageName = useCallback((index: number, name: string) => {
@@ -463,6 +486,17 @@ export default function SalesPipelinePage() {
         return
       }
 
+      if (name.length > PIPELINE_NAME_MAX_LENGTH) {
+        toast.error('O nome do funil excede o limite de 60 caracteres.')
+        return
+      }
+
+      const description = pipelineForm.description.trim()
+      if (description.length > PIPELINE_DESCRIPTION_MAX_LENGTH) {
+        toast.error('A descrição do funil deve ter no máximo 240 caracteres.')
+        return
+      }
+
       const trimmedStages = pipelineForm.stages.map((stage) => ({
         ...stage,
         name: stage.name.trim(),
@@ -478,6 +512,21 @@ export default function SalesPipelinePage() {
         return
       }
 
+      if (trimmedStages.length > MAX_STAGES_PER_PIPELINE) {
+        toast.error('Cada funil pode ter no máximo 10 estágios.')
+        return
+      }
+
+      if (trimmedStages.some((stage) => stage.name.length > STAGE_NAME_MAX_LENGTH)) {
+        toast.error('Os nomes dos estágios devem ter até 40 caracteres.')
+        return
+      }
+
+      if (!editingPipeline && pipelines.length >= MAX_PIPELINES_PER_COMPANY) {
+        toast.error('Você atingiu o limite de funis para esta empresa.')
+        return
+      }
+
       const normalizedStages = reindexStages(trimmedStages)
 
       try {
@@ -490,7 +539,7 @@ export default function SalesPipelinePage() {
             .from('pipeline')
             .update({
               name,
-              description: pipelineForm.description.trim() || null,
+              description: description || null,
             })
             .eq('id', editingPipeline.id)
 
@@ -500,7 +549,7 @@ export default function SalesPipelinePage() {
             .from('pipeline')
             .insert({
               name,
-              description: pipelineForm.description.trim() || null,
+              description: description || null,
               company_id: company.id,
             })
             .select('id')
@@ -570,6 +619,7 @@ export default function SalesPipelinePage() {
       closePipelineDialog,
       company,
       editingPipeline,
+      pipelines,
       pipelineForm,
       loadBoard,
       loadPipelines,
@@ -640,17 +690,47 @@ export default function SalesPipelinePage() {
         return
       }
 
-      if (!cardForm.title.trim()) {
+      const title = cardForm.title.trim()
+      if (!title) {
         toast.error('Informe um nome para a oportunidade.')
         return
       }
 
+      if (title.length > CARD_TITLE_MAX_LENGTH) {
+        toast.error('O nome da oportunidade deve ter até 120 caracteres.')
+        return
+      }
+
+      const companyName = cardForm.companyName.trim()
+      if (companyName.length > CARD_COMPANY_MAX_LENGTH) {
+        toast.error('O campo Empresa aceita no máximo 80 caracteres.')
+        return
+      }
+
+      const owner = cardForm.owner.trim()
+      if (owner.length > CARD_OWNER_MAX_LENGTH) {
+        toast.error('O campo Responsável aceita no máximo 80 caracteres.')
+        return
+      }
+
+      const tag = cardForm.tag.trim()
+      if (tag.length > CARD_TAG_MAX_LENGTH) {
+        toast.error('O campo Tag aceita no máximo 40 caracteres.')
+        return
+      }
+
+      const status = cardForm.status.trim()
+      if (status.length > CARD_STATUS_MAX_LENGTH) {
+        toast.error('O campo Status aceita no máximo 60 caracteres.')
+        return
+      }
+
       const payload = {
-        title: cardForm.title.trim(),
-        company_name: cardForm.companyName.trim() || null,
-        owner: cardForm.owner.trim() || null,
-        tag: cardForm.tag.trim() || null,
-        status: cardForm.status.trim() || null,
+        title,
+        company_name: companyName || null,
+        owner: owner || null,
+        tag: tag || null,
+        status: status || null,
         mrr: Number(cardForm.mrr) || 0,
         messages_count: Number(cardForm.messagesCount) || 0,
         last_message_at: fromInputDate(cardForm.lastMessageAt),

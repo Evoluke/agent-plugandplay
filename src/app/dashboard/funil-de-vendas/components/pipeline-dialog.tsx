@@ -4,6 +4,12 @@ import { FormEvent, useId } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
+import {
+  MAX_STAGES_PER_PIPELINE,
+  PIPELINE_DESCRIPTION_MAX_LENGTH,
+  PIPELINE_NAME_MAX_LENGTH,
+  STAGE_NAME_MAX_LENGTH,
+} from '../constants'
 import { Pipeline, PipelineFormState } from '../types'
 import { Modal } from './modal'
 
@@ -59,6 +65,7 @@ export function PipelineDialog({
             placeholder="Ex.: Aquisição, Expansão, Ativação"
             required
             disabled={loading}
+            maxLength={PIPELINE_NAME_MAX_LENGTH}
           />
         </div>
         <div className="space-y-2">
@@ -69,12 +76,16 @@ export function PipelineDialog({
             onChange={(event) => onChangeField('description', event.target.value)}
             placeholder="Explique o objetivo deste funil para o time."
             disabled={loading}
+            maxLength={PIPELINE_DESCRIPTION_MAX_LENGTH}
           />
         </div>
         <div className="space-y-2">
           <div>
             <label className="text-sm font-medium text-gray-700">Estágios do funil</label>
-            <p className="text-xs text-gray-500">Gerencie as etapas que representam o avanço das oportunidades.</p>
+            <p className="text-xs text-gray-500">
+              Gerencie as etapas que representam o avanço das oportunidades. ({form.stages.length}/
+              {MAX_STAGES_PER_PIPELINE})
+            </p>
           </div>
           {loading ? (
             <div className="flex items-center gap-2 rounded-lg border border-dashed border-slate-200 px-3 py-4 text-sm text-gray-500">
@@ -92,6 +103,7 @@ export function PipelineDialog({
                     onChange={(event) => onUpdateStageName(index, event.target.value)}
                     placeholder={`Estágio ${index + 1}`}
                     disabled={loading}
+                    maxLength={STAGE_NAME_MAX_LENGTH}
                   />
                   <Button
                     type="button"
@@ -111,7 +123,7 @@ export function PipelineDialog({
                 variant="outline"
                 className="w-full justify-center border-dashed"
                 onClick={onAddStage}
-                disabled={loading}
+                disabled={loading || form.stages.length >= MAX_STAGES_PER_PIPELINE}
               >
                 <Plus className="mr-2 h-4 w-4" /> Adicionar estágio
               </Button>

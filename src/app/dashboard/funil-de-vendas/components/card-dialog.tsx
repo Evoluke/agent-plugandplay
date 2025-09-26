@@ -10,6 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  CARD_COMPANY_MAX_LENGTH,
+  CARD_OWNER_MAX_LENGTH,
+  CARD_STATUS_MAX_LENGTH,
+  CARD_TAG_MAX_LENGTH,
+  CARD_TITLE_MAX_LENGTH,
+} from '../constants'
 import { CardFormState, DealCard, Stage } from '../types'
 import { Modal } from './modal'
 
@@ -83,6 +90,7 @@ export function CardDialog({
             onChange={(event) => onChangeField('title', event.target.value)}
             placeholder="Ex.: Ana Souza - InovaTech"
             required
+            maxLength={CARD_TITLE_MAX_LENGTH}
           />
         </div>
         <div className="space-y-2">
@@ -91,6 +99,7 @@ export function CardDialog({
             value={form.companyName}
             onChange={(event) => onChangeField('companyName', event.target.value)}
             placeholder="Nome da empresa"
+            maxLength={CARD_COMPANY_MAX_LENGTH}
           />
         </div>
         <div className="space-y-2">
@@ -99,6 +108,7 @@ export function CardDialog({
             value={form.owner}
             onChange={(event) => onChangeField('owner', event.target.value)}
             placeholder="Quem está cuidando"
+            maxLength={CARD_OWNER_MAX_LENGTH}
           />
         </div>
         <div className="space-y-2">
@@ -107,6 +117,7 @@ export function CardDialog({
             value={form.status}
             onChange={(event) => onChangeField('status', event.target.value)}
             placeholder="Ex.: Qualificado, Em risco"
+            maxLength={CARD_STATUS_MAX_LENGTH}
           />
         </div>
         <div className="space-y-2">
@@ -115,6 +126,7 @@ export function CardDialog({
             value={form.tag}
             onChange={(event) => onChangeField('tag', event.target.value)}
             placeholder="Ex.: Trial, Prioridade"
+            maxLength={CARD_TAG_MAX_LENGTH}
           />
         </div>
         <div className="space-y-2">
