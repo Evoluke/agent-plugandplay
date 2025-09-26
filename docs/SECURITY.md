@@ -3,6 +3,8 @@
 ## Uso do Service Role
 As rotas que utilizam `supabaseadmin` executam operações privilegiadas. Antes de cada acesso é necessário validar explicitamente o usuário autenticado e a empresa associada. Avaliar a migração para chamadas com privilégios mínimos, utilizando RPCs ou o cliente autenticado com RLS sempre que possível, reduzindo a necessidade do Service Role.
 
+Ao integrar com fluxos externos como o N8N, defina `N8N_AGENT_WEBHOOK_URL` com a URL completa do webhook publicado (incluindo o caminho exato fornecido pelo N8N). A API agora não acrescenta sufixos automaticamente, portanto qualquer divergência ou caminho relativo incorreto resultará em falhas na criação do agente. Mantenha o token em `N8N_WEBHOOK_TOKEN` obrigatório e valide-o no fluxo para impedir uso indevido do endpoint. O webhook recebe os campos `agent_id`, `agent_internal_name`, `chatwoot_id` e `chatwoot_user_id`; trate todos os valores como dados sensíveis da empresa, aplicando sanitização antes de replicá-los em sistemas externos.
+
 Rotas atuais que dependem do `supabaseadmin`:
 
 - `/api/profile/complete`
