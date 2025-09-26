@@ -16,6 +16,10 @@ type CardDialogProps = {
 }
 
 export function CardDialog({ open, editingCard, form, onClose, onSubmit, onChangeField }: CardDialogProps) {
+  if (!open) {
+    return null
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <Dialog.Portal>

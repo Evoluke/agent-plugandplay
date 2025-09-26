@@ -32,6 +32,10 @@ export function PipelineDialog({
   onRemoveStage,
   onChangeField,
 }: PipelineDialogProps) {
+  if (!open) {
+    return null
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <Dialog.Portal>
