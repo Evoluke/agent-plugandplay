@@ -4,7 +4,7 @@ import { Droppable } from '@hello-pangea/dnd'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Loader2, Plus } from 'lucide-react'
-import { DealCard, DEFAULT_STAGE_COLOR, Stage } from '../types'
+import { DealCard, DEFAULT_STAGE_COLOR, Pipeline, Stage } from '../types'
 import { DealCardItem } from './deal-card-item'
 
 type StageColumnProps = {
@@ -13,6 +13,8 @@ type StageColumnProps = {
   onAddCard: (stageId: string) => void
   onEditCard: (card: DealCard) => void
   onDeleteCard: (card: DealCard) => void
+  onTransferCard: (card: DealCard, pipelineId: string) => void
+  pipelines: Pipeline[]
   isLoading: boolean
 }
 
@@ -22,6 +24,8 @@ export function StageColumn({
   onAddCard,
   onEditCard,
   onDeleteCard,
+  onTransferCard,
+  pipelines,
   isLoading,
 }: StageColumnProps) {
   return (
@@ -60,8 +64,10 @@ export function StageColumn({
                   key={card.id}
                   card={card}
                   index={index}
+                  pipelines={pipelines}
                   onEdit={onEditCard}
                   onDelete={onDeleteCard}
+                  onTransfer={onTransferCard}
                 />
               ))
             ) : (

@@ -10,6 +10,7 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Gestão de estágios diretamente no modal de criação/edição do funil, com campos para adicionar, renomear, escolher a cor com um seletor nativo e remover etapas antes de salvar.
 - Cada estágio recebe uma cor de fundo armazenada no campo `stage.color`, aplicada diretamente como plano de fundo da coluna no board.
 - Transferência de oportunidades entre estágios pelo modal de edição, escolhendo o destino no seletor dedicado, inclusive para colunas vazias.
+- Menu de contexto nos cards com ações de transferência direta para outros funis (sempre posicionando a oportunidade no primeiro estágio disponível) e remoção rápida.
 - Cadastro e atualização de cards com campos de contato, status, responsável, métricas de mensagens e datas importantes. O campo de tag continua disponível no formulário apenas para fins internos e não é mais exibido no card.
 - Campos de funil, estágios e cards com limites de caracteres para preservar a legibilidade das colunas.
 - Títulos, empresas e responsáveis dos cards recebem truncamento automático para evitar estouro visual dentro das colunas.
@@ -36,6 +37,7 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 ## Considerações de UX
 - Quando não há funis cadastrados, o usuário vê um _empty state_ orientado à criação do primeiro funil.
 - As ações de funil (novo, editar e excluir) ficam agrupadas no menu de três pontinhos no cabeçalho da página.
+- Os cards usam um menu de três pontinhos dedicado para transferências entre funis e remoção, mantendo o botão principal reservado para abrir os detalhes.
 - Estágios são manipulados dentro do modal principal, evitando diálogos adicionais; a confirmação de exclusão permanece apenas para funis e cards.
 - A contagem de oportunidades por estágio é recalculada automaticamente após cada operação.
 - O botão **Cancelar** fecha o modal sem persistir mudanças e libera imediatamente a interação com o restante da interface.

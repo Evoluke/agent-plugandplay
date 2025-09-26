@@ -916,6 +916,83 @@ export default function SalesPipelinePage() {
     [loadBoard, selectedPipelineId]
   )
 
+  const handleTransferCard = useCallback(
+    async (card: DealCard, targetPipelineId: string) => {
+      if (card.pipeline_id === targetPipelineId) {
+        toast.error('A oportunidade já está neste funil.')
+        return
+      }
+
+      const targetPipeline = pipelines.find((pipeline) => pipeline.id === targetPipelineId)
+
+      try {
+        const { data: stageData, error: stageError } = await supabasebrowser
+          .from('stage')
+          .select('id')
+          .eq('pipeline_id', targetPipelineId)
+          .order('position', { ascending: true })
+          .limit(1)
+
+        if (stageError) throw stageError
+
+        const targetStage = stageData?.[0]
+        if (!targetStage) {
+          toast.error('O funil selecionado não possui estágios configurados.')
+          return
+        }
+
+        const { data: targetStageCards, error: targetStageCardsError } = await supabasebrowser
+          .from('card')
+          .select('id')
+          .eq('stage_id', targetStage.id)
+
+        if (targetStageCardsError) throw targetStageCardsError
+
+        const nextPosition = targetStageCards?.length ?? 0
+
+        const { error: updateError } = await supabasebrowser
+          .from('card')
+          .update({
+            pipeline_id: targetPipelineId,
+            stage_id: targetStage.id,
+            position: nextPosition,
+          })
+          .eq('id', card.id)
+
+        if (updateError) throw updateError
+
+        const sourceCards = getStageCards(cards, card.stage_id).filter(
+          (stageCard) => stageCard.id !== card.id
+        )
+
+        if (sourceCards.length) {
+          const reindexResponses = await Promise.all(
+            sourceCards.map((stageCard, index) =>
+              supabasebrowser.from('card').update({ position: index }).eq('id', stageCard.id)
+            )
+          )
+
+          const reindexError = reindexResponses.find(({ error }) => error)?.error
+          if (reindexError) throw reindexError
+        }
+
+        toast.success(
+          `Oportunidade transferida${
+            targetPipeline ? ` para "${targetPipeline.name}"` : ''
+          }.`
+        )
+
+        if (selectedPipelineId) {
+          void loadBoard(selectedPipelineId)
+        }
+      } catch (error) {
+        console.error(error)
+        toast.error('Não foi possível transferir a oportunidade.')
+      }
+    },
+    [cards, loadBoard, pipelines, selectedPipelineId]
+  )
+
   const handleDragEnd = useCallback(
     async ({ destination, source, draggableId }: DropResult) => {
       if (!destination) return
@@ -1126,6 +1203,8 @@ export default function SalesPipelinePage() {
                     }}
                     onEditCard={(card) => openCardDialog(card.stage_id, card)}
                     onDeleteCard={handleDeleteCard}
+                    onTransferCard={handleTransferCard}
+                    pipelines={pipelines}
                     isLoading={boardLoading}
                   />
                 ))}
