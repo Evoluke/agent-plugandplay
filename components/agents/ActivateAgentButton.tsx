@@ -18,7 +18,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
     setLoading(true);
     const { data: agent, error: agentError } = await supabasebrowser
       .from("agents")
-      .select("expiration_date")
+      .select("expiration_date, type")
       .eq("id", agentId)
       .single();
 
@@ -47,6 +47,29 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       );
       setLoading(false);
       return;
+    }
+
+    if (agent.type === "sdr") {
+      const { data: calendarToken, error: calendarError } =
+        await supabasebrowser
+          .from("agent_google_tokens")
+          .select("agent_id")
+          .eq("agent_id", agentId)
+          .maybeSingle();
+
+      if (calendarError) {
+        toast.error("Erro ao verificar o Google Calendar.");
+        setLoading(false);
+        return;
+      }
+
+      if (!calendarToken) {
+        toast.error(
+          "Conecte o Google Calendar nas integrações antes de ativar o agente SDR."
+        );
+        setLoading(false);
+        return;
+      }
     }
 
     const { error } = await supabasebrowser
