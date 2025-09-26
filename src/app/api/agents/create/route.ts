@@ -367,11 +367,17 @@ export async function POST(request: Request) {
 
   const trimmedName = name.trim();
 
+  type CompanyRecord = {
+    id: string;
+    chatwoot_id: string | number | null;
+    chatwoot_user_id: string | number | null;
+  };
+
   const { data: company, error: companyError } = await supabaseadmin
     .from("company")
-    .select("id")
+    .select("id, chatwoot_id, chatwoot_user_id")
     .eq("user_id", user.id)
-    .single();
+    .single<CompanyRecord>();
 
   if (companyError || !company) {
     return errorResponse("Empresa não encontrada.", 404);
