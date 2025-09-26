@@ -34,10 +34,17 @@ export function DealCardItem({ card, index, onEdit, onDelete }: DealCardItemProp
           {...provided.dragHandleProps}
           style={provided.draggableProps.style}
           className={cn(
-            'rounded-xl border bg-white p-4 shadow-sm transition-shadow',
-            snapshot.isDragging ? 'shadow-lg ring-2 ring-primary/30' : 'hover:shadow-md'
+            'relative rounded-2xl border border-slate-100 bg-white/90 p-4 shadow-sm transition-all duration-200 ease-out',
+            snapshot.isDragging
+              ? 'translate-y-0.5 shadow-lg ring-2 ring-primary/40'
+              : 'hover:-translate-y-0.5 hover:shadow-md'
           )}
+          role="listitem"
         >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-3 top-0 h-1 rounded-full bg-primary/10"
+          />
           <div className="flex items-start justify-between gap-2">
             <div className="space-y-1">
               <h4 className="text-sm font-semibold text-gray-900">{card.title}</h4>
@@ -59,8 +66,10 @@ export function DealCardItem({ card, index, onEdit, onDelete }: DealCardItemProp
                   event.stopPropagation()
                   onEdit(card)
                 }}
+                aria-label={`Abrir opções do card ${card.title}`}
               >
                 <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Abrir ações rápidas</span>
               </Button>
             </div>
           </div>
@@ -114,6 +123,7 @@ export function DealCardItem({ card, index, onEdit, onDelete }: DealCardItemProp
                 event.stopPropagation()
                 onDelete(card)
               }}
+              aria-label={`Remover a oportunidade ${card.title}`}
             >
               Remover
             </button>
@@ -124,6 +134,7 @@ export function DealCardItem({ card, index, onEdit, onDelete }: DealCardItemProp
                 event.stopPropagation()
                 onEdit(card)
               }}
+              aria-label={`Abrir detalhes da oportunidade ${card.title}`}
             >
               Abrir detalhes
               <ArrowRight className="h-3 w-3" />
