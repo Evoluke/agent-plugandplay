@@ -368,24 +368,11 @@ export default function SalesPipelinePage() {
   const [editingPipeline, setEditingPipeline] = useState<Pipeline | null>(null)
   const [pipelineFormLoading, setPipelineFormLoading] = useState(false)
 
-  const resetPipelineDialogState = useCallback(() => {
+  const closePipelineDialog = useCallback(() => {
+    setPipelineDialogOpen(false)
     setEditingPipeline(null)
     setPipelineForm(createInitialPipelineForm())
     setPipelineFormLoading(false)
-  }, [setEditingPipeline, setPipelineForm, setPipelineFormLoading])
-
-  useEffect(() => {
-    if (!pipelineDialogOpen) {
-      resetPipelineDialogState()
-    }
-  }, [pipelineDialogOpen, resetPipelineDialogState])
-
-  const closePipelineDialog = useCallback(() => {
-    setPipelineDialogOpen(false)
-  }, [])
-
-  const handlePipelineDialogOpenChange = useCallback((open: boolean) => {
-    setPipelineDialogOpen(open)
   }, [])
 
   const [cardDialogOpen, setCardDialogOpen] = useState(false)
@@ -786,17 +773,7 @@ export default function SalesPipelinePage() {
     setCardDialogOpen(true)
   }, [])
 
-  const handleCardDialogOpenChange = useCallback(
-    (open: boolean) => {
-      if (open) {
-        setCardDialogOpen(true)
-        return
-      }
-
-      closeCardDialog()
-    },
-    [closeCardDialog]
-  )
+  
 
   const handleCardSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -1111,229 +1088,247 @@ export default function SalesPipelinePage() {
         </div>
       )}
 
-      <Dialog.Root open={pipelineDialogOpen} onOpenChange={handlePipelineDialogOpenChange}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30 transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">
-              {editingPipeline ? 'Editar funil' : 'Novo funil'}
-            </Dialog.Title>
-            <Dialog.Description className="mt-1 text-sm text-gray-500">
-              Configure detalhes do funil e organize todos os estágios antes de colocar o board em produção.
-            </Dialog.Description>
+      {pipelineDialogOpen ? (
+        <Dialog.Root
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              closePipelineDialog()
+            }
+          }}
+        >
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+            <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl focus:outline-none">
+              <Dialog.Title className="text-lg font-semibold text-gray-900">
+                {editingPipeline ? 'Editar funil' : 'Novo funil'}
+              </Dialog.Title>
+              <Dialog.Description className="mt-1 text-sm text-gray-500">
+                Configure detalhes do funil e organize todos os estágios antes de colocar o board em produção.
+              </Dialog.Description>
 
-            <form className="mt-4 space-y-4" onSubmit={handlePipelineSubmit}>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Nome do funil</label>
-                <Input
-                  value={pipelineForm.name}
-                  onChange={(event) =>
-                    setPipelineForm((prev) => ({ ...prev, name: event.target.value }))
-                  }
-                  placeholder="Ex.: Aquisição, Expansão, Ativação"
-                  required
-                  disabled={pipelineFormLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Descrição</label>
-                <textarea
-                  className="h-24 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  value={pipelineForm.description}
-                  onChange={(event) =>
-                    setPipelineForm((prev) => ({ ...prev, description: event.target.value }))
-                  }
-                  placeholder="Explique o objetivo deste funil para o time."
-                  disabled={pipelineFormLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Estágios do funil</label>
-                  <p className="text-xs text-gray-500">Gerencie as etapas que representam o avanço das oportunidades.</p>
+              <form className="mt-4 space-y-4" onSubmit={handlePipelineSubmit}>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Nome do funil</label>
+                  <Input
+                    value={pipelineForm.name}
+                    onChange={(event) =>
+                      setPipelineForm((prev) => ({ ...prev, name: event.target.value }))
+                    }
+                    placeholder="Ex.: Aquisição, Expansão, Ativação"
+                    required
+                    disabled={pipelineFormLoading}
+                  />
                 </div>
-                {pipelineFormLoading ? (
-                  <div className="flex items-center gap-2 rounded-lg border border-dashed border-slate-200 px-3 py-4 text-sm text-gray-500">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Carregando estágios...
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Descrição</label>
+                  <textarea
+                    className="h-24 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    value={pipelineForm.description}
+                    onChange={(event) =>
+                      setPipelineForm((prev) => ({ ...prev, description: event.target.value }))
+                    }
+                    placeholder="Explique o objetivo deste funil para o time."
+                    disabled={pipelineFormLoading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Estágios do funil</label>
+                    <p className="text-xs text-gray-500">Gerencie as etapas que representam o avanço das oportunidades.</p>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {pipelineForm.stages.map((stage, index) => (
-                      <div
-                        key={stage.id ?? `novo-estagio-${index}`}
-                        className="flex items-center gap-2"
-                      >
-                        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-xs font-medium text-gray-500">
-                          {index + 1}
-                        </span>
-                        <Input
-                          value={stage.name}
-                          onChange={(event) => updatePipelineStageName(index, event.target.value)}
-                          placeholder={`Estágio ${index + 1}`}
-                          disabled={pipelineFormLoading}
-                        />
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="ghost"
-                          className="h-9 w-9 text-destructive hover:text-destructive"
-                          onClick={() => removePipelineStage(index)}
-                          disabled={pipelineFormLoading}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          <span className="sr-only">Remover estágio</span>
-                        </Button>
-                      </div>
-                    ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full justify-center border-dashed"
-                      onClick={addPipelineStage}
-                      disabled={pipelineFormLoading}
-                    >
-                      <Plus className="mr-2 h-4 w-4" /> Adicionar estágio
-                    </Button>
-                  </div>
-                )}
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={closePipelineDialog}>
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={pipelineFormLoading}>
                   {pipelineFormLoading ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" /> Salvando...
-                    </span>
+                    <div className="flex items-center gap-2 rounded-lg border border-dashed border-slate-200 px-3 py-4 text-sm text-gray-500">
+                      <Loader2 className="h-4 w-4 animate-spin" /> Carregando estágios...
+                    </div>
                   ) : (
-                    'Salvar funil'
+                    <div className="space-y-3">
+                      {pipelineForm.stages.map((stage, index) => (
+                        <div
+                          key={stage.id ?? `novo-estagio-${index}`}
+                          className="flex items-center gap-2"
+                        >
+                          <span className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-xs font-medium text-gray-500">
+                            {index + 1}
+                          </span>
+                          <Input
+                            value={stage.name}
+                            onChange={(event) => updatePipelineStageName(index, event.target.value)}
+                            placeholder={`Estágio ${index + 1}`}
+                            disabled={pipelineFormLoading}
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="h-9 w-9 text-destructive hover:text-destructive"
+                            onClick={() => removePipelineStage(index)}
+                            disabled={pipelineFormLoading}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Remover estágio</span>
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full justify-center border-dashed"
+                        onClick={addPipelineStage}
+                        disabled={pipelineFormLoading}
+                      >
+                        <Plus className="mr-2 h-4 w-4" /> Adicionar estágio
+                      </Button>
+                    </div>
                   )}
-                </Button>
-              </div>
-            </form>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="ghost" onClick={closePipelineDialog}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" disabled={pipelineFormLoading}>
+                    {pipelineFormLoading ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" /> Salvando...
+                      </span>
+                    ) : (
+                      'Salvar funil'
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      ) : null}
+
+      {cardDialogOpen ? (
+        <Dialog.Root
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              closeCardDialog()
+            }
+          }}
+        >
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+            <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl focus:outline-none">
+              <Dialog.Title className="text-lg font-semibold text-gray-900">
+                {editingCard ? 'Editar oportunidade' : 'Nova oportunidade'}
+              </Dialog.Title>
+              <Dialog.Description className="mt-1 text-sm text-gray-500">
+                Mantenha as informações atualizadas para priorizar o follow-up.
+              </Dialog.Description>
+
+              <form className="mt-4 grid gap-4 md:grid-cols-2" onSubmit={handleCardSubmit}>
+                <div className="md:col-span-2 space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Contato / Empresa</label>
+                  <Input
+                    value={cardForm.title}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, title: event.target.value }))
+                    }
+                    placeholder="Ex.: Ana Souza - InovaTech"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Empresa</label>
+                  <Input
+                    value={cardForm.companyName}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, companyName: event.target.value }))
+                    }
+                    placeholder="Nome da empresa"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Responsável</label>
+                  <Input
+                    value={cardForm.owner}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, owner: event.target.value }))
+                    }
+                    placeholder="Quem está cuidando"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Status</label>
+                  <Input
+                    value={cardForm.status}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, status: event.target.value }))
+                    }
+                    placeholder="Ex.: Qualificado, Em risco"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Tag</label>
+                  <Input
+                    value={cardForm.tag}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, tag: event.target.value }))
+                    }
+                    placeholder="Ex.: Trial, Prioridade"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">MRR estimado (R$)</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={cardForm.mrr}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, mrr: event.target.value }))
+                    }
+                    placeholder="0,00"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Mensagens</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={cardForm.messagesCount}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, messagesCount: event.target.value }))
+                    }
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Último contato</label>
+                  <Input
+                    type="datetime-local"
+                    value={cardForm.lastMessageAt}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, lastMessageAt: event.target.value }))
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Próxima ação</label>
+                  <Input
+                    type="datetime-local"
+                    value={cardForm.nextActionAt}
+                    onChange={(event) =>
+                      setCardForm((prev) => ({ ...prev, nextActionAt: event.target.value }))
+                    }
+                  />
+                </div>
+                <div className="md:col-span-2 flex justify-end gap-2">
+                  <Button type="button" variant="ghost" onClick={closeCardDialog}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit">Salvar</Button>
+                </div>
+              </form>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-
-      <Dialog.Root open={cardDialogOpen} onOpenChange={handleCardDialogOpenChange}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30 transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">
-              {editingCard ? 'Editar oportunidade' : 'Nova oportunidade'}
-            </Dialog.Title>
-            <Dialog.Description className="mt-1 text-sm text-gray-500">
-              Mantenha as informações atualizadas para priorizar o follow-up.
-            </Dialog.Description>
-
-            <form className="mt-4 grid gap-4 md:grid-cols-2" onSubmit={handleCardSubmit}>
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-sm font-medium text-gray-700">Contato / Empresa</label>
-                <Input
-                  value={cardForm.title}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, title: event.target.value }))
-                  }
-                  placeholder="Ex.: Ana Souza - InovaTech"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Empresa</label>
-                <Input
-                  value={cardForm.companyName}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, companyName: event.target.value }))
-                  }
-                  placeholder="Nome da empresa"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Responsável</label>
-                <Input
-                  value={cardForm.owner}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, owner: event.target.value }))
-                  }
-                  placeholder="Quem está cuidando"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Status</label>
-                <Input
-                  value={cardForm.status}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, status: event.target.value }))
-                  }
-                  placeholder="Ex.: Qualificado, Em risco"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Tag</label>
-                <Input
-                  value={cardForm.tag}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, tag: event.target.value }))
-                  }
-                  placeholder="Ex.: Trial, Prioridade"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">MRR estimado (R$)</label>
-                <Input
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  value={cardForm.mrr}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, mrr: event.target.value }))
-                  }
-                  placeholder="0,00"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Mensagens</label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={cardForm.messagesCount}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, messagesCount: event.target.value }))
-                  }
-                  placeholder="0"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Último contato</label>
-                <Input
-                  type="datetime-local"
-                  value={cardForm.lastMessageAt}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, lastMessageAt: event.target.value }))
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Próxima ação</label>
-                <Input
-                  type="datetime-local"
-                  value={cardForm.nextActionAt}
-                  onChange={(event) =>
-                    setCardForm((prev) => ({ ...prev, nextActionAt: event.target.value }))
-                  }
-                />
-              </div>
-              <div className="md:col-span-2 flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={closeCardDialog}>
-                  Cancelar
-                </Button>
-                <Button type="submit">Salvar</Button>
-              </div>
-            </form>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+      ) : null}
     </div>
   )
 
