@@ -30,5 +30,5 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Os cards do funil utilizam cantos arredondados de 16 px, sombra suave e espaçamento interno de 16 px.
 - Indicadores de status (tags, risco, responsável) devem seguir a paleta principal com variações em azul, roxo e verde claro.
 - O cabeçalho de cada estágio apresenta contagem de oportunidades em tipografia pequena e discreta.
-- Ações contextuais (editar, remover, abrir detalhes) são exibidas com ícones `lucide-react` alinhados ao canto superior direito.
+- Ações de gerenciamento do funil ficam agrupadas no menu de três pontinhos do cabeçalho; os estágios exibem apenas título e contagem para manter o foco nas oportunidades.
 

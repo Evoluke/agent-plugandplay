@@ -28,13 +28,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import * as Dialog from '@radix-ui/react-dialog'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { cn } from '@/lib/utils'
 import {
   ArrowRight,
   CheckCircle2,
   Clock,
-  Edit,
   Filter,
   Loader2,
   MessageSquare,
@@ -80,13 +80,17 @@ type DealCard = {
   pipeline_id: string
 }
 
+type PipelineStageForm = {
+  id?: string
+  name: string
+  position: number
+}
+
 type PipelineFormState = {
   name: string
   description: string
-}
-
-type StageFormState = {
-  name: string
+  stages: PipelineStageForm[]
+  removedStageIds: string[]
 }
 
 type CardFormState = {
@@ -101,14 +105,20 @@ type CardFormState = {
   nextActionAt: string
 }
 
-const initialPipelineForm: PipelineFormState = {
+const createEmptyStage = (position: number): PipelineStageForm => ({
+  name: '',
+  position,
+})
+
+const reindexStages = (stages: PipelineStageForm[]): PipelineStageForm[] =>
+  stages.map((stage, index) => ({ ...stage, position: index }))
+
+const createInitialPipelineForm = (): PipelineFormState => ({
   name: '',
   description: '',
-}
-
-const initialStageForm: StageFormState = {
-  name: '',
-}
+  stages: [createEmptyStage(0)],
+  removedStageIds: [],
+})
 
 const initialCardForm: CardFormState = {
   title: '',
@@ -290,8 +300,6 @@ type StageColumnProps = {
   stage: Stage
   cards: DealCard[]
   onAddCard: (stageId: string) => void
-  onEditStage: (stage: Stage) => void
-  onDeleteStage: (stage: Stage) => void
   onEditCard: (card: DealCard) => void
   onDeleteCard: (card: DealCard) => void
   isLoading: boolean
@@ -301,8 +309,6 @@ function StageColumn({
   stage,
   cards,
   onAddCard,
-  onEditStage,
-  onDeleteStage,
   onEditCard,
   onDeleteCard,
   isLoading,
@@ -314,24 +320,6 @@ function StageColumn({
           <p className="text-xs uppercase tracking-wide text-gray-400">Estágio</p>
           <h3 className="text-lg font-semibold text-gray-900">{stage.name}</h3>
           <p className="text-xs text-gray-500">{cards.length} oportunidades</p>
-        </div>
-        <div className="flex items-center gap-1">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 text-gray-500 hover:text-gray-900"
-            onClick={() => onEditStage(stage)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 text-destructive"
-            onClick={() => onDeleteStage(stage)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
@@ -376,17 +364,104 @@ export default function SalesPipelinePage() {
   const [boardLoading, setBoardLoading] = useState(false)
 
   const [pipelineDialogOpen, setPipelineDialogOpen] = useState(false)
-  const [pipelineForm, setPipelineForm] = useState<PipelineFormState>(initialPipelineForm)
+  const [pipelineForm, setPipelineForm] = useState<PipelineFormState>(createInitialPipelineForm())
   const [editingPipeline, setEditingPipeline] = useState<Pipeline | null>(null)
-
-  const [stageDialogOpen, setStageDialogOpen] = useState(false)
-  const [stageForm, setStageForm] = useState<StageFormState>(initialStageForm)
-  const [editingStage, setEditingStage] = useState<Stage | null>(null)
+  const [pipelineFormLoading, setPipelineFormLoading] = useState(false)
 
   const [cardDialogOpen, setCardDialogOpen] = useState(false)
   const [cardForm, setCardForm] = useState<CardFormState>(initialCardForm)
   const [editingCard, setEditingCard] = useState<DealCard | null>(null)
   const [cardStageId, setCardStageId] = useState<string | null>(null)
+
+  const openCreatePipelineDialog = useCallback(() => {
+    setEditingPipeline(null)
+    setPipelineForm(createInitialPipelineForm())
+    setPipelineFormLoading(false)
+    setPipelineDialogOpen(true)
+  }, [])
+
+  const openEditPipelineDialog = useCallback(
+    async (pipeline: Pipeline) => {
+      setEditingPipeline(pipeline)
+      setPipelineForm({
+        name: pipeline.name,
+        description: pipeline.description ?? '',
+        stages: [createEmptyStage(0)],
+        removedStageIds: [],
+      })
+      setPipelineFormLoading(true)
+      setPipelineDialogOpen(true)
+
+      const { data, error } = await supabasebrowser
+        .from('stage')
+        .select('id, name, position')
+        .eq('pipeline_id', pipeline.id)
+        .order('position', { ascending: true })
+
+      if (error) {
+        console.error(error)
+        toast.error('Não foi possível carregar os estágios do funil.')
+        setPipelineForm({
+          name: pipeline.name,
+          description: pipeline.description ?? '',
+          stages: [createEmptyStage(0)],
+          removedStageIds: [],
+        })
+        setPipelineFormLoading(false)
+        return
+      }
+
+      const stageForms = (data ?? []).map((stage, index) => ({
+        id: stage.id,
+        name: stage.name,
+        position: index,
+      }))
+
+      setPipelineForm({
+        name: pipeline.name,
+        description: pipeline.description ?? '',
+        stages: stageForms.length ? stageForms : [createEmptyStage(0)],
+        removedStageIds: [],
+      })
+      setPipelineFormLoading(false)
+    },
+    []
+  )
+
+  const addPipelineStage = useCallback(() => {
+    setPipelineForm((prev) => ({
+      ...prev,
+      stages: reindexStages([...prev.stages, createEmptyStage(prev.stages.length)]),
+    }))
+  }, [])
+
+  const updatePipelineStageName = useCallback((index: number, name: string) => {
+    setPipelineForm((prev) => {
+      const nextStages = prev.stages.map((stage, stageIndex) =>
+        stageIndex === index ? { ...stage, name } : stage
+      )
+      return { ...prev, stages: nextStages }
+    })
+  }, [])
+
+  const removePipelineStage = useCallback((index: number) => {
+    setPipelineForm((prev) => {
+      const stageToRemove = prev.stages[index]
+      const nextStages = prev.stages.filter((_, stageIndex) => stageIndex !== index)
+      const stagesList = reindexStages(nextStages.length ? nextStages : [createEmptyStage(0)])
+      const removedStageIds = stageToRemove?.id
+        ? prev.removedStageIds.includes(stageToRemove.id)
+          ? prev.removedStageIds
+          : [...prev.removedStageIds, stageToRemove.id]
+        : prev.removedStageIds
+
+      return {
+        ...prev,
+        stages: stagesList,
+        removedStageIds,
+      }
+    })
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -518,28 +593,49 @@ export default function SalesPipelinePage() {
         return
       }
 
-      if (!pipelineForm.name.trim()) {
+      const name = pipelineForm.name.trim()
+      if (!name) {
         toast.error('Informe um nome para o funil.')
         return
       }
 
+      const trimmedStages = pipelineForm.stages.map((stage) => ({
+        ...stage,
+        name: stage.name.trim(),
+      }))
+
+      if (!trimmedStages.length) {
+        toast.error('Adicione pelo menos um estágio ao funil.')
+        return
+      }
+
+      if (trimmedStages.some((stage) => !stage.name)) {
+        toast.error('Informe o nome de todos os estágios.')
+        return
+      }
+
+      const normalizedStages = reindexStages(trimmedStages)
+
       try {
+        setPipelineFormLoading(true)
+
+        let pipelineId = editingPipeline?.id ?? null
+
         if (editingPipeline) {
           const { error } = await supabasebrowser
             .from('pipeline')
             .update({
-              name: pipelineForm.name.trim(),
+              name,
               description: pipelineForm.description.trim() || null,
             })
             .eq('id', editingPipeline.id)
 
           if (error) throw error
-          toast.success('Funil atualizado com sucesso.')
         } else {
           const { data, error } = await supabasebrowser
             .from('pipeline')
             .insert({
-              name: pipelineForm.name.trim(),
+              name,
               description: pipelineForm.description.trim() || null,
               company_id: company.id,
             })
@@ -547,19 +643,68 @@ export default function SalesPipelinePage() {
             .single()
 
           if (error) throw error
-          toast.success('Funil criado com sucesso.')
-          setSelectedPipelineId(data?.id ?? null)
+          pipelineId = data?.id ?? null
         }
+
+        if (!pipelineId) {
+          throw new Error('Não foi possível identificar o funil.')
+        }
+
+        if (editingPipeline && pipelineForm.removedStageIds.length) {
+          const { error } = await supabasebrowser
+            .from('stage')
+            .delete()
+            .in('id', pipelineForm.removedStageIds)
+          if (error) throw error
+        }
+
+        const stagesToUpdate = normalizedStages.filter((stage) => stage.id)
+        const stagesToInsert = normalizedStages.filter((stage) => !stage.id)
+
+        for (const stage of stagesToUpdate) {
+          const { error } = await supabasebrowser
+            .from('stage')
+            .update({
+              name: stage.name,
+              position: stage.position,
+            })
+            .eq('id', stage.id)
+          if (error) throw error
+        }
+
+        if (stagesToInsert.length) {
+          const { error } = await supabasebrowser.from('stage').insert(
+            stagesToInsert.map((stage) => ({
+              name: stage.name,
+              position: stage.position,
+              pipeline_id: pipelineId!,
+            }))
+          )
+          if (error) throw error
+        }
+
+        toast.success(editingPipeline ? 'Funil atualizado com sucesso.' : 'Funil criado com sucesso.')
+
         setPipelineDialogOpen(false)
-        setPipelineForm(initialPipelineForm)
+        setPipelineForm(createInitialPipelineForm())
         setEditingPipeline(null)
+
+        if (!editingPipeline) {
+          setSelectedPipelineId(pipelineId)
+        }
+
         void loadPipelines(company.id)
+        if (selectedPipelineId === pipelineId) {
+          void loadBoard(pipelineId)
+        }
       } catch (error) {
         console.error(error)
         toast.error('Não foi possível salvar o funil.')
+      } finally {
+        setPipelineFormLoading(false)
       }
     },
-    [company, editingPipeline, pipelineForm, loadPipelines]
+    [company, editingPipeline, pipelineForm, loadBoard, loadPipelines, selectedPipelineId]
   )
 
   const handleDeletePipeline = useCallback(
@@ -584,70 +729,6 @@ export default function SalesPipelinePage() {
       }
     },
     [company, pipelines, loadPipelines]
-  )
-
-  const handleStageSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault()
-      if (!selectedPipelineId) {
-        toast.error('Selecione um funil para adicionar estágios.')
-        return
-      }
-
-      if (!stageForm.name.trim()) {
-        toast.error('Informe um nome para o estágio.')
-        return
-      }
-
-      try {
-        if (editingStage) {
-          const { error } = await supabasebrowser
-            .from('stage')
-            .update({ name: stageForm.name.trim() })
-            .eq('id', editingStage.id)
-          if (error) throw error
-          toast.success('Estágio atualizado com sucesso.')
-        } else {
-          const position = stages.length
-          const { error } = await supabasebrowser.from('stage').insert({
-            name: stageForm.name.trim(),
-            pipeline_id: selectedPipelineId,
-            position,
-          })
-          if (error) throw error
-          toast.success('Estágio criado com sucesso.')
-        }
-        setStageDialogOpen(false)
-        setStageForm(initialStageForm)
-        setEditingStage(null)
-        void loadBoard(selectedPipelineId)
-      } catch (error) {
-        console.error(error)
-        toast.error('Não foi possível salvar o estágio.')
-      }
-    },
-    [editingStage, loadBoard, selectedPipelineId, stageForm, stages.length]
-  )
-
-  const handleDeleteStage = useCallback(
-    async (stage: Stage) => {
-      if (!window.confirm(`Excluir o estágio "${stage.name}"? As oportunidades serão removidas.`)) {
-        return
-      }
-
-      try {
-        const { error } = await supabasebrowser.from('stage').delete().eq('id', stage.id)
-        if (error) throw error
-        toast.success('Estágio removido.')
-        if (selectedPipelineId) {
-          void loadBoard(selectedPipelineId)
-        }
-      } catch (error) {
-        console.error(error)
-        toast.error('Erro ao remover o estágio.')
-      }
-    },
-    [loadBoard, selectedPipelineId]
   )
 
   const openCardDialog = useCallback((stageId: string, card?: DealCard) => {
@@ -862,46 +943,56 @@ export default function SalesPipelinePage() {
             Organize oportunidades por estágio, acompanhe prioridades e mantenha seu time alinhado.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setEditingPipeline(null)
-              setPipelineForm(initialPipelineForm)
-              setPipelineDialogOpen(true)
-            }}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Novo funil
-          </Button>
-          {selectedPipelineId ? (
-            <>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  const current = pipelines.find((item) => item.id === selectedPipelineId)
-                  if (!current) return
-                  setEditingPipeline(current)
-                  setPipelineForm({
-                    name: current.name,
-                    description: current.description ?? '',
-                  })
-                  setPipelineDialogOpen(true)
-                }}
-              >
-                Editar funil
+        <div className="flex items-center gap-2">
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button type="button" variant="outline" size="icon" className="h-10 w-10">
+                <MoreHorizontal className="h-5 w-5" />
+                <span className="sr-only">Ações do funil</span>
               </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-destructive"
-                onClick={() => handleDeletePipeline(selectedPipelineId)}
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                align="end"
+                className="z-50 w-52 rounded-md border border-slate-200 bg-white p-1 shadow-lg"
               >
-                Excluir funil
-              </Button>
-            </>
-          ) : null}
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 outline-none transition hover:bg-slate-100 focus:bg-slate-100"
+                  onSelect={() => {
+                    openCreatePipelineDialog()
+                  }}
+                >
+                  <Plus className="h-4 w-4" /> Novo funil
+                </DropdownMenu.Item>
+                {selectedPipelineId ? (
+                  <>
+                    <DropdownMenu.Separator className="my-1 h-px bg-slate-200" />
+                    <DropdownMenu.Item
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 outline-none transition hover:bg-slate-100 focus:bg-slate-100"
+                      onSelect={() => {
+                        const current = pipelines.find((item) => item.id === selectedPipelineId)
+                        if (current) {
+                          void openEditPipelineDialog(current)
+                        }
+                      }}
+                    >
+                      Editar funil
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-destructive outline-none transition hover:bg-destructive/10 focus:bg-destructive/10"
+                      onSelect={() => {
+                        if (selectedPipelineId) {
+                          void handleDeletePipeline(selectedPipelineId)
+                        }
+                      }}
+                    >
+                      Excluir funil
+                    </DropdownMenu.Item>
+                  </>
+                ) : null}
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
       </div>
 
@@ -927,16 +1018,6 @@ export default function SalesPipelinePage() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Empresa</span>
-              <p className="rounded-lg border bg-white px-3 py-2 text-sm text-gray-700">
-                {company?.company_name ?? 'Conta não identificada'}
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Estágios ativos</span>
-              <p className="rounded-lg border bg-white px-3 py-2 text-sm text-gray-700">{stages.length}</p>
             </div>
           </div>
 
@@ -966,31 +1047,11 @@ export default function SalesPipelinePage() {
                     onAddCard={(stageId) => {
                       openCardDialog(stageId)
                     }}
-                    onEditStage={(stageData) => {
-                      setEditingStage(stageData)
-                      setStageForm({ name: stageData.name })
-                      setStageDialogOpen(true)
-                    }}
-                    onDeleteStage={handleDeleteStage}
                     onEditCard={(card) => openCardDialog(card.stage_id, card)}
                     onDeleteCard={handleDeleteCard}
                     isLoading={boardLoading}
                   />
                 ))}
-
-                {selectedPipelineId ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingStage(null)
-                      setStageForm(initialStageForm)
-                      setStageDialogOpen(true)
-                    }}
-                    className="flex h-full w-[260px] flex-shrink-0 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white text-sm font-medium text-gray-500 transition hover:border-primary hover:text-primary"
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Novo estágio
-                  </button>
-                ) : null}
               </div>
             </DndContext>
           </div>
@@ -1001,14 +1062,7 @@ export default function SalesPipelinePage() {
           <p className="mt-2 text-sm text-gray-500">
             Estruture as etapas do seu processo comercial para acompanhar cada oportunidade com clareza.
           </p>
-          <Button
-            className="mt-6"
-            onClick={() => {
-              setEditingPipeline(null)
-              setPipelineForm(initialPipelineForm)
-              setPipelineDialogOpen(true)
-            }}
-          >
+          <Button className="mt-6" onClick={openCreatePipelineDialog}>
             <Plus className="mr-2 h-4 w-4" /> Começar agora
           </Button>
         </div>
@@ -1022,7 +1076,7 @@ export default function SalesPipelinePage() {
               {editingPipeline ? 'Editar funil' : 'Novo funil'}
             </Dialog.Title>
             <Dialog.Description className="mt-1 text-sm text-gray-500">
-              Defina o nome e uma descrição para organizar o processo comercial.
+              Configure detalhes do funil e organize todos os estágios antes de colocar o board em produção.
             </Dialog.Description>
 
             <form className="mt-4 space-y-4" onSubmit={handlePipelineSubmit}>
@@ -1035,6 +1089,7 @@ export default function SalesPipelinePage() {
                   }
                   placeholder="Ex.: Aquisição, Expansão, Ativação"
                   required
+                  disabled={pipelineFormLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -1046,47 +1101,72 @@ export default function SalesPipelinePage() {
                     setPipelineForm((prev) => ({ ...prev, description: event.target.value }))
                   }
                   placeholder="Explique o objetivo deste funil para o time."
+                  disabled={pipelineFormLoading}
                 />
+              </div>
+              <div className="space-y-2">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Estágios do funil</label>
+                  <p className="text-xs text-gray-500">Gerencie as etapas que representam o avanço das oportunidades.</p>
+                </div>
+                {pipelineFormLoading ? (
+                  <div className="flex items-center gap-2 rounded-lg border border-dashed border-slate-200 px-3 py-4 text-sm text-gray-500">
+                    <Loader2 className="h-4 w-4 animate-spin" /> Carregando estágios...
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {pipelineForm.stages.map((stage, index) => (
+                      <div
+                        key={stage.id ?? `${index}-${stage.name}`}
+                        className="flex items-center gap-2"
+                      >
+                        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-xs font-medium text-gray-500">
+                          {index + 1}
+                        </span>
+                        <Input
+                          value={stage.name}
+                          onChange={(event) => updatePipelineStageName(index, event.target.value)}
+                          placeholder={`Estágio ${index + 1}`}
+                          disabled={pipelineFormLoading}
+                        />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          className="h-9 w-9 text-destructive hover:text-destructive"
+                          onClick={() => removePipelineStage(index)}
+                          disabled={pipelineFormLoading}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Remover estágio</span>
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full justify-center border-dashed"
+                      onClick={addPipelineStage}
+                      disabled={pipelineFormLoading}
+                    >
+                      <Plus className="mr-2 h-4 w-4" /> Adicionar estágio
+                    </Button>
+                  </div>
+                )}
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="ghost" onClick={() => setPipelineDialogOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit">Salvar funil</Button>
-              </div>
-            </form>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
-
-      <Dialog.Root open={stageDialogOpen} onOpenChange={setStageDialogOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">
-              {editingStage ? 'Editar estágio' : 'Novo estágio'}
-            </Dialog.Title>
-            <Dialog.Description className="mt-1 text-sm text-gray-500">
-              Crie etapas claras para acompanhar a evolução das oportunidades.
-            </Dialog.Description>
-
-            <form className="mt-4 space-y-4" onSubmit={handleStageSubmit}>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Nome do estágio</label>
-                <Input
-                  value={stageForm.name}
-                  onChange={(event) =>
-                    setStageForm({ name: event.target.value })
-                  }
-                  placeholder="Ex.: Qualificação, Negociação, Fechamento"
-                  required
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={() => setStageDialogOpen(false)}>
-                  Cancelar
+                <Button type="submit" disabled={pipelineFormLoading}>
+                  {pipelineFormLoading ? (
+                    <span className="inline-flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" /> Salvando...
+                    </span>
+                  ) : (
+                    'Salvar funil'
+                  )}
                 </Button>
-                <Button type="submit">Salvar estágio</Button>
               </div>
             </form>
           </Dialog.Content>
@@ -1213,4 +1293,5 @@ export default function SalesPipelinePage() {
       </Dialog.Root>
     </div>
   )
+
 }

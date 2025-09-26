@@ -27,3 +27,5 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `card` | Restrição por `pipeline.company_id`, incluindo validação extra ao mover cards entre estágios |
 
 Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.
+
+Como a gestão de estágios agora acontece no mesmo modal de criação/edição do funil, o cliente web executa uma sequência de inserções, atualizações e remoções na tabela `stage` ao confirmar o formulário. Garanta que as políticas verifiquem tanto o `pipeline_id` informado quanto o vínculo com `company_id`, evitando que IDs arbitrários sejam enviados durante essas operações encadeadas.

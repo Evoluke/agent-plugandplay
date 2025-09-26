@@ -42,8 +42,8 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 O painel do CRM agora conta com a página **Funil de vendas**, acessível pela sidebar do dashboard. Nela é possível:
 
-- Criar, editar e excluir funis para diferentes jornadas comerciais.
-- Organizar etapas personalizadas para cada funil, reordenando oportunidades por drag-and-drop.
+- Criar, editar e excluir funis para diferentes jornadas comerciais (menu de três pontinhos no topo da página).
+- Organizar etapas personalizadas para cada funil, definindo todos os estágios diretamente no modal de criação/edição e reordenando oportunidades por drag-and-drop.
 - Registrar informações relevantes em cards (MRR, responsável, status, última interação e próximas ações).
 
 Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` e `card`) e vinculados à empresa autenticada via Supabase.
