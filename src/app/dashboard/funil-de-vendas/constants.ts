@@ -5,6 +5,19 @@ export const PIPELINE_NAME_MAX_LENGTH = 60
 export const PIPELINE_DESCRIPTION_MAX_LENGTH = 240
 export const STAGE_NAME_MAX_LENGTH = 40
 
+export const DEFAULT_STAGE_COLORS = [
+  '#DCFCE7',
+  '#E0F2FE',
+  '#FEF9C3',
+  '#FCE7F3',
+  '#EDE9FE',
+  '#FFE4E6',
+  '#CFFAFE',
+  '#FDE68A',
+  '#F1F5F9',
+  '#F3E8FF',
+]
+
 export const CARD_TITLE_MAX_LENGTH = 120
 export const CARD_COMPANY_MAX_LENGTH = 80
 export const CARD_OWNER_MAX_LENGTH = 80

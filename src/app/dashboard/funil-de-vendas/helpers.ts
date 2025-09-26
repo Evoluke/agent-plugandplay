@@ -1,3 +1,4 @@
+import { DEFAULT_STAGE_COLORS } from './constants'
 import { CardFormState, PipelineFormState, PipelineStageForm } from './types'
 
 export const createEmptyStage = (position: number): PipelineStageForm => ({
@@ -7,6 +8,9 @@ export const createEmptyStage = (position: number): PipelineStageForm => ({
 
 export const reindexStages = (stages: PipelineStageForm[]): PipelineStageForm[] =>
   stages.map((stage, index) => ({ ...stage, position: index }))
+
+export const getDefaultStageColor = (position: number): string =>
+  DEFAULT_STAGE_COLORS[position % DEFAULT_STAGE_COLORS.length]
 
 export const createInitialPipelineForm = (): PipelineFormState => ({
   name: '',
