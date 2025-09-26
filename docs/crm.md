@@ -27,5 +27,6 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 - Estágios são manipulados dentro do modal principal, evitando diálogos adicionais; a confirmação de exclusão permanece apenas para funis e cards.
 - A contagem de oportunidades por estágio é recalculada automaticamente após cada operação.
 - O botão **Cancelar** fecha o modal sem persistir mudanças e libera imediatamente a interação com o restante da interface.
+- O quadro prioriza a visualização das colunas do funil, sem exibir filtros rápidos que desviem a atenção das oportunidades.
 - Campos de estágios e cards preservam o foco durante a digitação e, ao fechar os modais por **Cancelar** ou **Salvar**, o board volta a aceitar interações imediatamente; o front-end utiliza o componente `Modal` dedicado para desmontar completamente cada diálogo assim que ele é fechado, reiniciar o formulário, restaurar o `overflow` do documento e remover a camada escura na mesma renderização. A substituição do mecanismo de _drag and drop_ por `@hello-pangea/dnd` elimina os bloqueios residuais que ocorriam após cancelar ou salvar um funil.
 - A implementação foi modularizada em componentes (`StageColumn`, `PipelineDialog`, `CardDialog` e `Modal`), reduzindo duplicação de lógica e garantindo que estados e sobreposições sejam resetados em cada ciclo de abertura.

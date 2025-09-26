@@ -44,6 +44,7 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 
 - Criar, editar e excluir funis para diferentes jornadas comerciais (menu de três pontinhos no topo da página).
 - Organizar etapas personalizadas para cada funil, definindo todos os estágios diretamente no modal de criação/edição e reordenando oportunidades por _drag and drop_ com `@hello-pangea/dnd`.
+- Visualizar o quadro do funil sem faixas de filtros rápidos, mantendo o foco na movimentação das oportunidades.
 - Arrastar cards para estágios vazios utilizando a área destacada de destino, mantendo o comportamento consistente entre drag and drop e o seletor do modal.
 - Registrar informações relevantes em cards (MRR, responsável, status, última interação e próximas ações).
 - Digitar continuamente nos campos dos estágios e dos cards sem perda de foco, com os modais liberando o board assim que são fechados.
