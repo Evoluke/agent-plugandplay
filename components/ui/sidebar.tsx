@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/tooltip';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
+  Home,
   Settings,
   CreditCard,
   HelpCircle,
@@ -22,6 +23,7 @@ import {
   MessageSquare,
   BookOpen,
   Kanban,
+  MoreHorizontal,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { MAX_AGENTS_PER_COMPANY } from '@/lib/constants';
@@ -37,7 +39,7 @@ interface NavItem {
 const mainItem: NavItem = {
   label: 'Início',
   href: '/dashboard',
-  icon: <Menu size={20} />,
+  icon: <Home size={20} />,
 };
 
 const navItems: NavItem[] = [
@@ -363,7 +365,7 @@ export function Sidebar({ className }: { className?: string }) {
               }}
               className="p-2 rounded hover:bg-gray-100 flex items-center justify-center"
             >
-              <Settings size={20} />
+              <MoreHorizontal size={20} />
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" align="end" sideOffset={6} className="pointer-events-none">
