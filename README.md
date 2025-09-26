@@ -40,6 +40,8 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 ## 🔗 Links Úteis
 
+- Página **Funil de vendas** no dashboard com board Kanban para organizar oportunidades.
+
 - [Next.js](https://nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/)
