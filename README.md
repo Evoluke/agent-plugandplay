@@ -48,3 +48,7 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - [Chatwoot](https://www.chatwoot.com/)
 - [Vercel](https://vercel.com/)
 
+## 📈 Funil de vendas
+
+A partir da barra lateral do dashboard é possível acessar a nova página **Funil de vendas** e organizar oportunidades em um quadro Kanban responsivo. Crie diferentes funis por empresa, personalize os estágios e mova cartões entre colunas com _drag and drop_. Cada cartão aceita dados como cliente, valor estimado e observações, mantendo o histórico sincronizado com o Supabase para toda a equipe.
+

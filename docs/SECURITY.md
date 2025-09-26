@@ -22,5 +22,8 @@ As seguintes tabelas requerem políticas de Row Level Security para garantir o i
 | `agent_personality`, `agent_behavior`, `agent_onboarding`, `agent_specific_instructions`, `agent_knowledge_files` | Acesso restrito via relação com `agents.company_id` do usuário |
 | `payments` | Acesso apenas para registros com `company_id` pertencente ao usuário |
 | `tickets` | Acesso apenas para registros com `company_id` pertencente ao usuário |
+| `pipeline` | Usuário somente acessa funis cuja empresa esteja associada ao seu `auth.uid()` |
+| `stage` | Restringir aos estágios pertencentes aos funis da empresa do usuário |
+| `card` | Oportunidades somente visíveis e gerenciáveis pela empresa proprietária do funil |
 
 Certifique-se de que o RLS esteja habilitado e que as políticas correspondentes estejam configuradas no Supabase para cada tabela acima.
