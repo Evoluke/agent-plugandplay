@@ -8,6 +8,7 @@ export type Pipeline = {
   name: string
   description: string | null
   company_id: number
+  identifier: string | null
 }
 
 export type Stage = {

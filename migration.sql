@@ -171,10 +171,15 @@ create table public.pipeline (
   created_at timestamp with time zone not null default now(),
   company_id bigint not null,
   name text not null,
+  identifier text null,
   description text null,
   constraint pipeline_pkey primary key (id),
   constraint pipeline_company_id_fkey foreign key (company_id) references company (id) on delete cascade
 ) TABLESPACE pg_default;
+
+create unique index pipeline_company_identifier_key
+  on public.pipeline (company_id, identifier)
+  where identifier is not null;
 
 -- Tabela de estágios do funil
 create table public.stage (

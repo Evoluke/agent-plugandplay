@@ -40,6 +40,13 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 | `stage` | `id`, `pipeline_id`, `name`, `position`, `created_at` | Ordenação baseada em `position`, com exclusão em cascata dos cards. |
 | `card` | `id`, `pipeline_id`, `stage_id`, `title`, `company_name`, `owner`, `tag`, `status`, `mrr`, `messages_count`, `last_message_at`, `next_action_at`, `position` | Salva métricas exibidas nos cards e mantém posição por estágio. |
 
+### Funil padrão por empresa
+
+- Toda empresa recebe automaticamente o funil **"Funil da do Agente"**, identificado no banco de dados pelo campo `identifier = 'agent_default_pipeline'`.
+- Os estágios deste funil são fixos e seguem a ordem: **Entrada**, **Atendimento Humano** e **Qualificado**.
+- O front-end garante que o funil padrão exista antes de carregar o board, restaure os nomes/ordens configurados e o proteja contra exclusão ou edição.
+- Como apenas um funil pode utilizar este identificador por empresa, criações manuais sempre resultam em novos funis personalizados, mantendo o padrão intacto.
+
 ## Considerações de UX
 - Quando não há funis cadastrados, o usuário vê um _empty state_ orientado à criação do primeiro funil.
 - As ações de funil (novo, editar e excluir) ficam agrupadas no menu de três pontinhos no cabeçalho da página.
