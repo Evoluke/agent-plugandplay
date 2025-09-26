@@ -368,6 +368,25 @@ export default function SalesPipelinePage() {
   const [editingPipeline, setEditingPipeline] = useState<Pipeline | null>(null)
   const [pipelineFormLoading, setPipelineFormLoading] = useState(false)
 
+  const closePipelineDialog = useCallback(() => {
+    setPipelineDialogOpen(false)
+    setEditingPipeline(null)
+    setPipelineForm(createInitialPipelineForm())
+    setPipelineFormLoading(false)
+  }, [])
+
+  const handlePipelineDialogOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setPipelineDialogOpen(true)
+        return
+      }
+
+      closePipelineDialog()
+    },
+    [closePipelineDialog]
+  )
+
   const [cardDialogOpen, setCardDialogOpen] = useState(false)
   const [cardForm, setCardForm] = useState<CardFormState>(initialCardForm)
   const [editingCard, setEditingCard] = useState<DealCard | null>(null)
@@ -685,9 +704,7 @@ export default function SalesPipelinePage() {
 
         toast.success(editingPipeline ? 'Funil atualizado com sucesso.' : 'Funil criado com sucesso.')
 
-        setPipelineDialogOpen(false)
-        setPipelineForm(createInitialPipelineForm())
-        setEditingPipeline(null)
+        closePipelineDialog()
 
         if (!editingPipeline) {
           setSelectedPipelineId(pipelineId)
@@ -704,7 +721,15 @@ export default function SalesPipelinePage() {
         setPipelineFormLoading(false)
       }
     },
-    [company, editingPipeline, pipelineForm, loadBoard, loadPipelines, selectedPipelineId]
+    [
+      closePipelineDialog,
+      company,
+      editingPipeline,
+      pipelineForm,
+      loadBoard,
+      loadPipelines,
+      selectedPipelineId,
+    ]
   )
 
   const handleDeletePipeline = useCallback(
@@ -1068,7 +1093,7 @@ export default function SalesPipelinePage() {
         </div>
       )}
 
-      <Dialog.Root open={pipelineDialogOpen} onOpenChange={setPipelineDialogOpen}>
+      <Dialog.Root open={pipelineDialogOpen} onOpenChange={handlePipelineDialogOpenChange}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/30" />
           <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl">
@@ -1155,7 +1180,7 @@ export default function SalesPipelinePage() {
                 )}
               </div>
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={() => setPipelineDialogOpen(false)}>
+                <Button type="button" variant="ghost" onClick={closePipelineDialog}>
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={pipelineFormLoading}>

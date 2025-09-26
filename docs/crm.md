@@ -24,3 +24,4 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 - As ações de funil (novo, editar e excluir) ficam agrupadas no menu de três pontinhos no cabeçalho da página.
 - Estágios são manipulados dentro do modal principal, evitando diálogos adicionais; a confirmação de exclusão permanece apenas para funis e cards.
 - A contagem de oportunidades por estágio é recalculada automaticamente após cada operação.
+- O botão **Cancelar** fecha o modal sem persistir mudanças e libera imediatamente a interação com o restante da interface.
