@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { supabasebrowser } from '@/lib/supabaseClient'
-import { Loader2, MoreHorizontal, Plus } from 'lucide-react'
+import { Loader2, MoreHorizontal, Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { CardDialog } from './components/card-dialog'
 import { PipelineDialog } from './components/pipeline-dialog'
@@ -74,6 +74,16 @@ export default function SalesPipelinePage() {
   const [cardForm, setCardForm] = useState<CardFormState>(createInitialCardForm())
   const [editingCard, setEditingCard] = useState<DealCard | null>(null)
   const [cardStageId, setCardStageId] = useState<string | null>(null)
+  const [isRefreshCoolingDown, setIsRefreshCoolingDown] = useState(false)
+  const refreshCooldownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearRefreshCooldown = useCallback(() => {
+    if (refreshCooldownTimeoutRef.current) {
+      clearTimeout(refreshCooldownTimeoutRef.current)
+      refreshCooldownTimeoutRef.current = null
+    }
+    setIsRefreshCoolingDown(false)
+  }, [])
 
   const closePipelineDialog = useCallback(() => {
     setPipelineDialogOpen(false)
@@ -81,6 +91,24 @@ export default function SalesPipelinePage() {
     setPipelineForm(createInitialPipelineForm())
     setPipelineFormLoading(false)
   }, [])
+
+  const handleManualRefresh = useCallback(() => {
+    if (!selectedPipelineId) {
+      toast.error('Selecione um funil para atualizar.')
+      return
+    }
+
+    setIsRefreshCoolingDown(true)
+    if (refreshCooldownTimeoutRef.current) {
+      clearTimeout(refreshCooldownTimeoutRef.current)
+    }
+    refreshCooldownTimeoutRef.current = setTimeout(() => {
+      setIsRefreshCoolingDown(false)
+      refreshCooldownTimeoutRef.current = null
+    }, 10_000)
+
+    void loadBoard(selectedPipelineId)
+  }, [loadBoard, selectedPipelineId])
 
   const closeCardDialog = useCallback(() => {
     setCardDialogOpen(false)
@@ -453,6 +481,30 @@ export default function SalesPipelinePage() {
       void loadBoard(selectedPipelineId)
     }
   }, [selectedPipelineId, loadBoard])
+
+  useEffect(() => {
+    clearRefreshCooldown()
+  }, [clearRefreshCooldown, selectedPipelineId])
+
+  useEffect(() => {
+    return () => {
+      clearRefreshCooldown()
+    }
+  }, [clearRefreshCooldown])
+
+  useEffect(() => {
+    if (!selectedPipelineId) {
+      return
+    }
+
+    const intervalId = setInterval(() => {
+      void loadBoard(selectedPipelineId)
+    }, 5 * 60 * 1000)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [loadBoard, selectedPipelineId])
 
   const selectedPipeline = useMemo(
     () => pipelines.find((pipeline) => pipeline.id === selectedPipelineId) ?? null,
@@ -915,6 +967,21 @@ export default function SalesPipelinePage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-10 w-10"
+            onClick={handleManualRefresh}
+            disabled={!selectedPipelineId || boardLoading || isRefreshCoolingDown}
+          >
+            {boardLoading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <RefreshCw className="h-5 w-5" />
+            )}
+            <span className="sr-only">Atualizar funil</span>
+          </Button>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <Button type="button" variant="outline" size="icon" className="h-10 w-10">
