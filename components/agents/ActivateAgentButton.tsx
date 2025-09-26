@@ -45,8 +45,23 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       .limit(1)
       .maybeSingle();
 
+    const {
+      data: company,
+      error: companyError,
+    } = await supabasebrowser
+      .from("company")
+      .select("subscription_expires_at")
+      .eq("id", agent.company_id)
+      .single();
+
     if (paymentError) {
       toast.error("Erro ao consultar pagamentos da empresa.");
+      setLoading(false);
+      return;
+    }
+
+    if (companyError || !company) {
+      toast.error("Não foi possível consultar a assinatura corporativa.");
       setLoading(false);
       return;
     }
@@ -69,9 +84,12 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       return;
     }
 
-    if (!payment.due_date) {
+    const expirationSource =
+      company.subscription_expires_at ?? payment.due_date ?? null;
+
+    if (!expirationSource) {
       toast.error(
-        "Não foi possível validar o vencimento da cobrança corporativa."
+        "Não foi possível validar o vencimento da assinatura corporativa."
       );
       setLoading(false);
       return;
@@ -80,7 +98,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const dueDate = new Date(payment.due_date);
+    const dueDate = new Date(expirationSource);
     dueDate.setHours(0, 0, 0, 0);
 
     if (dueDate < today) {

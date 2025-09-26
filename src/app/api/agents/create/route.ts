@@ -371,11 +371,12 @@ export async function POST(request: Request) {
     id: string;
     chatwoot_id: string | number | null;
     chatwoot_user_id: string | number | null;
+    subscription_expires_at: string | null;
   };
 
   const { data: company, error: companyError } = await supabaseadmin
     .from("company")
-    .select("id, chatwoot_id, chatwoot_user_id")
+    .select("id, chatwoot_id, chatwoot_user_id, subscription_expires_at")
     .eq("user_id", user.id)
     .single<CompanyRecord>();
 
@@ -456,6 +457,7 @@ export async function POST(request: Request) {
   }
 
   let paymentInfo: Record<string, unknown> | null = null;
+  let subscriptionExpiresAt = company.subscription_expires_at ?? null;
 
   const { data: existingPayment, error: existingPaymentError } =
     await supabaseadmin
@@ -502,6 +504,34 @@ export async function POST(request: Request) {
         due_date: paymentData.due_date as string,
       });
 
+      const newExpiration = paymentData.due_date as string | null;
+
+      if (newExpiration) {
+        const newExpirationDate = new Date(newExpiration);
+        const currentExpirationDate = subscriptionExpiresAt
+          ? new Date(subscriptionExpiresAt)
+          : null;
+
+        if (
+          !currentExpirationDate ||
+          newExpirationDate.getTime() > currentExpirationDate.getTime()
+        ) {
+          const { error: companyUpdateError } = await supabaseadmin
+            .from("company")
+            .update({ subscription_expires_at: newExpiration })
+            .eq("id", company.id);
+
+          if (companyUpdateError) {
+            console.error(
+              "[agents:create] Erro ao atualizar expiração corporativa",
+              companyUpdateError
+            );
+          } else {
+            subscriptionExpiresAt = newExpiration;
+          }
+        }
+      }
+
       paymentInfo = {
         ...paymentData,
         ...(asaasResponse ? { asaas: asaasResponse } : {}),
@@ -520,6 +550,7 @@ export async function POST(request: Request) {
       maxAgents: MAX_AGENTS_PER_COMPANY,
       limitReached,
       payment: paymentInfo,
+      subscriptionExpiresAt,
     },
     { status: 201 }
   );

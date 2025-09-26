@@ -74,6 +74,7 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 - Os registros de cobrança ficam associados apenas ao `company_id`; nenhum `agent_id` é armazenado na tabela `payments`, reforçando que a assinatura é sempre corporativa.
 - A ativação dos agentes só ocorre quando a assinatura corporativa está paga e dentro da validade; o painel utiliza o último vencimento corporativo para validar o botão de ativar.
 - O menu do agente exibe o status da assinatura e o vencimento corporativo compartilhado entre todos os agentes, facilitando a conferência do pagamento único por empresa.
+- O vencimento consolidado fica armazenado em `company.subscription_expires_at`, permitindo que toda a aplicação valide a expiração corporativa sem depender de campos na tabela `agents`.
 
 ## 🔗 Links Úteis
 

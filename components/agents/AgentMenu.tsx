@@ -32,7 +32,7 @@ const typeLabels: Record<string, string> = {
 
 export default function AgentMenu({ agent }: { agent: Agent }) {
   const pathname = usePathname();
-  const [subscriptionDueDate, setSubscriptionDueDate] =
+  const [corporateExpiration, setCorporateExpiration] =
     useState<string | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     PaymentStatus | null
@@ -53,7 +53,7 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
 
       if (agentError || !agentRecord) {
         if (active) {
-          setSubscriptionDueDate(null);
+          setCorporateExpiration(null);
           setSubscriptionStatus(null);
         }
         return;
@@ -70,15 +70,33 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
         .limit(1)
         .maybeSingle();
 
+      const {
+        data: companyRecord,
+        error: companyError,
+      } = await supabasebrowser
+        .from("company")
+        .select("subscription_expires_at")
+        .eq("id", agentRecord.company_id)
+        .single();
+
       if (!active) return;
 
       if (paymentError) {
-        setSubscriptionDueDate(null);
+        setCorporateExpiration(
+          companyRecord?.subscription_expires_at ?? null
+        );
         setSubscriptionStatus(null);
         return;
       }
 
-      setSubscriptionDueDate(payment?.due_date ?? null);
+      const expiresAt =
+        companyRecord?.subscription_expires_at ?? payment?.due_date ?? null;
+
+      if (companyError) {
+        setCorporateExpiration(payment?.due_date ?? null);
+      } else {
+        setCorporateExpiration(expiresAt);
+      }
       setSubscriptionStatus(
         (payment?.status as PaymentStatus | undefined) ?? null
       );
@@ -110,8 +128,8 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const dueDateObject = subscriptionDueDate
-    ? new Date(subscriptionDueDate)
+  const dueDateObject = corporateExpiration
+    ? new Date(corporateExpiration)
     : null;
   if (dueDateObject) {
     dueDateObject.setHours(0, 0, 0, 0);
@@ -161,9 +179,9 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
                 <p className={`text-base font-semibold ${statusColor}`}>
                   {statusLabel}
                 </p>
-                {subscriptionDueDate && (
+                {corporateExpiration && (
                   <span className="text-xs text-gray-500">
-                    Vencimento: {new Date(subscriptionDueDate).toLocaleDateString("pt-BR")}
+                    Vencimento: {new Date(corporateExpiration).toLocaleDateString("pt-BR")}
                   </span>
                 )}
               </div>
