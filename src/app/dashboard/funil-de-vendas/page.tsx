@@ -68,6 +68,7 @@ export default function SalesPipelinePage() {
   const [cards, setCards] = useState<DealCard[]>([])
   const [selectedPipelineId, setSelectedPipelineId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [pipelinesLoading, setPipelinesLoading] = useState(true)
   const [boardLoading, setBoardLoading] = useState(false)
 
   const [pipelineDialogOpen, setPipelineDialogOpen] = useState(false)
@@ -459,49 +460,55 @@ export default function SalesPipelinePage() {
 
   const loadPipelines = useCallback(
     async (companyId: number) => {
-      const defaultPipelineId = await ensureDefaultPipeline(companyId)
+      setPipelinesLoading(true)
 
-      const { data, error } = await supabasebrowser
-        .from('pipeline')
-        .select('id, name, description, company_id, identifier')
-        .eq('company_id', companyId)
-        .order('created_at', { ascending: true })
+      try {
+        const defaultPipelineId = await ensureDefaultPipeline(companyId)
 
-      if (error) {
-        console.error(error)
-        toast.error('Erro ao carregar os funis.')
-        return
-      }
+        const { data, error } = await supabasebrowser
+          .from('pipeline')
+          .select('id, name, description, company_id, identifier')
+          .eq('company_id', companyId)
+          .order('created_at', { ascending: true })
 
-      const sortedPipelines = [...(data ?? [])].sort((a, b) => {
-        if (a.identifier === DEFAULT_PIPELINE_IDENTIFIER && b.identifier !== DEFAULT_PIPELINE_IDENTIFIER) return -1
-        if (b.identifier === DEFAULT_PIPELINE_IDENTIFIER && a.identifier !== DEFAULT_PIPELINE_IDENTIFIER) return 1
-        return a.name.localeCompare(b.name)
-      })
-
-      setPipelines(sortedPipelines)
-
-      setSelectedPipelineId((current) => {
-        if (current && sortedPipelines.some((pipeline) => pipeline.id === current)) {
-          return current
+        if (error) {
+          console.error(error)
+          toast.error('Erro ao carregar os funis.')
+          return
         }
 
-        if (
-          defaultPipelineId &&
-          sortedPipelines.some((pipeline) => pipeline.id === defaultPipelineId)
-        ) {
-          return defaultPipelineId
+        const sortedPipelines = [...(data ?? [])].sort((a, b) => {
+          if (a.identifier === DEFAULT_PIPELINE_IDENTIFIER && b.identifier !== DEFAULT_PIPELINE_IDENTIFIER) return -1
+          if (b.identifier === DEFAULT_PIPELINE_IDENTIFIER && a.identifier !== DEFAULT_PIPELINE_IDENTIFIER) return 1
+          return a.name.localeCompare(b.name)
+        })
+
+        setPipelines(sortedPipelines)
+
+        setSelectedPipelineId((current) => {
+          if (current && sortedPipelines.some((pipeline) => pipeline.id === current)) {
+            return current
+          }
+
+          if (
+            defaultPipelineId &&
+            sortedPipelines.some((pipeline) => pipeline.id === defaultPipelineId)
+          ) {
+            return defaultPipelineId
+          }
+
+          const defaultPipeline = sortedPipelines.find(
+            (pipeline) => pipeline.identifier === DEFAULT_PIPELINE_IDENTIFIER
+          )
+          return defaultPipeline?.id ?? sortedPipelines[0]?.id ?? null
+        })
+
+        if (!sortedPipelines.length) {
+          setStages([])
+          setCards([])
         }
-
-        const defaultPipeline = sortedPipelines.find(
-          (pipeline) => pipeline.identifier === DEFAULT_PIPELINE_IDENTIFIER
-        )
-        return defaultPipeline?.id ?? sortedPipelines[0]?.id ?? null
-      })
-
-      if (!sortedPipelines.length) {
-        setStages([])
-        setCards([])
+      } finally {
+        setPipelinesLoading(false)
       }
     },
     [ensureDefaultPipeline]
@@ -1165,7 +1172,12 @@ export default function SalesPipelinePage() {
         </div>
       </div>
 
-      {pipelines.length ? (
+      {pipelinesLoading ? (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="mt-4 text-sm text-gray-500">Carregando funis...</p>
+        </div>
+      ) : pipelines.length ? (
         <div className="space-y-6">
           <div className="grid gap-3 md:grid-cols-4">
             <div className="md:col-span-2">
