@@ -39,30 +39,27 @@ export function DealCardItem({ card, index, onEdit, onDelete }: DealCardItemProp
           )}
         >
           <div className="flex items-start justify-between gap-2">
-            <div className="space-y-1">
-              <h4 className="text-sm font-semibold text-gray-900">{card.title}</h4>
+            <div className="min-w-0 space-y-1">
+              <h4 className="clamp-2-lines text-sm font-semibold text-gray-900" title={card.title}>
+                {card.title}
+              </h4>
               {card.company_name ? (
-                <p className="text-xs text-gray-500">{card.company_name}</p>
+                <p className="text-xs text-gray-500" title={card.company_name}>
+                  <span className="block truncate">{card.company_name}</span>
+                </p>
               ) : null}
             </div>
-            <div className="flex items-center gap-1">
-              {card.tag ? (
-                <span className="rounded-full bg-blue-50 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-blue-600">
-                  {card.tag}
-                </span>
-              ) : null}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 text-gray-500 hover:text-gray-800"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  onEdit(card)
-                }}
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-gray-500 hover:text-gray-800"
+              onClick={(event) => {
+                event.stopPropagation()
+                onEdit(card)
+              }}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
@@ -87,19 +84,21 @@ export function DealCardItem({ card, index, onEdit, onDelete }: DealCardItemProp
 
           <div className="mt-4 space-y-2 text-xs text-gray-500">
             {card.owner ? (
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <User className="h-3.5 w-3.5 text-gray-400" />
-                <span>{card.owner}</span>
+                <span className="flex-1 truncate" title={card.owner}>
+                  {card.owner}
+                </span>
               </div>
             ) : null}
             {lastContact ? (
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <MessageSquare className="h-3.5 w-3.5 text-gray-400" />
                 <span>Último contato: {lastContact}</span>
               </div>
             ) : null}
             {nextAction ? (
-              <div className="flex items-center gap-2 text-indigo-600">
+              <div className="flex min-w-0 items-center gap-2 text-indigo-600">
                 <Clock className="h-3.5 w-3.5" />
                 <span>Próxima ação: {nextAction}</span>
               </div>

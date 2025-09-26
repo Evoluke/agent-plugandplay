@@ -161,5 +161,12 @@ body,
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
+
+  .clamp-2-lines {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
