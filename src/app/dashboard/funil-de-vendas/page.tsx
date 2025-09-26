@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { supabasebrowser } from '@/lib/supabaseClient'
-import { Filter, Loader2, MoreHorizontal, Plus } from 'lucide-react'
+import { Loader2, MoreHorizontal, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { CardDialog } from './components/card-dialog'
 import { PipelineDialog } from './components/pipeline-dialog'
@@ -737,21 +737,6 @@ export default function SalesPipelinePage() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2 text-sm text-gray-600">
-            <Button variant="outline" className="flex items-center gap-2 border-dashed">
-              <Filter className="h-4 w-4" /> Filtros rápidos
-            </Button>
-            <Button variant="ghost" className="text-gray-500 hover:text-gray-900">
-              Última atividade
-            </Button>
-            <Button variant="ghost" className="text-gray-500 hover:text-gray-900">
-              Proprietário
-            </Button>
-            <Button variant="ghost" className="text-gray-500 hover:text-gray-900">
-              Intervalo de datas
-            </Button>
           </div>
 
           <div className="-mx-2 overflow-x-auto pb-6">
