@@ -12,6 +12,7 @@ O módulo de CRM agora carrega o Chatwoot diretamente dentro do dashboard em um 
 1. Manter as variáveis de ambiente `CHATWOOT_BASE_URL` e `CHATWOOT_PLATFORM_TOKEN` configuradas.
 2. Garantir que o campo `chatwoot_user_id` esteja preenchido na tabela `company` para o usuário autenticado.
 3. Confirmar que a rota `/api/chatwoot/sso` responda com um objeto `{ url: string }`. Respostas inválidas exibem o estado de erro padrão.
+4. Validar que o backend realiza a chamada `POST` para `${CHATWOOT_BASE_URL}/platform/api/v1/users/{chatwoot_user_id}/login`, mantendo o header `api_access_token` exigido pelo Chatwoot.
 
 ## Boas práticas de UI
 - Evite adicionar cabeçalhos ou descrições extras no módulo para preservar a experiência imersiva.

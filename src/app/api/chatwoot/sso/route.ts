@@ -43,6 +43,7 @@ export async function GET() {
     const resp = await fetch(
       `${baseUrl}/platform/api/v1/users/${company.chatwoot_user_id}/login`,
       {
+        method: "POST",
         headers: {
           api_access_token: `${token}`,
         },
