@@ -164,3 +164,38 @@ create table public.dashboard_alerts (
   end_date date not null,
   constraint dashboard_alerts_pkey primary key (id)
 ) TABLESPACE pg_default;
+
+-- Tabelas para funil de vendas
+create table public.pipeline (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  company_id bigint not null,
+  name text not null,
+  constraint pipeline_pkey primary key (id),
+  constraint pipeline_company_id_fkey foreign key (company_id) references company (id) on delete cascade
+) TABLESPACE pg_default;
+
+create table public.stage (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  pipeline_id uuid not null,
+  name text not null,
+  position integer not null default 0,
+  constraint stage_pkey primary key (id),
+  constraint stage_pipeline_id_fkey foreign key (pipeline_id) references pipeline (id) on delete cascade
+) TABLESPACE pg_default;
+
+create table public.card (
+  id uuid not null default gen_random_uuid(),
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  stage_id uuid not null,
+  title text not null,
+  company_name text null,
+  value numeric(18, 2) null,
+  status text null,
+  priority text null,
+  position integer not null default 0,
+  constraint card_pkey primary key (id),
+  constraint card_stage_id_fkey foreign key (stage_id) references stage (id) on delete cascade
+) TABLESPACE pg_default;
