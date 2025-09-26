@@ -20,29 +20,6 @@ type User = {
   id: string;
 };
 
-declare global {
-  interface Window {
-    fbq?: (...args: unknown[]) => void;
-  }
-}
-
-const trackInitiateCheckout = (payment: Payment) => {
-  try {
-    if (typeof window === "undefined" || typeof window.fbq !== "function") {
-      return;
-    }
-
-    window.fbq("track", "InitiateCheckout", {
-      value: payment.amount,
-      currency: "BRL",
-      content_ids: [payment.id],
-      content_type: "payment",
-    });
-  } catch (error) {
-    console.error("Erro ao enviar evento do Pixel:", error);
-  }
-};
-
 
 export default function PaymentsPage() {
   const router = useRouter();
@@ -98,7 +75,6 @@ export default function PaymentsPage() {
   if (!user || !payments) return null;
 
   const handlePay = (payment: Payment) => {
-    trackInitiateCheckout(payment);
     setIsNavigating(true);
     try {
       router.push(`/dashboard/payments/${payment.id}/`);
