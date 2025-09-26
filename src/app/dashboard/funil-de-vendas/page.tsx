@@ -368,24 +368,25 @@ export default function SalesPipelinePage() {
   const [editingPipeline, setEditingPipeline] = useState<Pipeline | null>(null)
   const [pipelineFormLoading, setPipelineFormLoading] = useState(false)
 
-  const closePipelineDialog = useCallback(() => {
-    setPipelineDialogOpen(false)
+  const resetPipelineDialogState = useCallback(() => {
     setEditingPipeline(null)
     setPipelineForm(createInitialPipelineForm())
     setPipelineFormLoading(false)
+  }, [setEditingPipeline, setPipelineForm, setPipelineFormLoading])
+
+  useEffect(() => {
+    if (!pipelineDialogOpen) {
+      resetPipelineDialogState()
+    }
+  }, [pipelineDialogOpen, resetPipelineDialogState])
+
+  const closePipelineDialog = useCallback(() => {
+    setPipelineDialogOpen(false)
   }, [])
 
-  const handlePipelineDialogOpenChange = useCallback(
-    (open: boolean) => {
-      if (open) {
-        setPipelineDialogOpen(true)
-        return
-      }
-
-      closePipelineDialog()
-    },
-    [closePipelineDialog]
-  )
+  const handlePipelineDialogOpenChange = useCallback((open: boolean) => {
+    setPipelineDialogOpen(open)
+  }, [])
 
   const [cardDialogOpen, setCardDialogOpen] = useState(false)
   const [cardForm, setCardForm] = useState<CardFormState>(createInitialCardForm())
