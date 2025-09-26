@@ -8,6 +8,7 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Criação, edição e exclusão de funis com descrição opcional.
 - Limite de cinco funis por empresa e dez estágios por funil para manter o gerenciamento enxuto.
 - Gestão de estágios diretamente no modal de criação/edição do funil, com campos para adicionar, renomear e remover etapas antes de salvar.
+- Cada estágio recebe uma cor de fundo armazenada no campo `stage.color`, aplicada diretamente como plano de fundo da coluna no board.
 - Transferência de oportunidades entre estágios pelo modal de edição, escolhendo o destino no seletor dedicado, inclusive para colunas vazias.
 - Cadastro e atualização de cards com campos de contato, status, responsável, métricas de mensagens e datas importantes. O campo de tag continua disponível no formulário apenas para fins internos e não é mais exibido no card.
 - Campos de funil, estágios e cards com limites de caracteres para preservar a legibilidade das colunas.
@@ -22,7 +23,7 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 | Tabela | Campos principais | Observações |
 | --- | --- | --- |
 | `pipeline` | `id`, `company_id`, `name`, `description`, `created_at` | Relacionada a `company`. Remove estágios/cards associados em cascata. |
-| `stage` | `id`, `pipeline_id`, `name`, `position`, `created_at` | Ordenação baseada em `position`, com exclusão em cascata dos cards. |
+| `stage` | `id`, `pipeline_id`, `name`, `position`, `color`, `created_at` | Ordenação baseada em `position`, cor em formato hexadecimal utilizada no fundo das colunas e exclusão em cascata dos cards. |
 | `card` | `id`, `pipeline_id`, `stage_id`, `title`, `company_name`, `owner`, `tag`, `status`, `mrr`, `messages_count`, `last_message_at`, `next_action_at`, `position` | Salva métricas exibidas nos cards e mantém posição por estágio. |
 
 ### Funil padrão por empresa

@@ -11,11 +11,14 @@ export type Pipeline = {
   identifier: string | null
 }
 
+export const DEFAULT_STAGE_COLOR = '#F8FAFC'
+
 export type Stage = {
   id: string
   name: string
   position: number
   pipeline_id: string
+  color: string
 }
 
 export type DealCard = {
@@ -38,6 +41,7 @@ export type PipelineStageForm = {
   id?: string
   name: string
   position: number
+  color: string
 }
 
 export type PipelineFormState = {

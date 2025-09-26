@@ -1,8 +1,14 @@
-import { CardFormState, PipelineFormState, PipelineStageForm } from './types'
+import {
+  CardFormState,
+  DEFAULT_STAGE_COLOR,
+  PipelineFormState,
+  PipelineStageForm,
+} from './types'
 
 export const createEmptyStage = (position: number): PipelineStageForm => ({
   name: '',
   position,
+  color: DEFAULT_STAGE_COLOR,
 })
 
 export const reindexStages = (stages: PipelineStageForm[]): PipelineStageForm[] =>

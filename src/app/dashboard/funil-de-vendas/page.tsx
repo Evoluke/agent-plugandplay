@@ -28,6 +28,7 @@ import {
 import {
   CardFormState,
   Company,
+  DEFAULT_STAGE_COLOR,
   DealCard,
   Pipeline,
   PipelineFormState,
@@ -97,7 +98,7 @@ export default function SalesPipelinePage() {
     const [{ data: stageData, error: stageError }, { data: cardData, error: cardError }] = await Promise.all([
       supabasebrowser
         .from('stage')
-        .select('id, name, position, pipeline_id')
+        .select('id, name, position, pipeline_id, color')
         .eq('pipeline_id', pipelineId)
         .order('position', { ascending: true }),
       supabasebrowser
@@ -116,7 +117,12 @@ export default function SalesPipelinePage() {
       return
     }
 
-    setStages(stageData ?? [])
+    const normalizedStages = (stageData ?? []).map((stage) => ({
+      ...stage,
+      color: stage.color ?? DEFAULT_STAGE_COLOR,
+    }))
+
+    setStages(normalizedStages)
     setCards(
       (cardData ?? []).map((card) => ({
         ...card,
@@ -181,7 +187,7 @@ export default function SalesPipelinePage() {
 
     const { data, error } = await supabasebrowser
       .from('stage')
-      .select('id, name, position')
+      .select('id, name, position, color')
       .eq('pipeline_id', pipeline.id)
       .order('position', { ascending: true })
 
@@ -202,6 +208,7 @@ export default function SalesPipelinePage() {
       id: stage.id,
       name: stage.name,
       position: index,
+      color: stage.color ?? DEFAULT_STAGE_COLOR,
     }))
 
     setPipelineForm({
@@ -296,7 +303,7 @@ export default function SalesPipelinePage() {
   const syncDefaultPipelineStages = useCallback(async (pipelineId: string) => {
     const { data: existingStages, error } = await supabasebrowser
       .from('stage')
-      .select('id, name, position')
+      .select('id, name, position, color')
       .eq('pipeline_id', pipelineId)
       .order('position', { ascending: true })
 
@@ -304,7 +311,12 @@ export default function SalesPipelinePage() {
 
     const remainingStages = [...(existingStages ?? [])]
     const updates: { id: string; name: string; position: number }[] = []
-    const inserts: { name: string; position: number; pipeline_id: string }[] = []
+    const inserts: {
+      name: string
+      position: number
+      pipeline_id: string
+      color: string
+    }[] = []
 
     DEFAULT_STAGE_NAMES.forEach((stageName, index) => {
       const matchIndex = remainingStages.findIndex((stage) => stage.name === stageName)
@@ -314,7 +326,12 @@ export default function SalesPipelinePage() {
           updates.push({ id: matchedStage.id, name: stageName, position: index })
         }
       } else {
-        inserts.push({ name: stageName, position: index, pipeline_id: pipelineId })
+        inserts.push({
+          name: stageName,
+          position: index,
+          pipeline_id: pipelineId,
+          color: DEFAULT_STAGE_COLOR,
+        })
       }
     })
 
@@ -643,6 +660,7 @@ export default function SalesPipelinePage() {
               name: stage.name,
               position: stage.position,
               pipeline_id: pipelineId!,
+              color: stage.color ?? DEFAULT_STAGE_COLOR,
             }))
           )
           if (error) throw error
