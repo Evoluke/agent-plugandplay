@@ -72,61 +72,6 @@ const documentationSections: DocumentationSection[] = [
       },
     ],
   },
-  {
-    id: "knowledge-base",
-    title: "Base de conhecimento",
-    description: "Organize conteúdos que ajudam a IA a responder com precisão.",
-    items: [
-      {
-        id: "files",
-        title: "Gerenciando arquivos",
-        description: "Como subir, validar e remover documentos.",
-        body: [
-          "Aceitamos arquivos em formato PDF e TXT com até 10MB. Outros formatos serão rejeitados automaticamente.",
-          "O sistema estima a quantidade de tokens para manter o agente dentro dos limites suportados. Utilize documentos objetivos para otimizar o uso.",
-          "Caso precise atualizar um arquivo, faça o upload da nova versão e remova a antiga para evitar conteúdo duplicado.",
-        ],
-      },
-      {
-        id: "faq",
-        title: "Criando respostas rápidas",
-        description: "Construa uma biblioteca de respostas frequentes.",
-        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        body: [
-          "Organize as respostas rápidas por categoria para facilitar a manutenção conforme novas dúvidas surgirem.",
-          "Reforce palavras-chave e links úteis em cada resposta para orientar os usuários durante a conversa.",
-          "Revise o conteúdo periodicamente para garantir que esteja alinhado com processos e políticas atualizadas.",
-        ],
-      },
-    ],
-  },
-  {
-    id: "automation",
-    title: "Fluxos e integrações",
-    description: "Conecte o agente com ferramentas externas e automatize tarefas.",
-    items: [
-      {
-        id: "crm",
-        title: "Integrando com o CRM",
-        description: "Como habilitar o acesso ao Chatwoot.",
-        body: [
-          "Na seção de Configuração informe o identificador do seu workspace no Chatwoot para habilitar o atalho direto no menu.",
-          "Ao clicar em CRM na barra lateral abriremos o Chatwoot em uma nova aba utilizando SSO. Garanta que o usuário tenha permissões válidas.",
-          "Caso o acesso falhe, verifique as credenciais configuradas e tente novamente após alguns minutos.",
-        ],
-      },
-      {
-        id: "webhooks",
-        title: "Conectando webhooks",
-        description: "Dispare automações externas a partir das conversas.",
-        body: [
-          "Utilize os webhooks para enviar eventos do agente para o seu sistema de automações favorito.",
-          "Você pode disparar ações ao receber novos leads, quando uma conversa é encerrada ou ao detectar palavras-chave específicas.",
-          "Sempre teste os webhooks em um ambiente de homologação antes de ativá-los em produção.",
-        ],
-      },
-    ],
-  },
 ];
 
 type DocumentationMenuButtonProps = {
