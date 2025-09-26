@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/tooltip';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
-  Home,
   Settings,
   CreditCard,
   HelpCircle,
@@ -38,12 +37,12 @@ interface NavItem {
 const mainItem: NavItem = {
   label: 'Início',
   href: '/dashboard',
-  icon: <Home size={20} />,
+  icon: <Menu size={20} />,
 };
 
 const navItems: NavItem[] = [
-  { label: 'Pagamentos', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
   { label: 'Funil de vendas', href: '/dashboard/funil-de-vendas', icon: <Kanban size={20} /> },
+  { label: 'Pagamentos', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
   { label: 'Documentação', href: '/dashboard/documentacao', icon: <BookOpen size={20} /> },
 ];
 
