@@ -14,6 +14,7 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Títulos, empresas e responsáveis dos cards recebem truncamento automático para evitar estouro visual dentro das colunas.
 - Reordenação de cards por _drag and drop_ com `@hello-pangea/dnd`, garantindo atualização imediata da coluna/posição no Supabase e evitando o bloqueio de cliques observado com a implementação anterior.
 - Área de drop dedicada nas colunas vazias, permitindo transferir cards por arraste mesmo quando o estágio não possui oportunidades.
+- Colunas com cabeçalhos e fundos tonalizados pela cor registrada em `stage_color`, reforçando a identificação de cada etapa; ausências são preenchidas automaticamente com uma paleta padrão.
 - Botão de atualização dedicado ao funil, com bloqueio de 10 segundos entre cliques, cooldown reiniciado automaticamente ao alternar de funil e rotina automática que força a recarga do board a cada 5 minutos.
 
 ## Estrutura de dados
@@ -23,6 +24,7 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 | --- | --- | --- |
 | `pipeline` | `id`, `company_id`, `name`, `description`, `created_at` | Relacionada a `company`. Remove estágios/cards associados em cascata. |
 | `stage` | `id`, `pipeline_id`, `name`, `position`, `created_at` | Ordenação baseada em `position`, com exclusão em cascata dos cards. |
+| `stage_color` | `id`, `stage_id`, `background_color`, `created_at` | Relaciona um estágio à cor de fundo exibida no board; cada estágio possui no máximo um registro e, se estiver ausente, recebe automaticamente uma cor da paleta padrão. |
 | `card` | `id`, `pipeline_id`, `stage_id`, `title`, `company_name`, `owner`, `tag`, `status`, `mrr`, `messages_count`, `last_message_at`, `next_action_at`, `position` | Salva métricas exibidas nos cards e mantém posição por estágio. |
 
 ### Funil padrão por empresa

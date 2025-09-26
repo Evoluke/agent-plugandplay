@@ -16,6 +16,7 @@ export type Stage = {
   name: string
   position: number
   pipeline_id: string
+  background_color: string | null
 }
 
 export type DealCard = {

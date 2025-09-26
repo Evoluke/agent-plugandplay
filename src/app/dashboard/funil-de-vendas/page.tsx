@@ -22,6 +22,7 @@ import {
   createInitialCardForm,
   createInitialPipelineForm,
   fromInputDate,
+  getDefaultStageColor,
   reindexStages,
   toInputDate,
 } from './helpers'
@@ -49,6 +50,14 @@ import {
 const DEFAULT_PIPELINE_IDENTIFIER = 'agent_default_pipeline'
 const DEFAULT_PIPELINE_NAME = 'Funil da do Agente'
 const DEFAULT_STAGE_NAMES = ['Entrada', 'Atendimento Humano', 'Qualificado']
+
+type StageRow = {
+  id: string
+  name: string
+  position: number
+  pipeline_id: string
+  stage_color: { background_color: string | null } | null
+}
 
 function getStageCards(cards: DealCard[], stageId: string) {
   return cards
@@ -92,12 +101,72 @@ export default function SalesPipelinePage() {
     setPipelineFormLoading(false)
   }, [])
 
+  const ensureStageColors = useCallback(
+    async (pipelineId: string, stageRows?: StageRow[]): Promise<StageRow[]> => {
+      let rows = stageRows ?? []
+
+      if (!rows.length) {
+        const { data, error } = await supabasebrowser
+          .from('stage')
+          .select('id, name, position, pipeline_id, stage_color(background_color)')
+          .eq('pipeline_id', pipelineId)
+          .order('position', { ascending: true })
+
+        if (error) {
+          console.error(error)
+          return stageRows ?? []
+        }
+
+        rows = (data ?? []) as StageRow[]
+      }
+
+      const missingColors = rows.filter(
+        (stage) => !stage.stage_color?.background_color
+      )
+
+      if (!missingColors.length) {
+        return rows
+      }
+
+      const payload = missingColors.map((stage) => ({
+        stage_id: stage.id,
+        background_color: getDefaultStageColor(stage.position),
+      }))
+
+      const { data: upsertedColors, error } = await supabasebrowser
+        .from('stage_color')
+        .upsert(payload)
+        .select('stage_id, background_color')
+
+      if (error) {
+        console.error(error)
+        return rows
+      }
+
+      const colorMap = new Map(
+        (upsertedColors ?? []).map((item) => [item.stage_id, item.background_color])
+      )
+
+      return rows.map((stage) => {
+        if (stage.stage_color?.background_color) {
+          return stage
+        }
+
+        const background_color = colorMap.get(stage.id)
+        return background_color
+          ? { ...stage, stage_color: { background_color } }
+          : stage
+      })
+    },
+    []
+  )
+
   const loadBoard = useCallback(async (pipelineId: string) => {
     setBoardLoading(true)
     const [{ data: stageData, error: stageError }, { data: cardData, error: cardError }] = await Promise.all([
       supabasebrowser
         .from('stage')
-        .select('id, name, position, pipeline_id')
+        .select('id, name, position, pipeline_id, stage_color(background_color)')
         .eq('pipeline_id', pipelineId)
         .order('position', { ascending: true }),
       supabasebrowser
@@ -116,7 +185,21 @@ export default function SalesPipelinePage() {
       return
     }
 
-    setStages(stageData ?? [])
+    const normalizedStageRows = await ensureStageColors(
+      pipelineId,
+      (stageData ?? []) as StageRow[]
+    )
+
+    const normalizedStages: Stage[] = normalizedStageRows.map((stage) => ({
+      id: stage.id,
+      name: stage.name,
+      position: stage.position,
+      pipeline_id: stage.pipeline_id,
+      background_color:
+        stage.stage_color?.background_color ?? getDefaultStageColor(stage.position),
+    }))
+
+    setStages(normalizedStages)
     setCards(
       (cardData ?? []).map((card) => ({
         ...card,
@@ -125,7 +208,7 @@ export default function SalesPipelinePage() {
       }))
     )
     setBoardLoading(false)
-  }, [])
+  }, [ensureStageColors])
 
   const handleManualRefresh = useCallback(() => {
     if (!selectedPipelineId) {
@@ -341,7 +424,9 @@ export default function SalesPipelinePage() {
         )
       if (deleteError) throw deleteError
     }
-  }, [])
+
+    await ensureStageColors(pipelineId)
+  }, [ensureStageColors])
 
   const ensureDefaultPipeline = useCallback(
     async (companyId: number) => {

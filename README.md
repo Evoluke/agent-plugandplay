@@ -50,6 +50,7 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 - Os campos de funis, estágios e cards contam com limites de caracteres para evitar nomes excessivamente longos e manter a consistência visual do board.
 - Visualizar o quadro do funil sem faixas de filtros rápidos, mantendo o foco na movimentação das oportunidades.
 - Arrastar cards para estágios vazios utilizando a área destacada de destino, mantendo o comportamento consistente entre drag and drop e o seletor do modal.
+- Identificar rapidamente cada etapa com cabeçalhos e fundos suavemente coloridos segundo o valor salvo em `stage_color`; quando não há registro, o front-end aplica uma cor padrão da paleta para manter a consistência visual.
 - Registrar informações relevantes em cards (MRR, responsável, status, última interação e próximas ações).
 - Digitar continuamente nos campos dos estágios e dos cards sem perda de foco, com os modais liberando o board assim que são fechados.
 - Fechar o modal com **Cancelar** ou **Salvar** para descartar ou confirmar alterações com segurança; os diálogos utilizam um componente `Modal` próprio que aplica o _portal_ manualmente, desmonta o conteúdo assim que deixa de estar visível, restaura o `overflow` do `body` e remove a sobreposição na mesma renderização. Em conjunto com o mecanismo de drag and drop `@hello-pangea/dnd`, o board permanece interativo após qualquer salvamento ou cancelamento, sem travamentos residuais.
@@ -57,7 +58,7 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 - Em dispositivos móveis, o board kanban utiliza rolagem horizontal com alinhamento por estágio para manter a leitura confortável sem perder a estrutura original.
 - Um botão de atualização ao lado das opções do funil recarrega as colunas sob demanda, fica indisponível por 10 segundos após cada clique, tem o cooldown reiniciado quando o usuário troca de funil e conta com uma rotina automática que força a atualização do board a cada 5 minutos.
 
-Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` e `card`) e vinculados à empresa autenticada via Supabase.
+Os dados são salvos em tabelas dedicadas (`pipeline`, `stage`, `stage_color` e `card`) e vinculados à empresa autenticada via Supabase; a tabela `stage_color` armazena o gradiente utilizado nas colunas do board e recebe automaticamente uma cor padrão quando nenhum valor foi cadastrado previamente.
 
 ## 🧱 Navegação do dashboard
 
