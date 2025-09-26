@@ -8,6 +8,7 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Criação, edição e exclusão de funis com descrição opcional.
 - Limite de cinco funis por empresa e dez estágios por funil para manter o gerenciamento enxuto.
 - Gestão de estágios diretamente no modal de criação/edição do funil, com campos para adicionar, renomear e remover etapas antes de salvar.
+- Definição de cores individuais para cada estágio, reaproveitadas no board e nos seletores para reforçar a identidade visual.
 - Transferência de oportunidades entre estágios pelo modal de edição, escolhendo o destino no seletor dedicado, inclusive para colunas vazias.
 - Cadastro e atualização de cards com campos de contato, status, responsável, métricas de mensagens e datas importantes. O campo de tag continua disponível no formulário apenas para fins internos e não é mais exibido no card.
 - Campos de funil, estágios e cards com limites de caracteres para preservar a legibilidade das colunas.
@@ -28,7 +29,7 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 ### Funil padrão por empresa
 
 - Toda empresa recebe automaticamente o funil **"Funil da do Agente"**, identificado no banco de dados pelo campo `identifier = 'agent_default_pipeline'`.
-- Os estágios deste funil são fixos e seguem a ordem: **Entrada**, **Atendimento Humano** e **Qualificado**.
+- Os estágios deste funil são fixos e seguem a ordem: **Entrada**, **Atendimento Humano** e **Qualificado**, com cores padrão em tons de azul e verde para facilitar a identificação rápida.
 - O front-end garante que o funil padrão exista antes de carregar o board, restaure os nomes/ordens configurados e o proteja contra exclusão ou edição.
 - Como apenas um funil pode utilizar este identificador por empresa, criações manuais sempre resultam em novos funis personalizados, mantendo o padrão intacto.
 

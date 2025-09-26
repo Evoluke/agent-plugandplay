@@ -46,6 +46,7 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 - Criar, editar e excluir funis para diferentes jornadas comerciais (menu de três pontinhos no topo da página).
 - Cada empresa pode manter até cinco funis ativos simultaneamente; cada funil aceita no máximo dez estágios.
 - Organizar etapas personalizadas para cada funil, definindo todos os estágios diretamente no modal de criação/edição e reordenando oportunidades por _drag and drop_ com `@hello-pangea/dnd`.
+- Personalizar as cores de cada estágio, refletindo-as no cabeçalho das colunas e nos seletores dos modais.
 - Os campos de funis, estágios e cards contam com limites de caracteres para evitar nomes excessivamente longos e manter a consistência visual do board.
 - Visualizar o quadro do funil sem faixas de filtros rápidos, mantendo o foco na movimentação das oportunidades.
 - Arrastar cards para estágios vazios utilizando a área destacada de destino, mantendo o comportamento consistente entre drag and drop e o seletor do modal.

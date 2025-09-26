@@ -16,6 +16,7 @@ export type Stage = {
   name: string
   position: number
   pipeline_id: string
+  color: string | null
 }
 
 export type DealCard = {
@@ -38,6 +39,7 @@ export type PipelineStageForm = {
   id?: string
   name: string
   position: number
+  color: string
 }
 
 export type PipelineFormState = {

@@ -21,6 +21,7 @@ type PipelineDialogProps = {
   onClose: () => void
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
   onUpdateStageName: (index: number, value: string) => void
+  onUpdateStageColor: (index: number, value: string) => void
   onAddStage: () => void
   onRemoveStage: (index: number) => void
   onChangeField: (field: 'name' | 'description', value: string) => void
@@ -34,6 +35,7 @@ export function PipelineDialog({
   onClose,
   onSubmit,
   onUpdateStageName,
+  onUpdateStageColor,
   onAddStage,
   onRemoveStage,
   onChangeField,
@@ -98,13 +100,27 @@ export function PipelineDialog({
                   <span className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-xs font-medium text-gray-500">
                     {index + 1}
                   </span>
-                  <Input
-                    value={stage.name}
-                    onChange={(event) => onUpdateStageName(index, event.target.value)}
-                    placeholder={`Estágio ${index + 1}`}
-                    disabled={loading}
-                    maxLength={STAGE_NAME_MAX_LENGTH}
-                  />
+                  <div className="flex flex-1 items-center gap-2">
+                    <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-2 py-1">
+                      <span className="text-xs text-gray-500">Cor</span>
+                      <input
+                        type="color"
+                        value={stage.color}
+                        onChange={(event) => onUpdateStageColor(index, event.target.value)}
+                        className="h-6 w-8 cursor-pointer rounded border border-slate-200 bg-white p-0"
+                        aria-label={`Selecionar cor do estágio ${index + 1}`}
+                        disabled={loading}
+                      />
+                    </div>
+                    <Input
+                      className="flex-1"
+                      value={stage.name}
+                      onChange={(event) => onUpdateStageName(index, event.target.value)}
+                      placeholder={`Estágio ${index + 1}`}
+                      disabled={loading}
+                      maxLength={STAGE_NAME_MAX_LENGTH}
+                    />
+                  </div>
                   <Button
                     type="button"
                     size="icon"

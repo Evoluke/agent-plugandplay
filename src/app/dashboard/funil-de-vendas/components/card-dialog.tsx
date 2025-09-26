@@ -77,7 +77,14 @@ export function CardDialog({
             <SelectContent>
               {stages.map((stage) => (
                 <SelectItem key={stage.id} value={stage.id}>
-                  {stage.name}
+                  <span className="flex items-center gap-2">
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: stage.color ?? '#CBD5F5' }}
+                    />
+                    <span>{stage.name}</span>
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>

@@ -1,8 +1,13 @@
+import { STAGE_COLOR_PALETTE } from './constants'
 import { CardFormState, PipelineFormState, PipelineStageForm } from './types'
+
+export const getStageColorByIndex = (index: number) =>
+  STAGE_COLOR_PALETTE[index % STAGE_COLOR_PALETTE.length]
 
 export const createEmptyStage = (position: number): PipelineStageForm => ({
   name: '',
   position,
+  color: getStageColorByIndex(position),
 })
 
 export const reindexStages = (stages: PipelineStageForm[]): PipelineStageForm[] =>

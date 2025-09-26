@@ -24,17 +24,27 @@ export function StageColumn({
   onDeleteCard,
   isLoading,
 }: StageColumnProps) {
+  const stageColor = stage.color ?? '#CBD5F5'
+
   return (
     <div
       className={cn(
-        'flex h-full min-w-[260px] flex-shrink-0 flex-col rounded-2xl bg-slate-50/80 p-4 shadow-sm',
+        'flex h-full min-w-[260px] flex-shrink-0 flex-col rounded-2xl border-t-4 border-transparent bg-slate-50/80 p-4 shadow-sm',
         'w-full snap-start sm:w-[280px] lg:w-[320px]'
       )}
+      style={{ borderTopColor: stageColor }}
     >
       <div className="mb-4 flex items-start justify-between gap-2">
         <div>
           <p className="text-xs uppercase tracking-wide text-gray-600">Estágio</p>
-          <h3 className="text-lg font-semibold text-gray-900">{stage.name}</h3>
+          <div className="flex items-center gap-2">
+            <span
+              aria-hidden
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: stageColor }}
+            />
+            <h3 className="text-lg font-semibold text-gray-900">{stage.name}</h3>
+          </div>
           <p className="text-xs text-gray-500">{cards.length} oportunidades</p>
         </div>
       </div>
