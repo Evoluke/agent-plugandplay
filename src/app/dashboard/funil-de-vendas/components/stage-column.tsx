@@ -33,7 +33,7 @@ export function StageColumn({
     >
       <div className="mb-4 flex items-start justify-between gap-2">
         <div>
-          <p className="text-xs uppercase tracking-wide text-gray-400">Estágio</p>
+          <p className="text-xs uppercase tracking-wide text-gray-600">Estágio</p>
           <h3 className="text-lg font-semibold text-gray-900">{stage.name}</h3>
           <p className="text-xs text-gray-500">{cards.length} oportunidades</p>
         </div>
@@ -50,7 +50,7 @@ export function StageColumn({
             )}
           >
             {isLoading ? (
-              <div className="flex h-32 items-center justify-center text-gray-400">
+              <div className="flex h-32 items-center justify-center text-gray-600">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando
               </div>
             ) : cards.length ? (
@@ -64,7 +64,7 @@ export function StageColumn({
                 />
               ))
             ) : (
-              <div className="flex h-24 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white/60 text-xs font-medium uppercase tracking-wide text-slate-400">
+              <div className="flex h-24 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white/70 text-xs font-medium uppercase tracking-wide text-slate-600">
                 Arraste oportunidades para cá
               </div>
             )}
