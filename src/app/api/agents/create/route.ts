@@ -191,6 +191,56 @@ async function cleanupAgent(agentId: string) {
   await supabaseadmin.from("agents").delete().eq("id", agentId);
 }
 
+async function triggerCreateBox(
+  agentId: string,
+  chatwootId: string | number,
+  chatwootUserId: string | number
+) {
+  const baseUrl = process.env.N8N_AGENT_WEBHOOK_URL;
+  const token = process.env.N8N_WEBHOOK_TOKEN;
+
+  if (!baseUrl || !token) {
+    throw new Error("N8N create-box webhook não configurado");
+  }
+
+  const targetUrl = `${baseUrl.replace(/\/$/, "")}/create-box`;
+
+  const response = await fetch(targetUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${token}`,
+    },
+    body: JSON.stringify({
+      agent_id: agentId,
+      chatwoot_id: chatwootId,
+      chatwoot_user_id: chatwootUserId,
+    }),
+  });
+
+  const text = await response.text();
+  let data: unknown = null;
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
+  }
+
+  if (!response.ok) {
+    const message =
+      typeof (data as { error?: unknown })?.error === "string"
+        ? (data as { error: string }).error
+        : "Falha ao criar caixa do Chatwoot.";
+
+    throw new Error(message);
+  }
+
+  return data;
+}
+
 async function triggerPayment(
   accessToken: string | null,
   payment: { id: string; amount: number | string; due_date: string }
@@ -250,7 +300,7 @@ export async function GET(request: Request) {
 
   const { data: company, error: companyError } = await supabaseadmin
     .from("company")
-    .select("id")
+    .select("id, chatwoot_id, chatwoot_user_id")
     .eq("user_id", user.id)
     .single();
 
@@ -373,6 +423,29 @@ export async function POST(request: Request) {
     console.error("[agents:create] Erro ao aplicar template", error);
     await cleanupAgent(agentId);
     return errorResponse("Erro ao aplicar template do agente.", 500);
+  }
+
+  if (!company.chatwoot_id || !company.chatwoot_user_id) {
+    await cleanupAgent(agentId);
+    return errorResponse(
+      "Integração do Chatwoot não configurada para esta empresa.",
+      409
+    );
+  }
+
+  try {
+    await triggerCreateBox(
+      agentId,
+      company.chatwoot_id,
+      company.chatwoot_user_id
+    );
+  } catch (error) {
+    console.error("[agents:create] Erro ao chamar create-box no N8N", error);
+    await cleanupAgent(agentId);
+    return errorResponse(
+      "Não foi possível provisionar a caixa do Chatwoot para o agente.",
+      502
+    );
   }
 
   const dueDate = new Date();
