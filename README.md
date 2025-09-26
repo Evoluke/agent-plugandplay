@@ -48,3 +48,14 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - [Chatwoot](https://www.chatwoot.com/)
 - [Vercel](https://vercel.com/)
 
+## 📊 Funil de vendas
+
+A área **Funil de vendas** no dashboard permite organizar oportunidades em um board Kanban inspirado na interface do CRM. Para habilitar o recurso:
+
+- Acesse *Dashboard → Funil de vendas* na barra lateral.
+- Crie diferentes funis e gerencie etapas com cores e probabilidade de conversão.
+- Cadastre oportunidades com valores, responsáveis e notas, arrastando cards entre colunas usando @hello-pangea/dnd.
+- Utilize os filtros por responsável, status ou busca para focar no que importa; a reorganização por arrastar fica disponível quando não há filtros ativos.
+- Execute as migrações do Supabase para criar as tabelas `pipeline`, `stage` e `card`, responsáveis por armazenar funis, etapas e cards do quadro.
+
+As operações de criação, edição, exclusão e movimentação respeitam as políticas de segurança por empresa definidas nas novas migrações SQL.
