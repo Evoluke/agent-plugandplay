@@ -48,3 +48,8 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - [Chatwoot](https://www.chatwoot.com/)
 - [Vercel](https://vercel.com/)
 
+## 📈 Funil de vendas
+
+- Gerencie funis no dashboard em **Funil de vendas**, com criação, edição e exclusão de funis e estágios.
+- Arraste cards entre colunas para acompanhar oportunidades por etapa e mantenha os dados organizados.
+
