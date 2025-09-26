@@ -24,6 +24,11 @@ type Agent = {
 
 type PaymentStatus = "pendente" | "pago" | "estorno";
 
+type PaymentRecord = {
+  due_date: string | null;
+  status: PaymentStatus | null;
+};
+
 const typeLabels: Record<string, string> = {
   sdr: "SDR",
   "pre-qualificacao": "Pré-qualificação",
@@ -60,15 +65,14 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
       }
 
       const {
-        data: payment,
+        data: payments,
         error: paymentError,
       } = await supabasebrowser
         .from("payments")
         .select("due_date,status")
         .eq("company_id", agentRecord.company_id)
         .order("due_date", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(10);
 
       const {
         data: companyRecord,
@@ -89,17 +93,46 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
         return;
       }
 
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const paymentList = (payments ?? []) as PaymentRecord[];
+
+      const activePayment = paymentList.find((item) => {
+        if (item.status !== "pago" || !item.due_date) return false;
+        const dueDate = new Date(item.due_date);
+        dueDate.setHours(0, 0, 0, 0);
+        return dueDate >= today;
+      });
+
+      const pendingPayment = paymentList.find((item) => {
+        if (item.status !== "pendente") return false;
+        if (!item.due_date) return true;
+        const dueDate = new Date(item.due_date);
+        dueDate.setHours(0, 0, 0, 0);
+        return dueDate >= today;
+      });
+
+      const refundedPayment = paymentList.find((item) => item.status === "estorno");
+
       const expiresAt =
-        companyRecord?.subscription_expires_at ?? payment?.due_date ?? null;
+        companyRecord?.subscription_expires_at ?? activePayment?.due_date ?? null;
 
       if (companyError) {
-        setCorporateExpiration(payment?.due_date ?? null);
+        setCorporateExpiration(activePayment?.due_date ?? null);
       } else {
         setCorporateExpiration(expiresAt);
       }
-      setSubscriptionStatus(
-        (payment?.status as PaymentStatus | undefined) ?? null
-      );
+
+      const derivedStatus: PaymentStatus | null = activePayment
+        ? "pago"
+        : pendingPayment
+        ? "pendente"
+        : refundedPayment
+        ? "estorno"
+        : null;
+
+      setSubscriptionStatus(derivedStatus);
     }
 
     loadSubscription();

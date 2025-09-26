@@ -41,4 +41,5 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - O card lateral de "Assinatura corporativa" deve deixar claro que o vencimento exibido é compartilhado entre todos os agentes da empresa.
 - Utilize o mesmo tom tipográfico do estado "Ativo"/"Pendente" já existente e destaque a data formatada com `pt-BR`, proveniente de `company.subscription_expires_at`.
 - Em caso de erro na leitura da assinatura corporativa, apresente a mensagem padrão "Não encontrada" para reforçar que o problema é da conta da empresa, não de um agente específico.
+- Mensagens de status devem considerar apenas cobranças pagas com vencimento vigente, evitando alertas falsos quando existir uma fatura futura pendente.
 

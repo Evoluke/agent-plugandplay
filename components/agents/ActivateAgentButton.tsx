@@ -7,6 +7,11 @@ import { toast } from "sonner";
 
 type PaymentStatus = "pendente" | "pago" | "estorno";
 
+type PaymentRecord = {
+  due_date: string | null;
+  status: PaymentStatus | null;
+};
+
 interface Props {
   agentId: string;
   onActivated: () => void;
@@ -35,15 +40,14 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
     }
 
     const {
-      data: payment,
-      error: paymentError,
+      data: payments,
+      error: paymentsError,
     } = await supabasebrowser
       .from("payments")
       .select("due_date,status")
       .eq("company_id", agent.company_id)
       .order("due_date", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .limit(10);
 
     const {
       data: company,
@@ -54,7 +58,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       .eq("id", agent.company_id)
       .single();
 
-    if (paymentError) {
+    if (paymentsError) {
       toast.error("Erro ao consultar pagamentos da empresa.");
       setLoading(false);
       return;
@@ -66,26 +70,27 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       return;
     }
 
-    if (!payment) {
-      toast.error(
-        "Nenhum pagamento corporativo encontrado. Regularize a assinatura da empresa para ativar seus agentes."
-      );
-      setLoading(false);
-      return;
-    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const status = payment.status as PaymentStatus | null;
+    const activePayment = ((payments ?? []) as PaymentRecord[]).find((item) => {
+      if (item.status !== "pago") return false;
+      if (!item.due_date) return false;
+      const dueDate = new Date(item.due_date);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate >= today;
+    });
 
-    if (status !== "pago") {
+    if (!activePayment) {
       toast.error(
-        "A empresa possui uma cobrança pendente ou estornada. Conclua o pagamento corporativo para ativar o agente."
+        "Nenhum pagamento corporativo pago com vencimento vigente foi encontrado. Regularize a assinatura da empresa para ativar seus agentes."
       );
       setLoading(false);
       return;
     }
 
     const expirationSource =
-      company.subscription_expires_at ?? payment.due_date ?? null;
+      company.subscription_expires_at ?? activePayment.due_date ?? null;
 
     if (!expirationSource) {
       toast.error(
@@ -94,9 +99,6 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       setLoading(false);
       return;
     }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
     const dueDate = new Date(expirationSource);
     dueDate.setHours(0, 0, 0, 0);
