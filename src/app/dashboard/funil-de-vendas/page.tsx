@@ -1113,8 +1113,8 @@ export default function SalesPipelinePage() {
 
       <Dialog.Root open={pipelineDialogOpen} onOpenChange={handlePipelineDialogOpenChange}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl">
+          <Dialog.Overlay className="fixed inset-0 bg-black/30 transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0">
             <Dialog.Title className="text-lg font-semibold text-gray-900">
               {editingPipeline ? 'Editar funil' : 'Novo funil'}
             </Dialog.Title>
@@ -1218,8 +1218,8 @@ export default function SalesPipelinePage() {
 
       <Dialog.Root open={cardDialogOpen} onOpenChange={handleCardDialogOpenChange}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl">
+          <Dialog.Overlay className="fixed inset-0 bg-black/30 transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl transition-opacity duration-150 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0">
             <Dialog.Title className="text-lg font-semibold text-gray-900">
               {editingCard ? 'Editar oportunidade' : 'Nova oportunidade'}
             </Dialog.Title>

@@ -25,4 +25,4 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 - Estágios são manipulados dentro do modal principal, evitando diálogos adicionais; a confirmação de exclusão permanece apenas para funis e cards.
 - A contagem de oportunidades por estágio é recalculada automaticamente após cada operação.
 - O botão **Cancelar** fecha o modal sem persistir mudanças e libera imediatamente a interação com o restante da interface.
-- Campos de estágios e cards preservam o foco durante a digitação e, ao fechar os modais por **Cancelar** ou **Salvar**, o board volta a aceitar interações imediatamente, mesmo após sequências de edições.
+- Campos de estágios e cards preservam o foco durante a digitação e, ao fechar os modais por **Cancelar** ou **Salvar**, o board volta a aceitar interações imediatamente, com a sobreposição visual sendo desativada no mesmo instante para evitar bloqueios residuais mesmo após sequências de edições.
