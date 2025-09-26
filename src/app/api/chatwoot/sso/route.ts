@@ -50,12 +50,30 @@ export async function GET() {
       }
     );
 
-    const text = await resp.text();
-    let data: { url?: string } = {};
+    const contentType = resp.headers.get("content-type") ?? "";
+    const bodyText = await resp.text();
+
+    if (!contentType.includes("application/json")) {
+      console.error("[Chatwoot SSO] Unexpected response", {
+        status: resp.status,
+        contentType,
+        bodyPreview: bodyText.slice(0, 200),
+      });
+      return NextResponse.json(
+        { error: "SSO indisponível" },
+        { status: resp.status || 500 }
+      );
+    }
+
+    let data: { url?: string };
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(bodyText);
     } catch (err) {
       console.error("[Chatwoot SSO] Error parsing response", err);
+      return NextResponse.json(
+        { error: "SSO indisponível" },
+        { status: resp.status || 500 }
+      );
     }
 
     if (!resp.ok || !data.url) {
