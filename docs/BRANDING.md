@@ -26,3 +26,9 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
+## Diretrizes para o funil de vendas
+- Os cards do funil utilizam cantos arredondados de 16 px, sombra suave e espaçamento interno de 16 px.
+- Indicadores de status (tags, risco, responsável) devem seguir a paleta principal com variações em azul, roxo e verde claro.
+- O cabeçalho de cada estágio apresenta contagem de oportunidades em tipografia pequena e discreta.
+- Ações contextuais (editar, remover, abrir detalhes) são exibidas com ícones `lucide-react` alinhados ao canto superior direito.
+
