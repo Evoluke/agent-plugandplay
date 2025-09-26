@@ -741,7 +741,7 @@ export default function SalesPipelinePage() {
 
           <div className="-mx-2 overflow-x-auto pb-6">
             <DragDropContext onDragEnd={handleDragEnd}>
-              <div className="flex gap-4 px-2">
+              <div className="flex gap-4 px-2 snap-x snap-mandatory md:snap-none">
                 {stages.map((stage) => (
                   <StageColumn
                     key={stage.id}

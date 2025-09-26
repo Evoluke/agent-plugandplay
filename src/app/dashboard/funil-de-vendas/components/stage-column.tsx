@@ -25,7 +25,12 @@ export function StageColumn({
   isLoading,
 }: StageColumnProps) {
   return (
-    <div className="flex h-full w-[320px] flex-shrink-0 flex-col rounded-2xl bg-slate-50/80 p-4 shadow-sm">
+    <div
+      className={cn(
+        'flex h-full min-w-[260px] flex-shrink-0 flex-col rounded-2xl bg-slate-50/80 p-4 shadow-sm',
+        'w-full snap-start sm:w-[280px] lg:w-[320px]'
+      )}
+    >
       <div className="mb-4 flex items-start justify-between gap-2">
         <div>
           <p className="text-xs uppercase tracking-wide text-gray-400">Estágio</p>
