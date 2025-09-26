@@ -52,6 +52,13 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 
 Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` e `card`) e vinculados à empresa autenticada via Supabase.
 
+## 🧱 Navegação do dashboard
+
+- O menu lateral reúne as ações de **Configuração**, **Suporte** e **Logout** em um submenu acessível pelo ícone de três pontos horizontais posicionado no rodapé da sidebar.
+- O submenu mantém o foco na navegação principal, exibindo apenas os atalhos operacionais quando solicitado.
+- O primeiro atalho da barra lateral preserva o ícone de casa para destacar o retorno rápido ao dashboard principal.
+- A ordem dos atalhos prioriza o **Funil de vendas** antes de **Pagamentos**, mantendo o fluxo comercial em evidência.
+
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)
