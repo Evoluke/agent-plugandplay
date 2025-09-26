@@ -455,6 +455,10 @@ export default function SalesPipelinePage() {
     setCardDialogOpen(true)
   }, [])
 
+  const handleSelectCardStage = useCallback((stageId: string) => {
+    setCardStageId(stageId)
+  }, [])
+
   const handleCardSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
@@ -482,14 +486,41 @@ export default function SalesPipelinePage() {
 
       try {
         if (editingCard) {
+          const isChangingStage = editingCard.stage_id !== cardStageId
+          const destinationCards = getStageCards(cards, cardStageId).filter(
+            (card) => card.id !== editingCard.id
+          )
+          const nextPosition = isChangingStage
+            ? destinationCards.length
+            : editingCard.position
+
           const { error } = await supabasebrowser
             .from('card')
             .update({
               ...payload,
               stage_id: cardStageId,
+              position: nextPosition,
             })
             .eq('id', editingCard.id)
           if (error) throw error
+
+          if (isChangingStage) {
+            const sourceCards = getStageCards(cards, editingCard.stage_id).filter(
+              (card) => card.id !== editingCard.id
+            )
+
+            const reindexResponses = await Promise.all(
+              sourceCards.map((card, index) =>
+                supabasebrowser
+                  .from('card')
+                  .update({ position: index })
+                  .eq('id', card.id)
+              )
+            )
+
+            const reindexError = reindexResponses.find(({ error }) => error)?.error
+            if (reindexError) throw reindexError
+          }
           toast.success('Oportunidade atualizada.')
         } else {
           const stageCards = getStageCards(cards, cardStageId)
@@ -772,9 +803,12 @@ export default function SalesPipelinePage() {
         open={cardDialogOpen}
         editingCard={editingCard}
         form={cardForm}
+        stages={stages}
+        selectedStageId={cardStageId}
         onClose={closeCardDialog}
         onSubmit={handleCardSubmit}
         onChangeField={handleCardFieldChange}
+        onSelectStage={handleSelectCardStage}
       />
     </div>
   )

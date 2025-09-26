@@ -3,19 +3,39 @@
 import { FormEvent, useId } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { DealCard, CardFormState } from '../types'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { CardFormState, DealCard, Stage } from '../types'
 import { Modal } from './modal'
 
 type CardDialogProps = {
   open: boolean
   editingCard: DealCard | null
   form: CardFormState
+  stages: Stage[]
+  selectedStageId: string | null
   onClose: () => void
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
   onChangeField: <K extends keyof CardFormState>(field: K, value: CardFormState[K]) => void
+  onSelectStage: (stageId: string) => void
 }
 
-export function CardDialog({ open, editingCard, form, onClose, onSubmit, onChangeField }: CardDialogProps) {
+export function CardDialog({
+  open,
+  editingCard,
+  form,
+  stages,
+  selectedStageId,
+  onClose,
+  onSubmit,
+  onChangeField,
+  onSelectStage,
+}: CardDialogProps) {
   const titleId = useId()
   const descriptionId = useId()
 
@@ -35,6 +55,27 @@ export function CardDialog({ open, editingCard, form, onClose, onSubmit, onChang
       </p>
 
       <form className="mt-4 grid gap-4 md:grid-cols-2" onSubmit={onSubmit}>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Estágio</label>
+          <Select
+            value={selectedStageId ?? ''}
+            onValueChange={(value) => {
+              onSelectStage(value)
+            }}
+            disabled={!stages.length}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione um estágio" />
+            </SelectTrigger>
+            <SelectContent>
+              {stages.map((stage) => (
+                <SelectItem key={stage.id} value={stage.id}>
+                  {stage.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="space-y-2 md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Contato / Empresa</label>
           <Input

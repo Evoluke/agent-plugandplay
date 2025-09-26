@@ -2,6 +2,7 @@
 
 import { Droppable } from '@hello-pangea/dnd'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { Loader2, Plus } from 'lucide-react'
 import { DealCard, Stage } from '../types'
 import { DealCardItem } from './deal-card-item'
@@ -34,17 +35,20 @@ export function StageColumn({
       </div>
 
       <Droppable droppableId={stage.id} isDropDisabled={isLoading}>
-        {(provided) => (
+        {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="flex-1 space-y-3 overflow-y-auto pr-1"
+            className={cn(
+              'flex min-h-[120px] flex-1 flex-col gap-3 overflow-y-auto pr-1 transition-colors',
+              snapshot.isDraggingOver ? 'bg-white/80' : undefined
+            )}
           >
             {isLoading ? (
               <div className="flex h-32 items-center justify-center text-gray-400">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando
               </div>
-            ) : (
+            ) : cards.length ? (
               cards.map((card, index) => (
                 <DealCardItem
                   key={card.id}
@@ -54,6 +58,10 @@ export function StageColumn({
                   onDelete={onDeleteCard}
                 />
               ))
+            ) : (
+              <div className="flex h-24 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white/60 text-xs font-medium uppercase tracking-wide text-slate-400">
+                Arraste oportunidades para cá
+              </div>
             )}
             {provided.placeholder}
           </div>
