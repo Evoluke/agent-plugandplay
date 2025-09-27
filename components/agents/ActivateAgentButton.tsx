@@ -12,6 +12,11 @@ type PaymentRecord = {
   status: PaymentStatus | null;
 };
 
+type AgentRecord = {
+  company_id: string;
+  type: string;
+};
+
 interface Props {
   agentId: string;
   onActivated: () => void;
@@ -29,14 +34,37 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       error: agentError,
     } = await supabasebrowser
       .from("agents")
-      .select("company_id")
+      .select("company_id,type")
       .eq("id", agentId)
-      .single();
+      .single<AgentRecord>();
 
     if (agentError || !agent) {
       toast.error("Erro ao identificar a empresa do agente.");
       setLoading(false);
       return;
+    }
+
+    if (agent.type === "sdr") {
+      const {
+        data: googleTokens,
+        error: googleTokensError,
+      } = await supabasebrowser
+        .from("agent_google_tokens")
+        .select("id")
+        .eq("agent_id", agentId)
+        .limit(1);
+
+      if (googleTokensError) {
+        toast.error("Erro ao verificar a conexão com o Google Calendar.");
+        setLoading(false);
+        return;
+      }
+
+      if (!googleTokens || googleTokens.length === 0) {
+        toast.error("Conecte o Google Calendar para ativar o agente SDR.");
+        setLoading(false);
+        return;
+      }
     }
 
     const {
