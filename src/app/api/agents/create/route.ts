@@ -389,42 +389,72 @@ export async function POST(request: Request) {
     );
   }
 
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 30);
-  const dueDateIso = dueDate.toISOString();
-
+  let paymentInfo: Record<string, unknown> | null = null;
   const {
-    data: paymentData,
-    error: paymentError,
+    data: existingPayment,
+    error: existingPaymentError,
   } = await supabaseadmin
     .from("payments")
-    .insert({
-      company_id: company.id,
-      agent_id: agentId,
-      amount: AGENT_PRICE,
-      due_date: dueDateIso,
-      reference: `Mensalidade ${trimmedName}`,
-    })
-    .select("id, amount, due_date")
-    .single();
+    .select("id")
+    .eq("company_id", company.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-  if (paymentError) {
-    console.error("[agents:create] Erro ao criar pagamento", paymentError);
+  if (existingPaymentError) {
+    console.error(
+      "[agents:create] Erro ao verificar pagamentos existentes",
+      existingPaymentError
+    );
   }
 
-  let paymentInfo: Record<string, unknown> | null = null;
+  if (!existingPayment && !existingPaymentError) {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+    const dueDateIso = dueDate.toISOString();
 
-  if (paymentData) {
-    const asaasResponse = await triggerPayment(accessToken ?? null, {
-      id: paymentData.id as string,
-      amount: paymentData.amount as number | string,
-      due_date: paymentData.due_date as string,
-    });
+    const {
+      data: paymentData,
+      error: paymentError,
+    } = await supabaseadmin
+      .from("payments")
+      .insert({
+        company_id: company.id,
+        amount: AGENT_PRICE,
+        due_date: dueDateIso,
+        reference: `Mensalidade ${trimmedName}`,
+      })
+      .select("id, amount, due_date")
+      .single();
 
-    paymentInfo = {
-      ...paymentData,
-      ...(asaasResponse ? { asaas: asaasResponse } : {}),
-    };
+    if (paymentError) {
+      console.error("[agents:create] Erro ao criar pagamento", paymentError);
+    }
+
+    if (paymentData) {
+      const { error: expirationError } = await supabaseadmin
+        .from("company")
+        .update({ expiration_date: dueDateIso })
+        .eq("id", company.id);
+
+      if (expirationError) {
+        console.error(
+          "[agents:create] Erro ao atualizar expiração da empresa",
+          expirationError
+        );
+      }
+
+      const asaasResponse = await triggerPayment(accessToken ?? null, {
+        id: paymentData.id as string,
+        amount: paymentData.amount as number | string,
+        due_date: paymentData.due_date as string,
+      });
+
+      paymentInfo = {
+        ...paymentData,
+        ...(asaasResponse ? { asaas: asaasResponse } : {}),
+      };
+    }
   }
 
   const updatedCount = existingAgents + 1;

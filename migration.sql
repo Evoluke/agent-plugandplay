@@ -23,6 +23,7 @@ create table public.company (
   company_name text null,
   company_profile_id bigint null,
   chatwoot_id text null,
+  expiration_date timestamp with time zone null,
   profile_complete boolean not null default false,
   constraint company_pkey primary key (id),
   constraint company_id_key unique (id),
@@ -40,7 +41,6 @@ create table public.payments (
   id uuid not null default gen_random_uuid (),
   created_at timestamp with time zone not null default now(),
   company_id bigint null,
-  agent_id uuid null,
   amount numeric(18, 2) not null default '0'::numeric,
   status public.status_payment not null default 'pendente'::status_payment,
   paid_in timestamp with time zone null,
@@ -49,8 +49,7 @@ create table public.payments (
   asaas_id text null,
   payment_link text null,
   constraint payments_pkey primary key (id),
-  constraint payments_company_id_fkey foreign KEY (company_id) references company (id),
-  constraint payments_agent_id_fkey foreign KEY (agent_id) references agents (id)
+  constraint payments_company_id_fkey foreign KEY (company_id) references company (id)
 ) TABLESPACE pg_default;
 
 
@@ -63,7 +62,6 @@ create table public.agents (
   name text not null,
   type public.agent_type not null,
   is_active boolean not null default false,
-  expiration_date timestamp with time zone null,
   created_at timestamp with time zone not null default now(),
   company_id bigint not null,
   instructions jsonb not null default '{}'::jsonb,

@@ -16,11 +16,17 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
   const handleActivate = async () => {
     if (loading) return;
     setLoading(true);
-    const { data: agent, error: agentError } = await supabasebrowser
+    const {
+      data: agent,
+      error: agentError,
+    } = await supabasebrowser
       .from("agents")
-      .select("expiration_date, type")
+      .select("type, company:company(expiration_date)")
       .eq("id", agentId)
-      .single();
+      .single<{
+        type: string;
+        company: { expiration_date: string | null } | null;
+      }>();
 
     if (agentError) {
       toast.error("Erro ao verificar expiração.");
@@ -28,7 +34,9 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       return;
     }
 
-    if (!agent || !agent.expiration_date) {
+    const expirationDate = agent?.company?.expiration_date ?? null;
+
+    if (!agent || !expirationDate) {
       toast.error(
         "Nenhum pagamento encontrado. Realize o pagamento para ativar seu Agente."
       );
@@ -38,7 +46,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const expiration = new Date(agent.expiration_date);
+    const expiration = new Date(expirationDate);
     expiration.setHours(0, 0, 0, 0);
 
     if (expiration < today) {

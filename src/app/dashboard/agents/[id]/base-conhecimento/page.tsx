@@ -29,7 +29,7 @@ interface Agent {
   name: string;
   type: string;
   is_active: boolean;
-  company_id: number;
+  company_id: number | null;
 }
 
 interface KnowledgeFile {
@@ -68,8 +68,8 @@ export default function AgentKnowledgeBasePage() {
         .from("agents")
         .select("id,name,type,is_active,company_id")
         .eq("id", id)
-        .single();
-      setAgent(agentData);
+        .single<Agent>();
+      setAgent(agentData ?? null);
 
       const { data: fileData } = await supabasebrowser
         .from("agent_knowledge_files")
@@ -94,7 +94,7 @@ export default function AgentKnowledgeBasePage() {
   ) => {
     setUploading(true);
     const file = e.target.files?.[0];
-    if (!file || !agent) {
+    if (!file || !agent || !agent.company_id) {
       setUploading(false);
       return;
     }

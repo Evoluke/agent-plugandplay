@@ -70,7 +70,8 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 ## 🤖 Regras dos agentes IA
 
 - A ativação do agente **SDR** só é liberada após a autenticação do Google Calendar na tela de integrações do agente; sem o token de agenda conectado, o botão de ativar permanece bloqueado com aviso orientando a integração.
-- Os demais agentes seguem as validações padrão de expiração de pagamento, sem exigir integrações extras para iniciar o funcionamento.
+- A vigência da assinatura é controlada pela empresa. O primeiro pagamento é gerado automaticamente quando o primeiro agente de IA é criado e a empresa ainda não possui cobranças registradas; a data de expiração passa a ser armazenada em `company.expiration_date`.
+- Os demais agentes respeitam a expiração de pagamento da empresa, sem exigir integrações extras para iniciar o funcionamento.
 
 ## 🔗 Links Úteis
 
