@@ -67,13 +67,24 @@ export async function POST(request: Request) {
 
   console.log(`[payment] user=${userId} id=${id} total=${total}`);
 
+  type CompanyRecord = {
+    id: number;
+    company_name: string | null;
+    subscription_expires_at: string | null;
+    company_profile: {
+      cpf_cnpj: string;
+      responsible_name: string;
+      phone: string;
+    };
+  };
+
   const { data: company, error: companyError } = await supabaseadmin
     .from('company')
     .select(
-      'id, company_name, company_profile!inner(cpf_cnpj, responsible_name, phone)'
+      'id, company_name, subscription_expires_at, company_profile!inner(cpf_cnpj, responsible_name, phone)'
     )
     .eq('user_id', userId)
-    .single();
+    .single<CompanyRecord>();
 
   if (companyError || !company) {
     return NextResponse.json(
@@ -119,14 +130,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const { company_name, company_profile } = company as unknown as {
-    company_name: string | null;
-    company_profile: {
-      cpf_cnpj: string;
-      responsible_name: string;
-      phone: string;
-    };
-  };
+  const { company_name, company_profile } = company;
   if (!company_profile) {
     return NextResponse.json(
       { error: 'Company profile not found' },
@@ -201,12 +205,42 @@ export async function POST(request: Request) {
 
   if (!resp.ok) return NextResponse.json({ error: data }, { status: 400 });
 
+  const expirationSource = data.dueDate || dueDate;
+  let normalizedDueDate: string | null = null;
+
+  if (typeof expirationSource === 'string' && expirationSource) {
+    const expirationDate = new Date(expirationSource);
+    expirationDate.setHours(0, 0, 0, 0);
+    normalizedDueDate = expirationDate.toISOString();
+    const currentExpiration = company.subscription_expires_at
+      ? new Date(company.subscription_expires_at)
+      : null;
+
+    if (
+      !currentExpiration ||
+      expirationDate.getTime() > currentExpiration.getTime()
+    ) {
+      const { error: expirationUpdateError } = await supabaseadmin
+        .from('company')
+        .update({ subscription_expires_at: normalizedDueDate })
+        .eq('id', company.id);
+
+      if (expirationUpdateError) {
+        console.error('[payments:pay] erro ao atualizar expiração corporativa', expirationUpdateError);
+      }
+    }
+  }
+
   await supabaseadmin
     .from('payments')
     .update({
       asaas_id: data.id,
       payment_link: data.invoiceUrl || data.paymentLink,
-      due_date: data.dueDate || dueDate,
+      due_date:
+        normalizedDueDate ??
+        (typeof expirationSource === 'string' && expirationSource
+          ? expirationSource
+          : paymentRecord.due_date),
     })
     .eq('id', paymentRecord.id);
 

@@ -67,6 +67,15 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 - O primeiro atalho da barra lateral preserva o ícone de casa para destacar o retorno rápido ao dashboard principal.
 - A ordem dos atalhos prioriza o **Funil de vendas** antes de **Pagamentos**, mantendo o fluxo comercial em evidência.
 
+## 💳 Pagamentos
+
+- Cada empresa possui um histórico único de cobranças: o primeiro pagamento é criado automaticamente quando o usuário provisiona o primeiro agente de IA e não existe nenhum registro prévio para a empresa na tabela `payments`.
+- Novos agentes reutilizam o mesmo cadastro de pagamento da empresa, evitando a geração de cobranças duplicadas ao longo da expansão do time de IA.
+- Os registros de cobrança ficam associados apenas ao `company_id`; nenhum `agent_id` é armazenado na tabela `payments`, reforçando que a assinatura é sempre corporativa.
+- A ativação dos agentes só ocorre quando a assinatura corporativa está paga e dentro da validade; o painel ignora cobranças futuras pendentes e utiliza a última fatura paga com vencimento vigente para liberar o botão de ativar.
+- O menu do agente concentra-se apenas nos atributos individuais (status e tipo), deixando a conferência da assinatura corporativa centralizada no fluxo de ativação.
+- O vencimento consolidado fica armazenado em `company.subscription_expires_at`, permitindo que toda a aplicação valide a expiração corporativa sem depender de campos na tabela `agents`.
+
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)

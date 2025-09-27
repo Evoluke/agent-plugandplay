@@ -37,3 +37,8 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - O movimento dos cards usa `@hello-pangea/dnd`, que mantém a experiência de arrastar consistente após fechar qualquer modal. Garanta que estados visuais (sombra, destaque e placeholders) acompanhem essa fluidez sem introduzir artefatos que sugiram travamento da interface.
 - Colunas vazias devem exibir uma área pontilhada com texto em caixa alta convidando o usuário a arrastar oportunidades, reforçando que o drop é permitido mesmo sem cards existentes.
 
+## Status corporativo dos agentes
+- O menu lateral do agente não exibe mais um card dedicado à assinatura corporativa; mantenha a hierarquia visual focada no status individual e no tipo do agente.
+- Mensagens sobre pagamento corporativo devem aparecer apenas em fluxos como ativação ou alertas globais, preservando a distinção entre branding individual e informações financeiras compartilhadas.
+- Qualquer tela que comunique a assinatura deve continuar considerando apenas cobranças pagas com vencimento vigente, ignorando faturas futuras pendentes para evitar alarmes incorretos.
+

@@ -371,11 +371,12 @@ export async function POST(request: Request) {
     id: string;
     chatwoot_id: string | number | null;
     chatwoot_user_id: string | number | null;
+    subscription_expires_at: string | null;
   };
 
   const { data: company, error: companyError } = await supabaseadmin
     .from("company")
-    .select("id, chatwoot_id, chatwoot_user_id")
+    .select("id, chatwoot_id, chatwoot_user_id, subscription_expires_at")
     .eq("user_id", user.id)
     .single<CompanyRecord>();
 
@@ -455,42 +456,87 @@ export async function POST(request: Request) {
     );
   }
 
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 30);
-  const dueDateIso = dueDate.toISOString();
+  let paymentInfo: Record<string, unknown> | null = null;
+  let subscriptionExpiresAt = company.subscription_expires_at ?? null;
 
-  const {
-    data: paymentData,
-    error: paymentError,
-  } = await supabaseadmin
-    .from("payments")
-    .insert({
-      company_id: company.id,
-      agent_id: agentId,
-      amount: AGENT_PRICE,
-      due_date: dueDateIso,
-      reference: `Mensalidade ${trimmedName}`,
-    })
-    .select("id, amount, due_date")
-    .single();
+  const { data: existingPayment, error: existingPaymentError } =
+    await supabaseadmin
+      .from("payments")
+      .select("id")
+      .eq("company_id", company.id)
+      .limit(1)
+      .maybeSingle();
 
-  if (paymentError) {
-    console.error("[agents:create] Erro ao criar pagamento", paymentError);
+  if (existingPaymentError) {
+    console.error(
+      "[agents:create] Erro ao verificar pagamentos existentes",
+      existingPaymentError
+    );
   }
 
-  let paymentInfo: Record<string, unknown> | null = null;
+  if (!existingPayment) {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+    const dueDateIso = dueDate.toISOString();
 
-  if (paymentData) {
-    const asaasResponse = await triggerPayment(accessToken ?? null, {
-      id: paymentData.id as string,
-      amount: paymentData.amount as number | string,
-      due_date: paymentData.due_date as string,
-    });
+    const {
+      data: paymentData,
+      error: paymentError,
+    } = await supabaseadmin
+      .from("payments")
+      .insert({
+        company_id: company.id,
+        amount: AGENT_PRICE,
+        due_date: dueDateIso,
+        reference: "Mensalidade Agent Plug and Play",
+      })
+      .select("id, amount, due_date")
+      .single();
 
-    paymentInfo = {
-      ...paymentData,
-      ...(asaasResponse ? { asaas: asaasResponse } : {}),
-    };
+    if (paymentError) {
+      console.error("[agents:create] Erro ao criar pagamento", paymentError);
+    }
+
+    if (paymentData) {
+      const asaasResponse = await triggerPayment(accessToken ?? null, {
+        id: paymentData.id as string,
+        amount: paymentData.amount as number | string,
+        due_date: paymentData.due_date as string,
+      });
+
+      const newExpiration = paymentData.due_date as string | null;
+
+      if (newExpiration) {
+        const newExpirationDate = new Date(newExpiration);
+        const currentExpirationDate = subscriptionExpiresAt
+          ? new Date(subscriptionExpiresAt)
+          : null;
+
+        if (
+          !currentExpirationDate ||
+          newExpirationDate.getTime() > currentExpirationDate.getTime()
+        ) {
+          const { error: companyUpdateError } = await supabaseadmin
+            .from("company")
+            .update({ subscription_expires_at: newExpiration })
+            .eq("id", company.id);
+
+          if (companyUpdateError) {
+            console.error(
+              "[agents:create] Erro ao atualizar expiração corporativa",
+              companyUpdateError
+            );
+          } else {
+            subscriptionExpiresAt = newExpiration;
+          }
+        }
+      }
+
+      paymentInfo = {
+        ...paymentData,
+        ...(asaasResponse ? { asaas: asaasResponse } : {}),
+      };
+    }
   }
 
   const updatedCount = existingAgents + 1;
@@ -504,6 +550,7 @@ export async function POST(request: Request) {
       maxAgents: MAX_AGENTS_PER_COMPANY,
       limitReached,
       payment: paymentInfo,
+      subscriptionExpiresAt,
     },
     { status: 201 }
   );

@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
+type PaymentStatus = "pendente" | "pago" | "estorno";
+
+type PaymentRecord = {
+  due_date: string | null;
+  status: PaymentStatus | null;
+};
+
 interface Props {
   agentId: string;
   onActivated: () => void;
@@ -16,35 +23,88 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
   const handleActivate = async () => {
     if (loading) return;
     setLoading(true);
-    const { data: agent, error: agentError } = await supabasebrowser
+
+    const {
+      data: agent,
+      error: agentError,
+    } = await supabasebrowser
       .from("agents")
-      .select("expiration_date")
+      .select("company_id")
       .eq("id", agentId)
       .single();
 
-    if (agentError) {
-      toast.error("Erro ao verificar expiração.");
+    if (agentError || !agent) {
+      toast.error("Erro ao identificar a empresa do agente.");
       setLoading(false);
       return;
     }
 
-    if (!agent || !agent.expiration_date) {
-      toast.error(
-        "Nenhum pagamento encontrado. Realize o pagamento para ativar seu Agente."
-      );
+    const {
+      data: payments,
+      error: paymentsError,
+    } = await supabasebrowser
+      .from("payments")
+      .select("due_date,status")
+      .eq("company_id", agent.company_id)
+      .order("due_date", { ascending: false })
+      .limit(10);
+
+    const {
+      data: company,
+      error: companyError,
+    } = await supabasebrowser
+      .from("company")
+      .select("subscription_expires_at")
+      .eq("id", agent.company_id)
+      .single();
+
+    if (paymentsError) {
+      toast.error("Erro ao consultar pagamentos da empresa.");
+      setLoading(false);
+      return;
+    }
+
+    if (companyError || !company) {
+      toast.error("Não foi possível consultar a assinatura corporativa.");
       setLoading(false);
       return;
     }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const expiration = new Date(agent.expiration_date);
-    expiration.setHours(0, 0, 0, 0);
 
-    if (expiration < today) {
+    const activePayment = ((payments ?? []) as PaymentRecord[]).find((item) => {
+      if (item.status !== "pago") return false;
+      if (!item.due_date) return false;
+      const dueDate = new Date(item.due_date);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate >= today;
+    });
+
+    if (!activePayment) {
       toast.error(
-        "Data de expiração vencida. Não é possível ativar o agente."
+        "Nenhum pagamento corporativo pago com vencimento vigente foi encontrado. Regularize a assinatura da empresa para ativar seus agentes."
       );
+      setLoading(false);
+      return;
+    }
+
+    const expirationSource =
+      company.subscription_expires_at ?? activePayment.due_date ?? null;
+
+    if (!expirationSource) {
+      toast.error(
+        "Não foi possível validar o vencimento da assinatura corporativa."
+      );
+      setLoading(false);
+      return;
+    }
+
+    const dueDate = new Date(expirationSource);
+    dueDate.setHours(0, 0, 0, 0);
+
+    if (dueDate < today) {
+      toast.error("Cobrança corporativa vencida. Renove a assinatura para continuar.");
       setLoading(false);
       return;
     }
@@ -53,6 +113,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       .from("agents")
       .update({ is_active: true })
       .eq("id", agentId);
+
     if (error) {
       toast.error("Erro ao ativar agente.");
       setLoading(false);

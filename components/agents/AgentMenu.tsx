@@ -1,19 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import { usePathname } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { supabasebrowser } from "@/lib/supabaseClient";
-import {
-  Smile,
-  Settings,
-  BookOpen,
-  Database,
-  ClipboardList,
-  Calendar,
-} from "lucide-react";
+import { Smile, Settings, BookOpen, Database, ClipboardList, Calendar } from "lucide-react";
 
 type Agent = {
   id: string;
@@ -30,18 +22,6 @@ const typeLabels: Record<string, string> = {
 
 export default function AgentMenu({ agent }: { agent: Agent }) {
   const pathname = usePathname();
-  const [expirationDate, setExpirationDate] = useState<string | null>(null);
-
-  useEffect(() => {
-    supabasebrowser
-      .from("agents")
-      .select("expiration_date")
-      .eq("id", agent.id)
-      .single()
-      .then(({ data }) => {
-        setExpirationDate(data?.expiration_date ?? null);
-      });
-  }, [agent.id]);
 
   const menuItems = [
     { label: "Personalidade", icon: Smile, href: `/dashboard/agents/${agent.id}` },
@@ -78,19 +58,6 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
               {typeLabels[agent.type] || agent.type}
             </p>
           </div>
-          <div>
-            <p className="text-xs text-gray-500">Data de expiração</p>
-            <p
-              className={`text-base font-semibold ${expirationDate && new Date(expirationDate) < new Date()
-                  ? "text-base font-semibold"
-                  : "text-base font-semibold"
-                }`}
-            >
-              {expirationDate
-                ? new Date(expirationDate).toLocaleDateString("pt-BR")
-                : "Não definida"}
-            </p>
-          </div>
         </Card>
         <Card className="w-full md:flex-1 p-4 md:p-6 flex">
           <nav className="flex h-full w-full flex-wrap items-center justify-center gap-2 md:flex-nowrap md:justify-around md:gap-0">
@@ -115,4 +82,3 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
     </div>
   );
 }
-
