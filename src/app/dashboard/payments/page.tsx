@@ -141,9 +141,6 @@ export default function PaymentsPage() {
   const isExpired = isValidSubscriptionDate
     ? now >= subscriptionDate.getTime() + oneDayInMs
     : true;
-  const isInGracePeriod = isValidSubscriptionDate
-    ? !isExpired && now >= subscriptionDate.getTime()
-    : false;
 
   return (
     <div className="p-4 space-y-6 w-full max-w-5xl mx-auto">
@@ -169,9 +166,7 @@ export default function PaymentsPage() {
             {isValidSubscriptionDate
               ? isExpired
                 ? 'Expirada'
-                : isInGracePeriod
-                  ? 'Ativa (carência)'
-                  : 'Ativa'
+                : 'Ativa'
               : 'Indisponível'}
           </span>
         </CardContent>
