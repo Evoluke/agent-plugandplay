@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseadmin } from "@/lib/supabaseAdmin";
+import { ensureDefaultPipelineForCompany } from "@/lib/pipeline/server";
 import { getUserFromCookie } from "@/lib/auth";
 import {
   isValidCompanyName,
@@ -204,6 +205,22 @@ export async function POST(req: Request) {
 
   if (updateCompanyError) {
     return NextResponse.json({ error: updateCompanyError.message }, { status: 500 });
+  }
+
+  const companyId = Number(companyRecord.id);
+
+  if (!Number.isFinite(companyId)) {
+    return NextResponse.json({ error: "Empresa inválida" }, { status: 400 });
+  }
+
+  try {
+    await ensureDefaultPipelineForCompany(companyId);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Não foi possível criar o funil padrão da empresa" },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ ok: true });

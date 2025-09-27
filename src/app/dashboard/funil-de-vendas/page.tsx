@@ -40,14 +40,11 @@ import {
   PIPELINE_NAME_MAX_LENGTH,
   STAGE_NAME_MAX_LENGTH,
 } from './constants'
-
-const DEFAULT_PIPELINE_IDENTIFIER = 'agent_default_pipeline'
-const DEFAULT_PIPELINE_NAME = 'Funil da do Agente'
-const DEFAULT_STAGE_PRESETS = [
-  { name: 'Entrada', color: '#E0F2FE' },
-  { name: 'Atendimento Humano', color: '#FCE7F3' },
-  { name: 'Qualificado', color: '#FEF3C7' },
-]
+import {
+  DEFAULT_PIPELINE_IDENTIFIER,
+  DEFAULT_PIPELINE_NAME,
+  DEFAULT_STAGE_PRESETS,
+} from '@/lib/pipeline/defaults'
 
 function getStageCards(cards: DealCard[], stageId: string) {
   return cards
