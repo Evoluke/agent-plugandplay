@@ -136,10 +136,16 @@ export default function PaymentsPage() {
     ? subscriptionDate.toLocaleDateString("pt-BR")
     : 'Sem assinatura ativa';
 
-  const now = Date.now();
-  const oneDayInMs = 24 * 60 * 60 * 1000;
+  const now = new Date();
+  const endOfSubscriptionDay = subscriptionDate
+    ? new Date(
+        subscriptionDate.getFullYear(),
+        subscriptionDate.getMonth(),
+        subscriptionDate.getDate() + 1,
+      )
+    : null;
   const isExpired = isValidSubscriptionDate
-    ? now >= subscriptionDate.getTime() + oneDayInMs
+    ? !!endOfSubscriptionDay && now.getTime() >= endOfSubscriptionDay.getTime()
     : true;
 
   return (
