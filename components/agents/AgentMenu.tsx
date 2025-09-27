@@ -20,6 +20,7 @@ type Agent = {
   name: string;
   type: string;
   is_active: boolean;
+  company_id: number | null;
 };
 
 const typeLabels: Record<string, string> = {
@@ -33,15 +34,20 @@ export default function AgentMenu({ agent }: { agent: Agent }) {
   const [expirationDate, setExpirationDate] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!agent.company_id) {
+      setExpirationDate(null);
+      return;
+    }
+
     supabasebrowser
-      .from("agents")
+      .from("company")
       .select("expiration_date")
-      .eq("id", agent.id)
-      .single()
+      .eq("id", agent.company_id)
+      .maybeSingle()
       .then(({ data }) => {
-        setExpirationDate(data?.expiration_date ?? null);
+        setExpirationDate((data?.expiration_date as string | null) ?? null);
       });
-  }, [agent.id]);
+  }, [agent.company_id]);
 
   const menuItems = [
     { label: "Personalidade", icon: Smile, href: `/dashboard/agents/${agent.id}` },

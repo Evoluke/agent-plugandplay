@@ -19,6 +19,7 @@ type Agent = {
   name: string;
   type: string;
   is_active: boolean;
+  company_id: number | null;
 };
 
 export default function AgentBehaviorPage() {
@@ -33,11 +34,11 @@ export default function AgentBehaviorPage() {
     if (!id) return;
     supabasebrowser
       .from("agents")
-      .select("id,name,type,is_active")
+      .select("id,name,type,is_active,company_id")
       .eq("id", id)
-      .single()
+      .single<Agent>()
       .then(({ data }) => {
-        setAgent(data);
+        setAgent(data ?? null);
       });
 
     supabasebrowser
