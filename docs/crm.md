@@ -13,9 +13,10 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Cada estágio recebe uma cor de fundo armazenada no campo `stage.color`, aplicada diretamente como plano de fundo da coluna no board.
 - Transferência de oportunidades entre estágios pelo modal de edição, escolhendo o destino no seletor dedicado, inclusive para colunas vazias.
 - Menu de contexto nos cards com ações de transferência direta para outros funis (sempre posicionando a oportunidade no primeiro estágio disponível) e remoção rápida.
-- Cadastro e atualização de cards com campos de contato, status, responsável, métricas de mensagens e datas importantes. O campo de tag continua disponível no formulário apenas para fins internos e não é mais exibido no card.
+- Mensagem destacada no modal de criação/edição de cards informando que novas ferramentas e campos estão em desenvolvimento.
+- Cadastro e atualização de cards com um único campo de contato, simplificando o preenchimento enquanto novos recursos são desenvolvidos. O campo de tag continua disponível no formulário apenas para fins internos e não é mais exibido no card.
 - Campos de funil, estágios e cards com limites de caracteres para preservar a legibilidade das colunas.
-- Títulos, empresas e responsáveis dos cards recebem truncamento automático para evitar estouro visual dentro das colunas.
+- Os contatos exibidos nos cards recebem truncamento automático para evitar estouro visual dentro das colunas.
 - Reordenação de cards por _drag and drop_ com `@hello-pangea/dnd`, garantindo atualização imediata da coluna/posição no Supabase e evitando o bloqueio de cliques observado com a implementação anterior.
 - Área de drop dedicada nas colunas vazias, permitindo transferir cards por arraste mesmo quando o estágio não possui oportunidades.
 - Botão de atualização dedicado ao funil, com bloqueio de 10 segundos entre cliques, cooldown reiniciado automaticamente ao alternar de funil e rotina automática que força a recarga do board a cada 5 minutos.
@@ -27,7 +28,7 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 | --- | --- | --- |
 | `pipeline` | `id`, `company_id`, `name`, `description`, `created_at` | Relacionada a `company`. Remove estágios/cards associados em cascata. |
 | `stage` | `id`, `pipeline_id`, `name`, `position`, `color`, `created_at` | Ordenação baseada em `position`, cor em formato hexadecimal utilizada no fundo das colunas e exclusão em cascata dos cards. |
-| `card` | `id`, `pipeline_id`, `stage_id`, `title`, `company_name`, `owner`, `tag`, `status`, `mrr`, `messages_count`, `last_message_at`, `next_action_at`, `position` | Salva métricas exibidas nos cards e mantém posição por estágio. |
+| `card` | `id`, `pipeline_id`, `stage_id`, `contact`, `position` | Armazena o contato associado à oportunidade e mantém a ordenação dentro do estágio. |
 
 ### Funil padrão por empresa
 
