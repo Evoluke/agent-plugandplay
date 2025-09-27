@@ -1,7 +1,7 @@
 'use client';
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Bell } from 'lucide-react';
+import { Bell, Check } from 'lucide-react';
 import { useNotifications } from './NotificationProvider';
 import { cn } from '@/components/ui/utils';
 
@@ -41,8 +41,14 @@ export default function NotificationBell() {
               >
                 <span className="flex-1">{n.message}</span>
                 {!n.read_at && (
-                  <button onClick={() => markAsRead(n.id)} className="text-xs text-blue-600">
-                    Marcar como lido
+                  <button
+                    type="button"
+                    onClick={() => markAsRead(n.id)}
+                    className="inline-flex items-center justify-center text-blue-600 hover:text-blue-700"
+                    aria-label="Marcar notificação como lida"
+                  >
+                    <Check className="h-4 w-4" />
+                    <span className="sr-only">Marcar notificação como lida</span>
                   </button>
                 )}
               </div>
