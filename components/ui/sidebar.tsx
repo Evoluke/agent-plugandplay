@@ -56,6 +56,7 @@ const utilityNavItems: NavItem[] = [
 type Agent = {
   id: string;
   name: string;
+  is_active: boolean;
 };
 
 function useAgents() {
@@ -78,7 +79,7 @@ function useAgents() {
 
       const { data: agentData } = await supabasebrowser
         .from('agents')
-        .select('id,name')
+        .select('id,name,is_active')
         .eq('company_id', company.id);
       if (!isMounted) return;
       setAgents(agentData || []);
@@ -281,10 +282,22 @@ export function Sidebar({ className }: { className?: string }) {
                 <Link
                   key={agent.id}
                   href={`/dashboard/agents/${agent.id}`}
-                  className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  className={cn(
+                    'block px-4 py-2 text-sm hover:bg-gray-100 flex items-center justify-between gap-2',
+                    agent.is_active && 'bg-[#E3F5F0] text-[#2F6F68] font-semibold hover:bg-[#D7ECE4]',
+                  )}
                   onClick={() => setAgentsMenuOpen(false)}
                 >
-                  🤖 {agent.name}
+                  <span className="flex items-center gap-2">
+                    <span aria-hidden>🤖</span>
+                    <span>{agent.name}</span>
+                  </span>
+                  {agent.is_active && (
+                    <span
+                      aria-hidden
+                      className="h-2 w-2 rounded-full bg-[#2F6F68]"
+                    />
+                  )}
                 </Link>
               ))}
               {agents != null && (
@@ -472,10 +485,22 @@ export function MobileSidebar() {
                   <Link
                     key={agent.id}
                     href={`/dashboard/agents/${agent.id}`}
-                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    className={cn(
+                      'flex items-center justify-between gap-2 rounded px-4 py-2 text-sm hover:bg-gray-100',
+                      agent.is_active && 'bg-[#E3F5F0] text-[#2F6F68] font-semibold hover:bg-[#D7ECE4]',
+                    )}
                     onClick={() => setOpen(false)}
                   >
-                    🤖 {agent.name}
+                    <span className="flex items-center gap-2">
+                      <span aria-hidden>🤖</span>
+                      <span>{agent.name}</span>
+                    </span>
+                    {agent.is_active && (
+                      <span
+                        aria-hidden
+                        className="h-2 w-2 rounded-full bg-[#2F6F68]"
+                      />
+                    )}
                   </Link>
                 ))}
                 {agents.length < MAX_AGENTS_PER_COMPANY ? (
