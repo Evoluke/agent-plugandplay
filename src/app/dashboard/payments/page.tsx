@@ -14,7 +14,12 @@ type Payment = {
   created_at: string;
   due_date: string;
   reference: string;
-  company?: { id: string };
+  paid_in?: string | null;
+  companyId?: string | null;
+};
+
+type PaymentRow = Payment & {
+  company?: { id: string } | { id: string }[] | null;
 };
 
 type User = {
@@ -67,10 +72,23 @@ export default function PaymentsPage() {
 
       if (error) {
         console.error('Erro ao buscar payments:', error);
+        toast.error('Erro ao carregar pagamentos.');
         return;
       }
 
-      setPayments(data);
+      const normalizedPayments: Payment[] = (data ?? []).map((payment) => {
+        const { company, ...rest } = payment as PaymentRow;
+        const normalizedCompanyId = Array.isArray(company)
+          ? company[0]?.id ?? null
+          : company?.id ?? null;
+
+        return {
+          ...rest,
+          companyId: normalizedCompanyId,
+        } satisfies Payment;
+      });
+
+      setPayments(normalizedPayments);
     };
 
     fetchPayments();
