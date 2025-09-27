@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Sidebar, MobileSidebar } from '@/components/ui/sidebar'
 import DashboardAlerts from '@/components/ui/dashboard-alerts'
 import NotificationBell from '@/components/notifications/NotificationBell'
+import AgentActivityIndicator from '@/components/agents/AgentActivityIndicator'
 import OnboardingOverlay from '@/components/onboarding/OnboardingOverlay'
 import { supabasebrowser } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
@@ -42,7 +43,8 @@ export default function DashboardClientLayout({ children }: Props) {
         <main className="flex-1 bg-[#FAFAFA] p-6 min-h-[100svh] overflow-auto sm:ml-16">
           <div className="flex w-full items-center mb-4">
             <MobileSidebar />
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center">
+              <AgentActivityIndicator />
               <NotificationBell />
             </div>
           </div>

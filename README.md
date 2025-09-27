@@ -66,6 +66,7 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 - O submenu mantém o foco na navegação principal, exibindo apenas os atalhos operacionais quando solicitado.
 - O primeiro atalho da barra lateral preserva o ícone de casa para destacar o retorno rápido ao dashboard principal.
 - A ordem dos atalhos prioriza o **Funil de vendas** antes de **Pagamentos**, mantendo o fluxo comercial em evidência.
+- Ao lado do sino de notificações, um indicador em formato de robô sinaliza se existe um agente de IA ativo na empresa, exibindo um rosto feliz quando a ativação está liberada e um rosto triste caso contrário.
 
 ## 💳 Pagamentos
 
