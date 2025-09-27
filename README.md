@@ -84,6 +84,10 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 
 - A checagem que libera a ativação de agentes SDR considera apenas a existência de um registro em `agent_google_tokens` vinculado pelo campo `agent_id`, garantindo compatibilidade com o modelo sem coluna `id`.
 
+## 💬 Atendimento com Chatwoot
+
+- A integração com o Chatwoot permanece disponível dentro da plataforma autenticada, porém o widget público foi removido da landing page para evitar carregamento desnecessário de scripts externos.
+
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)

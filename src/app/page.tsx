@@ -3,13 +3,11 @@ import Hero from "@/components/landing/Hero";
 import Features from "@/components/landing/Features";
 import Stats from "@/components/landing/Stats";
 import Benefit from "@/components/landing/Benefit";
-import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
 import Pricing from "@/components/landing/Pricing";
 import type { Metadata } from "next";
-import Script from "next/script";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
@@ -40,22 +38,6 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <Script id="tracelead-chatwoot" strategy="afterInteractive">
-        {`(function(d,t) {
-      var BASE_URL="https://platform.tracelead.com.br";
-      var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-      g.src=BASE_URL+"/packs/js/sdk.js";
-      g.defer = true;
-      g.async = true;
-      s.parentNode.insertBefore(g,s);
-      g.onload=function(){
-        window.chatwootSDK.run({
-          websiteToken: 'EioqiGzk1toeBkQgLiRNxMuG',
-          baseUrl: BASE_URL
-        })
-      }
-    })(document,"script");`}
-      </Script>
       <Header />
       <main className="flex flex-col">
         <Hero />
