@@ -38,8 +38,7 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Colunas vazias devem exibir uma área pontilhada com texto em caixa alta convidando o usuário a arrastar oportunidades, reforçando que o drop é permitido mesmo sem cards existentes.
 
 ## Status corporativo dos agentes
-- O card lateral de "Assinatura corporativa" deve deixar claro que o vencimento exibido é compartilhado entre todos os agentes da empresa.
-- Utilize o mesmo tom tipográfico do estado "Ativo"/"Pendente" já existente e destaque a data formatada com `pt-BR`, proveniente de `company.subscription_expires_at`.
-- Em caso de erro na leitura da assinatura corporativa, apresente a mensagem padrão "Não encontrada" para reforçar que o problema é da conta da empresa, não de um agente específico.
-- Mensagens de status devem considerar apenas cobranças pagas com vencimento vigente, evitando alertas falsos quando existir uma fatura futura pendente.
+- O menu lateral do agente não exibe mais um card dedicado à assinatura corporativa; mantenha a hierarquia visual focada no status individual e no tipo do agente.
+- Mensagens sobre pagamento corporativo devem aparecer apenas em fluxos como ativação ou alertas globais, preservando a distinção entre branding individual e informações financeiras compartilhadas.
+- Qualquer tela que comunique a assinatura deve continuar considerando apenas cobranças pagas com vencimento vigente, ignorando faturas futuras pendentes para evitar alarmes incorretos.
 
