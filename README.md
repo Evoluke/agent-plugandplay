@@ -76,6 +76,10 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 - O menu do agente concentra-se apenas nos atributos individuais (status e tipo), deixando a conferência da assinatura corporativa centralizada no fluxo de ativação.
 - O vencimento consolidado fica armazenado em `company.subscription_expires_at`, permitindo que toda a aplicação valide a expiração corporativa sem depender de campos na tabela `agents`.
 
+## 📅 Integração com Google Calendar
+
+- A checagem que libera a ativação de agentes SDR considera apenas a existência de um registro em `agent_google_tokens` vinculado pelo campo `agent_id`, garantindo compatibilidade com o modelo sem coluna `id`.
+
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)
