@@ -50,7 +50,7 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
         error: googleTokensError,
       } = await supabasebrowser
         .from("agent_google_tokens")
-        .select("id")
+        .select("agent_id")
         .eq("agent_id", agentId)
         .limit(1);
 
