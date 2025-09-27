@@ -135,7 +135,15 @@ export default function PaymentsPage() {
   const formattedSubscriptionDate = isValidSubscriptionDate
     ? subscriptionDate.toLocaleDateString("pt-BR")
     : 'Sem assinatura ativa';
-  const isExpired = isValidSubscriptionDate ? subscriptionDate.getTime() < Date.now() : true;
+
+  const now = Date.now();
+  const oneDayInMs = 24 * 60 * 60 * 1000;
+  const isExpired = isValidSubscriptionDate
+    ? now >= subscriptionDate.getTime() + oneDayInMs
+    : true;
+  const isInGracePeriod = isValidSubscriptionDate
+    ? !isExpired && now >= subscriptionDate.getTime()
+    : false;
 
   return (
     <div className="p-4 space-y-6 w-full max-w-5xl mx-auto">
@@ -158,7 +166,13 @@ export default function PaymentsPage() {
                 : 'bg-muted text-muted-foreground'
             }`}
           >
-            {isValidSubscriptionDate ? (isExpired ? 'Expirada' : 'Ativa') : 'Indisponível'}
+            {isValidSubscriptionDate
+              ? isExpired
+                ? 'Expirada'
+                : isInGracePeriod
+                  ? 'Ativa (carência)'
+                  : 'Ativa'
+              : 'Indisponível'}
           </span>
         </CardContent>
       </Card>

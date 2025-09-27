@@ -70,7 +70,7 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 ## 💳 Pagamentos
 
 - Cada empresa possui um histórico único de cobranças: o primeiro pagamento é criado automaticamente quando o usuário provisiona o primeiro agente de IA e não existe nenhum registro prévio para a empresa na tabela `payments`.
-- A página apresenta um card dedicado à assinatura corporativa, exibindo a data de expiração consolidada em `company.subscription_expires_at` e destacando visualmente se a vigência está ativa ou expirada.
+- A página apresenta um card dedicado à assinatura corporativa, exibindo a data de expiração consolidada em `company.subscription_expires_at`, respeitando uma carência de 1 dia antes de considerar a vigência expirada e destacando visualmente o status atual.
 - Novos agentes reutilizam o mesmo cadastro de pagamento da empresa, evitando a geração de cobranças duplicadas ao longo da expansão do time de IA.
 - Os registros de cobrança ficam associados apenas ao `company_id`; nenhum `agent_id` é armazenado na tabela `payments`, reforçando que a assinatura é sempre corporativa.
 - A ativação dos agentes só ocorre quando a assinatura corporativa está paga e dentro da validade; o painel ignora cobranças futuras pendentes e utiliza a última fatura paga com vencimento vigente para liberar o botão de ativar.
