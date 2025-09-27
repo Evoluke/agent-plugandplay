@@ -3,6 +3,7 @@
 import { FormEvent, useId } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Sparkles } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -94,6 +95,10 @@ export function CardDialog({
           <Button type="submit">Salvar</Button>
         </div>
       </form>
+
+      <p className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary">
+        <Sparkles className="h-4 w-4" /> Estamos trabalhando em novas ferramentas e campos.
+      </p>
     </Modal>
   )
 }

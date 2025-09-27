@@ -13,7 +13,7 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Cada estágio recebe uma cor de fundo armazenada no campo `stage.color`, aplicada diretamente como plano de fundo da coluna no board.
 - Transferência de oportunidades entre estágios pelo modal de edição, escolhendo o destino no seletor dedicado, inclusive para colunas vazias.
 - Menu de contexto nos cards com ações de transferência direta para outros funis (sempre posicionando a oportunidade no primeiro estágio disponível) e remoção rápida.
-- Mensagem destacada no rodapé dos cards informando que novas ferramentas e campos estão em desenvolvimento.
+- Mensagem destacada no modal de criação/edição de cards informando que novas ferramentas e campos estão em desenvolvimento.
 - Cadastro e atualização de cards com um único campo de contato, simplificando o preenchimento enquanto novos recursos são desenvolvidos. O campo de tag continua disponível no formulário apenas para fins internos e não é mais exibido no card.
 - Campos de funil, estágios e cards com limites de caracteres para preservar a legibilidade das colunas.
 - Os contatos exibidos nos cards recebem truncamento automático para evitar estouro visual dentro das colunas.

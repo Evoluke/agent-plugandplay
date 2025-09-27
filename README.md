@@ -52,7 +52,7 @@ O painel do CRM agora conta com a página **Funil de vendas**, acessível pela s
 - Visualizar o quadro do funil sem faixas de filtros rápidos, mantendo o foco na movimentação das oportunidades.
 - Arrastar cards para estágios vazios utilizando a área destacada de destino, mantendo o comportamento consistente entre drag and drop e o seletor do modal.
 - Registrar apenas o contato principal de cada oportunidade, mantendo o quadro enxuto enquanto novos campos são preparados.
-- Destacar no rodapé de cada card que estamos trabalhando em novas ferramentas e campos para o CRM.
+- Exibir no modal de criação/edição de oportunidade uma mensagem destacada informando que estamos trabalhando em novas ferramentas e campos para o CRM.
 - Digitar continuamente nos campos dos estágios e dos cards sem perda de foco, com os modais liberando o board assim que são fechados.
 - Fechar o modal com **Cancelar** ou **Salvar** para descartar ou confirmar alterações com segurança; os diálogos utilizam um componente `Modal` próprio que aplica o _portal_ manualmente, desmonta o conteúdo assim que deixa de estar visível, restaura o `overflow` do `body` e remove a sobreposição na mesma renderização. Em conjunto com o mecanismo de drag and drop `@hello-pangea/dnd`, o board permanece interativo após qualquer salvamento ou cancelamento, sem travamentos residuais.
 - A página é segmentada em componentes reutilizáveis (`StageColumn`, `PipelineDialog`, `CardDialog` e `Modal`), o que mantém o código enxuto e garante que cada modal seja desmontado rapidamente após salvar ou cancelar.

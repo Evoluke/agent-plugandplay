@@ -4,7 +4,7 @@ import { Draggable } from '@hello-pangea/dnd'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { ArrowRight, MoreHorizontal, Sparkles } from 'lucide-react'
+import { ArrowRight, MoreHorizontal } from 'lucide-react'
 import { DealCard, Pipeline } from '../types'
 
 type DealCardItemProps = {
@@ -120,9 +120,6 @@ export function DealCardItem({
             </button>
           </div>
 
-          <p className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 py-2 text-[11px] font-medium text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Estamos trabalhando em novas ferramentas e campos.
-          </p>
         </div>
       )}
     </Draggable>
