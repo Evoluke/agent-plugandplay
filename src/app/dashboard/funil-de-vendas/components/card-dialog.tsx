@@ -10,13 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  CARD_COMPANY_MAX_LENGTH,
-  CARD_OWNER_MAX_LENGTH,
-  CARD_STATUS_MAX_LENGTH,
-  CARD_TAG_MAX_LENGTH,
-  CARD_TITLE_MAX_LENGTH,
-} from '../constants'
+import { CARD_CONTACT_MAX_LENGTH } from '../constants'
 import { CardFormState, DealCard, Stage } from '../types'
 import { Modal } from './modal'
 
@@ -58,10 +52,10 @@ export function CardDialog({
         {editingCard ? 'Editar oportunidade' : 'Nova oportunidade'}
       </h2>
       <p id={descriptionId} className="mt-1 text-sm text-gray-500">
-        Mantenha as informações atualizadas para priorizar o follow-up.
+        Cadastre o contato responsável e organize as oportunidades por estágio.
       </p>
 
-      <form className="mt-4 grid gap-4 md:grid-cols-2" onSubmit={onSubmit}>
+      <form className="mt-4 grid gap-4" onSubmit={onSubmit}>
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Estágio</label>
           <Select
@@ -83,90 +77,17 @@ export function CardDialog({
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-medium text-gray-700">Contato / Empresa</label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Contato</label>
           <Input
-            value={form.title}
-            onChange={(event) => onChangeField('title', event.target.value)}
-            placeholder="Ex.: Ana Souza - InovaTech"
+            value={form.contact}
+            onChange={(event) => onChangeField('contact', event.target.value)}
+            placeholder="Ex.: Ana Souza"
             required
-            maxLength={CARD_TITLE_MAX_LENGTH}
+            maxLength={CARD_CONTACT_MAX_LENGTH}
           />
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Empresa</label>
-          <Input
-            value={form.companyName}
-            onChange={(event) => onChangeField('companyName', event.target.value)}
-            placeholder="Nome da empresa"
-            maxLength={CARD_COMPANY_MAX_LENGTH}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Responsável</label>
-          <Input
-            value={form.owner}
-            onChange={(event) => onChangeField('owner', event.target.value)}
-            placeholder="Quem está cuidando"
-            maxLength={CARD_OWNER_MAX_LENGTH}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Status</label>
-          <Input
-            value={form.status}
-            onChange={(event) => onChangeField('status', event.target.value)}
-            placeholder="Ex.: Qualificado, Em risco"
-            maxLength={CARD_STATUS_MAX_LENGTH}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Tag</label>
-          <Input
-            value={form.tag}
-            onChange={(event) => onChangeField('tag', event.target.value)}
-            placeholder="Ex.: Trial, Prioridade"
-            maxLength={CARD_TAG_MAX_LENGTH}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">MRR estimado (R$)</label>
-          <Input
-            type="number"
-            min={0}
-            step="0.01"
-            value={form.mrr}
-            onChange={(event) => onChangeField('mrr', event.target.value)}
-            placeholder="0,00"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Mensagens</label>
-          <Input
-            type="number"
-            min={0}
-            value={form.messagesCount}
-            onChange={(event) => onChangeField('messagesCount', event.target.value)}
-            placeholder="0"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Último contato</label>
-          <Input
-            type="datetime-local"
-            value={form.lastMessageAt}
-            onChange={(event) => onChangeField('lastMessageAt', event.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Próxima ação</label>
-          <Input
-            type="datetime-local"
-            value={form.nextActionAt}
-            onChange={(event) => onChangeField('nextActionAt', event.target.value)}
-          />
-        </div>
-        <div className="flex justify-end gap-2 md:col-span-2">
+        <div className="flex justify-end gap-2">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancelar
           </Button>

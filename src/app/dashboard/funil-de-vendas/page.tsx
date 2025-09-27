@@ -21,10 +21,8 @@ import {
   createEmptyStage,
   createInitialCardForm,
   createInitialPipelineForm,
-  fromInputDate,
   normalizeStageColor,
   reindexStages,
-  toInputDate,
 } from './helpers'
 import {
   CardFormState,
@@ -35,11 +33,7 @@ import {
   Stage,
 } from './types'
 import {
-  CARD_COMPANY_MAX_LENGTH,
-  CARD_OWNER_MAX_LENGTH,
-  CARD_STATUS_MAX_LENGTH,
-  CARD_TAG_MAX_LENGTH,
-  CARD_TITLE_MAX_LENGTH,
+  CARD_CONTACT_MAX_LENGTH,
   MAX_PIPELINES_PER_COMPANY,
   MAX_STAGES_PER_PIPELINE,
   PIPELINE_DESCRIPTION_MAX_LENGTH,
@@ -108,9 +102,7 @@ export default function SalesPipelinePage() {
         .order('position', { ascending: true }),
       supabasebrowser
         .from('card')
-        .select(
-          'id, title, company_name, owner, tag, status, mrr, messages_count, last_message_at, next_action_at, position, stage_id, pipeline_id'
-        )
+        .select('id, contact, position, stage_id, pipeline_id')
         .eq('pipeline_id', pipelineId)
         .order('position', { ascending: true }),
     ])
@@ -128,13 +120,7 @@ export default function SalesPipelinePage() {
     }))
 
     setStages(normalizedStages)
-    setCards(
-      (cardData ?? []).map((card) => ({
-        ...card,
-        mrr: Number(card.mrr ?? 0),
-        messages_count: Number(card.messages_count ?? 0),
-      }))
-    )
+    setCards(cardData ?? [])
     setBoardLoading(false)
   }, [])
 
@@ -764,15 +750,7 @@ export default function SalesPipelinePage() {
     if (card) {
       setEditingCard(card)
       setCardForm({
-        title: card.title,
-        companyName: card.company_name ?? '',
-        owner: card.owner ?? '',
-        tag: card.tag ?? '',
-        status: card.status ?? '',
-        mrr: card.mrr ? String(card.mrr) : '',
-        messagesCount: card.messages_count ? String(card.messages_count) : '',
-        lastMessageAt: toInputDate(card.last_message_at),
-        nextActionAt: toInputDate(card.next_action_at),
+        contact: card.contact,
       })
     } else {
       setEditingCard(null)
@@ -793,51 +771,19 @@ export default function SalesPipelinePage() {
         return
       }
 
-      const title = cardForm.title.trim()
-      if (!title) {
-        toast.error('Informe um nome para a oportunidade.')
+      const contact = cardForm.contact.trim()
+      if (!contact) {
+        toast.error('Informe o contato da oportunidade.')
         return
       }
 
-      if (title.length > CARD_TITLE_MAX_LENGTH) {
-        toast.error('O nome da oportunidade deve ter até 120 caracteres.')
-        return
-      }
-
-      const companyName = cardForm.companyName.trim()
-      if (companyName.length > CARD_COMPANY_MAX_LENGTH) {
-        toast.error('O campo Empresa aceita no máximo 80 caracteres.')
-        return
-      }
-
-      const owner = cardForm.owner.trim()
-      if (owner.length > CARD_OWNER_MAX_LENGTH) {
-        toast.error('O campo Responsável aceita no máximo 80 caracteres.')
-        return
-      }
-
-      const tag = cardForm.tag.trim()
-      if (tag.length > CARD_TAG_MAX_LENGTH) {
-        toast.error('O campo Tag aceita no máximo 40 caracteres.')
-        return
-      }
-
-      const status = cardForm.status.trim()
-      if (status.length > CARD_STATUS_MAX_LENGTH) {
-        toast.error('O campo Status aceita no máximo 60 caracteres.')
+      if (contact.length > CARD_CONTACT_MAX_LENGTH) {
+        toast.error('O contato deve ter até 120 caracteres.')
         return
       }
 
       const payload = {
-        title,
-        company_name: companyName || null,
-        owner: owner || null,
-        tag: tag || null,
-        status: status || null,
-        mrr: Number(cardForm.mrr) || 0,
-        messages_count: Number(cardForm.messagesCount) || 0,
-        last_message_at: fromInputDate(cardForm.lastMessageAt),
-        next_action_at: fromInputDate(cardForm.nextActionAt),
+        contact,
       }
 
       try {
@@ -904,7 +850,7 @@ export default function SalesPipelinePage() {
 
   const handleDeleteCard = useCallback(
     async (card: DealCard) => {
-      if (!window.confirm(`Deseja remover a oportunidade "${card.title}"?`)) {
+      if (!window.confirm(`Deseja remover a oportunidade "${card.contact}"?`)) {
         return
       }
 
