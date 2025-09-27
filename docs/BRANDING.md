@@ -41,4 +41,5 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - O menu lateral do agente não exibe mais um card dedicado à assinatura corporativa; mantenha a hierarquia visual focada no status individual e no tipo do agente.
 - Mensagens sobre pagamento corporativo devem aparecer apenas em fluxos como ativação ou alertas globais, preservando a distinção entre branding individual e informações financeiras compartilhadas.
 - Qualquer tela que comunique a assinatura deve continuar considerando apenas cobranças pagas com vencimento vigente, ignorando faturas futuras pendentes para evitar alarmes incorretos.
+- Avisos relacionados a automações externas não devem sugerir dependência do N8N durante a criação de agentes, já que o provisionamento agora ocorre internamente; mantenha o tom institucional destacando a autonomia da plataforma.
 
