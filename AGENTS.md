@@ -13,6 +13,7 @@ Estas orientações se aplicam a todo o repositório `agent-plugandplay`.
 - Ao modificar arquivos Markdown, utilize títulos em português e mantenha uma estrutura coerente com o restante do projeto.
 - Ao ajustar o funil de vendas, mantenha alinhadas as descrições sobre áreas de drop vazias para garantir consistência entre código e documentação visual.
 - Sempre que atualizar o fluxo de assinatura corporativa, destaque na documentação que a interface considera apenas faturas pagas com vencimento vigente e ignora cobranças futuras pendentes ao liberar ativações, mantendo o menu do agente focado em atributos individuais.
+- Caso altere integrações externas, registre se algum fluxo do N8N deixa de ser utilizado — atualmente a criação de agentes não dispara webhooks externos.
 
 ## Mensagens de PR
 - Estruture a mensagem de PR com um resumo em tópicos e uma seção de testes, mencionando cada comando executado.

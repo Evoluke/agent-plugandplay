@@ -1,6 +1,6 @@
 # Agent Plug and Play
 
-Este repositório contém uma aplicação [Next.js](https://nextjs.org/) preparada para integrar serviços como **N8N**, **Dify** e **Chatwoot**, oferecendo uma base para construir experiências de agentes prontos para uso.
+Este repositório contém uma aplicação [Next.js](https://nextjs.org/) preparada para integrar serviços como **N8N**, **Dify** e **Chatwoot**, oferecendo uma base para construir experiências de agentes prontos para uso. A criação de agentes agora ocorre totalmente dentro da plataforma, sem acionar fluxos externos no N8N.
 
 ## 🚀 Setup
 
@@ -33,11 +33,11 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
    ```
 
 2. Faça o deploy na [Vercel](https://vercel.com/) (via CLI ou integração com Git). O processo padrão consiste em:
-   - Configurar as variáveis de ambiente no painel da Vercel (incluindo `N8N_WEBHOOK_URL`, `N8N_AGENT_WEBHOOK_URL` e `N8N_WEBHOOK_TOKEN`, usadas pelos endpoints internos `/api/knowledge-base/upload` e `/api/agents/create`). Certifique-se de que `N8N_AGENT_WEBHOOK_URL` já aponte diretamente para o endpoint final do fluxo do N8N, sem depender de sufixos adicionados pela aplicação.
-   - Ajustar o fluxo do N8N para consumir os campos `agent_id`, `agent_internal_name`, `chatwoot_id` e `chatwoot_user_id` enviados no corpo do webhook de criação de agentes.
+   - Configurar as variáveis de ambiente no painel da Vercel (incluindo `N8N_WEBHOOK_URL`, `N8N_CRM_WEBHOOK_URL` e `N8N_WEBHOOK_TOKEN`, usadas pelos endpoints internos `/api/knowledge-base/upload` e `/api/crm/create`).
+   - Revisar os fluxos do N8N responsáveis por receber uploads de base de conhecimento e provisionamento do CRM para que validem o token enviado no header `Authorization`.
    - Realizar o push para o branch principal para disparar o deploy automático **ou** utilizar o comando `vercel --prod`.
 
-> O fluxo do N8N deve validar o token enviado no header `Authorization` antes de aceitar o upload.
+> A criação de agentes não envia mais webhooks ao N8N; qualquer automação adicional deve ser disparada a partir de outros fluxos específicos.
 
 ## 🧭 Funil de vendas
 
