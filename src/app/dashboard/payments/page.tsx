@@ -4,7 +4,7 @@
 import { supabasebrowser } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
 
 type Payment = {
@@ -14,17 +14,28 @@ type Payment = {
   created_at: string;
   due_date: string;
   reference: string;
+  paid_in?: string | null;
+  companyId?: string | null;
+};
+
+type PaymentRow = Payment & {
+  company?: { id: string } | { id: string }[] | null;
 };
 
 type User = {
   id: string;
 };
 
+type Company = {
+  id: string;
+  subscription_expires_at: string | null;
+};
 
 export default function PaymentsPage() {
   const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
 
 
@@ -61,16 +72,48 @@ export default function PaymentsPage() {
 
       if (error) {
         console.error('Erro ao buscar payments:', error);
+        toast.error('Erro ao carregar pagamentos.');
         return;
       }
 
-      setPayments(data);
+      const normalizedPayments: Payment[] = (data ?? []).map((payment) => {
+        const { company, ...rest } = payment as PaymentRow;
+        const normalizedCompanyId = Array.isArray(company)
+          ? company[0]?.id ?? null
+          : company?.id ?? null;
+
+        return {
+          ...rest,
+          companyId: normalizedCompanyId,
+        } satisfies Payment;
+      });
+
+      setPayments(normalizedPayments);
     };
 
     fetchPayments();
   }, [user]);
 
+  useEffect(() => {
+    if (!user?.id) return;
 
+    const fetchCompany = async () => {
+      const { data, error } = await supabasebrowser
+        .from('company')
+        .select('id, subscription_expires_at')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Erro ao buscar dados da empresa:', error);
+        return;
+      }
+
+      setCompany(data);
+    };
+
+    fetchCompany();
+  }, [user]);
 
   if (!user || !payments) return null;
 
@@ -85,8 +128,49 @@ export default function PaymentsPage() {
     }
   };
 
+  const subscriptionDate = company?.subscription_expires_at
+    ? new Date(company.subscription_expires_at)
+    : null;
+  const isValidSubscriptionDate = subscriptionDate && !Number.isNaN(subscriptionDate.getTime());
+  const formattedSubscriptionDate = isValidSubscriptionDate
+    ? subscriptionDate.toLocaleDateString("pt-BR")
+    : 'Sem assinatura ativa';
+
+  const now = Date.now();
+  const oneDayInMs = 24 * 60 * 60 * 1000;
+  const isExpired = isValidSubscriptionDate
+    ? now >= subscriptionDate.getTime() + oneDayInMs
+    : true;
+
   return (
     <div className="p-4 space-y-6 w-full max-w-5xl mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle>Assinatura corporativa</CardTitle>
+          <CardDescription>Data de expiração vinculada à empresa logada.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">Válida até</p>
+            <p className="text-2xl font-semibold">{formattedSubscriptionDate}</p>
+          </div>
+          <span
+            className={`px-3 py-1 text-sm font-medium rounded-full ${
+              isValidSubscriptionDate
+                ? isExpired
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-green-100 text-green-800'
+                : 'bg-muted text-muted-foreground'
+            }`}
+          >
+            {isValidSubscriptionDate
+              ? isExpired
+                ? 'Expirada'
+                : 'Ativa'
+              : 'Indisponível'}
+          </span>
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Controle de Pagamentos</CardTitle>
