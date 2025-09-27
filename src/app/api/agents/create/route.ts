@@ -412,6 +412,13 @@ export async function POST(request: Request) {
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 30);
     const dueDateIso = dueDate.toISOString();
+    const today = new Date();
+    const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(today);
+    const paymentReference = `Mensalidade (${formattedDate})`;
 
     const {
       data: paymentData,
@@ -422,7 +429,7 @@ export async function POST(request: Request) {
         company_id: company.id,
         amount: AGENT_PRICE,
         due_date: dueDateIso,
-        reference: "Mensalidade Agent Plug and Play",
+        reference: paymentReference,
       })
       .select("id, amount, due_date")
       .single();
