@@ -93,8 +93,16 @@ export default function AgentKnowledgeBasePage() {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setUploading(true);
+    if (!agent || agent.company_id === null) {
+      toast.error("Não foi possível identificar a empresa", { id: t });
+      e.target.value = "";
+      setUploading(false);
+      return;
+    }
+
+    const companyId = agent.company_id;
     const file = e.target.files?.[0];
-    if (!file || !agent || !agent.company_id) {
+    if (!file) {
       setUploading(false);
       return;
     }
@@ -150,7 +158,7 @@ export default function AgentKnowledgeBasePage() {
       .insert({
         id: fileId,
         agent_id: id,
-        company_id: agent.company_id,
+        company_id: companyId,
         name: finalFileName,
         tokens,
       })
@@ -166,7 +174,7 @@ export default function AgentKnowledgeBasePage() {
       const uploadData = new FormData();
       uploadData.append("file", uploadFile);
       const response = await fetch(
-        `/api/knowledge-base/upload?path_id=${fileId}&company_id=${agent.company_id}&agent_id=${id}`,
+        `/api/knowledge-base/upload?path_id=${fileId}&company_id=${companyId}&agent_id=${id}`,
         {
           method: "POST",
           body: uploadData,
@@ -193,7 +201,8 @@ export default function AgentKnowledgeBasePage() {
   };
 
   const handleRemove = async () => {
-    if (!agent || !fileToDelete) return;
+    if (!agent || agent.company_id === null || !fileToDelete) return;
+    const companyId = agent.company_id;
     setDeleteLoading(true);
 
     const { error } = await supabasebrowser
@@ -210,7 +219,7 @@ export default function AgentKnowledgeBasePage() {
     const { error: docError } = await supabasebrowser
       .from("documents")
       .delete()
-      .eq("metadata->>company_id", agent.company_id.toString())
+      .eq("metadata->>company_id", companyId.toString())
       .eq("metadata->>agent_id", id)
       .eq("metadata->>path_id", fileToDelete.id);
 
@@ -218,7 +227,7 @@ export default function AgentKnowledgeBasePage() {
       await supabasebrowser.from("agent_knowledge_files").insert({
         id: fileToDelete.id,
         agent_id: id,
-        company_id: agent.company_id,
+        company_id: companyId,
         name: fileToDelete.name,
         tokens: fileToDelete.tokens,
       });
