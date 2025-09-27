@@ -137,6 +137,18 @@ export default function ActivateAgentButton({ agentId, onActivated }: Props) {
       return;
     }
 
+    const { error: deactivateError } = await supabasebrowser
+      .from("agents")
+      .update({ is_active: false })
+      .eq("company_id", agent.company_id)
+      .neq("id", agentId);
+
+    if (deactivateError) {
+      toast.error("Erro ao desativar outros agentes da empresa.");
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabasebrowser
       .from("agents")
       .update({ is_active: true })
