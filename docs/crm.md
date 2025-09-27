@@ -7,7 +7,7 @@ A página **Funil de vendas** centraliza os funis comerciais da empresa logada. 
 - Seleção de funil a partir da lista vinculada à empresa autenticada.
 - Criação, edição e exclusão de funis com descrição opcional.
 - Limite de cinco funis por empresa e dez estágios por funil para manter o gerenciamento enxuto.
-- Gestão de estágios diretamente no modal de criação/edição do funil, com campos para adicionar, renomear, escolher a cor com um seletor nativo e remover etapas antes de salvar.
+- Gestão de estágios diretamente no modal de criação/edição do funil, com campos para adicionar, renomear, escolher a cor com um seletor nativo alinhado ao campo de nome (sem exibir o hexadecimal) e remover etapas antes de salvar.
 - Agentes SDR só podem ser ativados após autenticar o Google Calendar vinculado, garantindo que apenas representantes com agenda conectada ofereçam horários disponíveis aos leads.
 - Cada empresa mantém apenas um agente de IA ativo por vez; ativar um novo agente desativa automaticamente os demais associados à mesma companhia.
 - Cada estágio recebe uma cor de fundo armazenada no campo `stage.color`, aplicada diretamente como plano de fundo da coluna no board.

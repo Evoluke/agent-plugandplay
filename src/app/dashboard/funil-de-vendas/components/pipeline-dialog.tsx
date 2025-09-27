@@ -96,34 +96,30 @@ export function PipelineDialog({
           ) : (
             <div className="space-y-3">
               {form.stages.map((stage, index) => (
-                <div key={stage.id ?? `novo-estagio-${index}`} className="flex flex-wrap items-center gap-2">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-xs font-medium text-gray-500">
-                    {index + 1}
-                  </span>
+                <div
+                  key={stage.id ?? `novo-estagio-${index}`}
+                  className="flex flex-wrap items-center gap-2 sm:flex-nowrap"
+                >
                   <Input
                     value={stage.name}
                     onChange={(event) => onUpdateStageName(index, event.target.value)}
                     placeholder={`Estágio ${index + 1}`}
                     disabled={loading}
                     maxLength={STAGE_NAME_MAX_LENGTH}
+                    className="min-w-0 flex-1"
                   />
-                  <div className="flex items-center gap-2">
-                    <label className="sr-only" htmlFor={`stage-color-${index}`}>
-                      Cor do estágio {index + 1}
-                    </label>
-                    <Input
-                      id={`stage-color-${index}`}
-                      type="color"
-                      value={stage.color.toLowerCase()}
-                      onChange={(event) => onUpdateStageColor(index, event.target.value)}
-                      disabled={loading}
-                      className="h-9 w-12 min-w-12 cursor-pointer p-1"
-                      title={`Cor do estágio ${index + 1}`}
-                    />
-                    <span className="text-xs font-medium uppercase text-gray-500">
-                      {stage.color.toUpperCase()}
-                    </span>
-                  </div>
+                  <label className="sr-only" htmlFor={`stage-color-${index}`}>
+                    Cor do estágio {index + 1}
+                  </label>
+                  <Input
+                    id={`stage-color-${index}`}
+                    type="color"
+                    value={stage.color.toLowerCase()}
+                    onChange={(event) => onUpdateStageColor(index, event.target.value)}
+                    disabled={loading}
+                    className="h-9 w-12 min-w-12 cursor-pointer p-1"
+                    title={`Cor do estágio ${index + 1}`}
+                  />
                   <Button
                     type="button"
                     size="icon"
