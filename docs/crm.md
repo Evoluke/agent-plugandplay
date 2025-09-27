@@ -32,9 +32,9 @@ As tabelas criadas para suportar o módulo ficam no schema público do Supabase:
 
 ### Funil padrão por empresa
 
-- Toda empresa recebe automaticamente o funil **"Funil da do Agente"**, identificado no banco de dados pelo campo `identifier = 'agent_default_pipeline'`.
+- Toda empresa recebe automaticamente o funil **"Funil da do Agente"** assim que a criação da conta é concluída, identificado no banco de dados pelo campo `identifier = 'agent_default_pipeline'`.
 - Os estágios deste funil são fixos e seguem a ordem: **Entrada**, **Atendimento Humano** e **Qualificado**, com as cores padrão **#E0F2FE**, **#FCE7F3** e **#FEF3C7** aplicadas respectivamente.
-- O front-end garante que o funil padrão exista antes de carregar o board, restaure os nomes/ordens configurados e o proteja contra exclusão ou edição.
+- O back-end garante a criação e sincronização inicial do funil ao finalizar o cadastro da empresa, enquanto o front-end continua verificando a estrutura antes de carregar o board, restaurando nomes/ordens configurados e protegendo-o contra exclusão ou edição.
 - Como apenas um funil pode utilizar este identificador por empresa, criações manuais sempre resultam em novos funis personalizados, mantendo o padrão intacto.
 
 ## Considerações de UX
