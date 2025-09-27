@@ -67,11 +67,6 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 - O primeiro atalho da barra lateral preserva o ícone de casa para destacar o retorno rápido ao dashboard principal.
 - A ordem dos atalhos prioriza o **Funil de vendas** antes de **Pagamentos**, mantendo o fluxo comercial em evidência.
 
-## 🤖 Regras dos agentes IA
-
-- A ativação do agente **SDR** só é liberada após a autenticação do Google Calendar na tela de integrações do agente; sem o token de agenda conectado, o botão de ativar permanece bloqueado com aviso orientando a integração.
-- Os demais agentes seguem as validações padrão de expiração de pagamento, sem exigir integrações extras para iniciar o funcionamento.
-
 ## 🔗 Links Úteis
 
 - [Next.js](https://nextjs.org/docs)
