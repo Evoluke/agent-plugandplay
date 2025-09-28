@@ -212,23 +212,6 @@ export async function POST(request: Request) {
     const expirationDate = new Date(expirationSource);
     expirationDate.setHours(0, 0, 0, 0);
     normalizedDueDate = expirationDate.toISOString();
-    const currentExpiration = company.subscription_expires_at
-      ? new Date(company.subscription_expires_at)
-      : null;
-
-    if (
-      !currentExpiration ||
-      expirationDate.getTime() > currentExpiration.getTime()
-    ) {
-      const { error: expirationUpdateError } = await supabaseadmin
-        .from('company')
-        .update({ subscription_expires_at: normalizedDueDate })
-        .eq('id', company.id);
-
-      if (expirationUpdateError) {
-        console.error('[payments:pay] erro ao atualizar expiração corporativa', expirationUpdateError);
-      }
-    }
   }
 
   await supabaseadmin

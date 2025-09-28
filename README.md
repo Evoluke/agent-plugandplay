@@ -72,13 +72,13 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 
 - Cada empresa possui um histórico único de cobranças: o primeiro pagamento é criado automaticamente quando o usuário provisiona o primeiro agente de IA e não existe nenhum registro prévio para a empresa na tabela `payments`.
 - O campo `reference` do primeiro pagamento segue o formato `Mensalidade (dd/MM/aaaa)` e utiliza a data corrente da criação para facilitar a identificação da fatura.
-- A página apresenta um card dedicado à assinatura corporativa, exibindo a data de expiração consolidada em `company.subscription_expires_at`, respeitando uma carência de 1 dia antes de considerar a vigência expirada (o status só muda para "Expirada" a partir de 00h00 do dia seguinte ao vencimento) e mantendo a etiqueta "Ativa" durante esse período de tolerância calculado por dia, não por horas corridas.
+- A página apresenta um card dedicado à assinatura corporativa, exibindo a data de expiração consolidada em `company.subscription_expires_at`, respeitando uma carência de 1 dia antes de considerar a vigência expirada (o status só muda para "Expirada" a partir de 00h00 do dia seguinte ao vencimento) e mantendo a etiqueta "Ativa" durante esse período de tolerância calculado por dia, não por horas corridas. Esse campo passou a ser atualizado exclusivamente por integrações externas, como os fluxos do N8N responsáveis pelo ciclo de cobrança.
 - Novos agentes reutilizam o mesmo cadastro de pagamento da empresa, evitando a geração de cobranças duplicadas ao longo da expansão do time de IA.
 - Os registros de cobrança ficam associados apenas ao `company_id`; nenhum `agent_id` é armazenado na tabela `payments`, reforçando que a assinatura é sempre corporativa.
 - A ativação dos agentes só ocorre quando a assinatura corporativa está paga e dentro da validade; o painel ignora cobranças futuras pendentes e confia exclusivamente na data consolidada em `company.subscription_expires_at` para liberar o botão de ativar.
 - Apenas um agente de IA pode permanecer ativo por empresa; ao ativar um novo agente, o sistema desativa automaticamente os demais agentes corporativos para evitar conflitos na operação.
 - O menu do agente concentra-se apenas nos atributos individuais (status e tipo), deixando a conferência da assinatura corporativa centralizada no fluxo de ativação.
-- O vencimento consolidado fica armazenado em `company.subscription_expires_at`, permitindo que toda a aplicação valide a expiração corporativa sem depender de campos na tabela `agents`.
+- O vencimento consolidado fica armazenado em `company.subscription_expires_at`, permitindo que toda a aplicação valide a expiração corporativa sem depender de campos na tabela `agents`; o backend não preenche mais essa coluna automaticamente, aguardando a atualização vinda das integrações externas.
 - Falhas ao buscar o histórico de cobranças exibem uma notificação de erro, evitando que a página fique silenciosamente desatualizada quando o Supabase estiver indisponível.
 
 ## 📅 Integração com Google Calendar

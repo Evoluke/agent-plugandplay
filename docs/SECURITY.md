@@ -14,7 +14,7 @@ Rotas atuais que dependem do `supabaseadmin`:
 - `/api/payments/pay`
 - `/api/payments/client`
 
-As rotas de pagamento agora atualizam `company.subscription_expires_at` sempre que uma cobrança é criada ou renovada. Garanta que políticas de RLS impeçam que outras empresas consultem ou modifiquem esse campo compartilhado, pois ele representa a vigência da assinatura corporativa. O menu do agente deixou de consultar diretamente a tabela de pagamentos, reduzindo a exposição desse histórico no front-end.
+Integrações externas, como os fluxos do N8N, passaram a ser as únicas responsáveis por atualizar `company.subscription_expires_at`. Garanta que políticas de RLS impeçam que outras empresas consultem ou modifiquem esse campo compartilhado, pois ele representa a vigência da assinatura corporativa. O menu do agente deixou de consultar diretamente a tabela de pagamentos, reduzindo a exposição desse histórico no front-end.
 
 ## Tabelas críticas e políticas de RLS
 As seguintes tabelas requerem políticas de Row Level Security para garantir o isolamento por empresa/usuário:
