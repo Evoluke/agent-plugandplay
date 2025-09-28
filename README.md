@@ -51,6 +51,7 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 - A landing **/curriculo-ia** trabalha em três passos: dados pessoais, experiência/conquistas e formação/habilidades, gerando uma pré-visualização instantânea do currículo com sugestões de texto e botões para download em PDF.
 - O PDF é criado no cliente utilizando `jspdf`, estruturado por seções (resumo, destaques, experiência, formação, competências e informações adicionais) e aplica a marca d’água "Gerado por Evoluke.com.br" antes de salvar o arquivo.
+- A rotina de exportação garante que as quebras de linha geradas pelo `jspdf` sejam normalizadas como listas, evitando falhas na renderização das seções do PDF mesmo quando a biblioteca retorna uma string simples.
 - Após o download o usuário é levado para **/curriculo-ia/dicas**, página com checklist de carreira, blocos de conteúdo e espaços para anúncios, estimulando uma segunda interação e novas impressões de AdSense.
 - O assistente de preenchimento inclui links para artigos do blog e destaca métricas a serem acompanhadas (currículos gerados por dia, CTR dos anúncios e palavras-chave de maior impacto).
 

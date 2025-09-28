@@ -160,8 +160,9 @@ function buildResume(data: FormData): GeneratedResume {
   };
 }
 
-function splitParagraph(doc: jsPDF, text: string, maxWidth: number) {
-  return doc.splitTextToSize(text, maxWidth);
+function splitParagraph(doc: jsPDF, text: string, maxWidth: number): string[] {
+  const lines = doc.splitTextToSize(text, maxWidth);
+  return Array.isArray(lines) ? lines : [lines];
 }
 
 export default function CurriculoWizard() {
