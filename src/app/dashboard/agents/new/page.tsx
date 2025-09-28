@@ -194,6 +194,10 @@ export default function NewAgentPage() {
 
       const agentId = data?.id;
 
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("agentsUpdated"));
+      }
+
       if (typeof agentId === "string") {
         router.push(`/dashboard/agents/${agentId}`);
       }
