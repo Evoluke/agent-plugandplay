@@ -5,13 +5,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routes = [
     { path: "", changefreq: "weekly", priority: 1 },
-    { path: "pricing", changefreq: "monthly", priority: 0.8 },
-    { path: "login", changefreq: "monthly", priority: 0.5 },
-    { path: "signup", changefreq: "monthly", priority: 0.5 },
-    { path: "forgot-password", changefreq: "yearly", priority: 0.3 },
-    { path: "verify-email", changefreq: "yearly", priority: 0.3 },
-    { path: "update-password", changefreq: "yearly", priority: 0.3 },
-    { path: "complete-profile", changefreq: "yearly", priority: 0.3 },
+    { path: "gerar-curriculo", changefreq: "weekly", priority: 0.9 },
+    { path: "modelos-de-curriculo", changefreq: "weekly", priority: 0.8 },
+    { path: "curriculo-primeiro-emprego", changefreq: "weekly", priority: 0.8 },
+    { path: "como-fazer-curriculo-por-area", changefreq: "weekly", priority: 0.8 },
+    { path: "blog", changefreq: "weekly", priority: 0.7 },
+    { path: "blog/curriculo-ats-palavras-chave", changefreq: "monthly", priority: 0.6 },
+    { path: "blog/carta-de-apresentacao-que-converte", changefreq: "monthly", priority: 0.6 },
+    { path: "blog/template-curriculo-2025", changefreq: "monthly", priority: 0.6 },
+    { path: "curriculo/enfermeiro", changefreq: "monthly", priority: 0.7 },
+    { path: "curriculo/vendedor", changefreq: "monthly", priority: 0.7 },
+    { path: "curriculo/designer", changefreq: "monthly", priority: 0.7 },
+    { path: "privacy", changefreq: "yearly", priority: 0.3 },
     { path: "terms", changefreq: "yearly", priority: 0.3 },
   ];
 
