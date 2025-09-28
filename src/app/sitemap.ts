@@ -5,6 +5,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routes = [
     { path: "", changefreq: "weekly", priority: 1 },
+    { path: "curriculo-ia", changefreq: "weekly", priority: 0.9 },
+    { path: "curriculo-ia/dicas", changefreq: "weekly", priority: 0.7 },
+    { path: "blog", changefreq: "weekly", priority: 0.7 },
+    { path: "blog/curriculo-primeiro-emprego", changefreq: "monthly", priority: 0.6 },
+    { path: "blog/curriculo-vendedor", changefreq: "monthly", priority: 0.6 },
+    { path: "blog/como-fazer-curriculo-2025", changefreq: "monthly", priority: 0.6 },
     { path: "sobre-nos", changefreq: "monthly", priority: 0.8 },
     { path: "saiba-mais", changefreq: "monthly", priority: 0.75 },
     { path: "sob-demanda", changefreq: "monthly", priority: 0.75 },

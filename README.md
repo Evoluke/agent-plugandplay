@@ -44,6 +44,15 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - O sitemap disponível em `/sitemap.xml` replica automaticamente o domínio configurado em `NEXT_PUBLIC_APP_URL` e cataloga as páginas públicas da landing page, incluindo **/sobre-nos**, **/saiba-mais**, **/sob-demanda**, **/crm**, **/bni**, **/contact**, **/privacy**, **/terms** e as rotas de autenticação.
 - O arquivo `public/robots.txt` declara `Sitemap: https://evoluke.com.br/sitemap.xml`, permitindo que os buscadores identifiquem rapidamente o índice gerado; ajuste a URL caso o domínio canônico seja personalizado em outro ambiente.
 - O script JSON-LD de organização é inserido diretamente no HTML servido, garantindo que os buscadores tenham acesso imediato aos metadados estruturados sem depender de execução de JavaScript no cliente.
+- As rotas **/curriculo-ia** e **/curriculo-ia/dicas** apresentam o gerador gratuito de currículos com IA, mantêm espaços reservados para Google AdSense e direcionam o usuário para conteúdos adicionais após o download do PDF com marca d’água da Evoluke.
+- O blog de carreira acessível em **/blog** e nos artigos específicos (**/blog/curriculo-primeiro-emprego**, **/blog/curriculo-vendedor**, **/blog/como-fazer-curriculo-2025**) oferece CTAs diretas para o gerador e reforça a estratégia de SEO com palavras-chave de long tail.
+
+## 📝 Gerador de currículo com IA
+
+- A landing **/curriculo-ia** trabalha em três passos: dados pessoais, experiência/conquistas e formação/habilidades, gerando uma pré-visualização instantânea do currículo com sugestões de texto e botões para download em PDF.
+- O PDF é criado no cliente utilizando `jspdf`, estruturado por seções (resumo, destaques, experiência, formação, competências e informações adicionais) e aplica a marca d’água "Gerado por Evoluke.com.br" antes de salvar o arquivo.
+- Após o download o usuário é levado para **/curriculo-ia/dicas**, página com checklist de carreira, blocos de conteúdo e espaços para anúncios, estimulando uma segunda interação e novas impressões de AdSense.
+- O assistente de preenchimento inclui links para artigos do blog e destaca métricas a serem acompanhadas (currículos gerados por dia, CTR dos anúncios e palavras-chave de maior impacto).
 
 ## 🧭 Funil de vendas
 
