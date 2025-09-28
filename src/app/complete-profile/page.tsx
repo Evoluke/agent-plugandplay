@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { supabasebrowser } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, Building2, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import {
   isValidCompanyName,
   isValidCpfCnpj,
@@ -79,6 +81,25 @@ export default function CompleteProfilePage() {
   };
 
   useEffect(() => {
+    if (
+      process.env.NODE_ENV === "development" &&
+      typeof window !== "undefined" &&
+      window.location.search.includes("preview=1")
+    ) {
+      setUserId("preview-user");
+      setCompanyName((prev) => prev || "Plug and Play Tecnologia");
+      handleCpfCnpjChange(cpfCnpj || "12345678000100");
+      setAddress((prev) => prev || "Av. Central, 100");
+      handleZipChange(zipCode || "12345000");
+      setCity((prev) => prev || "São Paulo");
+      setState((prev) => prev || "SP");
+      setCountry("Brasil");
+      setResponsible((prev) => prev || "Ana Martins");
+      handlePhoneChange(phone || "11988887777");
+      setLoading(false);
+      return;
+    }
+
     supabasebrowser.auth.getUser().then(async ({ data, error }) => {
       if (error || !data?.user) {
         router.replace("/login");
@@ -130,7 +151,7 @@ export default function CompleteProfilePage() {
       }
       setLoading(false);
     });
-  }, [router]);
+  }, [router, cpfCnpj, phone, zipCode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -201,162 +222,244 @@ export default function CompleteProfilePage() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <p>Aguarde um momento</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#FAFAFA] px-6 text-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#2F6F68]" />
+        <div className="space-y-1">
+          <p className="text-base font-medium text-slate-900">
+            Estamos preparando suas informações
+          </p>
+          <p className="text-sm text-slate-500">
+            Em instantes você poderá finalizar o cadastro.
+          </p>
+        </div>
       </div>
     );
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
-      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
-        <Button
-          variant="ghost"
-          className="mb-4"
-          onClick={handleBack}
-          disabled={loadingBack}
-        >
-          {loadingBack ? "Voltando..." : "← Voltar"}
-        </Button>
-
-        <form
-          onSubmit={handleSubmit}
-          className="w-full bg-white rounded-lg shadow p-6 space-y-4"
-        >
-
-          <h1 className="text-2xl font-semibold text-center">
-            Completar Perfil
-          </h1>
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium">
-              Nome da empresa
-            </label>
-            <Input
-              id="company"
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              maxLength={80}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="cpfCnpj" className="block text-sm font-medium">
-              CPF/CNPJ
-            </label>
-            <Input
-              id="cpfCnpj"
-              type="text"
-              value={cpfCnpj}
-              onChange={(e) => handleCpfCnpjChange(e.target.value)}
-              maxLength={18}
-              placeholder="000.000.000-00"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium">
-              Endereço
-            </label>
-            <Input
-              id="address"
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              maxLength={200}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="zip" className="block text-sm font-medium">
-                CEP
-              </label>
-              <Input
-                id="zip"
-                type="text"
-                value={zipCode}
-                onChange={(e) => handleZipChange(e.target.value)}
-                maxLength={9}
-                placeholder="00000-000"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="city" className="block text-sm font-medium">
-                Cidade
-              </label>
-              <Input
-                id="city"
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                maxLength={255}
-                required
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="state" className="block text-sm font-medium">
-                Estado
-              </label>
-              <Input
-                id="state"
-                type="text"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                maxLength={255}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium">
-                Telefone
-              </label>
-              <Input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => handlePhoneChange(e.target.value)}
-                maxLength={19}
-                placeholder="+00 (00) 00000-0000"
-                required
-              />
-            </div>
-            {/* <div>
-            <label htmlFor="country" className="block text-sm font-medium">
-              País
-            </label>
-            <Select value={country} onValueChange={setCountry}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o país" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Brasil">Brasil</SelectItem>
-                <SelectItem value="Estados Unidos">Estados Unidos</SelectItem>
-                <SelectItem value="Portugal">Portugal</SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
-          </div>
-          <div>
-            <label htmlFor="responsible" className="block text-sm font-medium">
-              Nome do responsável
-            </label>
-            <Input
-              id="responsible"
-              type="text"
-              value={responsible}
-              onChange={(e) => setResponsible(e.target.value)}
-              maxLength={80}
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Salvando..." : "Salvar"}
+    <div className="min-h-screen bg-[#FAFAFA] py-10">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 sm:px-6 lg:flex-row lg:items-start lg:gap-12">
+        <aside className="flex flex-col gap-6 lg:w-5/12">
+          <Button
+            type="button"
+            variant="ghost"
+            className="self-start rounded-full px-3 text-sm font-medium text-[#2F6F68] hover:bg-[#2F6F68]/5"
+            onClick={handleBack}
+            disabled={loadingBack}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" aria-hidden />
+            {loadingBack ? "Voltando..." : "Voltar para login"}
           </Button>
-        </form>
+
+          <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-[0_15px_35px_rgba(47,111,104,0.08)] backdrop-blur">
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-[#2F6F68]/10 p-2 text-[#2F6F68]">
+                <Building2 className="h-5 w-5" aria-hidden />
+              </div>
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Etapa final
+                </p>
+                <h1 className="text-2xl font-semibold text-slate-900">
+                  Complete o perfil da sua empresa
+                </h1>
+              </div>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-slate-600">
+              Centralizamos as informações essenciais para liberar o acesso ao dashboard, ao CRM e às integrações dos seus agentes.
+            </p>
+
+            <div className="mt-6 space-y-4 text-sm text-slate-600">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 text-[#2F6F68]" aria-hidden />
+                <p>Dados empresariais padronizados para emissão de notas e contratos.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 h-4 w-4 text-[#2F6F68]" aria-hidden />
+                <p>Armazenamento seguro com verificação automática de CPF/CNPJ e CEP.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Loader2 className="mt-0.5 h-4 w-4 animate-spin text-[#97B7B4]" aria-hidden />
+                <p>Integração imediata com o CRM assim que você enviar os dados.</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <Card className="flex-1 border-slate-200/80 bg-white/95 shadow-[0_20px_45px_rgba(15,23,42,0.08)]">
+          <CardHeader className="gap-4 border-b border-slate-200/70 pb-6">
+            <div className="flex flex-col gap-2">
+              <CardTitle className="text-xl font-semibold text-slate-900">
+                Dados cadastrais
+              </CardTitle>
+              <CardDescription className="text-sm leading-6 text-slate-600">
+                Preencha os dados corporativos para concluir o onboarding da sua conta.
+              </CardDescription>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+                <span>Progresso</span>
+                <span className="text-[#2F6F68]">Etapa única</span>
+              </div>
+              <Progress value={88} />
+            </div>
+          </CardHeader>
+          <form onSubmit={handleSubmit} className="contents">
+            <CardContent className="space-y-8 pt-6">
+              <section className="space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
+                  Identificação
+                </h2>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="company" className="text-sm font-medium text-slate-700">
+                      Nome da empresa
+                    </label>
+                    <Input
+                      id="company"
+                      type="text"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      maxLength={80}
+                      required
+                      autoComplete="organization"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="cpfCnpj" className="text-sm font-medium text-slate-700">
+                      CPF/CNPJ
+                    </label>
+                    <Input
+                      id="cpfCnpj"
+                      type="text"
+                      value={cpfCnpj}
+                      onChange={(e) => handleCpfCnpjChange(e.target.value)}
+                      maxLength={18}
+                      placeholder="000.000.000-00"
+                      required
+                      autoComplete="tax-id"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
+                  Endereço
+                </h2>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="address" className="text-sm font-medium text-slate-700">
+                      Endereço completo
+                    </label>
+                    <Input
+                      id="address"
+                      type="text"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      maxLength={200}
+                      required
+                      autoComplete="street-address"
+                    />
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <label htmlFor="zip" className="text-sm font-medium text-slate-700">
+                        CEP
+                      </label>
+                      <Input
+                        id="zip"
+                        type="text"
+                        value={zipCode}
+                        onChange={(e) => handleZipChange(e.target.value)}
+                        maxLength={9}
+                        placeholder="00000-000"
+                        required
+                        autoComplete="postal-code"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="city" className="text-sm font-medium text-slate-700">
+                        Cidade
+                      </label>
+                      <Input
+                        id="city"
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        maxLength={255}
+                        required
+                        autoComplete="address-level2"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <label htmlFor="state" className="text-sm font-medium text-slate-700">
+                        Estado
+                      </label>
+                      <Input
+                        id="state"
+                        type="text"
+                        value={state}
+                        onChange={(e) => setState(e.target.value)}
+                        maxLength={255}
+                        required
+                        autoComplete="address-level1"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="phone" className="text-sm font-medium text-slate-700">
+                        Telefone de contato
+                      </label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => handlePhoneChange(e.target.value)}
+                        maxLength={19}
+                        placeholder="+55 (11) 90000-0000"
+                        required
+                        autoComplete="tel"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
+                  Responsável
+                </h2>
+                <div className="space-y-2">
+                  <label htmlFor="responsible" className="text-sm font-medium text-slate-700">
+                    Nome completo do responsável
+                  </label>
+                  <Input
+                    id="responsible"
+                    type="text"
+                    value={responsible}
+                    onChange={(e) => setResponsible(e.target.value)}
+                    maxLength={80}
+                    required
+                    autoComplete="name"
+                  />
+                </div>
+              </section>
+            </CardContent>
+            <div className="px-6 pb-6">
+              <Button
+                type="submit"
+                className="w-full justify-center bg-[#2F6F68] text-white hover:bg-[#255852]"
+                disabled={loading}
+              >
+                {loading ? "Salvando informações..." : "Concluir cadastro"}
+              </Button>
+              <p className="mt-3 text-center text-xs text-slate-500">
+                Seus dados são armazenados com segurança seguindo as políticas de privacidade da plataforma.
+              </p>
+            </div>
+          </form>
+        </Card>
       </div>
     </div>
   );
