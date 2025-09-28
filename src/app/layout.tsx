@@ -81,13 +81,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <Script
+        <script
           id="evoluke-organization-structured-data"
           type="application/ld+json"
-          strategy="afterInteractive"
-        >
-          {JSON.stringify(organizationStructuredData)}
-        </Script>
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationStructuredData).replace(/</g, "\\u003c"),
+          }}
+        />
         <Script id="facebook-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
