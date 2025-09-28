@@ -30,8 +30,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA]">
-      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
+    <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center px-4 py-12">
+      <div className="w-full sm:max-w-md md:max-w-lg">
         <form
           onSubmit={handleSubmit}
           className="w-full bg-white rounded-lg shadow p-6 space-y-4"
@@ -59,9 +59,9 @@ export default function ForgotPasswordPage() {
             Voltar ao login
           </Link>
         </p>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
   );
 }
 

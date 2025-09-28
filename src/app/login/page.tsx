@@ -101,8 +101,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA]">
-      <div className="w-full px-4 sm:max-w-md md:max-w-lg">
+    <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center px-4 py-12">
+      <div className="w-full sm:max-w-md md:max-w-lg">
         <Image
           src="/logo.png"
           alt="Evoluke logo"
@@ -189,14 +189,14 @@ export default function LoginPage() {
         </Button>
 
 
-        <p className="text-center text-sm">
-          Não possui conta?{" "}
-          <Link href="/signup" className="text-teal-600 hover:underline">
-            Cadastrar
-          </Link>
-        </p>
-      </form>
+          <p className="text-center text-sm">
+            Não possui conta?{" "}
+            <Link href="/signup" className="text-teal-600 hover:underline">
+              Cadastrar
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
-  </div>
   );
 }
