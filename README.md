@@ -64,6 +64,7 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 ## 🧱 Navegação do dashboard
 
 - O menu lateral reúne as ações de **Configuração**, **Suporte** e **Logout** em um submenu acessível pelo ícone de três pontos horizontais posicionado no rodapé da sidebar.
+- Ao criar um novo agente de IA, a aplicação dispara automaticamente a atualização da sidebar para exibir o atalho recém-criado sem exigir recarregamento manual da página.
 - O submenu mantém o foco na navegação principal, exibindo apenas os atalhos operacionais quando solicitado.
 - O primeiro atalho da barra lateral preserva o ícone de casa para destacar o retorno rápido ao dashboard principal.
 - A ordem dos atalhos prioriza o **Funil de vendas** antes de **Pagamentos**, mantendo o fluxo comercial em evidência.
