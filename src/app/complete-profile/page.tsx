@@ -307,13 +307,6 @@ export default function CompleteProfilePage() {
                 Preencha os dados corporativos para concluir o onboarding da sua conta.
               </CardDescription>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-                <span>Progresso</span>
-                <span className="text-[#2F6F68]">Etapa única</span>
-              </div>
-              <Progress value={88} />
-            </div>
           </CardHeader>
           <form onSubmit={handleSubmit} className="contents">
             <CardContent className="space-y-8 pt-6">
