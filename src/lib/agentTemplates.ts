@@ -1,6 +1,6 @@
 export interface AgentTemplate {
   personality: {
-    voice_tone: 'formal' | 'casual';
+    voice_tone: 'formal' | 'casual' | 'informal' | 'neutro';
     objective: string;
     limits: string;
     company_name: string;

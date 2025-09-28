@@ -69,8 +69,7 @@ create table public.agents (
   constraint agents_company_id_fkey foreign key (company_id) references company (id)
 ) TABLESPACE pg_default;
 
--- Enum para tom de voz dos agentes
-create type public.voice_tone as enum ('formal', 'casual');
+create type public.voice_tone as enum ('formal', 'casual', 'informal', 'neutro');
 
 -- Tabela de personalidade dos agentes
 create table public.agent_personality (

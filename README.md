@@ -68,6 +68,11 @@ Os dados são salvos em tabelas dedicadas (`pipeline`, `stage` — agora com a c
 - O primeiro atalho da barra lateral preserva o ícone de casa para destacar o retorno rápido ao dashboard principal.
 - A ordem dos atalhos prioriza o **Funil de vendas** antes de **Pagamentos**, mantendo o fluxo comercial em evidência.
 
+## 🎭 Personalidade do agente
+
+- A etapa de personalidade do agente agora oferece quatro opções de tom de voz: **Formal**, **Casual**, **Informal** e **Neutro**, permitindo alinhar o estilo de comunicação ao posicionamento da marca sem depender de instruções complementares.
+- A seleção do tom de voz continua obrigatória para salvar a personalidade; utilize o modo **Neutro** quando quiser respostas equilibradas que evitem regionalismos, enquanto o modo **Informal** libera construções mais descontraídas sem perder a clareza nas mensagens.
+
 ## 💳 Pagamentos
 
 - Cada empresa possui um histórico único de cobranças: o primeiro pagamento é criado automaticamente quando o usuário provisiona o primeiro agente de IA e não existe nenhum registro prévio para a empresa na tabela `payments`.

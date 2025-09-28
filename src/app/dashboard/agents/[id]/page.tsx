@@ -206,6 +206,8 @@ export default function AgentDetailPage() {
                     <SelectContent>
                       <SelectItem value="formal">Formal</SelectItem>
                       <SelectItem value="casual">Casual</SelectItem>
+                      <SelectItem value="informal">Informal</SelectItem>
+                      <SelectItem value="neutro">Neutro</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-gray-500">Define estilo de resposta</p>

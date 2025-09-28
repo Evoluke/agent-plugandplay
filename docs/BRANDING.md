@@ -17,6 +17,11 @@ Utilizamos variáveis CSS para garantir consistência. Valores atuais:
 ## Tipografia
 A família tipográfica oficial é **Geist**, nas variantes Sans e Mono. Utilize Geist Sans para textos e Geist Mono para trechos de código ou números alinhados.
 
+## Tom de voz do agente
+- Os agentes podem assumir tons **Formal**, **Casual**, **Informal** ou **Neutro**. Escolha o estilo alinhado à identidade verbal da marca antes de complementar as instruções.
+- Prefira o modo **Neutro** para mensagens objetivas com vocabulário equilibrado e use o modo **Informal** em conversas que comportem linguagem mais leve, mantendo o cuidado com gírias regionais.
+- Sempre que o tom precisar variar por canal, registre orientações específicas nas instruções complementares, reforçando a consistência do atendimento.
+
 ## Espaçamentos
 A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize margens e paddings em múltiplos desta unidade: 4, 8, 12, 16, 24 px etc.
 
