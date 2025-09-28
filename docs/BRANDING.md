@@ -31,6 +31,10 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize a versão em `#2F6F68` sobre fundos claros e a versão branca sobre fundos escuros.
 - Não distorça, rotacione ou altere as cores oficiais.
 
+## Presença em páginas públicas
+- Garanta que as variações do logotipo acompanhem todas as páginas institucionais listadas no sitemap (`/sobre-nos`, `/saiba-mais`, `/sob-demanda`, `/crm`, `/bni` e formulários de contato) para preservar consistência visual entre o conteúdo priorizado pelos buscadores.
+- Utilize títulos e subtítulos com palavras-chave naturais alinhadas à proposta de valor da marca; essa abordagem reforça o impacto do `robots.txt` e do sitemap, maximizando o aproveitamento do tráfego orgânico.
+
 ## Diretrizes para o funil de vendas
 - Os cards do funil utilizam cantos arredondados de 16 px, sombra suave e espaçamento interno de 16 px.
 - Indicadores de status (status textual, risco e métricas) devem seguir a paleta principal com variações em azul, roxo e verde claro.

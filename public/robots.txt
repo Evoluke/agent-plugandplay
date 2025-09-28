@@ -6,3 +6,5 @@ Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
 
+Sitemap: https://evoluke.com.br/sitemap.xml
+
