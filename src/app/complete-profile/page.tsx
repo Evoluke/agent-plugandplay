@@ -18,6 +18,42 @@ import {
   isValidPhone,
 } from "@/lib/validators";
 
+const formatCpfCnpj = (value: string) => {
+  let digits = value.replace(/\D/g, "");
+  if (digits.length > 14) digits = digits.slice(0, 14);
+  if (digits.length <= 11) {
+    digits = digits
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  } else {
+    digits = digits
+      .replace(/(\d{2})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1/$2")
+      .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+  }
+  return digits;
+};
+
+const formatPhone = (value: string) => {
+  let digits = value.replace(/\D/g, "");
+  if (digits.startsWith("55")) digits = digits.slice(2);
+  if (digits.length > 11) digits = digits.slice(0, 11);
+  digits = digits.replace(/^(\d{2})(\d)/, "($1) $2");
+  digits = digits.replace(/(\d{5})(\d)/, "$1-$2");
+  return digits;
+};
+
+const formatZipCode = (value: string) => {
+  let digits = value.replace(/\D/g, "");
+  if (digits.length > 8) digits = digits.slice(0, 8);
+  if (digits.length > 5) {
+    digits = digits.replace(/(\d{5})(\d{1,3})/, "$1-$2");
+  }
+  return digits;
+};
+
 export default function CompleteProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -35,39 +71,15 @@ export default function CompleteProfilePage() {
   const [loadingBack, setLoadingBack] = useState(false);
 
   const handleCpfCnpjChange = (value: string) => {
-    let digits = value.replace(/\D/g, "");
-    if (digits.length > 14) digits = digits.slice(0, 14);
-    if (digits.length <= 11) {
-      digits = digits
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    } else {
-      digits = digits
-        .replace(/(\d{2})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1/$2")
-        .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
-    }
-    setCpfCnpj(digits);
+    setCpfCnpj(formatCpfCnpj(value));
   };
 
   const handlePhoneChange = (value: string) => {
-    let digits = value.replace(/\D/g, "");
-    if (digits.startsWith("55")) digits = digits.slice(2);
-    if (digits.length > 11) digits = digits.slice(0, 11);
-    digits = digits.replace(/^(\d{2})(\d)/, "($1) $2");
-    digits = digits.replace(/(\d{5})(\d)/, "$1-$2");
-    setPhone(digits);
+    setPhone(formatPhone(value));
   };
 
   const handleZipChange = (value: string) => {
-    let digits = value.replace(/\D/g, "");
-    if (digits.length > 8) digits = digits.slice(0, 8);
-    if (digits.length > 5) {
-      digits = digits.replace(/(\d{5})(\d{1,3})/, "$1-$2");
-    }
-    setZipCode(digits);
+    setZipCode(formatZipCode(value));
   };
 
   const handleBack = async () => {
@@ -88,14 +100,14 @@ export default function CompleteProfilePage() {
     ) {
       setUserId("preview-user");
       setCompanyName((prev) => prev || "Plug and Play Tecnologia");
-      handleCpfCnpjChange(cpfCnpj || "12345678000100");
+      setCpfCnpj((prev) => (prev ? prev : formatCpfCnpj("12345678000100")));
       setAddress((prev) => prev || "Av. Central, 100");
-      handleZipChange(zipCode || "12345000");
+      setZipCode((prev) => (prev ? prev : formatZipCode("12345000")));
       setCity((prev) => prev || "São Paulo");
       setState((prev) => prev || "SP");
       setCountry("Brasil");
       setResponsible((prev) => prev || "Ana Martins");
-      handlePhoneChange(phone || "11988887777");
+      setPhone((prev) => (prev ? prev : formatPhone("11988887777")));
       setLoading(false);
       return;
     }
@@ -129,7 +141,7 @@ export default function CompleteProfilePage() {
         router.replace("/dashboard");
         return;
       }
-      setCompanyName(company.company_name || "");
+      setCompanyName((prev) => prev || company.company_name || "");
 
       if (company.company_profile_id) {
         const { data: profile } = await supabasebrowser
@@ -138,20 +150,20 @@ export default function CompleteProfilePage() {
           .eq("id", company.company_profile_id)
           .single();
         if (profile) {
-          handleCpfCnpjChange(profile.cpf_cnpj || "");
-          setAddress(profile.address || "");
-          handleZipChange(profile.zip_code || "");
-          setCity(profile.city || "");
-          setState(profile.state || "");
+          setCpfCnpj((prev) => (prev ? prev : formatCpfCnpj(profile.cpf_cnpj || "")));
+          setAddress((prev) => prev || profile.address || "");
+          setZipCode((prev) => (prev ? prev : formatZipCode(profile.zip_code || "")));
+          setCity((prev) => prev || profile.city || "");
+          setState((prev) => prev || profile.state || "");
           setCountry(profile.country || "Brasil");
-          setResponsible(profile.responsible_name || "");
-          handlePhoneChange(profile.phone || "");
+          setResponsible((prev) => prev || profile.responsible_name || "");
+          setPhone((prev) => (prev ? prev : formatPhone(profile.phone || "")));
           // setLanguage(profile.language || "");
         }
       }
       setLoading(false);
     });
-  }, [router, cpfCnpj, phone, zipCode]);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
