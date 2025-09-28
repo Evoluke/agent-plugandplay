@@ -1,4 +1,4 @@
-const faqs = [
+export const FAQ_ITEMS = [
   {
     q: "O que é a Evoluke?",
     a: "Nossa tecnologia combina agentes de inteligência artificial que entendem as particularidades do seu negócio. Ao funcionar junto a uma plataforma de CRM multicanal, esses agentes automatizam o atendimento de maneira integrada. Isso permite processos mais eficientes e um relacionamento com clientes que cresce de forma inteligente e escalável.",
@@ -19,7 +19,7 @@ export default function FAQ() {
       <div className="mx-auto max-w-[920px] px-3 md:px-4 lg:px-6">
         <h2 className="mb-8 text-center text-3xl font-bold">Perguntas frequentes</h2>
         <div className="space-y-4">
-          {faqs.map((f) => (
+          {FAQ_ITEMS.map((f) => (
             <details key={f.q} className="rounded-md border p-4">
               <summary className="cursor-pointer">{f.q}</summary>
               <p className="mt-2 text-sm text-muted-foreground">{f.a}</p>

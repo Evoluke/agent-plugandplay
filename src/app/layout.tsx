@@ -14,19 +14,54 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const description =
   "A Evoluke oferece soluções de CRM integradas com inteligência artificial, personalizando atendimentos e automatizando processos para empresas.";
 
-export const metadata: Metadata = {
-  title: "Evoluke",
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://evoluke.com.br";
+
+const organizationStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Evoluke",
+  url: baseUrl,
+  logo: `${baseUrl}/logo.png`,
   description,
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      availableLanguage: ["Portuguese"],
+    },
+  ],
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "Evoluke | CRM com IA para atendimento omnicanal",
+    template: "%s | Evoluke",
+  },
+  description,
+  keywords: [
+    "CRM com IA",
+    "atendimento omnicanal",
+    "automação de vendas",
+    "chatbot inteligente",
+    "gestão de relacionamento com clientes",
+  ],
   robots: { index: true, follow: true },
+  category: "technology",
+  creator: "Evoluke",
+  publisher: "Evoluke",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Evoluke",
+    title: "Evoluke | CRM com IA para atendimento omnicanal",
     description,
-    url: "https://evoluke.com.br",
+    url: baseUrl,
     siteName: "Evoluke",
     images: [
       {
-        url: "/logo.png",
-        alt: "Evoluke",
+        url: `${baseUrl}/logo.png`,
+        alt: "Logotipo da Evoluke",
       },
     ],
     locale: "pt_BR",
@@ -34,9 +69,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Evoluke",
+    title: "Evoluke | CRM com IA para atendimento omnicanal",
     description,
-    images: ["/logo.png"],
+    images: [`${baseUrl}/logo.png`],
   },
 };
 
@@ -46,6 +81,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <script
+          id="evoluke-organization-structured-data"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationStructuredData).replace(/</g, "\\u003c"),
+          }}
+        />
         <Script id="facebook-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)

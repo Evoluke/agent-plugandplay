@@ -5,14 +5,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routes = [
     { path: "", changefreq: "weekly", priority: 1 },
+    { path: "sobre-nos", changefreq: "monthly", priority: 0.8 },
+    { path: "saiba-mais", changefreq: "monthly", priority: 0.75 },
+    { path: "sob-demanda", changefreq: "monthly", priority: 0.75 },
     { path: "pricing", changefreq: "monthly", priority: 0.8 },
+    { path: "contact", changefreq: "monthly", priority: 0.6 },
+    { path: "privacy", changefreq: "yearly", priority: 0.5 },
+    { path: "terms", changefreq: "yearly", priority: 0.5 },
     { path: "login", changefreq: "monthly", priority: 0.5 },
     { path: "signup", changefreq: "monthly", priority: 0.5 },
     { path: "forgot-password", changefreq: "yearly", priority: 0.3 },
     { path: "verify-email", changefreq: "yearly", priority: 0.3 },
     { path: "update-password", changefreq: "yearly", priority: 0.3 },
     { path: "complete-profile", changefreq: "yearly", priority: 0.3 },
-    { path: "terms", changefreq: "yearly", priority: 0.3 },
   ];
 
   const lastModified = new Date();

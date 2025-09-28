@@ -39,6 +39,12 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 > A criação de agentes não envia mais webhooks ao N8N; qualquer automação adicional deve ser disparada a partir de outros fluxos específicos.
 
+## 🌐 SEO e descoberta
+
+- O sitemap disponível em `/sitemap.xml` replica automaticamente o domínio configurado em `NEXT_PUBLIC_APP_URL` e cataloga as páginas públicas da landing page, incluindo **/sobre-nos**, **/saiba-mais**, **/sob-demanda**, **/crm**, **/bni**, **/contact**, **/privacy**, **/terms** e as rotas de autenticação.
+- O arquivo `public/robots.txt` declara `Sitemap: https://evoluke.com.br/sitemap.xml`, permitindo que os buscadores identifiquem rapidamente o índice gerado; ajuste a URL caso o domínio canônico seja personalizado em outro ambiente.
+- O script JSON-LD de organização é inserido diretamente no HTML servido, garantindo que os buscadores tenham acesso imediato aos metadados estruturados sem depender de execução de JavaScript no cliente.
+
 ## 🧭 Funil de vendas
 
 O painel do CRM agora conta com a página **Funil de vendas**, acessível pela sidebar do dashboard. Nela é possível:
