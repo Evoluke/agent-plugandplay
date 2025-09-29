@@ -5,6 +5,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Termos de Uso | Evoluke",
   description: "Termos de uso da plataforma Evoluke",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {

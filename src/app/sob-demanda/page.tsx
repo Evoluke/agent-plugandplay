@@ -6,6 +6,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Sob demanda - Evoluke",
   description: "Planos sob demanda da Evoluke",
+  alternates: {
+    canonical: "/sob-demanda",
+  },
 };
 
 export default function SobDemandaPage() {

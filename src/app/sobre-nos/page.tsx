@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Sobre Nós - Evoluke",
   description:
     "Saiba mais sobre a Evoluke e nossa missão de transformar o atendimento com tecnologia.",
+  alternates: {
+    canonical: "/sobre-nos",
+  },
 };
 
 export default function AboutPage() {

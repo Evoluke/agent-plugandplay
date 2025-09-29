@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Saiba Mais - Evoluke",
   description:
     "Conheça em detalhes o passo a passo de implantação, integrações e suporte do agente Evoluke para elevar o atendimento com IA.",
+  alternates: {
+    canonical: "/saiba-mais",
+  },
 };
 
 export default function SaibaMaisPage() {

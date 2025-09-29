@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Script from "next/script";
+import type { Metadata } from "next";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -15,6 +16,15 @@ const jsonLd = {
       url: "https://www.evoluke.com.br/tools/calculadora-margem",
     },
   ],
+};
+
+export const metadata: Metadata = {
+  title: "Ferramentas gratuitas - Evoluke",
+  description:
+    "Acesse calculadoras e recursos gratuitos da Evoluke para planejar precificação e estratégias comerciais com apoio de IA.",
+  alternates: {
+    canonical: "/tools",
+  },
 };
 
 export default function ToolsPage() {

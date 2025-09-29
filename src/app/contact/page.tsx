@@ -13,6 +13,9 @@ import {
 export const metadata: Metadata = {
   title: "Contato - Evoluke",
   description: "Informações de contato da Evoluke",
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function ContactPage() {
