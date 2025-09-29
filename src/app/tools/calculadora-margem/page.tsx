@@ -78,6 +78,20 @@ export default function MarginCalculatorPage() {
         </p>
       </header>
 
+      <div className="mt-8">
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-9486959611066829"
+          data-ad-slot="7060633998"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+        <Script id="margin-calculator-adsense" strategy="afterInteractive">
+          {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+        </Script>
+      </div>
+
       <div className="mt-12">
         <CalculatorClient />
       </div>
