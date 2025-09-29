@@ -3,11 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [toolsMenuOpen, setToolsMenuOpen] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -43,6 +44,45 @@ export default function Header() {
               <Link href="/sob-demanda" className="hover:text-primary">
                 Sob demanda
               </Link>
+            </li>
+            <li
+              className="relative"
+              onMouseEnter={() => setToolsMenuOpen(true)}
+              onMouseLeave={() => setToolsMenuOpen(false)}
+              onFocusCapture={() => setToolsMenuOpen(true)}
+              onBlur={(event) => {
+                const nextFocus = event.relatedTarget as Node | null;
+                if (!nextFocus || !event.currentTarget.contains(nextFocus)) {
+                  setToolsMenuOpen(false);
+                }
+              }}
+            >
+              <button
+                type="button"
+                className="hover:text-primary flex items-center gap-1"
+                aria-haspopup="true"
+                aria-expanded={toolsMenuOpen}
+                onClick={() => setToolsMenuOpen((current) => !current)}
+              >
+                Ferramentas
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              </button>
+              {toolsMenuOpen ? (
+                <div className="absolute left-0 top-full z-20 mt-2 w-64 rounded-lg border bg-background p-2 shadow-lg">
+                  <Link
+                    href="/tools"
+                    className="hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 block rounded-md px-3 py-2 text-left"
+                  >
+                    Visão geral das ferramentas
+                  </Link>
+                  <Link
+                    href="/tools/calculadora-margem"
+                    className="hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 block rounded-md px-3 py-2 text-left"
+                  >
+                    Calculadora de margem
+                  </Link>
+                </div>
+              ) : null}
             </li>
           </ul>
         </nav>
@@ -92,6 +132,18 @@ export default function Header() {
             <Link href="/sob-demanda" onClick={() => setOpen(false)}>
               Sob demanda
             </Link>
+            <div className="flex flex-col items-center gap-2">
+              <Link href="/tools" onClick={() => setOpen(false)} className="font-semibold">
+                Ferramentas
+              </Link>
+              <Link
+                href="/tools/calculadora-margem"
+                onClick={() => setOpen(false)}
+                className="text-sm text-muted-foreground"
+              >
+                Calculadora de margem
+              </Link>
+            </div>
             <Link href="/contact" onClick={() => setOpen(false)}>
               Contato
             </Link>
