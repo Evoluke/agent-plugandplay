@@ -16,6 +16,17 @@ declare global {
   }
 }
 
+const trackCompleteRegistration = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const { fbq } = window;
+  if (typeof fbq === "function") {
+    fbq("track", "CompleteRegistration");
+  }
+};
+
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -30,15 +41,21 @@ export default function SignupPage() {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
       const redirectTo = new URL("/login", baseUrl).toString();
-      const { error } = await supabasebrowser.auth.signInWithOAuth({
+      const { data, error } = await supabasebrowser.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: {
+          redirectTo,
+          skipBrowserRedirect: true,
+        },
       });
       if (error) {
         console.error("Erro ao entrar com Google:", error.message);
         toast.error("Não foi possível conectar com o Google. Tente novamente.");
-      } else if (typeof window !== "undefined" && typeof window.fbq === "function") {
-        window.fbq("track", "CompleteRegistration");
+      } else {
+        trackCompleteRegistration();
+        if (data?.url) {
+          window.location.href = data.url;
+        }
       }
     } catch (err) {
       console.error("Erro inesperado ao entrar com Google:", err);
@@ -79,9 +96,7 @@ export default function SignupPage() {
         setError(data.error || "Falha no cadastro");
       } else {
         toast.success("Verifique seu email para confirmar o cadastro");
-        if (typeof window !== "undefined" && typeof window.fbq === "function") {
-          window.fbq("track", "CompleteRegistration");
-        }
+        trackCompleteRegistration();
         router.push("/login");
       }
     } catch {
