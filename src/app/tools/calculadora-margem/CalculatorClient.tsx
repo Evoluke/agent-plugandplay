@@ -169,6 +169,11 @@ export default function CalculatorClient() {
         </div>
       </section>
 
+      <section className="rounded-3xl border border-dashed border-primary/30 bg-white/80 p-4 shadow-sm lg:h-full lg:col-start-2 lg:row-start-2">
+        <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
+        <GoogleAdsenseBanner />
+      </section>
+
       <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:h-full lg:col-start-1 lg:row-start-2">
         <h2 className="text-xl font-semibold text-slate-900">Por que conectar um agente de IA após definir sua margem?</h2>
         <ul className="space-y-4 text-sm leading-relaxed text-slate-600">
@@ -191,11 +196,6 @@ export default function CalculatorClient() {
         >
           Conheça a Evoluke
         </Link>
-      </section>
-
-      <section className="rounded-3xl border border-dashed border-primary/30 bg-white/80 p-4 shadow-sm lg:h-full lg:col-start-2 lg:row-start-2">
-        <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
-        <GoogleAdsenseBanner />
       </section>
     </div>
   );

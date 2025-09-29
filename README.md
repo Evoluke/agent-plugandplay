@@ -48,10 +48,10 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 ## 🧰 Ferramentas gratuitas
 
-- A navegação principal recebeu o menu **Ferramentas**, com submenu para destacar utilitários que geram valor imediato antes da contratação de um agente de IA.
+- A navegação principal recebeu o menu **Ferramentas**, com submenu para destacar utilitários que geram valor imediato antes da contratação de um agente de IA; todos os links dessa seção abrem em uma nova aba para manter a navegação atual disponível.
 - A pasta `src/app/tools` centraliza as ferramentas gratuitas. Cada recurso ganha metadados completos (`title`, `description`, `openGraph`, `twitter`) e marcações JSON-LD para reforçar a indexação orgânica.
 - A primeira entrega é a **Calculadora de margem e precificação** (`/tools/calculadora-margem`), que recebe custos diretos, despesas alocadas, impostos e margem desejada para devolver preço sugerido, margem real e lucro unitário.
-- A simulação é entregue imediatamente sem exigir e-mail, priorizando a experiência do visitante enquanto o bloco patrocinado de Google Ads aparece em um formato compacto que não distrai da análise dos resultados.
+- A simulação é entregue imediatamente sem exigir e-mail, priorizando a experiência do visitante enquanto o bloco patrocinado de Google Ads aparece em um formato compacto logo abaixo dos resultados no mobile, sem distrair da análise.
 - A grade responsiva mantém cartões paralelos sempre na mesma altura: formulário e resultados compartilham o mesmo espaço vertical, enquanto o bloco educacional fica alinhado ao anúncio patrocinado em telas largas.
 - O carregamento do Google Ads utiliza uma fila tipada no cliente para garantir compatibilidade com o build do Next.js, evitando erros durante a injeção do script assíncrono.
 - Após o cálculo, a interface apresenta argumentos de valor para conectar um agente de IA, acompanhados de um CTA direto para a página principal da Evoluke, mantendo o foco na automação comercial enquanto o visitante analisa os números.
