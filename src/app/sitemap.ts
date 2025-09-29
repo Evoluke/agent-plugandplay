@@ -9,6 +9,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "saiba-mais", changefreq: "monthly", priority: 0.75 },
     { path: "sob-demanda", changefreq: "monthly", priority: 0.75 },
     { path: "pricing", changefreq: "monthly", priority: 0.8 },
+    { path: "tools", changefreq: "weekly", priority: 0.85 },
+    { path: "tools/calculadora-margem", changefreq: "weekly", priority: 0.85 },
     { path: "contact", changefreq: "monthly", priority: 0.6 },
     { path: "privacy", changefreq: "yearly", priority: 0.5 },
     { path: "terms", changefreq: "yearly", priority: 0.5 },

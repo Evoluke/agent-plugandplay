@@ -2,19 +2,31 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useRef, useState, type FocusEvent } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
+  const toolsMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+    if (!open) {
+      setMobileToolsOpen(false);
+    }
     return () => {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  const handleToolsBlur = (event: FocusEvent<HTMLElement>) => {
+    if (!toolsMenuRef.current?.contains(event.relatedTarget as Node | null)) {
+      setToolsOpen(false);
+    }
+  };
 
   return (
     <header className="border-b bg-background">
@@ -38,6 +50,60 @@ export default function Header() {
               <Link href="/saiba-mais" className="hover:text-primary">
                 Como funciona?
               </Link>
+            </li>
+            <li>
+              <div
+                className="relative"
+                ref={toolsMenuRef}
+                onMouseEnter={() => setToolsOpen(true)}
+                onMouseLeave={() => setToolsOpen(false)}
+                onFocusCapture={() => setToolsOpen(true)}
+                onBlur={handleToolsBlur}
+              >
+                <button
+                  type="button"
+                  className="flex items-center gap-1 hover:text-primary focus:text-primary focus:outline-none"
+                  aria-expanded={toolsOpen}
+                  aria-haspopup="true"
+                  onClick={() => setToolsOpen((prev) => !prev)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                      setToolsOpen(false);
+                    }
+                  }}
+                >
+                  Ferramentas
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${toolsOpen ? "rotate-180" : ""}`}
+                    aria-hidden
+                  />
+                </button>
+                <div
+                  className={`absolute left-1/2 top-full z-20 mt-3 w-64 -translate-x-1/2 rounded-xl border bg-background p-4 shadow-xl transition ${
+                    toolsOpen ? "visible opacity-100" : "invisible opacity-0"
+                  }`}
+                >
+                  <div className="flex flex-col gap-3 text-sm">
+                    <Link
+                      href="/tools"
+                    className="rounded-lg border border-transparent bg-muted/40 p-3 font-semibold text-foreground hover:border-primary hover:bg-primary/10 hover:text-primary"
+                    onClick={() => setToolsOpen(false)}
+                  >
+                    Central de ferramentas
+                  </Link>
+                  <Link
+                    href="/tools/calculadora-margem"
+                    className="rounded-lg border border-muted bg-background p-3 hover:border-primary hover:text-primary"
+                    onClick={() => setToolsOpen(false)}
+                  >
+                    Calculadora de margem e precificação
+                  </Link>
+                    <p className="text-xs text-muted-foreground">
+                      Novas soluções chegam em breve para apoiar decisões de pricing e CRM.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
               <Link href="/sob-demanda" className="hover:text-primary">
@@ -89,6 +155,42 @@ export default function Header() {
             <Link href="/saiba-mais" onClick={() => setOpen(false)}>
               Como funciona?
             </Link>
+            <div className="flex w-full flex-col items-center gap-2">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between rounded-lg border border-muted/60 px-4 py-2 text-base font-medium text-foreground"
+                onClick={() => setMobileToolsOpen((prev) => !prev)}
+                aria-expanded={mobileToolsOpen}
+              >
+                Ferramentas
+                <ChevronDown className={`h-4 w-4 transition ${mobileToolsOpen ? "rotate-180" : ""}`} aria-hidden />
+              </button>
+              {mobileToolsOpen && (
+                <div className="w-full space-y-2 rounded-lg border border-muted bg-white/80 px-4 py-3 text-base text-muted-foreground">
+                  <Link
+                    href="/tools"
+                    onClick={() => {
+                      setOpen(false);
+                      setMobileToolsOpen(false);
+                    }}
+                    className="block font-medium text-foreground hover:text-primary"
+                  >
+                    Central de ferramentas
+                  </Link>
+                  <Link
+                    href="/tools/calculadora-margem"
+                    onClick={() => {
+                      setOpen(false);
+                      setMobileToolsOpen(false);
+                    }}
+                    className="block font-medium text-foreground hover:text-primary"
+                  >
+                    Calculadora de margem
+                  </Link>
+                  <p className="text-sm text-muted-foreground/80">Novas ferramentas serão liberadas em breve.</p>
+                </div>
+              )}
+            </div>
             <Link href="/sob-demanda" onClick={() => setOpen(false)}>
               Sob demanda
             </Link>

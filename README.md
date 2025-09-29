@@ -46,6 +46,12 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - O script JSON-LD de organização é inserido diretamente no HTML servido, garantindo que os buscadores tenham acesso imediato aos metadados estruturados sem depender de execução de JavaScript no cliente.
 - A imagem de destaque da seção hero utiliza `fetchpriority="high"`, `priority` e dimensões responsivas para ser pré-carregada logo no documento inicial, assegurando que a métrica de **Largest Contentful Paint (LCP)** seja atendida sem carregamento lento.
 
+## 🛠️ Ferramentas para geração de leads
+
+- A rota `/tools` apresenta um hub otimizado para SEO com descrição detalhada de utilitários gratuitos e chamadas para os planos premium.
+- A primeira ferramenta disponível é a **Calculadora de Margem e Precificação** (`/tools/calculadora-margem`), que valida custos positivos, bloqueia margens acima de 100% e apresenta preço sugerido, margem real e lucro unitário.
+- O formulário coleta opcionalmente o e-mail corporativo para nutrir leads, reforçando o funil com um destaque para o upgrade premium com cenários de precificação em massa.
+
 ## 🧭 Funil de vendas
 
 O painel do CRM agora conta com a página **Funil de vendas**, acessível pela sidebar do dashboard. Nela é possível:
