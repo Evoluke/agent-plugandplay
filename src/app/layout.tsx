@@ -77,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR" className={`${inter.variable} ${geistMono.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="google-adsense-account" content="ca-pub-9486959611066829" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <script
           id="evoluke-organization-structured-data"
