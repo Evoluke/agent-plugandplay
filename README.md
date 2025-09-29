@@ -48,7 +48,7 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 ## 🧰 Ferramentas gratuitas
 
-- A navegação principal recebeu o menu **Ferramentas**, com submenu para destacar utilitários que geram valor imediato antes da contratação de um agente de IA; todos os links dessa seção abrem em uma nova aba para manter a navegação atual disponível.
+- A navegação principal recebeu o menu **Ferramentas**, com submenu para destacar utilitários que geram valor imediato antes da contratação de um agente de IA; todos os links dessa seção abrem em uma nova aba para manter a navegação atual disponível. No menu móvel, o grupo fica recolhido por padrão e pode ser expandido sob demanda, enquanto os atalhos de âncora "Soluções" e "Modelos" foram removidos para reduzir distrações ao abrir o painel lateral.
 - A pasta `src/app/tools` centraliza as ferramentas gratuitas. Cada recurso ganha metadados completos (`title`, `description`, `openGraph`, `twitter`) e marcações JSON-LD para reforçar a indexação orgânica.
 - A primeira entrega é a **Calculadora de margem e precificação** (`/tools/calculadora-margem`), que recebe custos diretos, despesas alocadas, impostos e margem desejada para devolver preço sugerido, margem real e lucro unitário.
 - A simulação é entregue imediatamente sem exigir e-mail, priorizando a experiência do visitante enquanto o bloco patrocinado de Google Ads aparece em um formato compacto logo abaixo dos resultados no mobile, sem distrair da análise.

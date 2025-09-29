@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -15,6 +16,17 @@ export default function Header() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      setMobileToolsOpen(false);
+    }
+  }, [open]);
+
+  const closeMenu = () => {
+    setOpen(false);
+    setMobileToolsOpen(false);
+  };
 
   return (
     <header className="border-b bg-background">
@@ -101,34 +113,44 @@ export default function Header() {
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setOpen(false)}
+              onClick={closeMenu}
               aria-label="Fechar menu"
             >
               <X className="h-5 w-5" />
             </Button>
           </div>
           <nav className="mt-8 flex flex-col items-center gap-4 text-lg">
-            <Link href="/#solucoes" onClick={() => setOpen(false)}>
-              Soluções
-            </Link>
-            <Link href="/#modelos" onClick={() => setOpen(false)}>
-              Modelos
-            </Link>
-            <Link href="/saiba-mais" onClick={() => setOpen(false)}>
+            <Link href="/saiba-mais" onClick={closeMenu}>
               Como funciona?
             </Link>
-            <Link href="/sob-demanda" onClick={() => setOpen(false)}>
+            <Link href="/sob-demanda" onClick={closeMenu}>
               Sob demanda
             </Link>
-            <div className="w-full space-y-3 rounded-2xl border border-slate-200 bg-white/60 p-4 text-center text-base text-slate-700">
+            <div className="w-full space-y-3 rounded-2xl border border-slate-200 bg-white/60 p-4 text-base text-slate-700">
               <p className="text-xs font-semibold uppercase tracking-wide text-primary">Ferramentas</p>
-              <div className="space-y-2 text-sm">
+              <button
+                type="button"
+                onClick={() => setMobileToolsOpen((prev) => !prev)}
+                aria-expanded={mobileToolsOpen}
+                aria-controls="mobile-tools-submenu"
+                className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition hover:bg-primary/10"
+              >
+                <span>Explorar ferramentas</span>
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${mobileToolsOpen ? "-rotate-180" : ""}`}
+                  aria-hidden="true"
+                />
+              </button>
+              <div
+                id="mobile-tools-submenu"
+                className={`${mobileToolsOpen ? "space-y-2 pt-2" : "hidden"}`}
+              >
                 <Link
                   href="/tools"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setOpen(false)}
-                  className="block rounded-lg border border-transparent px-3 py-2 transition hover:border-primary/40 hover:bg-primary/10"
+                  onClick={closeMenu}
+                  className="block rounded-lg border border-transparent px-3 py-2 text-sm transition hover:border-primary/40 hover:bg-primary/10"
                 >
                   Todas as ferramentas
                 </Link>
@@ -136,24 +158,24 @@ export default function Header() {
                   href="/tools/calculadora-margem"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setOpen(false)}
-                  className="block rounded-lg border border-transparent px-3 py-2 transition hover:border-primary/40 hover:bg-primary/10"
+                  onClick={closeMenu}
+                  className="block rounded-lg border border-transparent px-3 py-2 text-sm transition hover:border-primary/40 hover:bg-primary/10"
                 >
                   Calculadora de margem
                 </Link>
               </div>
             </div>
-            <Link href="/contact" onClick={() => setOpen(false)}>
+            <Link href="/contact" onClick={closeMenu}>
               Contato
             </Link>
           </nav>
           <div className="mt-8 flex flex-col items-center gap-4">
-            <Link href="/login" className="w-full" onClick={() => setOpen(false)}>
+            <Link href="/login" className="w-full" onClick={closeMenu}>
               <Button variant="outline" className="w-full">
                 Login
               </Button>
             </Link>
-            <Link href="/signup" className="w-full" onClick={() => setOpen(false)}>
+            <Link href="/signup" className="w-full" onClick={closeMenu}>
               <Button className="w-full">Criar conta</Button>
             </Link>
           </div>
