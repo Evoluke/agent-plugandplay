@@ -108,7 +108,7 @@ export default function Header() {
         </Button>
       </div>
       {open && (
-        <div className="fixed inset-0 z-50 bg-background/95 p-6 md:hidden">
+        <div className="fixed inset-0 z-50 bg-background p-6 md:hidden">
           <div className="flex justify-end">
             <Button
               variant="outline"
@@ -126,7 +126,7 @@ export default function Header() {
             <Link href="/sob-demanda" onClick={closeMenu}>
               Sob demanda
             </Link>
-            <div className="w-full space-y-3 rounded-2xl border border-slate-200 bg-white/60 p-4 text-base text-slate-700">
+            <div className="w-full space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-4 text-base text-slate-700">
               <p className="text-xs font-semibold uppercase tracking-wide text-primary">Ferramentas</p>
               <button
                 type="button"
