@@ -3,18 +3,21 @@ import type { Metadata } from "next";
 
 import CalculatorClient from "./CalculatorClient";
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://evoluke.com.br";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: "Calculadora de margem e precificação | Evoluke",
   description:
     "Calcule preço sugerido, margem real e lucro unitário em segundos e descubra como agentes de IA mantêm sua política comercial lucrativa.",
   alternates: {
-    canonical: "https://www.evoluke.com.br/tools/calculadora-margem",
+    canonical: "/tools/calculadora-margem",
   },
   openGraph: {
     title: "Calculadora de margem e precificação | Evoluke",
     description:
       "Informe custos, impostos e margem desejada para descobrir automaticamente o preço ideal de venda e o lucro unitário esperado.",
-    url: "https://www.evoluke.com.br/tools/calculadora-margem",
+    url: "/tools/calculadora-margem",
     type: "article",
     siteName: "Evoluke",
   },

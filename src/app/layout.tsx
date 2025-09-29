@@ -50,9 +50,6 @@ export const metadata: Metadata = {
   category: "technology",
   creator: "Evoluke",
   publisher: "Evoluke",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "Evoluke | CRM com IA para atendimento omnicanal",
     description,
