@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Script from "next/script";
 import { FormEvent, useEffect, useState } from "react";
 
@@ -160,8 +161,8 @@ export default function CalculatorClient() {
           </div>
         )}
 
-        <div className="rounded-2xl border border-dashed border-primary/30 bg-white/60 p-4">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
+        <div className="rounded-2xl border border-dashed border-primary/30 bg-white/60 p-3">
+          <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
           <GoogleAdsenseBanner />
         </div>
       </aside>
@@ -182,6 +183,12 @@ export default function CalculatorClient() {
             <strong className="text-slate-900">Integração total com Evoluke:</strong> o agente agenda reuniões, envia propostas no formato correto e registra oportunidades qualificadas.
           </li>
         </ul>
+        <Link
+          href="/"
+          className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
+        >
+          Conheça a Evoluke
+        </Link>
       </section>
     </div>
   );
@@ -272,7 +279,7 @@ function GoogleAdsenseBanner() {
       />
       <ins
         className="adsbygoogle block w-full"
-        style={{ display: "block", minHeight: "120px" }}
+        style={{ display: "block", minHeight: "80px" }}
         data-ad-client="ca-pub-0000000000000000"
         data-ad-slot="1234567890"
         data-ad-format="auto"
