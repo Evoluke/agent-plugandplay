@@ -46,6 +46,14 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - O script JSON-LD de organização é inserido diretamente no HTML servido, garantindo que os buscadores tenham acesso imediato aos metadados estruturados sem depender de execução de JavaScript no cliente.
 - A imagem de destaque da seção hero utiliza `fetchpriority="high"`, `priority` e dimensões responsivas para ser pré-carregada logo no documento inicial, assegurando que a métrica de **Largest Contentful Paint (LCP)** seja atendida sem carregamento lento.
 
+## 🧰 Ferramentas gratuitas
+
+- A navegação principal recebeu o menu **Ferramentas**, com submenu para destacar utilitários que geram valor imediato antes da contratação de um agente de IA.
+- A pasta `src/app/tools` centraliza as ferramentas gratuitas. Cada recurso ganha metadados completos (`title`, `description`, `openGraph`, `twitter`) e marcações JSON-LD para reforçar a indexação orgânica.
+- A primeira entrega é a **Calculadora de margem e precificação** (`/tools/calculadora-margem`), que recebe custos diretos, despesas alocadas, impostos e margem desejada para devolver preço sugerido, margem real e lucro unitário.
+- Os envios solicitam e armazenam o e-mail corporativo via Supabase (`tool_leads`), permitindo nutrir leads com novidades sobre agentes Evoluke.
+- Após o cálculo, a interface apresenta argumentos de valor para conectar um agente de IA, mantendo o foco na automação comercial enquanto o visitante analisa os números.
+
 ## 🧭 Funil de vendas
 
 O painel do CRM agora conta com a página **Funil de vendas**, acessível pela sidebar do dashboard. Nela é possível:

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
@@ -43,6 +43,30 @@ export default function Header() {
               <Link href="/sob-demanda" className="hover:text-primary">
                 Sob demanda
               </Link>
+            </li>
+            <li className="group relative">
+              <Link
+                href="/tools"
+                className="flex items-center gap-1 hover:text-primary focus:text-primary focus:outline-none"
+                aria-haspopup="true"
+              >
+                Ferramentas
+                <ChevronDown className="h-4 w-4 transition group-hover:-rotate-180 group-focus-within:-rotate-180" />
+              </Link>
+              <div className="invisible absolute left-1/2 top-full z-30 mt-3 w-64 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-4 text-left opacity-0 shadow-xl transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <Link
+                  href="/tools/calculadora-margem"
+                  className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-primary/10 hover:text-primary"
+                >
+                  Calculadora de margem
+                  <span className="mt-1 block text-xs font-normal text-slate-500">
+                    Descubra preço sugerido, margem real e lucro unitário.
+                  </span>
+                </Link>
+                <div className="mt-3 rounded-lg border border-dashed border-slate-200 px-3 py-2 text-xs text-slate-500">
+                  Em breve: novos roteiros e calculadoras para apoiar seu time comercial com IA.
+                </div>
+              </div>
             </li>
           </ul>
         </nav>
@@ -92,6 +116,21 @@ export default function Header() {
             <Link href="/sob-demanda" onClick={() => setOpen(false)}>
               Sob demanda
             </Link>
+            <div className="w-full space-y-3 rounded-2xl border border-slate-200 bg-white/60 p-4 text-center text-base text-slate-700">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">Ferramentas</p>
+              <div className="space-y-2 text-sm">
+                <Link href="/tools" onClick={() => setOpen(false)} className="block rounded-lg border border-transparent px-3 py-2 transition hover:border-primary/40 hover:bg-primary/10">
+                  Todas as ferramentas
+                </Link>
+                <Link
+                  href="/tools/calculadora-margem"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg border border-transparent px-3 py-2 transition hover:border-primary/40 hover:bg-primary/10"
+                >
+                  Calculadora de margem
+                </Link>
+              </div>
+            </div>
             <Link href="/contact" onClick={() => setOpen(false)}>
               Contato
             </Link>
