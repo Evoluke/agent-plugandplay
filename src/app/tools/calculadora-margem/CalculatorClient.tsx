@@ -82,7 +82,7 @@ export default function CalculatorClient() {
   };
 
   return (
-    <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
+    <div className="flex flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:col-start-1 lg:row-start-1">
           <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             <div>
@@ -138,33 +138,40 @@ export default function CalculatorClient() {
           </form>
       </section>
 
-      <aside className="space-y-6 rounded-3xl border border-slate-200 bg-gradient-to-b from-primary/10 via-white to-primary/10 p-8 shadow-lg lg:col-start-2 lg:row-span-2">
-        <h2 className="text-xl font-semibold text-slate-900">Resultados da simulação</h2>
-        {result ? (
-          <dl className="space-y-4 text-sm">
-            <ResultRow label="Custo total" value={currencyFormatter.format(result.totalCost)} />
-            <ResultRow label="Preço sugerido" value={currencyFormatter.format(result.suggestedPrice)} highlight />
-            <ResultRow label="Margem real" value={percentFormatter.format(result.realMargin / 100)} />
-            <ResultRow label="Lucro unitário" value={currencyFormatter.format(result.unitProfit)} />
-          </dl>
-        ) : (
-          <p className="text-sm leading-relaxed text-slate-600">
-            Preencha os campos ao lado para descobrir imediatamente o preço de venda sugerido e entender se sua meta de margem está equilibrada com os custos.
-          </p>
-        )}
-
-        {result && (
-          <div className="rounded-2xl bg-white/80 p-4 text-xs leading-relaxed text-slate-500">
-            <p>
-              Utilize estes números para revisar descontos máximos, montar pacotes promocionais e alimentar previsões de receita. Caso precise de suporte, nossa equipe ajuda a treinar um agente Evoluke com base nestes dados.
+      <aside className="flex flex-col gap-5 lg:col-start-2 lg:row-span-2">
+        <section className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+          <header className="space-y-1">
+            <h2 className="text-xl font-semibold text-slate-900">Resultados da simulação</h2>
+            <p className="text-xs text-slate-500">
+              Ajuste sua precificação com base nas combinações de custo e margem desejada.
             </p>
-          </div>
-        )}
+          </header>
+          {result ? (
+            <dl className="space-y-3 text-sm">
+              <ResultRow label="Custo total" value={currencyFormatter.format(result.totalCost)} />
+              <ResultRow label="Preço sugerido" value={currencyFormatter.format(result.suggestedPrice)} highlight />
+              <ResultRow label="Margem real" value={percentFormatter.format(result.realMargin / 100)} />
+              <ResultRow label="Lucro unitário" value={currencyFormatter.format(result.unitProfit)} />
+            </dl>
+          ) : (
+            <p className="text-sm leading-relaxed text-slate-600">
+              Preencha os campos ao lado para descobrir imediatamente o preço de venda sugerido e entender se sua meta de margem está equilibrada com os custos.
+            </p>
+          )}
 
-        <div className="rounded-2xl border border-dashed border-primary/30 bg-white/60 p-3">
+          {result && (
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-xs leading-relaxed text-slate-500">
+              <p>
+                Utilize estes números para revisar descontos máximos, montar pacotes promocionais e alimentar previsões de receita. Caso precise de suporte, nossa equipe ajuda a treinar um agente Evoluke com base nestes dados.
+              </p>
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-3xl border border-dashed border-primary/30 bg-white/80 p-4 shadow-sm">
           <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
           <GoogleAdsenseBanner />
-        </div>
+        </section>
       </aside>
 
       <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:col-start-1 lg:row-start-2">
@@ -241,7 +248,11 @@ type ResultRowProps = {
 
 function ResultRow({ label, value, highlight }: ResultRowProps) {
   return (
-    <div className={`flex items-center justify-between rounded-xl px-4 py-3 ${highlight ? "bg-primary/10 font-semibold text-primary" : "bg-white/70 text-slate-700"}`}>
+    <div
+      className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-slate-700 shadow-sm ${
+        highlight ? "bg-primary/10 font-semibold text-primary" : "bg-white"
+      }`}
+    >
       <dt>{label}</dt>
       <dd>{value}</dd>
     </div>
@@ -279,7 +290,7 @@ function GoogleAdsenseBanner() {
       />
       <ins
         className="adsbygoogle block w-full"
-        style={{ display: "block", minHeight: "80px" }}
+        style={{ display: "block", minHeight: "60px" }}
         data-ad-client="ca-pub-0000000000000000"
         data-ad-slot="1234567890"
         data-ad-format="auto"
