@@ -265,6 +265,9 @@ declare global {
   }
 }
 
+const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? "ca-pub-9486959611066829";
+const ADSENSE_SLOT = process.env.NEXT_PUBLIC_ADSENSE_MARGIN_CALCULATOR_SLOT;
+
 function GoogleAdsenseBanner() {
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -275,6 +278,11 @@ function GoogleAdsenseBanner() {
       const adsQueue = window.adsbygoogle ?? [];
       adsQueue.push({});
       window.adsbygoogle = adsQueue;
+      if (!ADSENSE_SLOT) {
+        console.warn(
+          "Google AdSense slot ID ausente. Configure NEXT_PUBLIC_ADSENSE_MARGIN_CALCULATOR_SLOT para renderizar anúncios."
+        );
+      }
     } catch (error) {
       console.error("Erro ao carregar anúncio do Google Ads", error);
     }
@@ -285,14 +293,14 @@ function GoogleAdsenseBanner() {
       <Script
         id="adsbygoogle-tools-calculator"
         strategy="afterInteractive"
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000"
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
         crossOrigin="anonymous"
       />
       <ins
         className="adsbygoogle block w-full"
         style={{ display: "block", minHeight: "60px" }}
-        data-ad-client="ca-pub-0000000000000000"
-        data-ad-slot="1234567890"
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={ADSENSE_SLOT}
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
