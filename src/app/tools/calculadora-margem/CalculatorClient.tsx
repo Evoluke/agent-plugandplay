@@ -243,7 +243,7 @@ function ResultRow({ label, value, highlight }: ResultRowProps) {
 
 declare global {
   interface Window {
-    adsbygoogle?: { push: (args: Record<string, unknown>) => void }[];
+    adsbygoogle?: Array<Record<string, unknown>>;
   }
 }
 
@@ -254,7 +254,9 @@ function GoogleAdsenseBanner() {
     }
 
     try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      const adsQueue = window.adsbygoogle ?? [];
+      adsQueue.push({});
+      window.adsbygoogle = adsQueue;
     } catch (error) {
       console.error("Erro ao carregar anúncio do Google Ads", error);
     }
