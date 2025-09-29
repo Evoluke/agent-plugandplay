@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Script from "next/script";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -169,11 +168,6 @@ export default function CalculatorClient() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-dashed border-primary/30 bg-white/80 p-4 shadow-sm lg:h-full lg:col-start-2 lg:row-start-2">
-        <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
-        <GoogleAdsenseBanner />
-      </section>
-
       <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:h-full lg:col-start-1 lg:row-start-2">
         <h2 className="text-xl font-semibold text-slate-900">Por que conectar um agente de IA após definir sua margem?</h2>
         <ul className="space-y-4 text-sm leading-relaxed text-slate-600">
@@ -256,46 +250,5 @@ function ResultRow({ label, value, highlight }: ResultRowProps) {
       <dt>{label}</dt>
       <dd>{value}</dd>
     </div>
-  );
-}
-
-declare global {
-  interface Window {
-    adsbygoogle?: Array<Record<string, unknown>>;
-  }
-}
-
-function GoogleAdsenseBanner() {
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    try {
-      const adsQueue = window.adsbygoogle ?? [];
-      adsQueue.push({});
-      window.adsbygoogle = adsQueue;
-    } catch (error) {
-      console.error("Erro ao carregar anúncio do Google Ads", error);
-    }
-  }, []);
-
-  return (
-    <>
-      <Script
-        id="adsbygoogle-tools-calculator"
-        strategy="afterInteractive"
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000"
-        crossOrigin="anonymous"
-      />
-      <ins
-        className="adsbygoogle block w-full"
-        style={{ display: "block", minHeight: "60px" }}
-        data-ad-client="ca-pub-0000000000000000"
-        data-ad-slot="1234567890"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
-    </>
   );
 }
