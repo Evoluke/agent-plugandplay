@@ -1,7 +1,7 @@
 # Segurança e RLS
 
 ## Uso do Service Role
-As rotas que utilizam `supabaseadmin` executam operações privilegiadas. Antes de cada acesso é necessário validar explicitamente o usuário autenticado e a empresa associada. Avaliar a migração para chamadas com privilégios mínimos, utilizando RPCs ou o cliente autenticado com RLS sempre que possível, reduzindo a necessidade do Service Role.
+As rotas que utilizam `supabaseadmin` executam operações privilegiadas. Antes de cada acesso é necessário validar explicitamente o usuário autenticado e a empresa associada. Avaliar a migração para chamadas com privilégios mínimos, utilizando RPCs ou o cliente autenticado com RLS sempre que possível, reduzindo a necessidade do Service Role. O redesenho do gerador de currículo mantém toda a montagem do PDF e a pré-visualização em memória local — nenhuma informação preenchida é enviada a APIs internas, preservando a superfície de ataque inalterada.
 
 Ao integrar com fluxos externos como o N8N, mantenha `N8N_WEBHOOK_URL`, `N8N_CRM_WEBHOOK_URL` e `N8N_WEBHOOK_TOKEN` configurados e valide o token enviado no header `Authorization`. Os webhooks continuam responsáveis pelos uploads da base de conhecimento e pelo provisionamento inicial do CRM, enquanto a criação de agentes ocorre integralmente na API interna sem repassar dados sensíveis ao N8N.
 

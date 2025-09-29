@@ -49,10 +49,10 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 ## 📝 Gerador de currículo com IA
 
-- A landing **/curriculo-ia** trabalha em três passos: dados pessoais, experiência/conquistas e formação/habilidades, gerando uma pré-visualização instantânea do currículo com sugestões de texto e botões para download em PDF.
+- A landing **/curriculo-ia** foi redesenhada com foco mobile-first: hero com CTA claro, indicador de etapa clicável, campos amplos e pré-visualização expansível em telas pequenas. O fluxo permanece em três passos (dados pessoais, experiência/conquistas e formação/habilidades) com atualização em tempo real do preview.
 - O PDF é criado no cliente utilizando `jspdf`, estruturado por seções (resumo, destaques, experiência, formação, competências e informações adicionais) e aplica a marca d’água "Gerado por Evoluke.com.br" antes de salvar o arquivo.
 - A rotina de exportação garante que as quebras de linha geradas pelo `jspdf` sejam normalizadas como listas, evitando falhas na renderização das seções do PDF mesmo quando a biblioteca retorna uma string simples.
-- Após o download o usuário é levado para **/curriculo-ia/dicas**, página com checklist de carreira, blocos de conteúdo e espaços para anúncios, estimulando uma segunda interação e novas impressões de AdSense.
+- Após o download o usuário é levado para **/curriculo-ia/dicas**, agora com layout responsivo, cards de próximos passos, lista priorizada de métricas e blocos otimizados para anúncios/CTA, estimulando uma segunda interação e novas impressões de AdSense.
 - O assistente de preenchimento inclui links para artigos do blog e destaca métricas a serem acompanhadas (currículos gerados por dia, CTR dos anúncios e palavras-chave de maior impacto).
 
 ## 🧭 Funil de vendas

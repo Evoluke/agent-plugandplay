@@ -1,10 +1,16 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 import { jsPDF } from "jspdf";
 
-type FormData = {
+export type FormData = {
   name: string;
   professionalTitle: string;
   email: string;
@@ -27,7 +33,7 @@ type ResumeExperience = {
   description: string;
 };
 
-type GeneratedResume = {
+export type GeneratedResume = {
   header: {
     name: string;
     title: string;
@@ -39,6 +45,12 @@ type GeneratedResume = {
   education: string[];
   skills: string[];
   extras: string[];
+};
+
+type StepConfig = {
+  id: string;
+  title: string;
+  description: string;
 };
 
 const INITIAL_FORM: FormData = {
@@ -64,6 +76,24 @@ const EXPERIENCE_LEVEL_COPY: Record<string, string> = {
   Sênior: "nível sênior",
   Liderança: "experiência em liderança",
 };
+
+const STEPS: StepConfig[] = [
+  {
+    id: "informacoes",
+    title: "Informações essenciais",
+    description: "Preencha os dados de contato que aparecem no topo do currículo.",
+  },
+  {
+    id: "experiencia",
+    title: "Experiência e contexto",
+    description: "Organize histórico profissional, resumo e conquistas em destaque.",
+  },
+  {
+    id: "formacao",
+    title: "Formação e habilidades",
+    description: "Finalize com educação formal, competências e atividades extras.",
+  },
+];
 
 function parseList(value: string): string[] {
   return value
@@ -96,7 +126,8 @@ function createSummary(data: FormData): string {
   const levelCopy = EXPERIENCE_LEVEL_COPY[data.experienceLevel] ?? "com experiência comprovada";
   const areaSnippet = data.areaAtuacao ? `na área de ${data.areaAtuacao}` : "";
   const intro = data.name
-    ? `${data.name.split(" ")[0]} é um${data.professionalTitle?.startsWith("A") ? "a" : ""} profissional ${levelCopy} ${areaSnippet}`.trim()
+    ? `${data.name.split(" ")[0]} é um${data.professionalTitle?.startsWith("A") ? "a" : ""} profissional ${levelCopy} ${areaSnippet}`
+        .trim()
     : `Profissional ${levelCopy} ${areaSnippet}`.trim();
   const summaryBase = data.summary
     ? data.summary.trim()
@@ -165,37 +196,221 @@ function splitParagraph(doc: jsPDF, text: string, maxWidth: number): string[] {
   return Array.isArray(lines) ? lines : [lines];
 }
 
+function StepIndicator({
+  steps,
+  currentStep,
+  onNavigate,
+}: {
+  steps: StepConfig[];
+  currentStep: number;
+  onNavigate: (index: number) => void;
+}) {
+  return (
+    <ol className="grid gap-3 md:grid-cols-3" aria-label="Etapas do formulário">
+      {steps.map((step, index) => {
+        const isActive = index === currentStep;
+        const isCompleted = index < currentStep;
+        const baseStyles = "rounded-2xl border px-4 py-3 text-left transition";
+        const stateStyles = isActive
+          ? "border-[#2F6F68] bg-[#E7F4F2] text-[#1F4F4A]"
+          : isCompleted
+          ? "border-[#93C5FD] bg-[#EFF6FF] text-[#1E3A8A] hover:border-[#60A5FA]"
+          : "border-slate-200 bg-white text-slate-500";
+
+        return (
+          <li key={step.id}>
+            <button
+              type="button"
+              className={`${baseStyles} ${stateStyles} w-full`}
+              onClick={() => onNavigate(index)}
+              disabled={!isActive && !isCompleted}
+              aria-current={isActive ? "step" : undefined}
+            >
+              <span className="text-xs font-semibold uppercase tracking-[0.28em]">
+                Etapa {index + 1}
+              </span>
+              <span className="mt-2 block text-sm font-semibold text-inherit">{step.title}</span>
+              <span className="mt-1 block text-xs text-inherit/80">{step.description}</span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+function ResumePreview({ resume }: { resume: GeneratedResume }) {
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
+      <header className="border-b border-slate-100 pb-4">
+        <h3 className="text-2xl font-semibold text-slate-900">{resume.header.name}</h3>
+        {resume.header.title && (
+          <p className="mt-1 text-sm font-medium text-[#2F6F68]">{resume.header.title}</p>
+        )}
+        {resume.header.contacts && (
+          <p className="mt-2 text-xs uppercase tracking-[0.3em] text-slate-400">
+            {resume.header.contacts}
+          </p>
+        )}
+      </header>
+
+      <section className="mt-6 space-y-6 text-sm text-slate-600">
+        <div>
+          <h4 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Resumo profissional</h4>
+          <p className="mt-2 leading-relaxed text-slate-700">{resume.summary}</p>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Destaques</h4>
+          <ul className="mt-3 space-y-2">
+            {resume.highlights.map((highlight) => (
+              <li key={highlight} className="flex gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#2F6F68]" aria-hidden />
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Experiência</h4>
+          <div className="mt-3 space-y-4">
+            {resume.experiences.map((experience) => (
+              <div key={`${experience.headline}-${experience.company ?? ""}`}>
+                <p className="text-sm font-semibold text-slate-800">{experience.headline}</p>
+                {(experience.company || experience.period) && (
+                  <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
+                    {[experience.company, experience.period].filter(Boolean).join(" • ")}
+                  </p>
+                )}
+                <p className="mt-2 leading-relaxed">{experience.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Formação acadêmica</h4>
+          <ul className="mt-3 space-y-2">
+            {resume.education.map((entry) => (
+              <li key={entry} className="flex gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#2F6F68]" aria-hidden />
+                <span>{entry}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Competências</h4>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {resume.skills.map((skill) => (
+              <span key={skill} className="rounded-full bg-[#E0F2FE] px-3 py-1 text-xs font-medium text-[#0F172A]">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {resume.extras.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Informações adicionais</h4>
+            <ul className="mt-3 space-y-2">
+              {resume.extras.map((entry) => (
+                <li key={entry} className="flex gap-2">
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#2F6F68]" aria-hidden />
+                  <span>{entry}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+
+      <p className="mt-10 text-center text-xs uppercase tracking-[0.32em] text-slate-400">
+        Gerado por Evoluke.com.br
+      </p>
+    </article>
+  );
+}
+
+function FormActions({
+  currentStep,
+  stepCount,
+  hasGenerated,
+  onBack,
+  onDownload,
+}: {
+  currentStep: number;
+  stepCount: number;
+  hasGenerated: boolean;
+  onBack: () => void;
+  onDownload: () => void;
+}) {
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === stepCount - 1;
+
+  return (
+    <footer className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex gap-3">
+        {!isFirstStep && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
+          >
+            <span aria-hidden>←</span>
+            Voltar
+          </button>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3 sm:flex-row">
+        {hasGenerated && (
+          <button
+            type="button"
+            onClick={onDownload}
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-[#2F6F68] px-5 py-2.5 text-sm font-semibold text-[#2F6F68] transition hover:bg-[#E7F4F2]"
+          >
+            <span aria-hidden>⬇</span>
+            Baixar PDF gratuito
+          </button>
+        )}
+
+        <button
+          type="submit"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2F6F68] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#255852]"
+        >
+          {isLastStep ? (hasGenerated ? "Atualizar currículo" : "Gerar currículo agora") : "Continuar"}
+          <span aria-hidden>→</span>
+        </button>
+      </div>
+    </footer>
+  );
+}
+
 export default function CurriculoWizard() {
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM);
   const [currentStep, setCurrentStep] = useState(0);
   const [resume, setResume] = useState<GeneratedResume | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
 
-  const progress = useMemo(() => Math.round(((currentStep + 1) / 3) * 100), [currentStep]);
+  const stepCount = STEPS.length;
+  const progress = useMemo(() => Math.round(((currentStep + 1) / stepCount) * 100), [currentStep, stepCount]);
 
   const handleFieldChange = useCallback((field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const handleNext = useCallback(() => {
-    setCurrentStep((prev) => Math.min(prev + 1, 2));
+  const handleNavigateStep = useCallback((index: number) => {
+    setCurrentStep((prev) => (index <= prev ? index : prev));
   }, []);
 
   const handleBack = useCallback(() => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   }, []);
-
-  const handleGenerate = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const generatedResume = buildResume(formData);
-      setResume(generatedResume);
-      setHasGenerated(true);
-      setCurrentStep(2);
-    },
-    [formData],
-  );
 
   const handleDownload = useCallback(() => {
     if (!resume) {
@@ -311,22 +526,41 @@ export default function CurriculoWizard() {
     const pageHeight = doc.internal.pageSize.getHeight();
     doc.setTextColor(150);
     doc.setFontSize(10);
-    doc.text(
-      "Gerado por Evoluke.com.br",
-      doc.internal.pageSize.getWidth() / 2,
-      pageHeight - 24,
-      { align: "center" },
-    );
+    doc.text("Gerado por Evoluke.com.br", doc.internal.pageSize.getWidth() / 2, pageHeight - 24, { align: "center" });
 
     doc.save("curriculo-evoluke.pdf");
     setTimeout(() => router.push("/curriculo-ia/dicas"), 400);
   }, [resume, router]);
+
+  const handleSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      const isLastStep = currentStep === stepCount - 1;
+      if (!isLastStep) {
+        setCurrentStep((prev) => Math.min(prev + 1, stepCount - 1));
+        return;
+      }
+
+      setResume(buildResume(formData));
+      setHasGenerated(true);
+      setIsPreviewExpanded(true);
+    },
+    [currentStep, formData, stepCount],
+  );
+
+  useEffect(() => {
+    if (hasGenerated) {
+      setResume(buildResume(formData));
+    }
+  }, [formData, hasGenerated]);
 
   const handleReset = useCallback(() => {
     setFormData(INITIAL_FORM);
     setResume(null);
     setHasGenerated(false);
     setCurrentStep(0);
+    setIsPreviewExpanded(false);
   }, []);
 
   const handleStart = useCallback(() => {
@@ -334,17 +568,228 @@ export default function CurriculoWizard() {
     section?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
+  const togglePreview = useCallback(() => {
+    setIsPreviewExpanded((prev) => !prev);
+  }, []);
+
+  const renderStep = useCallback(() => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <label className="text-sm font-medium text-slate-700" htmlFor="name">
+                Nome completo
+              </label>
+              <input
+                id="name"
+                required
+                value={formData.name}
+                onChange={(event) => handleFieldChange("name", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Ex.: Ana Silva"
+                autoComplete="name"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="professionalTitle">
+                Título profissional
+              </label>
+              <input
+                id="professionalTitle"
+                value={formData.professionalTitle}
+                onChange={(event) => handleFieldChange("professionalTitle", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Ex.: Analista de Marketing Digital"
+                autoComplete="organization-title"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="email">
+                E-mail principal
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={(event) => handleFieldChange("email", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="seunome@email.com"
+                autoComplete="email"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="phone">
+                Telefone/WhatsApp
+              </label>
+              <input
+                id="phone"
+                value={formData.phone}
+                onChange={(event) => handleFieldChange("phone", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="(11) 90000-0000"
+                autoComplete="tel"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="location">
+                Cidade/UF
+              </label>
+              <input
+                id="location"
+                value={formData.location}
+                onChange={(event) => handleFieldChange("location", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Ex.: São Paulo - SP"
+                autoComplete="address-level2"
+              />
+            </div>
+          </div>
+        );
+      case 1:
+        return (
+          <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <label className="text-sm font-medium text-slate-700" htmlFor="areaAtuacao">
+                  Área de atuação
+                </label>
+                <input
+                  id="areaAtuacao"
+                  value={formData.areaAtuacao}
+                  onChange={(event) => handleFieldChange("areaAtuacao", event.target.value)}
+                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                  placeholder="Ex.: Marketing, Tecnologia, Vendas"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-700" htmlFor="experienceLevel">
+                  Nível de experiência
+                </label>
+                <select
+                  id="experienceLevel"
+                  value={formData.experienceLevel}
+                  onChange={(event) => handleFieldChange("experienceLevel", event.target.value)}
+                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                >
+                  <option value="">Selecione</option>
+                  <option>Iniciante</option>
+                  <option>Intermediário</option>
+                  <option>Pleno</option>
+                  <option>Sênior</option>
+                  <option>Liderança</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="summary">
+                Descrição profissional
+              </label>
+              <textarea
+                id="summary"
+                rows={4}
+                value={formData.summary}
+                onChange={(event) => handleFieldChange("summary", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Fale sobre seus objetivos, estilo de trabalho e principais entregas."
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="experiences">
+                Experiências profissionais (uma por linha)
+              </label>
+              <textarea
+                id="experiences"
+                rows={5}
+                value={formData.experiences}
+                onChange={(event) => handleFieldChange("experiences", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Cargo - Empresa (período): Principais resultados e responsabilidades"
+              />
+              <p className="mt-2 text-xs text-slate-500">
+                Ex.: Analista de Vendas - Loja XPTO (2022-Atual): Criei playbook comercial e aumentei em 35% o ticket médio.
+              </p>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="space-y-6">
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="achievements">
+                Conquistas e resultados
+              </label>
+              <textarea
+                id="achievements"
+                rows={4}
+                value={formData.achievements}
+                onChange={(event) => handleFieldChange("achievements", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Separe por vírgulas ou quebras de linha. Ex.: Aumento de 40% no faturamento"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="education">
+                Formação acadêmica
+              </label>
+              <textarea
+                id="education"
+                rows={4}
+                value={formData.education}
+                onChange={(event) => handleFieldChange("education", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Separe por linha. Ex.: Bacharel em Administração - USP"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="skills">
+                Competências principais
+              </label>
+              <textarea
+                id="skills"
+                rows={4}
+                value={formData.skills}
+                onChange={(event) => handleFieldChange("skills", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Separe por vírgulas ou quebras de linha. Ex.: CRM, Prospecção, Gestão de projetos"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700" htmlFor="extras">
+                Informações adicionais
+              </label>
+              <textarea
+                id="extras"
+                rows={3}
+                value={formData.extras}
+                onChange={(event) => handleFieldChange("extras", event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
+                placeholder="Idiomas, voluntariado, certificações, prêmios"
+              />
+              <p className="mt-2 text-xs text-slate-500">
+                Use este campo para adicionar cursos rápidos, causas sociais e certificações relevantes para a vaga.
+              </p>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  }, [currentStep, formData, handleFieldChange]);
+
   return (
-    <main className="bg-gradient-to-b from-[#FAFAFA] to-white pb-16 pt-20">
+    <main className="bg-gradient-to-b from-[#FAFAFA] to-white pb-16 pt-16">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 lg:flex-row">
-        <div className="flex-1 space-y-10">
+        <div className="flex-1 space-y-12">
           <section className="rounded-3xl border border-slate-200 bg-white/80 p-10 shadow-lg">
-            <p className="text-sm font-medium uppercase tracking-widest text-teal-700">Currículo inteligente</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-teal-700">Currículo inteligente</p>
             <h1 className="mt-4 text-3xl font-semibold text-slate-900 md:text-4xl">
               Monte seu currículo grátis em poucos cliques com IA
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-slate-600">
-              Organize sua trajetória profissional com orientações inteligentes, visualização instantânea e download em PDF com a marca Evoluke.
+              Estruture experiências, conquistas e habilidades com recomendações geradas automaticamente. Visualize tudo em tempo
+              real e baixe um PDF com marca Evoluke otimizada para recrutadores.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <button
@@ -352,390 +797,91 @@ export default function CurriculoWizard() {
                 onClick={handleStart}
                 className="rounded-full bg-[#2F6F68] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#255852]"
               >
-                Criar meu currículo agora
+                Começar agora
               </button>
               <p className="text-sm text-slate-500">
-                Leva menos de 5 minutos para concluir os 3 passos e baixar seu PDF profissional.
+                Leva menos de 5 minutos para concluir as 3 etapas e gerar a prévia em tempo real.
               </p>
             </div>
+            <dl className="mt-8 grid gap-6 sm:grid-cols-3">
+              <div>
+                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Foco em mobile</dt>
+                <dd className="mt-2 text-sm text-slate-600">
+                  Passos curtos, campos grandes e preview expansível garantem uma experiência fluida no celular.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Texto confiável</dt>
+                <dd className="mt-2 text-sm text-slate-600">
+                  Sugestões de IA seguem boas práticas de UX writing e incluem métricas para destacar resultados.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Ads prontos</dt>
+                <dd className="mt-2 text-sm text-slate-600">
+                  Blocos otimizados para Google AdSense posicionados em áreas de alta visibilidade.
+                </dd>
+              </div>
+            </dl>
           </section>
 
           <section id="curriculo-form" className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
-            <header className="flex flex-col gap-4 border-b border-slate-100 pb-6 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-slate-900">Assistente guiado</h2>
-                <p className="text-sm text-slate-500">Responda às perguntas em até 3 etapas. A IA monta o currículo completo automaticamente.</p>
-              </div>
-              <div className="flex items-center gap-3 text-sm font-medium text-[#2F6F68]">
-                <span className="hidden md:inline">Etapa {currentStep + 1} de 3</span>
-                <div className="h-2 w-40 rounded-full bg-slate-100">
-                  <div
-                    className="h-2 rounded-full bg-[#2F6F68] transition-all"
-                    style={{ width: `${progress}%` }}
-                  />
+            <header className="flex flex-col gap-6 border-b border-slate-100 pb-6">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">Assistente guiado</h2>
+                  <p className="text-sm text-slate-500">
+                    Siga as etapas para criar um currículo enxuto. As respostas alimentam a pré-visualização à direita.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-sm font-medium text-[#2F6F68]">
+                  <span className="hidden md:inline">Etapa {currentStep + 1} de {stepCount}</span>
+                  <div className="h-2 w-40 rounded-full bg-slate-100">
+                    <div className="h-2 rounded-full bg-[#2F6F68] transition-all" style={{ width: `${progress}%` }} />
+                  </div>
                 </div>
               </div>
+              <StepIndicator steps={STEPS} currentStep={currentStep} onNavigate={handleNavigateStep} />
             </header>
 
-            <form className="mt-8 space-y-8" onSubmit={handleGenerate}>
-              {currentStep === 0 && (
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="md:col-span-2">
-                    <label className="text-sm font-medium text-slate-700" htmlFor="name">
-                      Nome completo
-                    </label>
-                    <input
-                      id="name"
-                      required
-                      value={formData.name}
-                      onChange={(event) => handleFieldChange("name", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Ex.: Ana Silva"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="professionalTitle">
-                      Título profissional
-                    </label>
-                    <input
-                      id="professionalTitle"
-                      value={formData.professionalTitle}
-                      onChange={(event) => handleFieldChange("professionalTitle", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Ex.: Analista de Marketing Digital"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="email">
-                      E-mail principal
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(event) => handleFieldChange("email", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="seunome@email.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="phone">
-                      Telefone/WhatsApp
-                    </label>
-                    <input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(event) => handleFieldChange("phone", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="(11) 90000-0000"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="location">
-                      Cidade/UF
-                    </label>
-                    <input
-                      id="location"
-                      value={formData.location}
-                      onChange={(event) => handleFieldChange("location", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Ex.: São Paulo - SP"
-                    />
-                  </div>
-                </div>
-              )}
+            <form className="mt-8 space-y-8" onSubmit={handleSubmit}>
+              {renderStep()}
 
-              {currentStep === 1 && (
-                <div className="space-y-6">
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div>
-                      <label className="text-sm font-medium text-slate-700" htmlFor="areaAtuacao">
-                        Área de atuação
-                      </label>
-                      <input
-                        id="areaAtuacao"
-                        value={formData.areaAtuacao}
-                        onChange={(event) => handleFieldChange("areaAtuacao", event.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                        placeholder="Ex.: Marketing, Tecnologia, Vendas"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-slate-700" htmlFor="experienceLevel">
-                        Nível de experiência
-                      </label>
-                      <select
-                        id="experienceLevel"
-                        value={formData.experienceLevel}
-                        onChange={(event) => handleFieldChange("experienceLevel", event.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      >
-                        <option value="">Selecione</option>
-                        <option>Iniciante</option>
-                        <option>Intermediário</option>
-                        <option>Pleno</option>
-                        <option>Sênior</option>
-                        <option>Liderança</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="summary">
-                      Descrição profissional
-                    </label>
-                    <textarea
-                      id="summary"
-                      rows={4}
-                      value={formData.summary}
-                      onChange={(event) => handleFieldChange("summary", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Fale rapidamente sobre seus objetivos, estilo de trabalho e principais entregas."
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="experiences">
-                      Experiências profissionais (um por linha)
-                    </label>
-                    <textarea
-                      id="experiences"
-                      rows={5}
-                      value={formData.experiences}
-                      onChange={(event) => handleFieldChange("experiences", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Cargo - Empresa (período): Principais resultados e responsabilidades"
-                    />
-                    <p className="mt-2 text-xs text-slate-500">
-                      Ex.: Analista de Vendas - Loja XPTO (2022-Atual): Criei playbook comercial e aumentei em 35% o ticket médio.
-                    </p>
-                  </div>
-                </div>
-              )}
+              <div className="rounded-2xl bg-slate-50 p-4 text-xs text-slate-500">
+                <p>
+                  Dica rápida: utilize verbos fortes (liderou, entregou, estruturou) e números concretos para aumentar a percepção
+                  de impacto das suas experiências.
+                </p>
+              </div>
 
-              {currentStep === 2 && (
-                <div className="space-y-6">
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="achievements">
-                      Conquistas em destaque (uma por linha)
-                    </label>
-                    <textarea
-                      id="achievements"
-                      rows={4}
-                      value={formData.achievements}
-                      onChange={(event) => handleFieldChange("achievements", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Premiações, metas batidas, projetos estratégicos ou certificações relevantes"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="education">
-                      Formação acadêmica (uma por linha)
-                    </label>
-                    <textarea
-                      id="education"
-                      rows={4}
-                      value={formData.education}
-                      onChange={(event) => handleFieldChange("education", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Curso - Instituição (ano): Foco principal"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="skills">
-                      Habilidades e ferramentas (separe por vírgula ou linha)
-                    </label>
-                    <textarea
-                      id="skills"
-                      rows={3}
-                      value={formData.skills}
-                      onChange={(event) => handleFieldChange("skills", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Gestão de projetos, Power BI, Metodologia Ágil, CRM"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700" htmlFor="extras">
-                      Informações adicionais (opcional)
-                    </label>
-                    <textarea
-                      id="extras"
-                      rows={3}
-                      value={formData.extras}
-                      onChange={(event) => handleFieldChange("extras", event.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 shadow-sm focus:border-[#2F6F68] focus:outline-none"
-                      placeholder="Disponibilidade para viagens, idiomas ou trabalho voluntário"
-                    />
-                  </div>
-                </div>
-              )}
+              <FormActions
+                currentStep={currentStep}
+                stepCount={stepCount}
+                hasGenerated={hasGenerated}
+                onBack={handleBack}
+                onDownload={handleDownload}
+              />
 
-              <footer className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex gap-3">
-                  {currentStep > 0 && (
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className="rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
-                    >
-                      Voltar
-                    </button>
-                  )}
-                  {currentStep < 2 && (
-                    <button
-                      type="button"
-                      onClick={handleNext}
-                      className="rounded-full bg-[#2F6F68] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#255852]"
-                    >
-                      Próximo passo
-                    </button>
-                  )}
-                </div>
-                {currentStep === 2 && (
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <button
-                      type="submit"
-                      className="rounded-full bg-[#2F6F68] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#255852]"
-                    >
-                      Gerar currículo com IA
-                    </button>
-                    <p className="text-xs text-slate-500">
-                      Revisamos as respostas automaticamente para sugerir textos profissionais.
-                    </p>
-                  </div>
-                )}
-              </footer>
+              {hasGenerated && (
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 transition hover:border-slate-300"
+                >
+                  Começar um novo currículo
+                </button>
+              )}
             </form>
           </section>
 
-          {resume && (
-            <section className="rounded-3xl border border-teal-100 bg-white/90 p-8 shadow-xl">
-              <header className="flex flex-col gap-2 border-b border-slate-100 pb-6 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-slate-900">Pré-visualização do currículo</h2>
-                  <p className="text-sm text-slate-500">
-                    Ajuste as respostas acima se quiser refinar. O PDF trará esta mesma estrutura com a marca da Evoluke.
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={handleDownload}
-                    className="rounded-full bg-[#2F6F68] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#255852]"
-                  >
-                    Baixar PDF gratuito
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleReset}
-                    className="rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
-                  >
-                    Começar novamente
-                  </button>
-                </div>
-              </header>
-
-              <article className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-inner">
-                <div className="border-b border-slate-100 pb-6">
-                  <h3 className="text-2xl font-semibold text-slate-900">{resume.header.name}</h3>
-                  <p className="text-sm font-medium text-[#2F6F68]">{resume.header.title}</p>
-                  {resume.header.contacts && (
-                    <p className="mt-2 text-sm text-slate-500">{resume.header.contacts}</p>
-                  )}
-                </div>
-
-                <section className="mt-6 space-y-4">
-                  <div>
-                    <h4 className="text-base font-semibold uppercase tracking-wide text-slate-700">Resumo profissional</h4>
-                    <p className="mt-2 text-sm text-slate-600">{resume.summary}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-base font-semibold uppercase tracking-wide text-slate-700">Destaques</h4>
-                    <ul className="mt-2 space-y-2 text-sm text-slate-600">
-                      {resume.highlights.map((item) => (
-                        <li key={item} className="flex gap-2">
-                          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#2F6F68]" aria-hidden />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="text-base font-semibold uppercase tracking-wide text-slate-700">Experiência profissional</h4>
-                    <div className="mt-2 space-y-4">
-                      {resume.experiences.map((experience) => (
-                        <div key={`${experience.headline}-${experience.company ?? ""}`} className="rounded-2xl bg-slate-50 p-4">
-                          <p className="text-sm font-semibold text-slate-800">{experience.headline}</p>
-                          {(experience.company || experience.period) && (
-                            <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
-                              {[experience.company, experience.period].filter(Boolean).join(" • ")}
-                            </p>
-                          )}
-                          <p className="mt-2 text-sm text-slate-600">{experience.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-base font-semibold uppercase tracking-wide text-slate-700">Formação acadêmica</h4>
-                    <ul className="mt-2 space-y-2 text-sm text-slate-600">
-                      {resume.education.map((entry) => (
-                        <li key={entry} className="flex gap-2">
-                          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#2F6F68]" aria-hidden />
-                          <span>{entry}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="text-base font-semibold uppercase tracking-wide text-slate-700">Competências</h4>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {resume.skills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="rounded-full bg-[#E0F2FE] px-3 py-1 text-xs font-medium text-[#0F172A]"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {resume.extras.length > 0 && (
-                    <div>
-                      <h4 className="text-base font-semibold uppercase tracking-wide text-slate-700">Informações adicionais</h4>
-                      <ul className="mt-2 space-y-2 text-sm text-slate-600">
-                        {resume.extras.map((entry) => (
-                          <li key={entry} className="flex gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#2F6F68]" aria-hidden />
-                            <span>{entry}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </section>
-
-                <p className="mt-8 text-center text-xs uppercase tracking-[0.3em] text-slate-400">
-                  Gerado por Evoluke.com.br
-                </p>
-              </article>
-            </section>
-          )}
-
           {!hasGenerated && (
             <section className="rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-lg">
-              <h3 className="text-lg font-semibold text-slate-900">Por que usar o gerador da Evoluke?</h3>
+              <h3 className="text-lg font-semibold text-slate-900">Por que escolher a Evoluke?</h3>
               <ul className="mt-4 space-y-3 text-sm text-slate-600">
-                <li>
-                  • Sugestões automáticas de texto com tom profissional alinhado às melhores práticas de recrutamento.
-                </li>
-                <li>• Layout limpo com foco no conteúdo que recrutadores procuram em processos seletivos.</li>
-                <li>• Download imediato em PDF com marca d’água discreta da Evoluke para fortalecer seu networking.</li>
-                <li>• Recomendamos conteúdos de carreira e vagas alinhadas ao seu perfil após o download.</li>
+                <li>• Experiência responsiva com foco em mobile-first e acessibilidade.</li>
+                <li>• Campos inteligentes e dicas de escrita para acelerar o preenchimento.</li>
+                <li>• Prévia atualizada em tempo real e download imediato com marca d’água discreta.</li>
+                <li>• Conteúdos recomendados e campanhas pensadas para aumentar o tráfego qualificado.</li>
               </ul>
             </section>
           )}
@@ -751,8 +897,40 @@ export default function CurriculoWizard() {
               Google Ads 300×250
             </div>
             <p className="mt-4 text-xs text-slate-500">
-              Reserve este bloco para campanhas de remarketing ou parceiros estratégicos.
+              Ideal para campanhas de recolocação, cursos e treinamentos de carreira.
             </p>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-md">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-slate-900">Pré-visualização</h4>
+              <button
+                type="button"
+                onClick={togglePreview}
+                className="rounded-full px-3 py-1 text-xs font-semibold text-[#2F6F68] transition hover:bg-[#E7F4F2] lg:hidden"
+              >
+                {isPreviewExpanded ? "Ocultar" : "Ver"}
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              A visualização completa fica fixa em telas maiores. No mobile, expanda quando quiser revisar antes de baixar.
+            </p>
+          </div>
+
+          {(hasGenerated || isPreviewExpanded) && resume && (
+            <div className="lg:hidden">
+              <ResumePreview resume={resume} />
+            </div>
+          )}
+
+          <div className="hidden lg:block">
+            {resume ? (
+              <ResumePreview resume={resume} />
+            ) : (
+              <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
+                A pré-visualização será exibida aqui após preencher os campos.
+              </div>
+            )}
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-md">
@@ -779,7 +957,7 @@ export default function CurriculoWizard() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-md">
             <h4 className="text-sm font-semibold text-slate-900">Métrica acompanhada</h4>
             <p className="mt-3 text-sm text-slate-600">
-              Monitore currículos gerados por dia, acompanhe o CTR dos anúncios e descubra as palavras-chave que trazem mais visitas.
+              Acompanhe currículos gerados por dia, CTR dos anúncios e palavras-chave que trazem visitantes qualificados.
             </p>
           </div>
         </aside>

@@ -36,6 +36,12 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 - Utilize títulos e subtítulos com palavras-chave naturais alinhadas à proposta de valor da marca; essa abordagem reforça o impacto do `robots.txt` e do sitemap, maximizando o aproveitamento do tráfego orgânico.
 - Mantenha o script JSON-LD de organização disponível diretamente no HTML inicial para que os mecanismos de busca leiam os metadados de branding mesmo em rastreadores sem execução de JavaScript.
 
+## Diretrizes para o gerador de currículo
+- A landing **/curriculo-ia** utiliza hero amplo com CTA destacado e texto de apoio. Preserve o degradê claro (`from-[#FAFAFA] to-white`), o CTA primário em `#2F6F68` e os destaques informativos em `#1F4F4A`/`#2F6F68`.
+- O stepper precisa ser clicável apenas para etapas concluídas, mantendo botões arredondados com estados ativo (`bg-[#E7F4F2]`), concluído (`bg-[#EFF6FF]`) e futuro (`bg-white`) e atributo `aria-current="step"` na etapa aberta.
+- Em mobile, mantenha o botão de expansão da pré-visualização com contraste alto e linguagem direta. Em desktop, a prévia deve permanecer fixa na coluna lateral direita com cartões brancos, sombra suave e tipografia consistente com o restante da landing.
+- Os espaços para anúncios devem preservar borda pontilhada, altura mínima compatível com os formatos 300×250/300×600 e textos institucionais que facilitem a troca por tags do Google AdSense.
+
 ## Diretrizes para o funil de vendas
 - Os cards do funil utilizam cantos arredondados de 16 px, sombra suave e espaçamento interno de 16 px.
 - Indicadores de status (status textual, risco e métricas) devem seguir a paleta principal com variações em azul, roxo e verde claro.
