@@ -65,7 +65,7 @@ export default function MarginCalculatorForm() {
 
   const premiumMessage = useMemo(
     () =>
-      "Conheça o plano premium para simular cenários, automatizar listas de preços e exportar relatórios detalhados.",
+      "Conheça o plano premium para simular cenários, nutrir contatos com IA no WhatsApp e sincronizar decisões de preço com o CRM.",
     [],
   );
 
@@ -131,8 +131,8 @@ export default function MarginCalculatorForm() {
           <div>
             <h2 className="text-2xl font-semibold text-foreground">Calcule a precificação ideal</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Descubra o preço de venda recomendado e identifique se sua margem de lucro está alinhada ao plano de crescimento da
-              empresa.
+              Descubra o preço de venda recomendado, dispare o fluxo de WhatsApp com IA e identifique se sua margem de lucro está
+              alinhada ao plano de crescimento da empresa.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -196,7 +196,7 @@ export default function MarginCalculatorForm() {
                 autoComplete="email"
                 value={values.email}
                 onChange={handleChange("email")}
-                placeholder="Receba dicas avançadas"
+                placeholder="Receba roteiros de automação no WhatsApp"
               />
             </label>
             <p className="text-xs text-muted-foreground" id="calculator-helper">
@@ -209,7 +209,7 @@ export default function MarginCalculatorForm() {
             </p>
           )}
           <Button type="submit" className="w-full sm:w-auto">
-            Calcular margens
+            Calcular margens e iniciar fluxo no WhatsApp
           </Button>
         </form>
         <div className="w-full rounded-xl bg-muted/50 p-6 lg:w-1/2">
@@ -252,7 +252,7 @@ export default function MarginCalculatorForm() {
             <h4 className="text-sm font-semibold uppercase tracking-wide text-primary">Plano premium</h4>
             <p className="text-sm text-muted-foreground">{premiumMessage}</p>
             <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
-              <Link href="/pricing">Quero conhecer o premium</Link>
+              <Link href="/pricing">Ativar automação WhatsApp + CRM premium</Link>
             </Button>
           </div>
         </div>

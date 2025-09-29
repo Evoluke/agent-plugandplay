@@ -48,9 +48,9 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 ## 🛠️ Ferramentas para geração de leads
 
-- A rota `/tools` apresenta um hub otimizado para SEO com descrição detalhada de utilitários gratuitos e chamadas para os planos premium.
-- A primeira ferramenta disponível é a **Calculadora de Margem e Precificação** (`/tools/calculadora-margem`), que valida custos positivos, bloqueia margens acima de 100% e apresenta preço sugerido, margem real e lucro unitário.
-- O formulário coleta opcionalmente o e-mail corporativo para nutrir leads, reforçando o funil com um destaque para o upgrade premium com cenários de precificação em massa.
+- A rota `/tools` apresenta um hub otimizado para SEO com descrição detalhada de utilitários gratuitos e chamadas voltadas a gatilhos de automação de conversas no WhatsApp integradas ao CRM corporativo.
+- A primeira ferramenta disponível é a **Calculadora de Margem e Precificação** (`/tools/calculadora-margem`), que valida custos positivos, bloqueia margens acima de 100% e apresenta preço sugerido, margem real e lucro unitário antes de propor a automação com IA.
+- O formulário coleta opcionalmente o e-mail corporativo para nutrir leads, reforçando o funil com destaque para o upgrade premium com cenários de precificação em massa e disparo automático de fluxos no WhatsApp.
 
 ## 🧭 Funil de vendas
 

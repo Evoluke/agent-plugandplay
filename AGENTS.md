@@ -12,6 +12,7 @@ Estas orientações se aplicam a todo o repositório `agent-plugandplay`.
 - Atualize documentação relevante (por exemplo, arquivos em `docs/` ou `README.md`) sempre que fizer mudanças que afetem o comportamento observado pelo usuário.
 - Ao modificar arquivos Markdown, utilize títulos em português e mantenha uma estrutura coerente com o restante do projeto.
 - Ao ajustar o funil de vendas, mantenha alinhadas as descrições sobre áreas de drop vazias para garantir consistência entre código e documentação visual.
+- Garanta que qualquer CTA público faça referência direta às automações de conversas no WhatsApp com IA e integração com o CRM da plataforma.
 - Sempre que atualizar o fluxo de assinatura corporativa, destaque na documentação que a interface considera apenas faturas pagas com vencimento vigente e ignora cobranças futuras pendentes ao liberar ativações, mantendo o menu do agente focado em atributos individuais.
 - Caso altere integrações externas, registre se algum fluxo do N8N deixa de ser utilizado — atualmente a criação de agentes não dispara webhooks externos.
 

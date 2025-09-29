@@ -34,6 +34,7 @@ A unidade base de espaçamento segue o padrão do Tailwind CSS (4 px). Organize
 ## Presença em páginas públicas
 - Garanta que as variações do logotipo acompanhem todas as páginas institucionais listadas no sitemap (`/sobre-nos`, `/saiba-mais`, `/sob-demanda`, `/crm`, `/bni` e formulários de contato) para preservar consistência visual entre o conteúdo priorizado pelos buscadores.
 - Utilize títulos e subtítulos com palavras-chave naturais alinhadas à proposta de valor da marca; essa abordagem reforça o impacto do `robots.txt` e do sitemap, maximizando o aproveitamento do tráfego orgânico.
+- Conecte cada CTA textual ou botão das páginas públicas à narrativa de automações de conversas no WhatsApp com IA e CRM, garantindo consistência entre a promessa da marca e o destino oferecido na plataforma.
 - Mantenha o script JSON-LD de organização disponível diretamente no HTML inicial para que os mecanismos de busca leiam os metadados de branding mesmo em rastreadores sem execução de JavaScript.
 
 ## Diretrizes para o funil de vendas

@@ -98,9 +98,9 @@ export default function Header() {
                   >
                     Calculadora de margem e precificação
                   </Link>
-                    <p className="text-xs text-muted-foreground">
-                      Novas soluções chegam em breve para apoiar decisões de pricing e CRM.
-                    </p>
+                  <p className="text-xs text-muted-foreground">
+                    Novas soluções chegam em breve para acionar conversas inteligentes no WhatsApp integradas ao CRM.
+                  </p>
                   </div>
                 </div>
               </div>
@@ -187,7 +187,9 @@ export default function Header() {
                   >
                     Calculadora de margem
                   </Link>
-                  <p className="text-sm text-muted-foreground/80">Novas ferramentas serão liberadas em breve.</p>
+                  <p className="text-sm text-muted-foreground/80">
+                    Novos gatilhos de WhatsApp com IA serão liberados em breve.
+                  </p>
                 </div>
               )}
             </div>

@@ -6,13 +6,14 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Calculadora de Margem e Precificação | Evoluke",
   description:
-    "Calcule o preço ideal de venda informando custos, impostos e margem desejada. Receba o lucro unitário e a margem real em segundos.",
+    "Calcule o preço ideal de venda informando custos, impostos e margem desejada. Receba o lucro unitário, a margem real e conecte o gatilho automático de WhatsApp com IA.",
   keywords: [
     "calculadora de margem",
     "precificação",
     "lucro unitário",
     "gestão financeira",
     "simulador de preço",
+    "WhatsApp com IA",
   ],
   alternates: {
     canonical: "/tools/calculadora-margem",

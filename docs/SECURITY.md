@@ -15,6 +15,7 @@ Rotas atuais que dependem do `supabaseadmin`:
 - `/api/payments/client`
 
 Integrações externas, como os fluxos do N8N, passaram a ser as únicas responsáveis por atualizar `company.subscription_expires_at`. Garanta que políticas de RLS impeçam que outras empresas consultem ou modifiquem esse campo compartilhado, pois ele representa a vigência da assinatura corporativa. O menu do agente deixou de consultar diretamente a tabela de pagamentos, reduzindo a exposição desse histórico no front-end.
+A jornada que parte dos CTAs de ferramentas gratuitas direciona leads para automações de WhatsApp com IA; registre os eventos de disparo em tabelas segregadas e trate tokens ou bearers usados nesses gatilhos com o mesmo rigor de credenciais sensíveis, evitando que uma conta acione fluxos de outra empresa.
 
 ## Tabelas críticas e políticas de RLS
 As seguintes tabelas requerem políticas de Row Level Security para garantir o isolamento por empresa/usuário:
