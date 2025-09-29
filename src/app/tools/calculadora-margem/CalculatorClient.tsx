@@ -82,9 +82,9 @@ export default function CalculatorClient() {
   };
 
   return (
-    <div className="flex flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-      <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:col-start-1 lg:row-start-1">
-          <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+    <div className="flex flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)] lg:gap-8 lg:auto-rows-fr">
+      <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:h-full">
+        <form className="flex h-full flex-col space-y-6" onSubmit={handleSubmit} noValidate>
             <div>
               <h2 className="text-2xl font-semibold text-slate-900">Preencha os dados da sua oferta</h2>
               <p className="mt-2 text-sm text-slate-600">
@@ -135,17 +135,17 @@ export default function CalculatorClient() {
             >
               Calcular preço sugerido
             </button>
-          </form>
+        </form>
       </section>
 
-      <aside className="flex flex-col gap-5 lg:col-start-2 lg:row-span-2">
-        <section className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
-          <header className="space-y-1">
-            <h2 className="text-xl font-semibold text-slate-900">Resultados da simulação</h2>
-            <p className="text-xs text-slate-500">
-              Ajuste sua precificação com base nas combinações de custo e margem desejada.
-            </p>
-          </header>
+      <section className="flex flex-col gap-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg lg:h-full">
+        <header className="space-y-1">
+          <h2 className="text-xl font-semibold text-slate-900">Resultados da simulação</h2>
+          <p className="text-xs text-slate-500">
+            Ajuste sua precificação com base nas combinações de custo e margem desejada.
+          </p>
+        </header>
+        <div className="flex flex-1 flex-col justify-between gap-5">
           {result ? (
             <dl className="space-y-3 text-sm">
               <ResultRow label="Custo total" value={currencyFormatter.format(result.totalCost)} />
@@ -166,15 +166,10 @@ export default function CalculatorClient() {
               </p>
             </div>
           )}
-        </section>
+        </div>
+      </section>
 
-        <section className="rounded-3xl border border-dashed border-primary/30 bg-white/80 p-4 shadow-sm">
-          <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
-          <GoogleAdsenseBanner />
-        </section>
-      </aside>
-
-      <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:col-start-1 lg:row-start-2">
+      <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-lg lg:h-full lg:col-start-1 lg:row-start-2">
         <h2 className="text-xl font-semibold text-slate-900">Por que conectar um agente de IA após definir sua margem?</h2>
         <ul className="space-y-4 text-sm leading-relaxed text-slate-600">
           <li>
@@ -196,6 +191,11 @@ export default function CalculatorClient() {
         >
           Conheça a Evoluke
         </Link>
+      </section>
+
+      <section className="rounded-3xl border border-dashed border-primary/30 bg-white/80 p-4 shadow-sm lg:h-full lg:col-start-2 lg:row-start-2">
+        <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary">Patrocinado</p>
+        <GoogleAdsenseBanner />
       </section>
     </div>
   );
