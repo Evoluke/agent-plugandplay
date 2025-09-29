@@ -10,6 +10,12 @@ import { toast } from "sonner";
 import { isValidEmail, isValidPassword } from "@/lib/validators";
 import { supabasebrowser } from "@/lib/supabaseClient";
 
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
+
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -31,6 +37,8 @@ export default function SignupPage() {
       if (error) {
         console.error("Erro ao entrar com Google:", error.message);
         toast.error("Não foi possível conectar com o Google. Tente novamente.");
+      } else if (typeof window !== "undefined" && typeof window.fbq === "function") {
+        window.fbq("track", "CompleteRegistration");
       }
     } catch (err) {
       console.error("Erro inesperado ao entrar com Google:", err);
@@ -71,6 +79,9 @@ export default function SignupPage() {
         setError(data.error || "Falha no cadastro");
       } else {
         toast.success("Verifique seu email para confirmar o cadastro");
+        if (typeof window !== "undefined" && typeof window.fbq === "function") {
+          window.fbq("track", "CompleteRegistration");
+        }
         router.push("/login");
       }
     } catch {
