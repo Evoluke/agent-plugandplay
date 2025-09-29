@@ -51,6 +51,7 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 - A rota `/tools` apresenta um hub otimizado para SEO com descrição detalhada de utilitários gratuitos e chamadas voltadas a gatilhos de automação de conversas no WhatsApp integradas ao CRM corporativo.
 - A primeira ferramenta disponível é a **Calculadora de Margem e Precificação** (`/tools/calculadora-margem`), que valida custos positivos, bloqueia margens acima de 100% e apresenta preço sugerido, margem real e lucro unitário antes de propor a automação com IA.
 - O formulário coleta opcionalmente o e-mail corporativo para nutrir leads, reforçando o funil com destaque para o upgrade premium com cenários de precificação em massa e disparo automático de fluxos no WhatsApp.
+- O cabeçalho, o hub de ferramentas e a calculadora adotam componentes mobile-first, com botões de largura total, cards arredondados e tipografia balanceada para manter a legibilidade e os CTAs de WhatsApp + CRM acessíveis em telas menores.
 
 ## 🧭 Funil de vendas
 
