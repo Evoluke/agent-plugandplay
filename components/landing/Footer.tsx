@@ -1,8 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
@@ -35,6 +32,26 @@ export default function Footer() {
               <li>
                 <Link href="/privacy" className="hover:text-primary">
                   Privacidade
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-4 font-semibold">Ferramentas</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/tools" target="_blank" rel="noopener noreferrer" className="hover:text-primary">
+                  Todas as ferramentas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/tools/calculadora-margem"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary"
+                >
+                  Calculadora de margem
                 </Link>
               </li>
             </ul>
