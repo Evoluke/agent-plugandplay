@@ -65,10 +65,16 @@ export async function POST(req: Request) {
   const userId = data.user.id;
 
   try {
+    const trialExpiration = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
     // 2) insere na tabela company (service role key ignora RLS)
     const { error: companyError } = await supabaseadmin
       .from("company")
-      .insert({ user_id: userId, profile_complete: false });
+      .insert({
+        user_id: userId,
+        profile_complete: false,
+        subscription_expires_at: trialExpiration,
+      });
 
     if (companyError) {
       console.error("Erro ao criar company:", companyError.message);
