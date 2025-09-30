@@ -41,8 +41,9 @@ Este repositório contém uma aplicação [Next.js](https://nextjs.org/) prepara
 
 ## 🌐 SEO e descoberta
 
-- O sitemap disponível em `/sitemap.xml` replica automaticamente o domínio configurado em `NEXT_PUBLIC_APP_URL` e cataloga as páginas públicas da landing page, incluindo **/sobre-nos**, **/saiba-mais**, **/sob-demanda**, **/crm**, **/bni**, **/contact**, **/privacy**, **/terms**, **/landing** e as rotas de autenticação.
+- O sitemap disponível em `/sitemap.xml` replica automaticamente o domínio configurado em `NEXT_PUBLIC_APP_URL` e cataloga as páginas públicas da landing page, incluindo **/sobre-nos**, **/saiba-mais**, **/sob-demanda**, **/crm**, **/bni**, **/contact**, **/privacy**, **/terms**, **/landing**, **/landing/recursos** e as rotas de autenticação.
 - A nova rota **/landing** oferece uma experiência mobile-first focada em agentes de IA com destaque para a avaliação gratuita de 7 dias, reforçando a integração oficial com WhatsApp e o CRM próprio diretamente no conteúdo institucional.
+- A rota complementar **/landing/recursos** replica o conteúdo aprofundado de **/saiba-mais** no visual escuro da landing, mantendo os mesmos textos sobre onboarding, governança e integrações enquanto direciona os CTAs para a avaliação gratuita e para o WhatsApp corporativo `(47) 8853-3553`.
 - O arquivo `public/robots.txt` declara `Sitemap: https://evoluke.com.br/sitemap.xml`, permitindo que os buscadores identifiquem rapidamente o índice gerado; ajuste a URL caso o domínio canônico seja personalizado em outro ambiente.
 - O script JSON-LD de organização é inserido diretamente no HTML servido, garantindo que os buscadores tenham acesso imediato aos metadados estruturados sem depender de execução de JavaScript no cliente.
 - A imagem de destaque da seção hero utiliza `fetchpriority="high"`, `priority` e dimensões responsivas para ser pré-carregada logo no documento inicial, assegurando que a métrica de **Largest Contentful Paint (LCP)** seja atendida sem carregamento lento.

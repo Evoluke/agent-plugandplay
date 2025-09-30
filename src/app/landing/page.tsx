@@ -103,7 +103,7 @@ export default function LandingPage() {
               Iniciar avaliação gratuita
             </Link>
             <Link
-              href="/saiba-mais"
+              href="/landing/recursos"
               className="w-full rounded-lg border border-slate-700 px-5 py-3 text-center text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white sm:w-auto"
             >
               Ver recursos completos
@@ -225,7 +225,9 @@ export default function LandingPage() {
               Criar conta gratuita
             </Link>
             <Link
-              href="/contact"
+              href="https://wa.me/554788533553"
+              target="_blank"
+              rel="noreferrer"
               className="w-full rounded-lg border border-emerald-500/40 px-5 py-3 text-center text-sm font-semibold text-emerald-200 transition hover:border-emerald-400 hover:text-white sm:w-auto"
             >
               Falar com especialistas
