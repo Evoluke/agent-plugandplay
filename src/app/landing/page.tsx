@@ -14,16 +14,16 @@ const highlights = [
     icon: "🤖",
   },
   {
-    title: "Resultados mensuráveis",
+    title: "CRM próprio integrado",
     description:
-      "Acompanhe métricas de conversão, tempo médio de resposta e oportunidades geradas diretamente no dashboard sem planilhas extras.",
-    icon: "📈",
+      "Centralize conversas, leads e histórico de oportunidades no nosso CRM nativo, pronto para a equipe comercial agir sem integrações extras.",
+    icon: "🗂️",
   },
   {
-    title: "Integração omnicanal",
+    title: "Integração oficial com WhatsApp",
     description:
-      "Ative WhatsApp, Instagram e site em um único fluxo para manter todo o histórico organizado e acessível pela equipe.",
-    icon: "🔗",
+      "Conecte sua conta WhatsApp Business API e responda em escala mantendo toda a jornada registrada automaticamente no CRM.",
+    icon: "💬",
   },
 ];
 
@@ -45,11 +45,7 @@ const steps = [
   },
 ];
 
-const integrations = [
-  { name: "WhatsApp Business", icon: "💬" },
-  { name: "Instagram DM", icon: "📸" },
-  { name: "Zapier", icon: "⚡" },
-];
+const integrations = [{ name: "WhatsApp Business API", icon: "💬" }];
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -144,7 +140,7 @@ export default function LandingPage() {
                   <p className="mt-1 text-[11px] text-slate-400">Últimos 30 dias</p>
                 </div>
                 <div className="col-span-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <p className="text-slate-400">Integrações ativas</p>
+                  <p className="text-slate-400">Integração ativa</p>
                   <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
                     {integrations.map((integration) => (
                       <span
@@ -168,7 +164,7 @@ export default function LandingPage() {
               Capture, qualifique e converta com um agente que nunca dorme
             </h2>
             <p className="text-base text-slate-300">
-              Automatize a primeira resposta, envie propostas personalizadas e encaminhe leads aquecidos para o time comercial. A IA aprende com o seu conteúdo e mantém o tom da sua marca em todos os canais.
+              Automatize a primeira resposta, envie propostas personalizadas e encaminhe leads aquecidos para o time comercial. A IA aprende com o seu conteúdo e registra cada interação no nosso CRM, mantendo o tom da sua marca em todas as conversas no WhatsApp.
             </p>
             <ul className="space-y-5">
               {highlights.map((item) => (
@@ -195,7 +191,7 @@ export default function LandingPage() {
             </p>
             <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Comece hoje mesmo</h2>
             <p className="mt-3 max-w-2xl text-sm text-slate-300 sm:text-base">
-              Uma avaliação gratuita de 7 dias para liberar fluxos automáticos, monitoramento em tempo real e integrações prontas com seus canais favoritos.
+              Uma avaliação gratuita de 7 dias para liberar fluxos automáticos, monitoramento em tempo real e a integração oficial com WhatsApp que alimenta nosso CRM próprio.
             </p>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -219,7 +215,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-5xl rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-slate-950 to-slate-950 p-8 text-center sm:p-12">
           <h2 className="text-3xl font-bold sm:text-4xl">Pronto para multiplicar suas conversões?</h2>
           <p className="mt-4 text-sm text-slate-300 sm:text-base">
-            Garanta 7 dias de acesso gratuito para treinar seu agente de IA, acompanhar métricas e conectar todos os canais sem limites de conversas.
+            Garanta 7 dias de acesso gratuito para treinar seu agente de IA, acompanhar métricas e operar o WhatsApp integrado ao nosso CRM, sem limites de conversas.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
