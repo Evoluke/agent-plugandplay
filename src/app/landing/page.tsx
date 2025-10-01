@@ -22,7 +22,7 @@ const highlights = [
   {
     title: "Integração oficial com WhatsApp",
     description:
-      "Conecte sua conta WhatsApp Business API e responda em escala mantendo toda a jornada registrada automaticamente no CRM.",
+      "Conecte sua conta WhatsApp e responda em escala mantendo toda a jornada registrada automaticamente no CRM.",
     icon: "💬",
   },
 ];
@@ -45,7 +45,7 @@ const steps = [
   },
 ];
 
-const integrations = [{ name: "WhatsApp Business API", icon: "💬" }];
+const integrations = [{ name: "WhatsApp", icon: "💬" }];
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
