@@ -60,7 +60,6 @@ const pricingTiers = [
       "Disponível 24/7",
     ],
     price: formatPrice(599),
-    popular: false,
   },
   {
     name: "Representante de vendas (SDR)",
@@ -71,7 +70,6 @@ const pricingTiers = [
       "Disponível 24/7",
     ],
     price: formatPrice(599),
-    popular: true,
   },
   {
     name: "Pré-Qualificação",
@@ -82,7 +80,6 @@ const pricingTiers = [
       "Disponível 24/7",
     ],
     price: formatPrice(599),
-    popular: false,
   },
 ];
 
@@ -267,11 +264,6 @@ export default function LandingPage() {
                 key={tier.name}
                 className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/60 p-6 shadow-xl transition hover:-translate-y-1 hover:border-emerald-400/40 hover:shadow-emerald-500/20"
               >
-                {tier.popular && (
-                  <span className="absolute right-6 top-6 rounded-full border border-emerald-500/60 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-emerald-200">
-                    Mais popular
-                  </span>
-                )}
                 <h3 className="text-xl font-semibold text-white">{tier.name}</h3>
                 <p className="mt-2 text-sm text-slate-300">{tier.description}</p>
                 <div className="mt-6 flex items-baseline gap-2 text-white">
