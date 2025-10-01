@@ -5,7 +5,6 @@ import Script from "next/script";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
-import ChatwootController from "@/components/ChatwootController";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -126,7 +125,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </noscript>
           <Toaster position="top-right" />
           {children}
-          <ChatwootController />
         </NotificationProvider>
       </body>
     </html>
