@@ -47,6 +47,45 @@ const steps = [
 
 const integrations = [{ name: "WhatsApp", icon: "💬" }];
 
+const formatPrice = (value: number) =>
+  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const pricingTiers = [
+  {
+    name: "Suporte Atendimento",
+    description: "Responde dúvidas e auxilia clientes com fluxos orientados a atendimento.",
+    features: [
+      "Consulta base de conhecimento",
+      "Integra CRM Evoluke",
+      "Disponível 24/7",
+    ],
+    price: formatPrice(599),
+    popular: false,
+  },
+  {
+    name: "Representante de vendas (SDR)",
+    description: "Qualifica leads, agenda compromissos e encaminha oportunidades aquecidas.",
+    features: [
+      "Qualificação automática de leads",
+      "Integra CRM Evoluke",
+      "Disponível 24/7",
+    ],
+    price: formatPrice(599),
+    popular: true,
+  },
+  {
+    name: "Pré-Qualificação",
+    description: "Identifica interesse inicial e transfere para atendimento humano em segundos.",
+    features: [
+      "Pré-qualificação guiada",
+      "Integra CRM Evoluke",
+      "Disponível 24/7",
+    ],
+    price: formatPrice(599),
+    popular: false,
+  },
+];
+
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   alternates: {
@@ -205,6 +244,61 @@ export default function LandingPage() {
                 </span>
                 <h3 className="text-xl font-semibold text-white">{step.title}</h3>
                 <p className="text-sm text-slate-300">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-900 bg-slate-950 px-6 py-16 sm:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <p className="text-sm font-semibold uppercase tracking-widest text-emerald-300">
+              Planos para escalar atendimento
+            </p>
+            <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Modelos prontos para uso</h2>
+            <p className="mt-3 text-sm text-slate-300 sm:text-base">
+              Inclui até 5.000 mensagens de IA por mês. Expanda quando precisar sem migrar de plataforma.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {pricingTiers.map((tier) => (
+              <div
+                key={tier.name}
+                className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/60 p-6 shadow-xl transition hover:-translate-y-1 hover:border-emerald-400/40 hover:shadow-emerald-500/20"
+              >
+                {tier.popular && (
+                  <span className="absolute right-6 top-6 rounded-full border border-emerald-500/60 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-emerald-200">
+                    Mais popular
+                  </span>
+                )}
+                <h3 className="text-xl font-semibold text-white">{tier.name}</h3>
+                <p className="mt-2 text-sm text-slate-300">{tier.description}</p>
+                <div className="mt-6 flex items-baseline gap-2 text-white">
+                  <span className="text-3xl font-bold">{tier.price}</span>
+                  <span className="text-xs font-medium uppercase tracking-widest text-slate-400">/ mês</span>
+                </div>
+                <ul className="mt-6 space-y-3 text-sm text-slate-200">
+                  {tier.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2">
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-300">
+                        ✓
+                      </span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-8 flex flex-1 flex-col justify-end gap-3">
+                  <Link
+                    href="/signup"
+                    className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400"
+                  >
+                    Assinar agora
+                  </Link>
+                  <p className="text-[11px] text-slate-400">
+                    Mensagens adicionais têm custo extra de R$ 0,0599 por envio.
+                  </p>
+                </div>
               </div>
             ))}
           </div>
